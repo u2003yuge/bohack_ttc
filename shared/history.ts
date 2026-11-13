@@ -60,7 +60,7 @@ export function calculateBenchmark(role: string, score: number, year: number | n
   const yearSample = year === null ? roleSample : roleSample.filter((candidate) => candidate.year === year);
   const sample = yearSample.length ? yearSample : roleSample;
   const activeYear = yearSample.length ? year : null;
-  const percentile = Math.round(sample.filter((candidate) => candidate.composite <= score).length / sample.length * 100);
+  const percentile = Math.round(sample.filter((candidate) => candidate.composite < score).length / sample.length * 100);
   const screened = sample.filter((candidate) => candidate.screened).map((candidate) => candidate.composite).sort((a, b) => a - b);
   const hired = sample.filter((candidate) => candidate.hired).map((candidate) => candidate.composite).sort((a, b) => a - b);
   const allScores = sample.map((candidate) => candidate.composite).sort((a, b) => a - b);
