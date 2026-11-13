@@ -37,6 +37,18 @@ test("benchmark leaves outcome cutoffs unavailable when that outcome has no samp
   assert.equal(benchmark.hiredRate, 0);
 });
 
+test("benchmark uses the arithmetic median for an even number of outcome samples", () => {
+  const records: HistoricalCandidate[] = [
+    { id: "screened-a", name: "A", role: "产品经理", year: 2025, screened: true, hired: false, composite: 70 },
+    { id: "screened-b", name: "B", role: "产品经理", year: 2025, screened: true, hired: false, composite: 81 },
+    { id: "hired-a", name: "C", role: "产品经理", year: 2025, screened: true, hired: true, composite: 81 },
+    { id: "hired-b", name: "D", role: "产品经理", year: 2025, screened: true, hired: true, composite: 89 },
+  ];
+  const benchmark = calculateBenchmark("产品经理", 80, null, records);
+  assert.equal(benchmark.screenCutoff, 81);
+  assert.equal(benchmark.hireCutoff, 85);
+});
+
 test("benchmark returns unavailable comparisons rather than NaN for an empty history", () => {
   const benchmark = calculateBenchmark("产品经理", 80, null, []);
   assert.equal(benchmark.sampleCount, 0);

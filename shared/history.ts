@@ -151,5 +151,8 @@ export function calculateBenchmark(role: string, score: number, year: number | n
 }
 
 function percentileValue(values: number[]): number {
-  return values[Math.max(0, Math.ceil(values.length * 0.5) - 1)] ?? 0;
+  const middle = (values.length - 1) / 2;
+  const lower = values[Math.floor(middle)];
+  const upper = values[Math.ceil(middle)];
+  return lower === undefined || upper === undefined ? 0 : Math.round(((lower + upper) / 2) * 10) / 10;
 }
