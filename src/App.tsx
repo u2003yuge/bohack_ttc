@@ -387,6 +387,7 @@ function RecruitmentQualityMap({ candidates, selectedId, onSelect }: { candidate
 
 type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string };
 type KnowledgeSort = "default" | "score" | "updated" | "title";
+type KnowledgeVerificationFilter = "all" | "pending" | "verified";
 const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "" };
 
 function KnowledgeReviewHistory({ history }: { history: KnowledgeReviewEntry[] }) {
@@ -421,6 +422,8 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
+  const [verificationFilter, setVerificationFilter] = useState<KnowledgeVerificationFilter>("all");
+  const [linkedOnly, setLinkedOnly] = useState(false);
   const [selectedId, setSelectedId] = useState(initialId && records.some((record) => record.id === initialId) ? initialId : seedKnowledgeRecords[0].id);
   const [reviewScore, setReviewScore] = useState(seedKnowledgeRecords[0].significanceScore);
   const [reviewNote, setReviewNote] = useState(seedKnowledgeRecords[0].scoreRationale);
@@ -443,7 +446,12 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [editorError, setEditorError] = useState("");
   const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
   const normalizedQuery = query.trim().toLocaleLowerCase();
-  const filtered = records.filter((record) => (kind === "all" || record.kind === kind) && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")}`.toLocaleLowerCase().includes(normalizedQuery));
+  const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeReferences(resume, [record]).length > 0).length])), [records, resumes]);
+  const filtered = records.filter((record) => {
+    const verificationMatches = verificationFilter === "all" || (verificationFilter === "verified" ? record.verificationStatus === "已核验" : record.verificationStatus !== "已核验");
+    const linkedMatches = !linkedOnly || (linkedResumeCounts.get(record.id) ?? 0) > 0;
+    return (kind === "all" || record.kind === kind) && verificationMatches && linkedMatches && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")}`.toLocaleLowerCase().includes(normalizedQuery);
+  });
   const sortedRecords = [...filtered].sort((a, b) => sort === "score" ? b.significanceScore - a.significanceScore : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "title" ? a.title.localeCompare(b.title, "zh-CN") : 0);
   const selected = sortedRecords.find((record) => record.id === selectedId) ?? sortedRecords[0] ?? null;
   const kindSummary = (Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((value) => {
@@ -455,7 +463,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
   useEffect(() => {
     if (initialId && records.some((record) => record.id === initialId)) {
-      setKind("all"); setQuery(""); setSelectedId(initialId);
+      setKind("all"); setQuery(""); setVerificationFilter("all"); setLinkedOnly(false); setSelectedId(initialId);
     }
   }, [initialId, records]);
   useEffect(() => {
@@ -553,8 +561,9 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <button onClick={saveRecord} disabled={editorBusy || !draft.title.trim()}>{editorBusy ? "保存中" : editingId ? "保存修改" : "创建资料"}</button>
             </div>}
             <div className="knowledge-filters"><div className="knowledge-filter-buttons"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div><label className="knowledge-sort-label"><span>排序</span><select value={sort} onChange={(event) => setSort(event.target.value as KnowledgeSort)} aria-label="资料排序"><option value="default">默认</option><option value="updated">最近更新</option><option value="score">评分高低</option><option value="title">名称</option></select></label></div>
+            <div className="knowledge-secondary-filters"><div className="knowledge-filter-buttons"><button className={verificationFilter === "all" ? "active" : ""} onClick={() => setVerificationFilter("all")}>全部状态</button><button className={verificationFilter === "pending" ? "active" : ""} onClick={() => setVerificationFilter("pending")}>待核验</button><button className={verificationFilter === "verified" ? "active" : ""} onClick={() => setVerificationFilter("verified")}>已核验</button></div><button className={`linked-filter ${linkedOnly ? "active" : ""}`} onClick={() => setLinkedOnly((value) => !value)} aria-pressed={linkedOnly}>仅看已被简历引用</button></div>
             <div className="knowledge-result-count">显示 {sortedRecords.length} / {records.length} 条</div>
-            <div className="knowledge-record-list">{sortedRecords.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"} · {record.verificationStatus === "已核验" ? "已核验" : "待核验"}</small></span><b>{record.significanceScore}</b></button>)}{!sortedRecords.length && <div className="empty-list">没有匹配资料</div>}</div>
+            <div className="knowledge-record-list">{sortedRecords.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"} · {record.verificationStatus === "已核验" ? "已核验" : "待核验"}</small></span><span className="knowledge-row-links" title={`${linkedResumeCounts.get(record.id) ?? 0} 份简历引用`}>{linkedResumeCounts.get(record.id) ?? 0}<ExternalLink size={10} /></span><b>{record.significanceScore}</b></button>)}{!sortedRecords.length && <div className="empty-list">没有匹配资料</div>}</div>
           </aside>
           <section className="knowledge-detail">
             {selected ? <>
