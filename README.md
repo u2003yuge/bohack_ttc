@@ -1,6 +1,6 @@
-# hackson_ttc
+# bohack_ttc
 
-Project repository.
+Project repository for bohack_ttc.
 
 ## Getting Started
 
