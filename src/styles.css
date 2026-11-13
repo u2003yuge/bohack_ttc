@@ -360,14 +360,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .quality-map-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .quality-map-head h3 { margin: 4px 0 4px; color: #2f4438; font-size: 15px; }
 .quality-map-head p { margin: 0; color: #829087; font-size: 10px; }
-.quality-map-legend { display: flex; flex-direction: column; gap: 6px; color: #76857c; font-size: 9px; white-space: nowrap; }
-.legend-dot { width: 7px; height: 7px; display: inline-block; margin-right: 5px; border-radius: 50%; }.legend-deep { background: #4e9673; }.legend-wide { background: #d2953c; }
+.quality-map-legend { display: flex; flex-direction: column; gap: 6px; color: #76857c; font-size: 9px; white-space: nowrap; }.quality-size-legend { display: inline-flex; align-items: center; gap: 5px; }.quality-size-legend i { display: inline-block; flex: 0 0 auto; border: 1px solid #fff; border-radius: 50%; background: #659477; box-shadow: 0 0 0 1px #659477; }.quality-size-small { width: 20px; height: 20px; }.quality-size-large { width: 30px; height: 30px; }.quality-selected-candidate { color: #426c51; font-weight: 600; white-space: normal; }
 .quality-map-wrap { overflow-x: auto; margin-top: 12px; }
 .quality-map { display: block; width: 100%; min-width: 560px; height: auto; }
 .quality-map-bg { fill: #fff; stroke: #dce8e1; stroke-width: 1; }
 .quality-quadrant { opacity: .55; }.quality-quadrant-learning { fill: #f2f7f4; }.quality-quadrant-deep { fill: #edf7f0; }.quality-quadrant-narrow { fill: #fbf8ef; }.quality-quadrant-broad { fill: #fffaf0; }
 .quality-midline { stroke: #dbe7df; stroke-width: 1; stroke-dasharray: 4 4; }.quality-axis { stroke: #b9cbc0; stroke-width: 1; }.quality-quadrant-label { fill: #a1afa7; font-size: 9px; }.quality-tick { fill: #9aa89f; font-size: 8px; }.quality-axis-label { fill: #718077; font-size: 9px; }
-.quality-bubble { stroke: #fff; stroke-width: 2; opacity: .9; }.quality-bubble-1 { fill: #3f8b69; }.quality-bubble-2 { fill: #d18d31; }.quality-bubble-3 { fill: #6e88ac; }.quality-bubble-4 { fill: #9a7199; }.quality-name { fill: #43574c; font-size: 9px; font-weight: 600; }.quality-point { cursor: pointer; outline: none; }.quality-point:hover .quality-bubble, .quality-point:focus-visible .quality-bubble { stroke: #263e31; stroke-width: 3; opacity: 1; }.quality-point.selected .quality-bubble { stroke: #172b21; stroke-width: 3; opacity: 1; }.quality-point.selected .quality-name { fill: #1f513b; font-weight: 700; }
+.quality-bubble { stroke: #fff; stroke-width: 2; opacity: .9; }.quality-bubble-1 { fill: #3f8b69; }.quality-bubble-2 { fill: #d18d31; }.quality-bubble-3 { fill: #6e88ac; }.quality-bubble-4 { fill: #6c8498; }.quality-name { fill: #43574c; font-size: 9px; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }.quality-rank-mark { fill: #fff; font-size: 8px; font-weight: 700; pointer-events: none; }.quality-point { cursor: pointer; outline: none; }.quality-point:hover .quality-bubble, .quality-point:focus-visible .quality-bubble { stroke: #263e31; stroke-width: 3; opacity: 1; }.quality-point.selected .quality-bubble { stroke: #172b21; stroke-width: 3; opacity: 1; }.quality-point.selected .quality-name { fill: #1f513b; font-weight: 700; }
 .quality-map-note { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; color: #8c9991; font-size: 8px; }
 .comparison-table-wrap { overflow-x: auto; }
 .comparison-table { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 10px; }
@@ -433,6 +432,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 640px) {
+  .quality-map-head { flex-direction: column; }.quality-map-legend { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 5px 10px; white-space: normal; }
   .comparison-workspace-main { padding: 18px 12px 28px; }
   .knowledge-main { padding: 12px; }
   .knowledge-overview { padding: 11px 12px; }.knowledge-overview-grid { gap: 5px; }.knowledge-overview-item { padding: 8px 7px; }.knowledge-overview-bottom { align-items: flex-start; flex-direction: column; gap: 2px; }.knowledge-overview-bottom span:last-child { text-align: left; }
