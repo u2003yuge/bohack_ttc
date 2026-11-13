@@ -120,7 +120,7 @@ RESUME_DIR=.data/resumes
 
 内置示例库目前有 23 条记录：竞赛 8 条、期刊 / 会议 7 条、公司 8 条，包含中国高校常见竞赛、计算机与 AI 学术成果，以及互联网、硬件和新能源公司。它们的分数是待审核的演示起始值，不是权威排名；正式使用前应按岗位口径核对来源并重新评估。完整字段、类别审核要点和维护边界见 [`docs/KNOWLEDGE_DATABASE.md`](docs/KNOWLEDGE_DATABASE.md)。
 
-资料库概览新增“审核准备度”流程统计，可点击“待补来源 / 待核来源 / 待人工评估 / 已完成”直接筛选资料。该指标描述资料是否具备审核条件，不代表资料含金量；应用 AI 筛选方案时会清除手动选中的准备度阶段，保证预计命中数准确。
+资料库概览新增“审核准备度”流程统计，可点击“待补来源 / 待核来源 / 待人工评估 / 已完成”直接筛选资料。该指标描述资料是否具备审核条件，不代表资料含金量；AI 也能识别这四种状态，预览精确匹配数量后应用同一阶段筛选。
 
 资料库 API 为 `GET /api/resumes/knowledge`、`POST /api/resumes/knowledge`、`POST /api/resumes/knowledge/enrich`、`POST /api/resumes/knowledge/filter-draft`、`PUT /api/resumes/knowledge/:id`、`PUT /api/resumes/knowledge/:id/review` 和 `POST /api/resumes/knowledge/:id/suggest`。资料草案、评分建议和列表筛选分别使用 `server/skills/knowledge-enrichment.md`、`server/skills/knowledge-assessment.md`、`server/skills/knowledge-filter-assistant.md` 约束；资料草案只填充未保存表单，评分建议等待人工确认，自然语言筛选只返回经校验的列表条件。Tavily 返回的网页摘要只是检索线索，系统不宣称已独立核实网页内容。通用 Agent 与资料核验共用搜索适配器，对相同查询短时缓存、合并并发请求；失败不缓存。分析报告和资料详情支持双向跳转；引用仅由简历中出现的资料名称或别名确定性匹配，不代表已核实。示例评分只用于演示界面和审核流程，使用真实招聘时应核对官方来源、具体名次、作者贡献、岗位职责和项目结果。
 

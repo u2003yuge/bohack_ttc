@@ -87,7 +87,7 @@ test("changing a cited source identity clears its human verification marker", ()
 test("knowledge filter drafts accept only supported filters and bound free-text fields", () => {
   const draft = normalizeKnowledgeFilterDraft({
     kind: "competition", verificationFilter: "verified", evidenceFilter: "verified-sources", scoreBand: "85-100", reviewFilter: "reviewed",
-    query: ` ${"x".repeat(140)} `, linkedOnly: true, sort: "score", rationale: ` ${"r".repeat(260)} `,
+    readiness: "sources-pending", query: ` ${"x".repeat(140)} `, linkedOnly: true, sort: "score", rationale: ` ${"r".repeat(260)} `,
   });
   assert.equal("error" in draft, false);
   if ("error" in draft) return;
@@ -95,11 +95,18 @@ test("knowledge filter drafts accept only supported filters and bound free-text 
   assert.equal(draft.rationale.length, 240);
   assert.equal(draft.linkedOnly, true);
   assert.equal(draft.reviewFilter, "reviewed");
+  assert.equal(draft.readiness, "sources-pending");
 });
 
 test("knowledge filter drafts reject invented filter values", () => {
-  const draft = normalizeKnowledgeFilterDraft({ kind: "candidate", verificationFilter: "all", evidenceFilter: "all", scoreBand: "all", linkedOnly: false, sort: "score" });
+  const draft = normalizeKnowledgeFilterDraft({ kind: "candidate", verificationFilter: "all", evidenceFilter: "all", scoreBand: "all", reviewFilter: "all", readiness: "unknown", linkedOnly: false, sort: "score" });
   assert.deepEqual(draft, { error: "筛选草案包含无效选项，请重新生成。" });
+});
+
+test("knowledge filter drafts treat a missing readiness field as an unrestricted legacy value", () => {
+  const draft = normalizeKnowledgeFilterDraft({ kind: "all", verificationFilter: "all", evidenceFilter: "all", scoreBand: "all", reviewFilter: "all", linkedOnly: false, sort: "default" });
+  assert.equal("error" in draft, false);
+  if (!("error" in draft)) assert.equal(draft.readiness, "all");
 });
 
 test("knowledge score bands separate saved human reviews from pending example scores", () => {

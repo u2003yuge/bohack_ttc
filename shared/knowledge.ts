@@ -36,6 +36,7 @@ export type KnowledgeFilterDraft = {
   evidenceFilter: KnowledgeEvidenceFilter;
   scoreBand: KnowledgeScoreBand;
   reviewFilter: KnowledgeReviewFilter;
+  readiness: KnowledgeReadiness | "all";
   query: string;
   linkedOnly: boolean;
   sort: KnowledgeSort;
@@ -49,10 +50,13 @@ export function normalizeKnowledgeFilterDraft(input: unknown): KnowledgeFilterDr
   const evidenceFilters = ["all", "with-sources", "verified-sources", "without-sources"];
   const scoreBands = ["all", "0-49", "50-69", "70-84", "85-100"];
   const reviewFilters = ["all", "reviewed", "pending"];
+  const readinessFilters = ["all", ...knowledgeReadinessStages.map((stage) => stage.key)];
+  const readiness = value.readiness === undefined ? "all" : value.readiness;
   const sorts = ["default", "score", "updated", "title"];
   if (!kinds.includes(String(value.kind)) || !verificationFilters.includes(String(value.verificationFilter))
     || !evidenceFilters.includes(String(value.evidenceFilter)) || !scoreBands.includes(String(value.scoreBand))
-    || !reviewFilters.includes(String(value.reviewFilter)) || !sorts.includes(String(value.sort)) || typeof value.linkedOnly !== "boolean") {
+    || !reviewFilters.includes(String(value.reviewFilter)) || !readinessFilters.includes(String(readiness))
+    || !sorts.includes(String(value.sort)) || typeof value.linkedOnly !== "boolean") {
     return { error: "筛选草案包含无效选项，请重新生成。" };
   }
   return {
@@ -61,6 +65,7 @@ export function normalizeKnowledgeFilterDraft(input: unknown): KnowledgeFilterDr
     evidenceFilter: value.evidenceFilter as KnowledgeEvidenceFilter,
     scoreBand: value.scoreBand as KnowledgeScoreBand,
     reviewFilter: value.reviewFilter as KnowledgeReviewFilter,
+    readiness: readiness as KnowledgeFilterDraft["readiness"],
     query: typeof value.query === "string" ? value.query.trim().slice(0, 120) : "",
     linkedOnly: value.linkedOnly,
     sort: value.sort as KnowledgeSort,
