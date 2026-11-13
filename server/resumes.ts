@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
-import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreWeights } from "../shared/scoring.js";
+import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates } from "../shared/history.js";
 import { knowledgeRecords, type KnowledgeRecord } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
@@ -25,6 +25,7 @@ type ResumeRecord = {
   summary: string;
   analysisReport: string;
   scoreCard?: ScoreCard;
+  scoreHistory?: ScoreHistoryEntry[];
   analysisStatus: "complete" | "unavailable" | "failed";
   analysisError: string;
   analyzedAt: string;
@@ -320,6 +321,7 @@ router.post("/:id/analyze", async (request, response, next) => {
       ...record,
       analysisReport,
       scoreCard,
+      scoreHistory: appendScoreHistory(record, scoreCard, "review", roleRequirements),
       analysisStatus: "complete" as const,
       analysisError: "",
       analyzedAt: new Date().toISOString(),
@@ -398,6 +400,7 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
   if (process.env.OPENAI_API_KEY && text) {
   try {
       record.scoreCard = await generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements: "", weights: await readWeights() });
+      record.scoreHistory = appendScoreHistory(record, record.scoreCard, "import");
       record.analysisReport = await generateInitialReport({
         name: record.name,
         role: record.role,
@@ -418,6 +421,15 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
     record.analysisError = "没有提取到可分析文本。扫描件 PDF 需要先接入 OCR。";
   }
   return record;
+}
+
+function appendScoreHistory(record: ResumeRecord, scoreCard: ScoreCard, reason: ScoreHistoryEntry["reason"], roleRequirements = ""): ScoreHistoryEntry[] {
+  const history = record.scoreHistory?.length
+    ? record.scoreHistory
+    : record.scoreCard
+      ? [{ id: `legacy-${record.scoreCard.evaluatedAt}`, evaluatedAt: record.scoreCard.evaluatedAt, reason: "import" as const, scoreCard: record.scoreCard }]
+      : [];
+  return [...history, { id: crypto.randomUUID(), evaluatedAt: scoreCard.evaluatedAt, reason, roleRequirements: roleRequirements.slice(0, 2000), scoreCard }];
 }
 
 async function readWeights(): Promise<ScoreWeights> {

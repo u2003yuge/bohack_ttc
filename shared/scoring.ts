@@ -19,6 +19,14 @@ export type ScoreCard = {
   evaluatedAt: string;
 };
 
+export type ScoreHistoryEntry = {
+  id: string;
+  evaluatedAt: string;
+  reason: "import" | "review";
+  roleRequirements?: string;
+  scoreCard: ScoreCard;
+};
+
 export const defaultScoreWeights: ScoreWeights = {
   leadership: 18,
   expertise: 24,

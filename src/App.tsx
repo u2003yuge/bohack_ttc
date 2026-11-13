@@ -281,11 +281,45 @@ function ScoreRadar({ card }: { card: ScoreCard }) {
 }
 
 function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume }) {
-  const awardCount = (candidate.text.match(/奖|获奖|award|ACM|ICPC|CCF|竞赛|冠军|金牌/gi) ?? []).length;
-  const points = [0, 1, 2, 3].map((index) => Math.min(100, Math.max(0, card.composite - (3 - index) * (4 + Math.min(awardCount, 3)) + (index > 1 ? awardCount * 1.5 : 0))));
-  const path = points.map((value, index) => `${28 + index * 76},${105 - value * 0.7}`).join(" ");
-  const labels = candidate.experiences?.slice(0, 4).map((experience) => experience.period) ?? [];
-  return <div className="score-trend"><div className="trend-legend"><span>综合分-时间趋势</span><small>基于简历时间线与奖项证据的趋势示意</small></div><svg viewBox="0 0 260 132" role="img" aria-label="综合分时间趋势折线图"><line x1="26" y1="105" x2="248" y2="105" className="trend-axis" /><line x1="26" y1="35" x2="26" y2="105" className="trend-axis" /><polyline points={path} className="trend-line" />{points.map((value, index) => <g key={index}><circle cx={28 + index * 76} cy={105 - value * 0.7} r="4" className="trend-dot" /><text x={28 + index * 76} y="122" textAnchor="middle" className="trend-label">{labels[index] || (index === 0 ? "早期" : index === 3 ? "当前" : `阶段 ${index + 1}`)}</text></g>)}</svg></div>;
+  const history = candidate.scoreHistory?.length ? candidate.scoreHistory : candidate.scoreCard ? [{ id: `legacy-${candidate.scoreCard.evaluatedAt}`, evaluatedAt: candidate.scoreCard.evaluatedAt, reason: "import" as const, scoreCard: candidate.scoreCard }] : [];
+  const [selectedId, setSelectedId] = useState(history.at(-1)?.id ?? "");
+  const [focusedCriterion, setFocusedCriterion] = useState<ScoreKey | null>(null);
+  const selected = history.find((entry) => entry.id === selectedId) ?? history.at(-1);
+  const selectedIndex = selected ? history.findIndex((entry) => entry.id === selected.id) : -1;
+  const previous = selectedIndex > 0 ? history[selectedIndex - 1] : null;
+  useEffect(() => { setSelectedId(history.at(-1)?.id ?? ""); setFocusedCriterion(null); }, [candidate.id, history.length]);
+  const chartWidth = Math.max(260, history.length * 48 + 24);
+  const x = (index: number) => history.length < 2 ? chartWidth / 2 : 34 + (index / (history.length - 1)) * (chartWidth - 52);
+  const y = (score: number) => 104 - (score / 100) * 72;
+  const points = history.map((entry, index) => `${x(index)},${y(entry.scoreCard.composite)}`).join(" ");
+  const focus = focusedCriterion && selected ? selected.scoreCard.criteria[focusedCriterion] : null;
+  return <div className="score-trend">
+    <div className="trend-legend"><span>综合分复评记录</span><small>当前综合分 {card.composite.toFixed(1)} · 历史点按当时权重保存</small></div>
+    {history.length ? <>
+      <div className="trend-chart-scroll"><svg viewBox={`0 0 ${chartWidth} 142`} style={{ width: `${chartWidth}px` }} role="img" aria-label="按实际评估时间排列的综合分历史折线图">
+        {[0, 50, 100].map((tick) => <g key={tick}><line x1="28" y1={y(tick)} x2={chartWidth - 12} y2={y(tick)} className="trend-grid" /><text x="23" y={y(tick) + 3} textAnchor="end" className="trend-label">{tick}</text></g>)}
+        <line x1="28" y1="104" x2={chartWidth - 12} y2="104" className="trend-axis" />
+        {history.length > 1 && <polyline points={points} className="trend-line" />}
+        {history.map((entry, index) => {
+          const date = new Date(entry.evaluatedAt);
+          const label = Number.isNaN(date.getTime()) ? "未知日期" : date.toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" });
+          const score = entry.scoreCard.composite;
+          const active = entry.id === selected?.id;
+          return <g key={entry.id} className={`trend-point ${active ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${label}，${entry.reason === "import" ? "导入初评" : "复评"}，综合分 ${score.toFixed(1)}`} aria-pressed={active} onClick={() => { setSelectedId(entry.id); setFocusedCriterion(null); }} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedId(entry.id); setFocusedCriterion(null); } }}>
+            <title>{`${label} · ${entry.reason === "import" ? "导入初评" : "复评"} · 综合分 ${score.toFixed(1)}`}</title>
+            <circle cx={x(index)} cy={y(score)} r={active ? 5 : 4} className="trend-dot" />
+            <text x={x(index)} y="124" textAnchor="middle" className="trend-label">{label}</text>
+          </g>;
+        })}
+      </svg></div>
+      {selected && <div className="trend-selection"><div className="trend-selection-head"><span>{selected.reason === "import" ? "导入初评" : "复评"} · {new Date(selected.evaluatedAt).toLocaleString("zh-CN", { dateStyle: "medium", timeStyle: "short" })}</span><strong>{selected.scoreCard.composite.toFixed(1)} 分{previous && selectedIndex >= 0 ? <small className={selected.scoreCard.composite >= previous.scoreCard.composite ? "trend-up" : "trend-down"}>{selected.scoreCard.composite >= previous.scoreCard.composite ? "+" : ""}{(selected.scoreCard.composite - previous.scoreCard.composite).toFixed(1)}</small> : null}</strong></div>
+        <div className="trend-criteria">{scoreCriteria.map(({ key, label }) => { const criterion = selected.scoreCard.criteria[key]; return <button key={key} className={focusedCriterion === key ? "focused" : ""} onClick={() => setFocusedCriterion(focusedCriterion === key ? null : key)}><span>{label}</span><i><b style={{ width: `${criterion.score}%` }} /></i><strong>{criterion.score.toFixed(0)}</strong></button>; })}</div>
+        {selected.roleRequirements && <div className="trend-role-context"><strong>当时的岗位要求</strong><span>{selected.roleRequirements}</span></div>}
+        {focus && focusedCriterion && <div className="trend-evidence"><strong>{scoreCriteria.find((item) => item.key === focusedCriterion)?.label} · 评分依据</strong>{focus.evidence.length ? focus.evidence.map((item, index) => <span key={`${index}-${item}`}>{item}</span>) : <span>本次评估未提取到明确证据</span>}</div>}
+        <small className="trend-weight-note">按该次评估保存的权重计算，旧记录不会随当前权重变化而重算。</small>
+      </div>}
+    </> : <div className="trend-empty"><strong>{candidate.source === "demo" ? "示例简历没有真实评估历史" : "尚无评分记录"}</strong><span>{candidate.source === "demo" ? "导入 PDF 并完成分析后，这里会显示实际评估结果。" : "导入初评会记录第一个分数；后续复评后形成真实趋势。"}</span></div>}
+  </div>;
 }
 
 function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
