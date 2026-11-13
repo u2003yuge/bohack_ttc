@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +8,7 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates } from "../shared/history.js";
-import { knowledgeRecords, type KnowledgeRecord } from "../shared/knowledge.js";
+import { knowledgeRecords, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 
 type ResumeRecord = {
@@ -120,12 +121,21 @@ router.put("/knowledge/:id/review", async (request, response, next) => {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
     if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
     const score = Number(request.body?.significanceScore);
-    const rationale = typeof request.body?.scoreRationale === "string" ? request.body.scoreRationale.trim().slice(0, 500) : record.scoreRationale;
+    const reviews = await readKnowledgeReviews();
+    const previous = reviews[record.id];
+    const rationale = typeof request.body?.scoreRationale === "string" ? request.body.scoreRationale.trim().slice(0, 500) : previous?.scoreRationale ?? record.scoreRationale;
     const verificationStatus = request.body?.verificationStatus;
     if (!Number.isFinite(score) || score < 0 || score > 100) { response.status(400).json({ error: "含金量评分需要是 0 到 100 之间的数字。" }); return; }
     if (verificationStatus !== undefined && !["示例资料，待核验", "已核验"].includes(verificationStatus)) { response.status(400).json({ error: "请选择有效的核验状态。" }); return; }
-    const reviews = await readKnowledgeReviews();
-    reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, ...(verificationStatus ? { verificationStatus } : {}), updatedAt: new Date().toISOString().slice(0, 10) };
+    const status = verificationStatus ?? previous?.verificationStatus ?? record.verificationStatus;
+    const reviewedAt = new Date().toISOString();
+    const source = request.body?.source === "ai-assisted" ? "ai-assisted" : "manual";
+    const previousHistory = Array.isArray(previous?.reviewHistory) ? previous.reviewHistory : [];
+    const reviewHistory = [...previousHistory, {
+      id: randomUUID(), significanceScore: Math.round(score), scoreRationale: rationale,
+      verificationStatus: status, updatedAt: reviewedAt, source,
+    } satisfies KnowledgeReviewEntry].slice(-30);
+    reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, verificationStatus: status, updatedAt: reviewedAt.slice(0, 10), reviewHistory };
     await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
     await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
     response.json({ record: { ...record, ...reviews[record.id] } });
@@ -455,8 +465,10 @@ function normalizeWeightInput(input: unknown): ScoreWeights {
   })) as ScoreWeights);
 }
 
-async function readKnowledgeReviews(): Promise<Record<string, { significanceScore?: number; scoreRationale?: string; verificationStatus?: KnowledgeRecord["verificationStatus"]; updatedAt?: string }>> {
-  try { return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, { significanceScore?: number; scoreRationale?: string; updatedAt?: string }>; }
+type StoredKnowledgeReview = { significanceScore?: number; scoreRationale?: string; verificationStatus?: KnowledgeRecord["verificationStatus"]; updatedAt?: string; reviewHistory?: KnowledgeReviewEntry[] };
+
+async function readKnowledgeReviews(): Promise<Record<string, StoredKnowledgeReview>> {
+  try { return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, StoredKnowledgeReview>; }
   catch { return {}; }
 }
 

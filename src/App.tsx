@@ -28,7 +28,7 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, roleGroup, roleGroupLabel } from "../shared/history";
-import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord } from "../shared/knowledge";
+import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -383,6 +383,34 @@ type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; fie
 type KnowledgeSort = "default" | "score" | "updated" | "title";
 const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "" };
 
+function KnowledgeReviewHistory({ history }: { history: KnowledgeReviewEntry[] }) {
+  const [activeId, setActiveId] = useState(history.at(-1)?.id ?? "");
+  useEffect(() => { setActiveId(history.at(-1)?.id ?? ""); }, [history.length]);
+  if (!history.length) return <section className="knowledge-review-history"><div className="review-history-heading"><strong>评估记录</strong><span>尚无人工保存的评估</span></div></section>;
+  const width = 400;
+  const left = 28;
+  const right = 390;
+  const top = 12;
+  const bottom = 92;
+  const pointX = (index: number) => history.length === 1 ? (left + right) / 2 : left + index / (history.length - 1) * (right - left);
+  const pointY = (score: number) => bottom - score / 100 * (bottom - top);
+  const active = history.find((entry) => entry.id === activeId) ?? history.at(-1)!;
+  return <section className="knowledge-review-history">
+    <div className="review-history-heading"><strong>评估记录</strong><span>{history.length} 次已保存审核 · 最近 30 次</span></div>
+    <svg className="review-history-chart" viewBox={`0 0 ${width} 118`} role="group" aria-label="人工含金量评分历史">
+      {[0, 50, 100].map((value) => <g key={value}><line x1={left} y1={pointY(value)} x2={right} y2={pointY(value)} className="review-history-grid" /><text x="2" y={pointY(value) + 3} className="review-history-axis-label">{value}</text></g>)}
+      <polyline points={history.map((entry, index) => `${pointX(index)},${pointY(entry.significanceScore)}`).join(" ")} className="review-history-line" />
+      {history.map((entry, index) => <g key={entry.id} className={`review-history-point ${entry.id === active.id ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${new Date(entry.updatedAt).toLocaleString("zh-CN")}，${entry.significanceScore} 分，${entry.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}`} aria-pressed={entry.id === active.id} onClick={() => setActiveId(entry.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveId(entry.id); } }}>
+        <circle cx={pointX(index)} cy={pointY(entry.significanceScore)} r={entry.id === active.id ? 5 : 3.5} />
+      </g>)}
+      <text x={left} y="112" className="review-history-date">{new Date(history[0].updatedAt).toLocaleDateString("zh-CN")}</text>
+      {history.length > 1 && <text x={right} y="112" textAnchor="end" className="review-history-date">{new Date(history.at(-1)!.updatedAt).toLocaleDateString("zh-CN")}</text>}
+      <text x={pointX(history.findIndex((entry) => entry.id === active.id))} y={Math.max(9, pointY(active.significanceScore) - 8)} textAnchor="middle" className="review-history-score">{active.significanceScore}</text>
+    </svg>
+    <div className="review-history-detail"><div><strong>{active.significanceScore}<small>/ 100</small></strong><span>{new Date(active.updatedAt).toLocaleString("zh-CN")}</span><span>{active.verificationStatus === "已核验" ? "已核验" : "待核验"}</span><span>{active.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}</span></div><p>{active.scoreRationale || "未填写评估依据。"}</p></div>
+  </section>;
+}
+
 function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectResume, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectResume: (id: string) => void; webSearchAvailable: boolean }) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
@@ -390,6 +418,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [selectedId, setSelectedId] = useState(seedKnowledgeRecords[0].id);
   const [reviewScore, setReviewScore] = useState(seedKnowledgeRecords[0].significanceScore);
   const [reviewNote, setReviewNote] = useState(seedKnowledgeRecords[0].scoreRationale);
+  const [reviewSource, setReviewSource] = useState<"manual" | "ai-assisted">("manual");
   const [verificationStatus, setVerificationStatus] = useState<KnowledgeRecord["verificationStatus"]>(seedKnowledgeRecords[0].verificationStatus);
   const [saving, setSaving] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
@@ -424,7 +453,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   }, [initialId, records]);
   useEffect(() => {
     if (!selected) return;
-    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewError(""); setReviewSaved(false);
+    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewSource("manual"); setReviewError(""); setReviewSaved(false);
     setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
   }, [selected?.id]);
 
@@ -463,7 +492,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     if (!selected) return;
     setSaving(true); setReviewError(""); setReviewSaved(false);
     try {
-      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/review`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ significanceScore: reviewScore, scoreRationale: reviewNote, verificationStatus }) });
+      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/review`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ significanceScore: reviewScore, scoreRationale: reviewNote, verificationStatus, source: reviewSource }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "无法保存人工评估。");
       if (payload.record) { onRecordsChange(records.map((record) => record.id === selected.id ? payload.record : record)); setReviewSaved(true); }
@@ -480,6 +509,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "AI 建议暂时不可用。");
       setReviewScore(payload.suggestion.score); setReviewNote(payload.suggestion.rationale); setSuggestionQuestions(payload.suggestion.verificationQuestions ?? []);
+      setReviewSource("ai-assisted");
       setSuggestionSources(Array.isArray(payload.sources) ? payload.sources : []); setSuggestionConfidence(payload.suggestion.confidence ?? null); setSuggestionSearchStatus(payload.searchStatus ?? "not-configured");
     } catch (error) { setReviewError(error instanceof Error ? error.message : "AI 建议暂时不可用。"); }
     finally { setSuggesting(false); }
@@ -531,14 +561,15 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
                 <label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label>
                 <label className="review-focus">评估侧重（可选）<textarea value={reviewerFocus} onChange={(event) => setReviewerFocus(event.target.value)} maxLength={500} rows={2} placeholder="例如：优先看官方获奖名单与比赛规模，降低宣传性描述的权重" /><small>{reviewerFocus.length}/500</small></label>
                 <button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "正在查找并评估" : webSearchAvailable ? "AI 联网核验并建议" : "AI 建议含金量"}</button>
-                <label>核验状态<select value={verificationStatus} onChange={(event) => setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"])}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label>
-                <label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => setReviewScore(Number(event.target.value))} /></label>
-                <textarea value={reviewNote} onChange={(event) => setReviewNote(event.target.value)} rows={4} placeholder="说明评分依据、岗位相关性和待核验事项" />
+                <label>核验状态<select value={verificationStatus} onChange={(event) => { setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"]); setReviewSource("manual"); setReviewSaved(false); }}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label>
+                <label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => { setReviewScore(Number(event.target.value)); setReviewSource("manual"); setReviewSaved(false); }} /></label>
+                <textarea value={reviewNote} onChange={(event) => { setReviewNote(event.target.value); setReviewSource("manual"); setReviewSaved(false); }} rows={4} placeholder="说明评分依据、岗位相关性和待核验事项" />
                 {suggestionQuestions.length > 0 && <div className="verification-questions"><strong>建议核实</strong>{suggestionQuestions.map((item) => <span key={item}>{item}</span>)}</div>}
                 {suggestionSearchStatus && <div className="research-result"><div className="research-result-head"><strong>{suggestionSearchStatus === "searched" ? `联网参考 · ${suggestionSources.length} 个来源` : suggestionSearchStatus === "no-results" ? "没有找到可用网页来源" : suggestionSearchStatus === "unavailable" ? "联网检索暂不可用" : "基于本地资料建议"}</strong>{suggestionConfidence !== null && <span>参考置信度 {Math.round(suggestionConfidence * 100)}%</span>}</div><p>{suggestionSearchStatus === "searched" ? "来源用于了解赛事、期刊或组织背景；不能证明候选人的具体获奖、发表或个人贡献。" : suggestionSearchStatus === "unavailable" ? "本次建议只参考本地资料字段，请通过官方来源人工核验。" : suggestionSearchStatus === "not-configured" ? "尚未配置网页搜索，本次建议仅依据本地资料字段。" : "本次建议仅依据本地资料字段，未引用外部来源。"}</p>{suggestionSources.map((source) => <a className="research-source" key={source.url} href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}<ExternalLink size={12} /></strong><small>{source.url}</small>{source.snippet && <span>{source.snippet}</span>}</a>)}</div>}
                 {reviewError && <div className="inline-error">{reviewError}</div>}{reviewSaved && <div className="review-saved">人工评估已保存</div>}
                 <button className="save-review" onClick={saveReview} disabled={saving}>{saving ? "保存中" : "保存人工评估"}</button>
               </div>
+              <KnowledgeReviewHistory key={selected.id} history={selected.reviewHistory ?? []} />
               {selected.officialUrl && <a className="official-link" href={selected.officialUrl} target="_blank" rel="noreferrer">打开官方来源 <ExternalLink size={14} /></a>}
             </> : <div className="knowledge-empty-detail">没有符合筛选条件的资料。</div>}
           </section>

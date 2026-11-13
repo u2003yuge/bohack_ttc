@@ -1,4 +1,12 @@
 export type KnowledgeKind = "competition" | "journal" | "company";
+export type KnowledgeReviewEntry = {
+  id: string;
+  significanceScore: number;
+  scoreRationale: string;
+  verificationStatus: "示例资料，待核验" | "已核验";
+  updatedAt: string;
+  source: "manual" | "ai-assisted";
+};
 
 export type KnowledgeRecord = {
   id: string;
@@ -15,6 +23,7 @@ export type KnowledgeRecord = {
   scoreRationale: string;
   verificationStatus: "示例资料，待核验" | "已核验";
   updatedAt: string;
+  reviewHistory?: KnowledgeReviewEntry[];
 };
 
 export const knowledgeKindLabels: Record<KnowledgeKind, string> = {
