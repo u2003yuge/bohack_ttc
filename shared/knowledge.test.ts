@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { findKnowledgeMatch, findKnowledgeReferences, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
+import { findKnowledgeMatch, findKnowledgeReferences, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -30,6 +30,16 @@ test("does not create a cross reference from an empty or unrelated resume body",
 
 test("returns only records that match the supplied resume body", () => {
   assert.deepEqual(findKnowledgeReferences("获得 ICPC 区域赛奖项。", [record]), [record]);
+});
+
+test("seed knowledge library covers all three categories with distinct official entries", () => {
+  assert.equal(knowledgeRecords.length, 23);
+  assert.deepEqual(new Set(knowledgeRecords.map((item) => item.kind)), new Set(["competition", "journal", "company"]));
+  assert.equal(new Set(knowledgeRecords.map((item) => item.id)).size, knowledgeRecords.length);
+  assert.ok(knowledgeRecords.filter((item) => item.kind === "competition").length >= 8);
+  assert.ok(knowledgeRecords.filter((item) => item.kind === "journal").length >= 7);
+  assert.ok(knowledgeRecords.filter((item) => item.kind === "company").length >= 8);
+  assert.ok(knowledgeRecords.every((item) => item.verificationStatus === "示例资料，待核验"));
 });
 
 test("knowledge evidence sources keep valid web links and bounded review metadata", () => {
