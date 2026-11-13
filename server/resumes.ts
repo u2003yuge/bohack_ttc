@@ -7,7 +7,7 @@ import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
-import { historicalCandidates } from "../shared/history.js";
+import { historicalCandidates, normalizeHistoricalCandidate, type HistoricalCandidate } from "../shared/history.js";
 import { knowledgeRecords, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 
@@ -43,9 +43,47 @@ const extractionVersion = 3;
 const settingsPath = path.join(directory, ".metadata", "settings.json");
 const knowledgeReviewsPath = path.join(directory, ".metadata", "knowledge-reviews.json");
 const customKnowledgePath = path.join(directory, ".metadata", "knowledge-records.json");
+const historyCandidatesPath = path.join(directory, ".metadata", "history-candidates.json");
 
-router.get("/history", (_request, response) => {
-  response.json({ candidates: historicalCandidates, source: "local-seed", description: "本地历史招聘基准样本" });
+router.get("/history", async (_request, response, next) => {
+  try {
+    const local = await readHistoryCandidates();
+    response.json({ candidates: [...historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" as const })), ...local.map((candidate) => ({ ...candidate, source: "local" as const }))], description: "本地历史招聘基准样本" });
+  } catch (error) { next(error); }
+});
+
+router.post("/history", async (request, response, next) => {
+  try {
+    const local = await readHistoryCandidates();
+    const candidate = normalizeHistoricalCandidate(request.body, `hist-local-${randomUUID()}`, local.length + 1);
+    if ("error" in candidate) { response.status(400).json({ error: candidate.error }); return; }
+    local.unshift(candidate);
+    await writeHistoryCandidates(local);
+    response.status(201).json({ candidate: { ...candidate, source: "local" } });
+  } catch (error) { next(error); }
+});
+
+router.put("/history/:id", async (request, response, next) => {
+  try {
+    const local = await readHistoryCandidates();
+    const index = local.findIndex((candidate) => candidate.id === request.params.id);
+    if (index < 0) { response.status(404).json({ error: "找不到本地历史样本。" }); return; }
+    const candidate = normalizeHistoricalCandidate(request.body, local[index].id, index + 1);
+    if ("error" in candidate) { response.status(400).json({ error: candidate.error }); return; }
+    local[index] = candidate;
+    await writeHistoryCandidates(local);
+    response.json({ candidate: { ...candidate, source: "local" } });
+  } catch (error) { next(error); }
+});
+
+router.delete("/history/:id", async (request, response, next) => {
+  try {
+    const local = await readHistoryCandidates();
+    const nextRecords = local.filter((candidate) => candidate.id !== request.params.id);
+    if (nextRecords.length === local.length) { response.status(404).json({ error: "找不到本地历史样本。" }); return; }
+    await writeHistoryCandidates(nextRecords);
+    response.json({ deleted: true });
+  } catch (error) { next(error); }
 });
 
 router.get("/knowledge", async (_request, response, next) => {
@@ -514,6 +552,16 @@ async function readWeights(): Promise<ScoreWeights> {
 async function saveWeights(weights: ScoreWeights): Promise<void> {
   await mkdir(path.dirname(settingsPath), { recursive: true });
   await writeFile(settingsPath, JSON.stringify({ weights }, null, 2), "utf8");
+}
+
+async function readHistoryCandidates(): Promise<HistoricalCandidate[]> {
+  try { return JSON.parse(await readFile(historyCandidatesPath, "utf8")) as HistoricalCandidate[]; }
+  catch { return []; }
+}
+
+async function writeHistoryCandidates(candidates: HistoricalCandidate[]): Promise<void> {
+  await mkdir(path.dirname(historyCandidatesPath), { recursive: true });
+  await writeFile(historyCandidatesPath, JSON.stringify(candidates, null, 2), "utf8");
 }
 
 function normalizeWeightInput(input: unknown): ScoreWeights {

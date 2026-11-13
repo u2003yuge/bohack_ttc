@@ -6,7 +6,23 @@ export type HistoricalCandidate = {
   screened: boolean;
   hired: boolean;
   composite: number;
+  source?: "demo" | "local";
 };
+
+export function normalizeHistoricalCandidate(input: unknown, id: string, fallbackIndex: number, currentYear = new Date().getFullYear()): HistoricalCandidate | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const name = typeof value.name === "string" ? value.name.trim().slice(0, 80) : "";
+  const role = typeof value.role === "string" ? value.role.trim().slice(0, 120) : "";
+  const year = Number(value.year);
+  const composite = Number(value.composite);
+  const screened = value.screened === true;
+  const hired = value.hired === true;
+  if (!role) return { error: "请填写岗位名称。" };
+  if (!Number.isInteger(year) || year < 1980 || year > currentYear + 1) return { error: "请填写有效的招聘年份。" };
+  if (!Number.isFinite(composite) || composite < 0 || composite > 100) return { error: "综合分需要在 0 到 100 之间。" };
+  if (hired && !screened) return { error: "最终录取样本必须标记为通过首轮。" };
+  return { id, name: name || `匿名样本 ${fallbackIndex}`, role, year, screened, hired, composite: Math.round(composite * 10) / 10 };
+}
 
 // Seed data for the local recruiting benchmark. Replace with approved historical records in production.
 export const historicalCandidates: HistoricalCandidate[] = [
@@ -52,10 +68,10 @@ export function roleGroupLabel(group: string): string {
   return ({ product: "产品", data: "数据分析", frontend: "前端开发", engineering: "软件工程", general: "综合" } as Record<string, string>)[group] ?? "综合";
 }
 
-export function calculateBenchmark(role: string, score: number, year: number | null = null): Benchmark {
+export function calculateBenchmark(role: string, score: number, year: number | null = null, records: HistoricalCandidate[] = historicalCandidates): Benchmark {
   const group = roleGroup(role);
-  const candidates = historicalCandidates.filter((candidate) => roleGroup(candidate.role) === group);
-  const roleSample = candidates.length ? candidates : historicalCandidates;
+  const candidates = records.filter((candidate) => roleGroup(candidate.role) === group);
+  const roleSample = candidates.length ? candidates : records;
   const availableYears = [...new Set(roleSample.map((candidate) => candidate.year))].sort((a, b) => b - a);
   const yearSample = year === null ? roleSample : roleSample.filter((candidate) => candidate.year === year);
   const sample = yearSample.length ? yearSample : roleSample;

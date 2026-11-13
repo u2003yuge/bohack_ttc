@@ -10,6 +10,7 @@ import {
   Check,
   ChevronDown,
   CircleHelp,
+  Database,
   FileText,
   FolderOpen,
   Globe2,
@@ -27,7 +28,7 @@ import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
-import { calculateBenchmark, roleGroup, roleGroupLabel } from "../shared/history";
+import { calculateBenchmark, historicalCandidates, roleGroup, roleGroupLabel, type HistoricalCandidate } from "../shared/history";
 import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
@@ -371,10 +372,10 @@ function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
   return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><span>{projects.length} 项</span></div>{projects.length ? projects.map((project) => <article className="project-item" key={project.title}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl></article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
 }
 
-function BenchmarkBadge({ role, score }: { role: string; score: number }) {
+function BenchmarkBadge({ role, score, candidates }: { role: string; score: number; candidates: HistoricalCandidate[] }) {
   const [year, setYear] = useState<number | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const benchmark = calculateBenchmark(role, score, year);
+  const benchmark = calculateBenchmark(role, score, year, candidates);
   useEffect(() => { setYear(null); setSelectedHistoryId(null); }, [role]);
   const selectedHistory = benchmark.candidates.find((candidate) => candidate.id === selectedHistoryId);
   const lanes = [
@@ -397,8 +398,81 @@ function BenchmarkBadge({ role, score }: { role: string; score: number }) {
   </section>;
 }
 
-function ScoreInsights({ card, candidate, records, onOpenKnowledge, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} /><ProjectBreakdownView candidate={candidate} /></div>;
+type HistoricalDraft = { name: string; role: string; year: number; composite: number; screened: boolean; hired: boolean };
+const emptyHistoricalDraft = (): HistoricalDraft => ({ name: "匿名样本", role: "", year: new Date().getFullYear(), composite: 70, screened: false, hired: false });
+
+function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void }) {
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [selectedId, setSelectedId] = useState("");
+  const [editingId, setEditingId] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
+  const [draft, setDraft] = useState<HistoricalDraft>(emptyHistoricalDraft());
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState("");
+  const groups = [...new Set(candidates.map((candidate) => roleGroup(candidate.role)))].sort();
+  const years = [...new Set(candidates.map((candidate) => candidate.year))].sort((a, b) => b - a);
+  const filtered = candidates.filter((candidate) => (roleFilter === "all" || roleGroup(candidate.role) === roleFilter) && (yearFilter === "all" || candidate.year === Number(yearFilter)));
+  const selected = filtered.find((candidate) => candidate.id === selectedId) ?? filtered[0] ?? null;
+  const screenedCount = filtered.filter((candidate) => candidate.screened).length;
+  const hiredCount = filtered.filter((candidate) => candidate.hired).length;
+  const median = (values: number[]) => { const sorted = [...values].sort((a, b) => a - b); return sorted.length ? (sorted[Math.floor((sorted.length - 1) / 2)] + sorted[Math.floor(sorted.length / 2)]) / 2 : 0; };
+  const lanes = [
+    { key: "hired", label: "最终录取", records: filtered.filter((candidate) => candidate.hired) },
+    { key: "screened", label: "通过首轮", records: filtered.filter((candidate) => candidate.screened && !candidate.hired) },
+    { key: "rejected", label: "未过首轮", records: filtered.filter((candidate) => !candidate.screened) },
+  ];
+
+  function beginAdd() { setEditingId(""); setDraft(emptyHistoricalDraft()); setError(""); setFormOpen(true); }
+  function beginEdit(candidate: HistoricalCandidate) {
+    if (candidate.source !== "local") return;
+    setEditingId(candidate.id); setDraft({ name: candidate.name, role: candidate.role, year: candidate.year, composite: candidate.composite, screened: candidate.screened, hired: candidate.hired }); setError(""); setFormOpen(true);
+  }
+  async function save() {
+    setBusy(true); setError("");
+    try {
+      const response = await fetch(editingId ? `/api/resumes/history/${encodeURIComponent(editingId)}` : "/api/resumes/history", { method: editingId ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draft) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法保存历史样本。");
+      const candidate = payload.candidate as HistoricalCandidate;
+      onCandidatesChange(editingId ? candidates.map((item) => item.id === editingId ? candidate : item) : [...candidates, candidate]);
+      setSelectedId(candidate.id); setEditingId(""); setDraft(emptyHistoricalDraft()); setFormOpen(false);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法保存历史样本。"); }
+    finally { setBusy(false); }
+  }
+  async function remove(candidate: HistoricalCandidate) {
+    setBusy(true); setError("");
+    try {
+      const response = await fetch(`/api/resumes/history/${encodeURIComponent(candidate.id)}`, { method: "DELETE" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法删除历史样本。");
+      const remaining = candidates.filter((item) => item.id !== candidate.id);
+      onCandidatesChange(remaining); setDeleteTargetId(""); if (selectedId === candidate.id) setSelectedId(remaining[0]?.id ?? "");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法删除历史样本。"); }
+    finally { setBusy(false); }
+  }
+
+  return <main className="history-database-main">
+    <div className="history-database-shell">
+      <header className="history-database-header"><div><span className="eyebrow">LOCAL RECRUITING BENCHMARK</span><h2>历史招聘样本库</h2><p>只保存匿名样本的岗位、年份、综合分与筛选结果；本地录入可随时修改或删除。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></header>
+      <section className="history-database-summary"><div><span>当前样本</span><strong>{filtered.length}</strong></div><div><span>首轮通过</span><strong>{filtered.length ? Math.round(screenedCount / filtered.length * 100) : 0}%</strong></div><div><span>最终录取</span><strong>{filtered.length ? Math.round(hiredCount / filtered.length * 100) : 0}%</strong></div><div><span>综合分中位数</span><strong>{median(filtered.map((candidate) => candidate.composite)).toFixed(1)}</strong></div><small>当前筛选范围 · 演示样本与本地样本分开标记</small></section>
+      <section className="history-database-chart"><div className="history-database-section-head"><div><span className="eyebrow">SCORE DISTRIBUTION</span><h3>按招聘结果查看分数</h3></div><div className="history-database-filters"><label>岗位<select value={roleFilter} onChange={(event) => { setRoleFilter(event.target.value); setSelectedId(""); }}><option value="all">全部岗位族</option>{groups.map((group) => <option key={group} value={group}>{roleGroupLabel(group)}</option>)}</select></label><label>年份<select value={yearFilter} onChange={(event) => { setYearFilter(event.target.value); setSelectedId(""); }}><option value="all">全部年份</option>{years.map((year) => <option key={year} value={year}>{year}</option>)}</select></label></div></div>
+        <div className="history-database-plot">{lanes.map((lane) => <div className="history-database-lane" key={lane.key}><span>{lane.label}<small>{lane.records.length}</small></span><div className={`history-database-track ${lane.key}`}>{lane.records.map((candidate) => <button key={candidate.id} className={`history-database-dot ${candidate.id === selected?.id ? "selected" : ""} ${candidate.source === "local" ? "local" : "demo"}`} style={{ left: `${candidate.composite}%` }} title={`${candidate.name} · ${candidate.role} · ${candidate.year} · ${candidate.composite} 分`} aria-label={`选中${candidate.name}，${candidate.year} 年${candidate.role}，${candidate.composite} 分，${lane.label}`} aria-pressed={candidate.id === selected?.id} onClick={() => setSelectedId(candidate.id)} />)}</div></div>)}<div className="history-database-axis"><span /><div><i>0</i><i>25</i><i>50</i><i>75</i><i>100</i></div></div></div>
+        <div className="history-database-legend"><span><i className="demo" />演示样本</span><span><i className="local" />本地录入</span></div>
+        {selected && <div className="history-database-selected"><strong>{selected.name}</strong><span>{selected.role} · {selected.year} · {selected.composite} 分 · {selected.screened ? "通过首轮" : "未过首轮"} · {selected.hired ? "最终录取" : "未录取"}</span><b>{selected.source === "local" ? "本地" : "演示"}</b></div>}
+      </section>
+      <section className="history-database-records"><div className="history-database-section-head"><div><span className="eyebrow">SAMPLE RECORDS</span><h3>样本记录</h3></div><button className="history-add-button" onClick={beginAdd}><Plus size={13} />新增本地样本</button></div>
+        {formOpen && <form className="history-record-form" onSubmit={(event) => { event.preventDefault(); void save(); }}><strong>{editingId ? "编辑本地样本" : "新增匿名样本"}</strong><label>匿名代号<input value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} maxLength={80} placeholder="匿名样本" /></label><label>岗位名称<input value={draft.role} onChange={(event) => setDraft({ ...draft, role: event.target.value })} maxLength={120} required placeholder="例如：产品经理" /></label><label>招聘年份<input type="number" min="1980" max={new Date().getFullYear() + 1} value={draft.year} onChange={(event) => setDraft({ ...draft, year: Number(event.target.value) })} required /></label><label>综合分<input type="number" min="0" max="100" step="0.1" value={draft.composite} onChange={(event) => setDraft({ ...draft, composite: Number(event.target.value) })} required /></label><label className="history-check-label"><input type="checkbox" checked={draft.screened} onChange={(event) => setDraft({ ...draft, screened: event.target.checked, hired: event.target.checked ? draft.hired : false })} />通过首轮</label><label className="history-check-label"><input type="checkbox" checked={draft.hired} onChange={(event) => setDraft({ ...draft, hired: event.target.checked, screened: event.target.checked || draft.screened })} />最终录取</label>{error && <div className="inline-error">{error}</div>}<div><button type="button" onClick={() => { setFormOpen(false); setEditingId(""); setDraft(emptyHistoricalDraft()); setError(""); }}>取消</button><button type="submit" disabled={busy || !draft.role.trim()}>{busy ? "保存中" : "保存样本"}</button></div></form>}
+        <div className="history-record-list">{filtered.map((candidate) => <article className={`history-record-row ${candidate.id === selected?.id ? "selected" : ""}`} key={candidate.id}><div className="history-record-score"><strong>{candidate.composite.toFixed(1)}</strong><i><b style={{ width: `${candidate.composite}%` }} /></i></div><div className="history-record-identity"><button className="history-record-select" onClick={() => setSelectedId(candidate.id)}><strong>{candidate.name}<small className={candidate.source === "local" ? "local" : "demo"}>{candidate.source === "local" ? "本地" : "演示"}</small></strong><span>{candidate.role} · {candidate.year}</span></button></div><div className="history-record-outcome"><span>{candidate.screened ? "通过首轮" : "未过首轮"}</span><span>{candidate.hired ? "最终录取" : "未录取"}</span></div>{candidate.source === "local" ? <div className="history-record-actions"><button type="button" onClick={() => beginEdit(candidate)} title="编辑样本" aria-label={`编辑${candidate.name}`}><Pencil size={13} /></button>{deleteTargetId === candidate.id ? <><button type="button" onClick={() => void remove(candidate)} disabled={busy}>确认</button><button type="button" onClick={() => setDeleteTargetId("")}>取消</button></> : <button type="button" onClick={() => setDeleteTargetId(candidate.id)} title="删除样本" aria-label={`删除${candidate.name}`}><X size={13} /></button>}</div> : <span className="history-readonly">只读</span>}</article>)}{!filtered.length && <div className="empty-list">当前筛选没有历史样本</div>}</div>
+      </section>
+      <p className="history-database-disclaimer">演示样本为虚构数据。本地录入建议使用匿名代号；系统不保存历史简历 PDF、姓名、联系方式或简历正文。样本结果只用于辅助比较，不构成录用规则。</p>
+    </div>
+  </main>;
+}
+
+function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} /><ProjectBreakdownView candidate={candidate} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -698,7 +772,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, onOpenKnowledge, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
   const pages = paginateReport(answer);
   return (
     <div className="analysis-document-shell">
@@ -708,7 +782,7 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
       </div>
       <div className="analysis-document-pages">
         {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
-        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} onOpenKnowledge={onOpenKnowledge} onEvidence={onEvidence} />
+        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onEvidence={onEvidence} />
       </div>
     </div>
   );
@@ -793,6 +867,8 @@ export default function App() {
   const [importProgress, setImportProgress] = useState("");
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyCandidates, setHistoryCandidates] = useState<HistoricalCandidate[]>(historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" })));
   const [knowledgeTargetId, setKnowledgeTargetId] = useState<string | undefined>();
   const [knowledgeRecords, setKnowledgeRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
   const [weights, setWeights] = useState<ScoreWeights>(defaultScoreWeights);
@@ -830,6 +906,7 @@ export default function App() {
     fetch("/api/health").then((response) => response.json()).then(setHealth).catch(() => setHealth(null));
     fetch("/api/resumes/scoring/weights").then((response) => response.json()).then((payload) => payload.weights && setWeights(payload.weights)).catch(() => undefined);
     fetch("/api/resumes/knowledge").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.records)) setKnowledgeRecords(payload.records); }).catch(() => undefined);
+    fetch("/api/resumes/history").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.candidates)) setHistoryCandidates(payload.candidates); }).catch(() => undefined);
   }, []);
 
   async function updateWeights(next: ScoreWeights) {
@@ -972,6 +1049,7 @@ export default function App() {
     setKnowledgeTargetId(id);
     setKnowledgeOpen(true);
     setComparisonOpen(false);
+    setHistoryOpen(false);
   }
 
   function selectResume(id: string) {
@@ -998,11 +1076,12 @@ export default function App() {
           <span>bohack<span className="brand-dot">.</span></span>
         </a>
         <div className="topbar-divider" />
-        <div className="workspace-name">{knowledgeOpen ? "资料库" : comparisonOpen ? "候选人对比" : "招聘工作台"} <ChevronDown size={14} /></div>
+        <div className="workspace-name">{knowledgeOpen ? "资料库" : comparisonOpen ? "候选人对比" : historyOpen ? "历史招聘样本" : "招聘工作台"} <ChevronDown size={14} /></div>
         <div className="topbar-spacer" />
         <div className="privacy-note"><ShieldCheck size={15} /> 本地存储</div>
-        <button className="compare-button" onClick={() => { setComparisonOpen((current) => !current); setKnowledgeOpen(false); }} title={comparisonOpen ? "返回单人分析" : "打开多人候选人对比"}>{comparisonOpen ? "返回分析" : <><BriefcaseBusiness size={14} />候选人对比</>}</button>
+        <button className="compare-button" onClick={() => { setComparisonOpen((current) => !current); setKnowledgeOpen(false); setHistoryOpen(false); }} title={comparisonOpen ? "返回单人分析" : "打开多人候选人对比"}>{comparisonOpen ? "返回分析" : <><BriefcaseBusiness size={14} />候选人对比</>}</button>
         <button className="compare-button" onClick={() => { if (knowledgeOpen) { setKnowledgeOpen(false); } else { openKnowledge(); } }} title={knowledgeOpen ? "返回简历分析" : "打开资料库"}>{knowledgeOpen ? "返回分析" : <><BookOpen size={14} />资料库</>}</button>
+        <button className="compare-button" onClick={() => { setHistoryOpen((current) => !current); setKnowledgeOpen(false); setComparisonOpen(false); }} title={historyOpen ? "返回简历分析" : "管理历史招聘样本"}>{historyOpen ? "返回分析" : <><Database size={14} />历史样本</>}</button>
         <button className="icon-button help-button" title="隐私与数据说明" aria-label="隐私与数据说明"><CircleHelp size={18} /></button>
         <div className="user-avatar" title="工作区">B</div>
       </header>
@@ -1044,7 +1123,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -1085,7 +1164,7 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} onOpenKnowledge={openKnowledge} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
         </aside>
