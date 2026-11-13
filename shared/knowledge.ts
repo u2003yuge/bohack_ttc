@@ -10,6 +10,17 @@ export type KnowledgeReviewEntry = {
   evidenceSources?: KnowledgeEvidenceSource[];
 };
 
+export function knowledgeReviewTimelineX(dates: string[], left: number, right: number): number[] {
+  if (dates.length <= 1) return dates.map(() => (left + right) / 2);
+  const timestamps = dates.map((date) => Date.parse(date));
+  const first = Math.min(...timestamps);
+  const last = Math.max(...timestamps);
+  if (timestamps.some((timestamp) => !Number.isFinite(timestamp)) || first === last) {
+    return dates.map((_, index) => left + index / (dates.length - 1) * (right - left));
+  }
+  return timestamps.map((timestamp) => left + (timestamp - first) / (last - first) * (right - left));
+}
+
 export type KnowledgeEvidenceSourceType = "official" | "school-policy" | "index" | "publisher" | "other";
 export type KnowledgeSort = "default" | "score" | "updated" | "title";
 export type KnowledgeVerificationFilter = "all" | "pending" | "verified";

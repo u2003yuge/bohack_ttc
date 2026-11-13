@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
+import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, knowledgeReviewTimelineX, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -18,6 +18,11 @@ const record: KnowledgeRecord = {
   verificationStatus: "示例资料，待核验",
   updatedAt: "2026-01-01",
 };
+
+test("knowledge review chart spaces points by elapsed time and falls back for identical timestamps", () => {
+  assert.deepEqual(knowledgeReviewTimelineX(["2026-01-01T00:00:00Z", "2026-01-02T00:00:00Z", "2026-01-11T00:00:00Z"], 20, 200), [20, 38, 200]);
+  assert.deepEqual(knowledgeReviewTimelineX(["2026-01-01", "2026-01-01", "2026-01-01"], 20, 200), [20, 110, 200]);
+});
 
 test("finds a matching alias in resume text and preserves its original casing", () => {
   assert.equal(findKnowledgeMatch("曾参加 acm-icpc 区域赛。", record), "acm-icpc");

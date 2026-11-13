@@ -32,7 +32,7 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
-import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
+import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -583,17 +583,19 @@ type KnowledgeDraftProposal = Omit<KnowledgeDraft, "title" | "kind" | "aliases" 
 const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "", evidenceSources: [] };
 
 function KnowledgeReviewHistory({ history, sources }: { history: KnowledgeReviewEntry[]; sources: KnowledgeEvidenceSource[] }) {
-  const [activeId, setActiveId] = useState(history.at(-1)?.id ?? "");
-  useEffect(() => { setActiveId(history.at(-1)?.id ?? ""); }, [history.length]);
+  const timeline = [...history].sort((a, b) => Date.parse(a.updatedAt) - Date.parse(b.updatedAt));
+  const [activeId, setActiveId] = useState(timeline.at(-1)?.id ?? "");
+  useEffect(() => { setActiveId(timeline.at(-1)?.id ?? ""); }, [history.length]);
   if (!history.length) return <section className="knowledge-review-history"><div className="review-history-heading"><strong>评估记录</strong><span>尚无人工保存的评估</span></div></section>;
   const width = 400;
   const left = 28;
   const right = 390;
   const top = 12;
   const bottom = 92;
-  const pointX = (index: number) => history.length === 1 ? (left + right) / 2 : left + index / (history.length - 1) * (right - left);
+  const positions = knowledgeReviewTimelineX(timeline.map((entry) => entry.updatedAt), left, right);
+  const pointX = (index: number) => positions[index];
   const pointY = (score: number) => bottom - score / 100 * (bottom - top);
-  const active = history.find((entry) => entry.id === activeId) ?? history.at(-1)!;
+  const active = timeline.find((entry) => entry.id === activeId) ?? timeline.at(-1)!;
   const activeSources = active.evidenceSources ?? (active.evidenceSourceIds ?? [])
     .map((id) => sources.find((source) => source.id === id))
     .filter((source): source is KnowledgeEvidenceSource => Boolean(source));
@@ -601,13 +603,13 @@ function KnowledgeReviewHistory({ history, sources }: { history: KnowledgeReview
     <div className="review-history-heading"><strong>评估记录</strong><span>{history.length} 次已保存审核 · 最近 30 次</span></div>
     <svg className="review-history-chart" viewBox={`0 0 ${width} 118`} role="group" aria-label="人工含金量评分历史">
       {[0, 50, 100].map((value) => <g key={value}><line x1={left} y1={pointY(value)} x2={right} y2={pointY(value)} className="review-history-grid" /><text x="2" y={pointY(value) + 3} className="review-history-axis-label">{value}</text></g>)}
-      <polyline points={history.map((entry, index) => `${pointX(index)},${pointY(entry.significanceScore)}`).join(" ")} className="review-history-line" />
-      {history.map((entry, index) => <g key={entry.id} className={`review-history-point ${entry.id === active.id ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${new Date(entry.updatedAt).toLocaleString("zh-CN")}，${entry.significanceScore} 分，${entry.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}`} aria-pressed={entry.id === active.id} onClick={() => setActiveId(entry.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveId(entry.id); } }}>
+      <polyline points={timeline.map((entry, index) => `${pointX(index)},${pointY(entry.significanceScore)}`).join(" ")} className="review-history-line" />
+      {timeline.map((entry, index) => <g key={entry.id} className={`review-history-point ${entry.id === active.id ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${new Date(entry.updatedAt).toLocaleString("zh-CN")}，${entry.significanceScore} 分，${entry.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}`} aria-pressed={entry.id === active.id} onClick={() => setActiveId(entry.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveId(entry.id); } }}>
         <circle cx={pointX(index)} cy={pointY(entry.significanceScore)} r={entry.id === active.id ? 5 : 3.5} />
       </g>)}
-      <text x={left} y="112" className="review-history-date">{new Date(history[0].updatedAt).toLocaleDateString("zh-CN")}</text>
-      {history.length > 1 && <text x={right} y="112" textAnchor="end" className="review-history-date">{new Date(history.at(-1)!.updatedAt).toLocaleDateString("zh-CN")}</text>}
-      <text x={pointX(history.findIndex((entry) => entry.id === active.id))} y={Math.max(9, pointY(active.significanceScore) - 8)} textAnchor="middle" className="review-history-score">{active.significanceScore}</text>
+      <text x={left} y="112" className="review-history-date">{new Date(timeline[0].updatedAt).toLocaleDateString("zh-CN")}</text>
+      {timeline.length > 1 && <text x={right} y="112" textAnchor="end" className="review-history-date">{new Date(timeline.at(-1)!.updatedAt).toLocaleDateString("zh-CN")}</text>}
+      <text x={pointX(timeline.findIndex((entry) => entry.id === active.id))} y={Math.max(9, pointY(active.significanceScore) - 8)} textAnchor="middle" className="review-history-score">{active.significanceScore}</text>
     </svg>
     <div className="review-history-detail"><div><strong>{active.significanceScore}<small>/ 100</small></strong><span>{new Date(active.updatedAt).toLocaleString("zh-CN")}</span><span>{active.verificationStatus === "已核验" ? "已核验" : "待核验"}</span><span>{active.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}</span></div><p>{active.scoreRationale || "未填写评估依据。"}</p>{activeSources.length > 0 && <div className="review-history-sources"><span>本次引用</span>{activeSources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}<ExternalLink size={10} /></strong><small>{[knowledgeEvidenceSourceTypeLabels[source.sourceType], source.dataYear, source.verified ? "当时已核对" : "当时待核对"].filter(Boolean).join(" · ")}</small>{source.note && <small>{source.note}</small>}</a>)}</div>}</div>
   </section>;
