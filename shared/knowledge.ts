@@ -6,6 +6,21 @@ export type KnowledgeReviewEntry = {
   verificationStatus: "示例资料，待核验" | "已核验";
   updatedAt: string;
   source: "manual" | "ai-assisted";
+  evidenceSourceIds?: string[];
+  evidenceSources?: KnowledgeEvidenceSource[];
+};
+
+export type KnowledgeEvidenceSourceType = "official" | "school-policy" | "index" | "publisher" | "other";
+
+export type KnowledgeEvidenceSource = {
+  id: string;
+  title: string;
+  url: string;
+  sourceType: KnowledgeEvidenceSourceType;
+  dataYear: string;
+  note: string;
+  verified: boolean;
+  checkedAt: string;
 };
 
 export type KnowledgeRecord = {
@@ -23,8 +38,55 @@ export type KnowledgeRecord = {
   scoreRationale: string;
   verificationStatus: "示例资料，待核验" | "已核验";
   updatedAt: string;
+  evidenceSources?: KnowledgeEvidenceSource[];
   reviewHistory?: KnowledgeReviewEntry[];
 };
+
+export const knowledgeEvidenceSourceTypeLabels: Record<KnowledgeEvidenceSourceType, string> = {
+  official: "官方来源",
+  "school-policy": "学校 / 学院文件",
+  index: "数据库 / 目录",
+  publisher: "出版方 / 主办方",
+  other: "其他来源",
+};
+
+export function normalizeKnowledgeEvidenceSources(input: unknown, previousSources: KnowledgeEvidenceSource[] = []): KnowledgeEvidenceSource[] {
+  if (!Array.isArray(input)) return [];
+  const validTypes = Object.keys(knowledgeEvidenceSourceTypeLabels) as KnowledgeEvidenceSourceType[];
+  const previousById = new Map(previousSources.map((source) => [source.id, source]));
+  const seen = new Set<string>();
+  return input.flatMap((item): KnowledgeEvidenceSource[] => {
+    if (!item || typeof item !== "object") return [];
+    const value = item as Record<string, unknown>;
+    const title = typeof value.title === "string" ? value.title.trim().slice(0, 160) : "";
+    const urlValue = typeof value.url === "string" ? value.url.trim().slice(0, 500) : "";
+    let url = "";
+    try {
+      const parsed = new URL(urlValue);
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") url = parsed.toString();
+    } catch { /* Ignore malformed URLs. */ }
+    if (!title || !url || seen.has(url)) return [];
+    seen.add(url);
+    const id = typeof value.id === "string" && value.id.trim() ? value.id.slice(0, 80) : globalThis.crypto.randomUUID();
+    const sourceType = validTypes.includes(value.sourceType as KnowledgeEvidenceSourceType) ? value.sourceType as KnowledgeEvidenceSourceType : "other";
+    const dataYear = typeof value.dataYear === "string" ? value.dataYear.trim().slice(0, 40) : "";
+    const previous = previousById.get(id);
+    const changedIdentity = Boolean(previous && (previous.title !== title || previous.url !== url || previous.sourceType !== sourceType || previous.dataYear !== dataYear));
+    const verified = value.verified === true && !changedIdentity;
+    const suppliedCheckDate = typeof value.checkedAt === "string" && !Number.isNaN(Date.parse(value.checkedAt)) ? value.checkedAt : "";
+    const checkedAt = verified ? suppliedCheckDate || new Date().toISOString() : "";
+    return [{
+      id,
+      title,
+      url,
+      sourceType,
+      dataYear,
+      note: typeof value.note === "string" ? value.note.trim().slice(0, 500) : "",
+      verified,
+      checkedAt: verified ? checkedAt : "",
+    }];
+  }).slice(0, 12);
+}
 
 export const knowledgeKindLabels: Record<KnowledgeKind, string> = {
   competition: "竞赛",

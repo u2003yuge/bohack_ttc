@@ -8,7 +8,7 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
-import { knowledgeRecords, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
+import { knowledgeRecords, normalizeKnowledgeEvidenceSources, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 
 type ResumeRecord = {
@@ -125,6 +125,7 @@ router.post("/knowledge", async (request, response, next) => {
       field: textInput(input.field, 120), organizer: textInput(input.organizer, 120), region: textInput(input.region, 80),
       summary: textInput(input.summary, 1200), signals: Array.isArray(input.signals) ? input.signals.filter((item: unknown): item is string => typeof item === "string").slice(0, 10) : [],
       officialUrl: safeHttpUrl(input.officialUrl), significanceScore: 50,
+      evidenceSources: normalizeKnowledgeEvidenceSources(input.evidenceSources),
       scoreRationale: "新建资料尚未评估。请核验可靠来源和岗位相关证据。",
       verificationStatus: "示例资料，待核验", updatedAt: new Date().toISOString().slice(0, 10),
     };
@@ -192,6 +193,7 @@ router.put("/knowledge/:id", async (request, response, next) => {
       summary: textInput(input.summary, 1200),
       signals: stringList(input.signals, 10, 100),
       officialUrl: safeHttpUrl(input.officialUrl),
+      evidenceSources: normalizeKnowledgeEvidenceSources(input.evidenceSources, existing.evidenceSources ?? []),
       updatedAt: new Date().toISOString().slice(0, 10),
     };
     const custom = await readCustomKnowledge();
@@ -235,9 +237,16 @@ router.put("/knowledge/:id/review", async (request, response, next) => {
     const reviewedAt = new Date().toISOString();
     const source = request.body?.source === "ai-assisted" ? "ai-assisted" : "manual";
     const previousHistory = Array.isArray(previous?.reviewHistory) ? previous.reviewHistory : [];
+    const availableSourceIds = new Set((record.evidenceSources ?? []).map((item) => item.id));
+    const evidenceSourceIds: string[] = Array.isArray(request.body?.evidenceSourceIds)
+      ? [...new Set<string>(request.body.evidenceSourceIds.filter((id: unknown): id is string => typeof id === "string" && availableSourceIds.has(id)) as string[])].slice(0, 12)
+      : [];
+    const evidenceSources = (record.evidenceSources ?? [])
+      .filter((item) => evidenceSourceIds.includes(item.id))
+      .map((item) => ({ ...item }));
     const reviewHistory = [...previousHistory, {
       id: randomUUID(), significanceScore: Math.round(score), scoreRationale: rationale,
-      verificationStatus: status, updatedAt: reviewedAt, source,
+      verificationStatus: status, updatedAt: reviewedAt, source, evidenceSourceIds, evidenceSources,
     } satisfies KnowledgeReviewEntry].slice(-30);
     reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, verificationStatus: status, updatedAt: reviewedAt.slice(0, 10), reviewHistory };
     await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });

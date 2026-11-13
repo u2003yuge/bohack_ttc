@@ -30,7 +30,7 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
-import { findKnowledgeMatch, findKnowledgeReferences, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
+import { findKnowledgeMatch, findKnowledgeReferences, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -533,10 +533,11 @@ function RecruitmentQualityMap({ candidates, selectedId, onSelect }: { candidate
   return <section className="quality-map-section"><div className="quality-map-head"><div><span className="eyebrow">RECRUITING QUALITY MAP</span><h3>招聘质量图 · 深度 × 广度</h3><p>用一张图识别候选人的能力深度与经历广度。气泡越大，综合分越高。</p></div><div className="quality-map-legend"><span><i className="legend-dot legend-deep" />能力深度</span><span><i className="legend-dot legend-wide" />经历广度</span></div></div><div className="quality-map-wrap"><svg className="quality-map" viewBox={`0 0 ${width} ${height}`} role="group" aria-label="候选人招聘质量深度广度散点图"><rect x={left} y={top} width={plotWidth} height={plotHeight} className="quality-map-bg" /><rect x={left} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-learning" /><rect x={left + plotWidth / 2} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-deep" /><rect x={left} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-narrow" /><rect x={left + plotWidth / 2} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-broad" /><line x1={left + plotWidth / 2} y1={top} x2={left + plotWidth / 2} y2={top + plotHeight} className="quality-midline" /><line x1={left} y1={top + plotHeight / 2} x2={left + plotWidth} y2={top + plotHeight / 2} className="quality-midline" /><line x1={left} y1={top + plotHeight} x2={left + plotWidth} y2={top + plotHeight} className="quality-axis" /><line x1={left} y1={top} x2={left} y2={top + plotHeight} className="quality-axis" /><text x={left + plotWidth / 4} y={top + 18} className="quality-quadrant-label">待验证的成长型</text><text x={left + plotWidth * .75} y={top + 18} className="quality-quadrant-label">深度与广度兼具</text><text x={left + plotWidth / 4} y={top + plotHeight - 12} className="quality-quadrant-label">单一领域深耕</text><text x={left + plotWidth * .75} y={top + plotHeight - 12} className="quality-quadrant-label">广泛经历待聚焦</text>{[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={pointX(tick)} y1={top + plotHeight} x2={pointX(tick)} y2={top + plotHeight + 4} className="quality-axis" /><text x={pointX(tick)} y={height - 25} textAnchor="middle" className="quality-tick">{tick}</text><line x1={left - 4} y1={pointY(tick)} x2={left} y2={pointY(tick)} className="quality-axis" /><text x={left - 9} y={pointY(tick) + 3} textAnchor="end" className="quality-tick">{tick}</text></g>)}{candidates.map(({ resume, card }, index) => { const breadth = card.criteria.perspective.score; const depth = depthScore(card); const radius = 8 + (card.composite / maxComposite) * 7; const x = pointX(breadth); const y = pointY(depth); const active = resume.id === selectedId; return <g key={resume.id} className={`quality-point ${active ? "selected" : ""}`} role="button" tabIndex={0} aria-pressed={active} aria-label={`${resume.name}：深度 ${depth.toFixed(0)}，广度 ${breadth.toFixed(0)}，综合分 ${card.composite.toFixed(1)}`} onClick={() => onSelect(resume.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(resume.id); } }}><title>{`${resume.name}：深度 ${depth.toFixed(0)}，广度 ${breadth.toFixed(0)}，综合分 ${card.composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={active ? radius + 2 : radius} className={`quality-bubble quality-bubble-${Math.min(index + 1, 4)}`} /><text x={x} y={y - radius - 5} textAnchor="middle" className="quality-name">{resume.name.length > 9 ? `${resume.name.slice(0, 9)}…` : resume.name}</text></g>; })}<text x={left + plotWidth / 2} y={height - 7} textAnchor="middle" className="quality-axis-label">经历广度（行业、领域、方法和团队经历）</text><text x="14" y={top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 14 ${top + plotHeight / 2})`} className="quality-axis-label">能力深度</text></svg></div><div className="quality-map-note"><span>深度 = 领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>广度 = 经历广度分</span></div></section>;
 }
 
-type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string };
-type KnowledgeDraftProposal = Omit<KnowledgeDraft, "title" | "kind" | "aliases" | "signals"> & { aliases: string[]; signals: string[]; confidence: number; rationale: string; unknowns: string[]; sources: KnowledgeSource[]; searchStatus: "searched" | "no-results" | "not-configured" | "unavailable"; inputFingerprint: string };
+type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string; evidenceSources: KnowledgeEvidenceSource[] };
+type KnowledgeDraftProposal = Omit<KnowledgeDraft, "title" | "kind" | "aliases" | "signals" | "evidenceSources"> & { aliases: string[]; signals: string[]; confidence: number; rationale: string; unknowns: string[]; sources: KnowledgeSource[]; searchStatus: "searched" | "no-results" | "not-configured" | "unavailable"; inputFingerprint: string };
 type KnowledgeSort = "default" | "score" | "updated" | "title";
 type KnowledgeVerificationFilter = "all" | "pending" | "verified";
+type KnowledgeEvidenceFilter = "all" | "with-sources" | "verified-sources" | "without-sources";
 type KnowledgeScoreBand = "all" | "0-49" | "50-69" | "70-84" | "85-100";
 const knowledgeScoreBands: Array<{ key: Exclude<KnowledgeScoreBand, "all">; label: string; min: number; max: number }> = [
   { key: "0-49", label: "0–49", min: 0, max: 49 },
@@ -544,9 +545,9 @@ const knowledgeScoreBands: Array<{ key: Exclude<KnowledgeScoreBand, "all">; labe
   { key: "70-84", label: "70–84", min: 70, max: 84 },
   { key: "85-100", label: "85–100", min: 85, max: 100 },
 ];
-const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "" };
+const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "", evidenceSources: [] };
 
-function KnowledgeReviewHistory({ history }: { history: KnowledgeReviewEntry[] }) {
+function KnowledgeReviewHistory({ history, sources }: { history: KnowledgeReviewEntry[]; sources: KnowledgeEvidenceSource[] }) {
   const [activeId, setActiveId] = useState(history.at(-1)?.id ?? "");
   useEffect(() => { setActiveId(history.at(-1)?.id ?? ""); }, [history.length]);
   if (!history.length) return <section className="knowledge-review-history"><div className="review-history-heading"><strong>评估记录</strong><span>尚无人工保存的评估</span></div></section>;
@@ -558,6 +559,9 @@ function KnowledgeReviewHistory({ history }: { history: KnowledgeReviewEntry[] }
   const pointX = (index: number) => history.length === 1 ? (left + right) / 2 : left + index / (history.length - 1) * (right - left);
   const pointY = (score: number) => bottom - score / 100 * (bottom - top);
   const active = history.find((entry) => entry.id === activeId) ?? history.at(-1)!;
+  const activeSources = active.evidenceSources ?? (active.evidenceSourceIds ?? [])
+    .map((id) => sources.find((source) => source.id === id))
+    .filter((source): source is KnowledgeEvidenceSource => Boolean(source));
   return <section className="knowledge-review-history">
     <div className="review-history-heading"><strong>评估记录</strong><span>{history.length} 次已保存审核 · 最近 30 次</span></div>
     <svg className="review-history-chart" viewBox={`0 0 ${width} 118`} role="group" aria-label="人工含金量评分历史">
@@ -570,7 +574,7 @@ function KnowledgeReviewHistory({ history }: { history: KnowledgeReviewEntry[] }
       {history.length > 1 && <text x={right} y="112" textAnchor="end" className="review-history-date">{new Date(history.at(-1)!.updatedAt).toLocaleDateString("zh-CN")}</text>}
       <text x={pointX(history.findIndex((entry) => entry.id === active.id))} y={Math.max(9, pointY(active.significanceScore) - 8)} textAnchor="middle" className="review-history-score">{active.significanceScore}</text>
     </svg>
-    <div className="review-history-detail"><div><strong>{active.significanceScore}<small>/ 100</small></strong><span>{new Date(active.updatedAt).toLocaleString("zh-CN")}</span><span>{active.verificationStatus === "已核验" ? "已核验" : "待核验"}</span><span>{active.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}</span></div><p>{active.scoreRationale || "未填写评估依据。"}</p></div>
+    <div className="review-history-detail"><div><strong>{active.significanceScore}<small>/ 100</small></strong><span>{new Date(active.updatedAt).toLocaleString("zh-CN")}</span><span>{active.verificationStatus === "已核验" ? "已核验" : "待核验"}</span><span>{active.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}</span></div><p>{active.scoreRationale || "未填写评估依据。"}</p>{activeSources.length > 0 && <div className="review-history-sources"><span>引用来源</span>{activeSources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer">{source.title}<ExternalLink size={10} /></a>)}</div>}</div>
   </section>;
 }
 
@@ -579,12 +583,14 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
   const [verificationFilter, setVerificationFilter] = useState<KnowledgeVerificationFilter>("all");
+  const [evidenceFilter, setEvidenceFilter] = useState<KnowledgeEvidenceFilter>("all");
   const [scoreBand, setScoreBand] = useState<KnowledgeScoreBand>("all");
   const [linkedOnly, setLinkedOnly] = useState(false);
   const [selectedId, setSelectedId] = useState(initialId && records.some((record) => record.id === initialId) ? initialId : seedKnowledgeRecords[0].id);
   const [reviewScore, setReviewScore] = useState(seedKnowledgeRecords[0].significanceScore);
   const [reviewNote, setReviewNote] = useState(seedKnowledgeRecords[0].scoreRationale);
   const [reviewSource, setReviewSource] = useState<"manual" | "ai-assisted">("manual");
+  const [reviewSourceIds, setReviewSourceIds] = useState<string[]>([]);
   const [reviewProposal, setReviewProposal] = useState<KnowledgeReviewSuggestion | null>(null);
   const [verificationStatus, setVerificationStatus] = useState<KnowledgeRecord["verificationStatus"]>(seedKnowledgeRecords[0].verificationStatus);
   const [saving, setSaving] = useState(false);
@@ -613,10 +619,12 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeMatch(resume.text, record) !== null).length])), [records, resumes]);
   const filtered = records.filter((record) => {
     const verificationMatches = verificationFilter === "all" || (verificationFilter === "verified" ? record.verificationStatus === "已核验" : record.verificationStatus !== "已核验");
+    const hasSources = Boolean(record.officialUrl || record.evidenceSources?.length);
+    const evidenceMatches = evidenceFilter === "all" || (evidenceFilter === "with-sources" && hasSources) || (evidenceFilter === "verified-sources" && record.evidenceSources?.some((source) => source.verified)) || (evidenceFilter === "without-sources" && !hasSources);
     const linkedMatches = !linkedOnly || (linkedResumeCounts.get(record.id) ?? 0) > 0;
     const selectedBand = knowledgeScoreBands.find((band) => band.key === scoreBand);
     const scoreMatches = !selectedBand || (record.significanceScore >= selectedBand.min && record.significanceScore <= selectedBand.max);
-    return (kind === "all" || record.kind === kind) && verificationMatches && linkedMatches && scoreMatches && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")}`.toLocaleLowerCase().includes(normalizedQuery);
+    return (kind === "all" || record.kind === kind) && verificationMatches && evidenceMatches && linkedMatches && scoreMatches && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")} ${(record.evidenceSources ?? []).map((source) => `${source.title} ${source.dataYear} ${source.note}`).join(" ")}`.toLocaleLowerCase().includes(normalizedQuery);
   });
   const sortedRecords = [...filtered].sort((a, b) => sort === "score" ? b.significanceScore - a.significanceScore : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "title" ? a.title.localeCompare(b.title, "zh-CN") : 0);
   const selected = sortedRecords.find((record) => record.id === selectedId) ?? sortedRecords[0] ?? null;
@@ -628,6 +636,11 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     return { kind: value, count: items.length, reviewed: reviewed.length, average };
   });
   const scoreBandCounts = knowledgeScoreBands.map((band) => ({ ...band, count: records.filter((record) => record.significanceScore >= band.min && record.significanceScore <= band.max).length }));
+  const evidenceCoverage = [
+    { key: "with-sources" as const, label: "有来源", count: records.filter((record) => Boolean(record.officialUrl || record.evidenceSources?.length)).length },
+    { key: "verified-sources" as const, label: "有已核来源", count: records.filter((record) => record.evidenceSources?.some((source) => source.verified)).length },
+    { key: "without-sources" as const, label: "待补来源", count: records.filter((record) => !record.officialUrl && !record.evidenceSources?.length).length },
+  ];
 
   useEffect(() => {
     if (initialId && records.some((record) => record.id === initialId)) {
@@ -636,7 +649,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   }, [initialId, records]);
   useEffect(() => {
     if (!selected) return;
-    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewSource("manual"); setReviewProposal(null); setReviewError(""); setReviewSaved(false); setDeleteConfirmation(false); setDeleteError("");
+    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewSource("manual"); setReviewSourceIds(selected.reviewHistory?.at(-1)?.evidenceSourceIds ?? []); setReviewProposal(null); setReviewError(""); setReviewSaved(false); setDeleteConfirmation(false); setDeleteError("");
     setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
   }, [selected?.id]);
 
@@ -649,13 +662,26 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     if (!selected) return;
     enrichmentRequestId.current += 1;
     setEditingId(selected.id);
-    setDraft({ ...selected, aliases: selected.aliases.join("\n"), signals: selected.signals.join("\n") });
+    setDraft({ ...selected, aliases: selected.aliases.join("\n"), signals: selected.signals.join("\n"), evidenceSources: (selected.evidenceSources ?? []).map((source) => ({ ...source })) });
     setEnrichmentBusy(false); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
   }
 
   function closeEditor() {
     enrichmentRequestId.current += 1;
     setEnrichmentBusy(false); setEditorOpen(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null);
+  }
+
+  function addEvidenceSource() {
+    if (draft.evidenceSources.length >= 12) return;
+    setDraft((current) => ({ ...current, evidenceSources: [...current.evidenceSources, { id: crypto.randomUUID(), title: "", url: "", sourceType: "official", dataYear: "", note: "", verified: false, checkedAt: "" }] }));
+  }
+
+  function updateEvidenceSource(id: string, patch: Partial<KnowledgeEvidenceSource>) {
+    setDraft((current) => ({ ...current, evidenceSources: current.evidenceSources.map((source) => {
+      if (source.id !== id) return source;
+      const changesSourceIdentity = ["title", "url", "sourceType", "dataYear"].some((key) => key in patch && patch[key as keyof KnowledgeEvidenceSource] !== source[key as keyof KnowledgeEvidenceSource]);
+      return { ...source, ...patch, ...(changesSourceIdentity ? { verified: false, checkedAt: "" } : {}) };
+    }) }));
   }
 
   async function enrichDraft() {
@@ -699,6 +725,10 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
   async function saveRecord() {
     if (!draft.title.trim()) return;
+    if (draft.evidenceSources.some((source) => !source.title.trim() || !/^https?:\/\//i.test(source.url.trim()))) {
+      setEditorError("来源条目需要填写名称和 http(s) 链接；不需要的空条目请先移除。");
+      return;
+    }
     setEditorBusy(true); setEditorError("");
     const values = { ...draft, aliases: draft.aliases.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean), signals: draft.signals.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean) };
     try {
@@ -731,7 +761,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     if (!selected) return;
     setSaving(true); setReviewError(""); setReviewSaved(false);
     try {
-      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/review`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ significanceScore: reviewScore, scoreRationale: reviewNote, verificationStatus, source: reviewSource }) });
+      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/review`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ significanceScore: reviewScore, scoreRationale: reviewNote, verificationStatus, source: reviewSource, evidenceSourceIds: reviewSourceIds }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "无法保存人工评估。");
       if (payload.record) { onRecordsChange(records.map((record) => record.id === selected.id ? payload.record : record)); setReviewSaved(true); }
@@ -769,6 +799,9 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
             <div className="knowledge-score-distribution-head"><strong>人工评分分布</strong><span>点击分段筛选 · 仅反映当前记录</span></div>
             <div className="knowledge-score-bands">{scoreBandCounts.map((band) => <button type="button" key={band.key} className={scoreBand === band.key ? "active" : ""} onClick={() => setScoreBand(scoreBand === band.key ? "all" : band.key)} aria-pressed={scoreBand === band.key} aria-label={`${band.label} 分：${band.count} 条资料，点击筛选`}><span className="knowledge-score-band-count">{band.count}</span><span className="knowledge-score-band-track"><i style={{ width: `${records.length ? band.count / records.length * 100 : 0}%` }} /></span><span className="knowledge-score-band-label">{band.label}</span></button>)}</div>
           </div>
+          <div className="knowledge-evidence-coverage" role="group" aria-label="来源覆盖情况">
+            {evidenceCoverage.map((item) => <button type="button" key={item.key} className={evidenceFilter === item.key ? "active" : ""} onClick={() => setEvidenceFilter(evidenceFilter === item.key ? "all" : item.key)} aria-pressed={evidenceFilter === item.key}><span>{item.label}</span><strong>{item.count}</strong><i><b style={{ width: `${records.length ? item.count / records.length * 100 : 0}%` }} /></i></button>)}
+          </div>
         </section>
         <div className="knowledge-body">
           <aside className="knowledge-list">
@@ -788,12 +821,13 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <textarea value={draft.summary} onChange={(event) => setDraft({ ...draft, summary: event.target.value })} rows={3} placeholder="简介与信息边界" />
               <textarea value={draft.signals} onChange={(event) => setDraft({ ...draft, signals: event.target.value })} rows={2} placeholder="人工审核信号，每行一项" />
               <input value={draft.officialUrl} onChange={(event) => setDraft({ ...draft, officialUrl: event.target.value })} placeholder="官方来源网址（可选）" />
+               <section className="knowledge-evidence-editor"><div className="knowledge-evidence-editor-head"><strong>可追溯来源</strong><button type="button" onClick={addEvidenceSource} disabled={draft.evidenceSources.length >= 12}><Plus size={12} />添加来源</button></div>{draft.evidenceSources.map((source) => <div className="knowledge-evidence-edit-row" key={source.id}><div><input value={source.title} onChange={(event) => updateEvidenceSource(source.id, { title: event.target.value })} placeholder="来源名称 *" /><select value={source.sourceType} onChange={(event) => updateEvidenceSource(source.id, { sourceType: event.target.value as KnowledgeEvidenceSourceType })}>{Object.entries(knowledgeEvidenceSourceTypeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><input value={source.dataYear} onChange={(event) => updateEvidenceSource(source.id, { dataYear: event.target.value })} placeholder="数据年份" /></div><input value={source.url} onChange={(event) => updateEvidenceSource(source.id, { url: event.target.value })} placeholder="https://..." /><textarea value={source.note} onChange={(event) => updateEvidenceSource(source.id, { note: event.target.value })} rows={2} placeholder="这条来源能核实什么？" /><footer><label><input type="checkbox" checked={source.verified} onChange={(event) => updateEvidenceSource(source.id, { verified: event.target.checked, checkedAt: event.target.checked ? new Date().toISOString() : "" })} />我已人工核对</label><button type="button" onClick={() => setDraft((current) => ({ ...current, evidenceSources: current.evidenceSources.filter((item) => item.id !== source.id) }))} aria-label={`移除来源 ${source.title || "未命名"}`}><X size={12} /></button></footer></div>)}{draft.evidenceSources.length === 0 && <small>记录官网、学校认定文件、期刊目录或论文页面；来源核对状态由审核员维护。</small>}</section>
               {editorError && <div className="inline-error">{editorError}</div>}
               <button onClick={saveRecord} disabled={editorBusy || !draft.title.trim()}>{editorBusy ? "保存中" : editingId ? "保存修改" : "创建资料"}</button>
             </div>}
             <div className="knowledge-filters"><div className="knowledge-filter-buttons"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div><label className="knowledge-sort-label"><span>排序</span><select value={sort} onChange={(event) => setSort(event.target.value as KnowledgeSort)} aria-label="资料排序"><option value="default">默认</option><option value="updated">最近更新</option><option value="score">评分高低</option><option value="title">名称</option></select></label></div>
             <div className="knowledge-secondary-filters"><div className="knowledge-filter-buttons"><button className={verificationFilter === "all" ? "active" : ""} onClick={() => setVerificationFilter("all")}>全部状态</button><button className={verificationFilter === "pending" ? "active" : ""} onClick={() => setVerificationFilter("pending")}>待核验</button><button className={verificationFilter === "verified" ? "active" : ""} onClick={() => setVerificationFilter("verified")}>已核验</button></div><button className={`linked-filter ${linkedOnly ? "active" : ""}`} onClick={() => setLinkedOnly((value) => !value)} aria-pressed={linkedOnly}>仅看已被简历引用</button></div>
-            <div className="knowledge-result-count"><span>显示 {sortedRecords.length} / {records.length} 条{scoreBand !== "all" ? ` · 分数 ${scoreBand}` : ""}</span>{(scoreBand !== "all" || query || kind !== "all" || verificationFilter !== "all" || linkedOnly) && <button type="button" onClick={() => { setScoreBand("all"); setQuery(""); setKind("all"); setVerificationFilter("all"); setLinkedOnly(false); }}>清除筛选</button>}</div>
+            <div className="knowledge-result-count"><span>显示 {sortedRecords.length} / {records.length} 条{scoreBand !== "all" ? ` · 分数 ${scoreBand}` : evidenceFilter !== "all" ? ` · ${evidenceCoverage.find((item) => item.key === evidenceFilter)?.label}` : ""}</span>{(scoreBand !== "all" || query || kind !== "all" || verificationFilter !== "all" || evidenceFilter !== "all" || linkedOnly) && <button type="button" onClick={() => { setScoreBand("all"); setQuery(""); setKind("all"); setVerificationFilter("all"); setEvidenceFilter("all"); setLinkedOnly(false); }}>清除筛选</button>}</div>
             <div className="knowledge-record-list">{sortedRecords.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"} · {record.verificationStatus === "已核验" ? "已核验" : "待核验"}</small></span><span className="knowledge-row-links" title={`${linkedResumeCounts.get(record.id) ?? 0} 份简历引用`}>{linkedResumeCounts.get(record.id) ?? 0}<ExternalLink size={10} /></span><b>{record.significanceScore}</b></button>)}{!sortedRecords.length && <div className="empty-list">没有匹配资料</div>}</div>
           </aside>
           <section className="knowledge-detail">
@@ -803,6 +837,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <div className="knowledge-meta"><span><b>领域</b>{selected.field || "未填写"}</span><span><b>组织 / 主办方</b>{selected.organizer || "未填写"}</span><span><b>地区</b>{selected.region || "未填写"}</span><span><b>核验状态</b>{selected.verificationStatus}</span></div>
               <p className="knowledge-summary">{selected.summary || "尚无简介，请编辑资料补充背景和信息边界。"}</p>
               <div className="knowledge-signals"><strong>审核信号</strong><div>{selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <small>尚未添加审核信号</small>}</div></div>
+              <section className="knowledge-evidence-list"><div className="knowledge-evidence-list-head"><strong>可追溯来源</strong><span>{(selected.evidenceSources ?? []).filter((source) => source.verified).length} / {(selected.evidenceSources ?? []).length} 条已核对</span></div>{selected.officialUrl && <a className="knowledge-evidence-row" href={selected.officialUrl} target="_blank" rel="noreferrer"><span className="knowledge-evidence-status pending" /><span><strong>官方主页</strong><small>入口链接 · 尚未记录具体指标或认定条款</small></span><ExternalLink size={13} /></a>}{(selected.evidenceSources ?? []).map((source) => <a className="knowledge-evidence-row" key={source.id} href={source.url} target="_blank" rel="noreferrer"><span className={`knowledge-evidence-status ${source.verified ? "verified" : "pending"}`} /><span><strong>{source.title}<small>{[knowledgeEvidenceSourceTypeLabels[source.sourceType], source.dataYear].filter(Boolean).join(" · ")}{source.note ? ` · ${source.note}` : ""}</small></strong>{source.verified && source.checkedAt && <small>人工核对于 {new Date(source.checkedAt).toLocaleDateString("zh-CN")}</small>}</span><ExternalLink size={13} /></a>)}{!selected.officialUrl && !(selected.evidenceSources?.length) && <p className="knowledge-evidence-empty">尚无来源记录。可通过“编辑资料”添加官网、期刊目录、学校认定文件或结果公示。</p>}</section>
               <div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map(({ resume, match }) => <button key={resume.id} onClick={() => { onSelectEvidence(resume.id, match); onClose(); }} title={`返回简历并定位“${match}”`}><span className="candidate-avatar">{resume.initials}</span><span>{resume.name} · {resume.role}<small>原文命中：{match}</small></span><ExternalLink size={11} /></button>) : <span>当前简历正文中没有匹配的名称或别名</span>}</div>
               <div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 建议需复核后保存</span></div>
                 <label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label>
@@ -812,13 +847,14 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
                 <label>核验状态<select value={verificationStatus} onChange={(event) => { setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"]); setReviewSource("manual"); setReviewSaved(false); }}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label>
                 <label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => { setReviewScore(Number(event.target.value)); setReviewSource("manual"); setReviewSaved(false); }} /></label>
                 <textarea value={reviewNote} onChange={(event) => { setReviewNote(event.target.value); setReviewSource("manual"); setReviewSaved(false); }} rows={4} placeholder="说明评分依据、岗位相关性和待核验事项" />
+                {(selected.evidenceSources?.length ?? 0) > 0 && <fieldset className="review-evidence-citations"><legend>本次评分引用</legend>{selected.evidenceSources!.map((source) => <label key={source.id}><input type="checkbox" checked={reviewSourceIds.includes(source.id)} onChange={(event) => setReviewSourceIds((current) => event.target.checked ? [...current, source.id] : current.filter((id) => id !== source.id))} /><span>{source.title}<small>{knowledgeEvidenceSourceTypeLabels[source.sourceType]} · {source.verified ? "已人工核对" : "待核对"}</small></span></label>)}</fieldset>}
                 {reviewSource === "ai-assisted" && <span className="review-source-note">当前草稿采用 AI 建议；点击保存后会记为经人工确认。</span>}
                 {suggestionQuestions.length > 0 && <div className="verification-questions"><strong>建议核实</strong>{suggestionQuestions.map((item) => <span key={item}>{item}</span>)}</div>}
                 {suggestionSearchStatus && <div className="research-result"><div className="research-result-head"><strong>{suggestionSearchStatus === "searched" ? `联网参考 · ${suggestionSources.length} 个来源` : suggestionSearchStatus === "no-results" ? "没有找到可用网页来源" : suggestionSearchStatus === "unavailable" ? "联网检索暂不可用" : "基于本地资料建议"}</strong>{suggestionConfidence !== null && <span>参考置信度 {Math.round(suggestionConfidence * 100)}%</span>}</div><p>{suggestionSearchStatus === "searched" ? "来源用于了解赛事、期刊或组织背景；不能证明候选人的具体获奖、发表或个人贡献。" : suggestionSearchStatus === "unavailable" ? "本次建议只参考本地资料字段，请通过官方来源人工核验。" : suggestionSearchStatus === "not-configured" ? "尚未配置网页搜索，本次建议仅依据本地资料字段。" : "本次建议仅依据本地资料字段，未引用外部来源。"}</p>{suggestionSources.map((source) => <a className="research-source" key={source.url} href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}<ExternalLink size={12} /></strong><small>{source.url}</small>{source.snippet && <span>{source.snippet}</span>}</a>)}</div>}
                 {reviewError && <div className="inline-error">{reviewError}</div>}{reviewSaved && <div className="review-saved">人工评估已保存</div>}
                 <button className="save-review" onClick={saveReview} disabled={saving}>{saving ? "保存中" : "保存人工评估"}</button>
               </div>
-              <KnowledgeReviewHistory key={selected.id} history={selected.reviewHistory ?? []} />
+              <KnowledgeReviewHistory key={selected.id} history={selected.reviewHistory ?? []} sources={selected.evidenceSources ?? []} />
               {selected.officialUrl && <a className="official-link" href={selected.officialUrl} target="_blank" rel="noreferrer">打开官方来源 <ExternalLink size={14} /></a>}
             </> : <div className="knowledge-empty-detail">没有符合筛选条件的资料。</div>}
           </section>
