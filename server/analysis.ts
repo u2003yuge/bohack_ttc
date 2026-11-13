@@ -40,6 +40,13 @@ export function normalizeProjectBreakdownSources(input: unknown): { sources: Pro
   return { sources };
 }
 
+export function normalizeProjectBreakdownRequest(input: unknown): { sources: ProjectBreakdownSource[]; reviewerFocus: string } | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const normalized = normalizeProjectBreakdownSources(value.projects);
+  if ("error" in normalized) return normalized;
+  return { ...normalized, reviewerFocus: typeof value.reviewerFocus === "string" ? value.reviewerFocus.trim().slice(0, 500) : "" };
+}
+
 export function normalizeProjectBreakdownDraft(input: unknown, sources: ProjectBreakdownSource[]): { projects: ProjectBreakdownDraft[] } | { error: string } {
   const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
   const rawProjects = Array.isArray(value.projects) ? value.projects : [];
@@ -66,7 +73,7 @@ export function normalizeProjectBreakdownDraft(input: unknown, sources: ProjectB
   return projects.length ? { projects } : { error: "AI 拆解结果没有可回溯到简历原文的证据，请重试或使用原始拆解。" };
 }
 
-export async function suggestProjectBreakdown(sources: ProjectBreakdownSource[]): Promise<{ projects: ProjectBreakdownDraft[] }> {
+export async function suggestProjectBreakdown(sources: ProjectBreakdownSource[], reviewerFocus = ""): Promise<{ projects: ProjectBreakdownDraft[] }> {
   const client = createClient();
   if (!client) throw new Error("未配置模型服务");
   const response = await client.chat.completions.create({
@@ -75,7 +82,7 @@ export async function suggestProjectBreakdown(sources: ProjectBreakdownSource[])
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: projectBreakdownSkill },
-      { role: "user", content: JSON.stringify({ projects: sources.map((source, sourceIndex) => ({ sourceIndex, title: source.title, content: source.content })) }) },
+      { role: "user", content: JSON.stringify({ reviewerFocus: reviewerFocus.slice(0, 500), projects: sources.map((source, sourceIndex) => ({ sourceIndex, title: source.title, content: source.content })) }) },
     ],
   });
   const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { normalizeAnalysisTaskDraft, normalizeKnowledgeEnrichment, normalizeProjectBreakdownDraft, normalizeProjectBreakdownSources } from "./analysis.js";
+import { normalizeAnalysisTaskDraft, normalizeKnowledgeEnrichment, normalizeProjectBreakdownDraft, normalizeProjectBreakdownRequest, normalizeProjectBreakdownSources } from "./analysis.js";
 
 const sources = [
   { title: "Official venue", url: "https://neurips.cc/", snippet: "Conference website" },
@@ -43,6 +43,14 @@ test("project breakdown inputs require bounded source text", () => {
   if ("error" in normalized) return;
   assert.equal(normalized.sources[0].title, "项目 A");
   assert.equal(normalized.sources[0].content.length, 2500);
+});
+
+test("project breakdown reviewer focus is trimmed and bounded separately from resume evidence", () => {
+  const normalized = normalizeProjectBreakdownRequest({ projects: [{ title: "经历", content: "主导搭建系统" }], reviewerFocus: `  ${"突出个人贡献。".repeat(100)}  ` });
+  assert.equal("error" in normalized, false);
+  if ("error" in normalized) return;
+  assert.equal(normalized.reviewerFocus.length, 500);
+  assert.equal(normalized.sources[0].content, "主导搭建系统");
 });
 
 test("project breakdown drafts accept only unique in-range indexes with exact resume evidence", () => {

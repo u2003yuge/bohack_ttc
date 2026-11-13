@@ -376,24 +376,31 @@ function ScoreTrend({ card, candidate, onEvidence }: { card: ScoreCard; candidat
 
 function ProjectBreakdownView({ candidate, agentAvailable, onEvidence }: { candidate: Resume; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const projects = deriveProjects(candidate);
+  const [reviewerFocus, setReviewerFocus] = useState("");
   const [draft, setDraft] = useState<ProjectBreakdownDraft[] | null>(null);
   const [showAiDraft, setShowAiDraft] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const requestProjects = projects.map(({ title, sourceText }) => ({ title, content: sourceText }));
+  const requestFingerprint = JSON.stringify({ projects: requestProjects, reviewerFocus: reviewerFocus.trim() });
+  const currentFingerprint = useRef(requestFingerprint);
+  currentFingerprint.current = requestFingerprint;
   async function explainProjects() {
+    const fingerprint = requestFingerprint;
     setBusy(true); setError("");
     try {
-      const response = await fetch("/api/agent/project-breakdown", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projects: projects.map(({ title, sourceText }) => ({ title, content: sourceText })) }) });
+      const response = await fetch("/api/agent/project-breakdown", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projects: requestProjects, reviewerFocus: reviewerFocus.trim() }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "AI 项目拆解失败。");
       if (!Array.isArray(payload.projects) || payload.projects.length === 0) throw new Error("AI 没有返回带原文依据的项目拆解。");
+      if (currentFingerprint.current !== fingerprint) throw new Error("经历或解读侧重点已修改，请重新生成草案。");
       setDraft(payload.projects as ProjectBreakdownDraft[]);
       setShowAiDraft(true);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "AI 项目拆解失败。"); }
     finally { setBusy(false); }
   }
   const activeProjects = showAiDraft && draft ? draft : projects;
-  return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><div className="project-breakdown-actions">{draft && <div className="project-breakdown-modes" role="group" aria-label="项目拆解展示模式"><button type="button" className={!showAiDraft ? "active" : ""} aria-pressed={!showAiDraft} onClick={() => setShowAiDraft(false)}>规则拆解</button><button type="button" className={showAiDraft ? "active" : ""} aria-pressed={showAiDraft} onClick={() => setShowAiDraft(true)}>AI 草案</button></div>}<button type="button" className="project-ai-button" onClick={() => void explainProjects()} disabled={!agentAvailable || busy || !projects.length} title={!agentAvailable ? "请先配置模型服务" : "仅将当前列出的经历片段发送给模型"}>{busy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}{busy ? "拆解中" : "AI 人话拆解"}</button><span>{activeProjects.length} 项</span></div></div>{error && <div className="inline-error" role="status">{error}</div>}{showAiDraft && draft && <p className="project-ai-note">AI 结果是未保存草案；引用经过原文校验。请核对后再使用，未明确的目标、个人贡献或结果会保留为待核实项。</p>}{activeProjects.length ? activeProjects.map((project, index) => <article className="project-item" key={`${project.title}-${index}`}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}{"sourceIndex" in project ? ` · 依据置信度 ${Math.round(project.confidence * 100)}%` : ""}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl>{"evidence" in project && <button type="button" className="project-evidence-link" onClick={() => onEvidence(project.evidence)} title="在简历原文中定位 AI 引用">原文依据：{project.evidence}<ExternalLink size={10} /></button>}</article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
+  return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><div className="project-breakdown-actions">{draft && <div className="project-breakdown-modes" role="group" aria-label="项目拆解展示模式"><button type="button" className={!showAiDraft ? "active" : ""} aria-pressed={!showAiDraft} onClick={() => setShowAiDraft(false)}>规则拆解</button><button type="button" className={showAiDraft ? "active" : ""} aria-pressed={showAiDraft} onClick={() => setShowAiDraft(true)}>AI 草案</button></div>}<button type="button" className="project-ai-button" onClick={() => void explainProjects()} disabled={!agentAvailable || busy || !projects.length} title={!agentAvailable ? "请先配置模型服务" : "仅将当前列出的经历片段发送给模型"}>{busy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}{busy ? "拆解中" : "AI 人话拆解"}</button><span>{activeProjects.length} 项</span></div></div><label className="project-review-focus">AI 解读侧重点（可选）<input value={reviewerFocus} maxLength={500} onChange={(event) => { setReviewerFocus(event.target.value); setDraft(null); setShowAiDraft(false); setError(""); }} placeholder="例如：用非技术语言解释，重点说明个人贡献" /><small>仅随当前经历片段发送；修改后需重新生成草案</small></label>{error && <div className="inline-error" role="status">{error}</div>}{showAiDraft && draft && <p className="project-ai-note">AI 结果是未保存草案；引用经过原文校验。请核对后再使用，未明确的目标、个人贡献或结果会保留为待核实项。</p>}{activeProjects.length ? activeProjects.map((project, index) => <article className="project-item" key={`${project.title}-${index}`}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}{"sourceIndex" in project ? ` · 依据置信度 ${Math.round(project.confidence * 100)}%` : ""}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl>{"evidence" in project && <button type="button" className="project-evidence-link" onClick={() => onEvidence(project.evidence)} title="在简历原文中定位 AI 引用">原文依据：{project.evidence}<ExternalLink size={10} /></button>}</article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
 }
 
 function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: string; score: number; candidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void }) {

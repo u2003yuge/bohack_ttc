@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import resumes from "./resumes.js";
 import { searchPublicWeb } from "./web-search.js";
-import { normalizeProjectBreakdownSources, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
+import { normalizeProjectBreakdownRequest, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -142,7 +142,7 @@ app.post("/api/agent/task-draft", async (request, response) => {
 });
 
 app.post("/api/agent/project-breakdown", async (request, response) => {
-  const normalized = normalizeProjectBreakdownSources(request.body?.projects);
+  const normalized = normalizeProjectBreakdownRequest(request.body);
   if ("error" in normalized) {
     response.status(400).json({ error: normalized.error });
     return;
@@ -152,7 +152,7 @@ app.post("/api/agent/project-breakdown", async (request, response) => {
     return;
   }
   try {
-    response.json(await suggestProjectBreakdown(normalized.sources));
+    response.json(await suggestProjectBreakdown(normalized.sources, normalized.reviewerFocus));
   } catch (error) {
     response.status(502).json({ error: error instanceof Error ? error.message : "项目拆解失败。" });
   }
