@@ -86,9 +86,11 @@ router.put("/knowledge/:id/review", async (request, response, next) => {
     if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
     const score = Number(request.body?.significanceScore);
     const rationale = typeof request.body?.scoreRationale === "string" ? request.body.scoreRationale.trim().slice(0, 500) : record.scoreRationale;
+    const verificationStatus = request.body?.verificationStatus;
     if (!Number.isFinite(score) || score < 0 || score > 100) { response.status(400).json({ error: "含金量评分需要是 0 到 100 之间的数字。" }); return; }
+    if (verificationStatus !== undefined && !["示例资料，待核验", "已核验"].includes(verificationStatus)) { response.status(400).json({ error: "请选择有效的核验状态。" }); return; }
     const reviews = await readKnowledgeReviews();
-    reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, updatedAt: new Date().toISOString().slice(0, 10) };
+    reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, ...(verificationStatus ? { verificationStatus } : {}), updatedAt: new Date().toISOString().slice(0, 10) };
     await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
     await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
     response.json({ record: { ...record, ...reviews[record.id] } });
@@ -392,7 +394,7 @@ function normalizeWeightInput(input: unknown): ScoreWeights {
   })) as ScoreWeights);
 }
 
-async function readKnowledgeReviews(): Promise<Record<string, { significanceScore?: number; scoreRationale?: string; updatedAt?: string }>> {
+async function readKnowledgeReviews(): Promise<Record<string, { significanceScore?: number; scoreRationale?: string; verificationStatus?: KnowledgeRecord["verificationStatus"]; updatedAt?: string }>> {
   try { return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, { significanceScore?: number; scoreRationale?: string; updatedAt?: string }>; }
   catch { return {}; }
 }
