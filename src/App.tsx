@@ -378,7 +378,7 @@ function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
   return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><span>{projects.length} 项</span></div>{projects.length ? projects.map((project) => <article className="project-item" key={project.title}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl></article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
 }
 
-function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: string; score: number; candidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null) => void }) {
+function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: string; score: number; candidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void }) {
   const [year, setYear] = useState<number | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const benchmark = calculateBenchmark(role, score, year, candidates);
@@ -401,19 +401,19 @@ function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: stri
     {selectedHistory && <div className="benchmark-selected"><strong>{selectedHistory.name}</strong><span>{selectedHistory.year} 年 · {selectedHistory.composite} 分 · {selectedHistory.screened ? "通过首轮" : "未通过首轮"} · {selectedHistory.hired ? "最终录取" : "未录取"}</span><button onClick={() => setSelectedHistoryId(null)} aria-label="关闭历史样本详情"><X size={12} /></button></div>}
     <div className="benchmark-stats"><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div><div><span>首轮参考分数</span><strong>{benchmark.screenCutoff}</strong></div><div><span>录取参考分数</span><strong>{benchmark.hireCutoff}</strong></div></div>
     <p>本地演示样本仅用于说明比较方式，不代表真实招聘结果；百分位和参考线均为辅助信息。</p>
-    <button type="button" className="benchmark-database-link" onClick={() => onOpenHistory(candidates.some((candidate) => roleGroup(candidate.role) === benchmark.roleGroup) ? benchmark.roleGroup : "all", benchmark.year)}><Database size={12} />查看当前岗位样本库</button>
+    <button type="button" className="benchmark-database-link" onClick={() => onOpenHistory(candidates.some((candidate) => roleGroup(candidate.role) === benchmark.roleGroup) ? benchmark.roleGroup : "all", benchmark.year, selectedHistoryId ?? undefined)}><Database size={12} />查看当前岗位样本库</button>
   </section>;
 }
 
 type HistoricalDraft = { name: string; role: string; year: number; composite: number; screened: boolean; hired: boolean };
 const emptyHistoricalDraft = (): HistoricalDraft => ({ name: "匿名样本", role: "", year: new Date().getFullYear(), composite: 70, screened: false, hired: false });
 
-function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agentAvailable, initialFilter }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void; agentAvailable: boolean; initialFilter: { roleGroup: string; year: number | null } | null }) {
+function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agentAvailable, initialFilter, initialSelectedId }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void; agentAvailable: boolean; initialFilter: { roleGroup: string; year: number | null } | null; initialSelectedId: string }) {
   const [roleFilter, setRoleFilter] = useState(initialFilter?.roleGroup ?? "all");
   const [yearFilter, setYearFilter] = useState(initialFilter?.year === null || initialFilter?.year === undefined ? "all" : String(initialFilter.year));
   const [scoreBandFilter, setScoreBandFilter] = useState<HistoricalScoreBandKey | null>(null);
   const [outcomeFilter, setOutcomeFilter] = useState<HistoricalOutcomeFilter>("all");
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState(initialSelectedId);
   const [editingId, setEditingId] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [draft, setDraft] = useState<HistoricalDraft>(emptyHistoricalDraft());
@@ -514,7 +514,7 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agent
   </main>;
 }
 
-function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onOpenHistory, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null) => void; onEvidence: (evidence: string) => void }) {
+function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onOpenHistory, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onEvidence: (evidence: string) => void }) {
   const [selectedCriterion, setSelectedCriterion] = useState<ScoreKey | null>(null);
   const selected = selectedCriterion ? card.criteria[selectedCriterion] : null;
   const selectedLabel = scoreCriteria.find((criterion) => criterion.key === selectedCriterion)?.label;
@@ -988,7 +988,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null) => void; onEvidence: (evidence: string) => void }) {
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onEvidence: (evidence: string) => void }) {
   const pages = paginateReport(answer);
   return (
     <div className="analysis-document-shell">
@@ -1138,7 +1138,7 @@ export default function App() {
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [historyLaunchFilter, setHistoryLaunchFilter] = useState<{ roleGroup: string; year: number | null } | null>(null);
+  const [historyLaunchFilter, setHistoryLaunchFilter] = useState<{ roleGroup: string; year: number | null; selectedId: string } | null>(null);
   const [historyCandidates, setHistoryCandidates] = useState<HistoricalCandidate[]>(historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" })));
   const [knowledgeTargetId, setKnowledgeTargetId] = useState<string | undefined>();
   const [knowledgeRecords, setKnowledgeRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
@@ -1338,8 +1338,8 @@ export default function App() {
     setHistoryOpen(false);
   }
 
-  function openHistory(roleGroupFilter?: string, year?: number | null) {
-    setHistoryLaunchFilter(roleGroupFilter ? { roleGroup: roleGroupFilter, year: year ?? null } : null);
+  function openHistory(roleGroupFilter?: string, year?: number | null, selectedHistoryId?: string) {
+    setHistoryLaunchFilter(roleGroupFilter ? { roleGroup: roleGroupFilter, year: year ?? null, selectedId: selectedHistoryId ?? "" } : null);
     setHistoryOpen(true);
     setKnowledgeOpen(false);
     setComparisonOpen(false);
@@ -1422,7 +1422,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
