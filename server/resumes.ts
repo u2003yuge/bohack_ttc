@@ -338,15 +338,18 @@ router.post("/:id/analyze", async (request, response, next) => {
         }
       }
     }
-    const analysisReport = await generateRoleReport({
-      name: record.name,
-      resumeText: record.text,
-      roleRequirements,
-      question,
-      externalSources: researchSources,
-      externalSearchStatus: researchStatus,
-    });
-    const scoreCard = await generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements, weights: await readWeights() });
+    const weights = await readWeights();
+    const [analysisReport, scoreCard] = await Promise.all([
+      generateRoleReport({
+        name: record.name,
+        resumeText: record.text,
+        roleRequirements,
+        question,
+        externalSources: researchSources,
+        externalSearchStatus: researchStatus,
+      }),
+      generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements, weights }),
+    ]);
     const updated = {
       ...record,
       analysisReport,
@@ -429,16 +432,21 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
 
   if (process.env.OPENAI_API_KEY && text) {
   try {
-      record.scoreCard = await generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements: "", weights: await readWeights() });
-      record.scoreHistory = appendScoreHistory(record, record.scoreCard, "import");
-      record.analysisReport = await generateInitialReport({
-        name: record.name,
-        role: record.role,
-        location: record.location,
-        education: record.education,
-        skills: record.skills,
-        resumeText: record.text,
-      });
+      const weights = await readWeights();
+      const [scoreCard, analysisReport] = await Promise.all([
+        generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements: "", weights }),
+        generateInitialReport({
+          name: record.name,
+          role: record.role,
+          location: record.location,
+          education: record.education,
+          skills: record.skills,
+          resumeText: record.text,
+        }),
+      ]);
+      record.scoreCard = scoreCard;
+      record.scoreHistory = appendScoreHistory(record, scoreCard, "import");
+      record.analysisReport = analysisReport;
       record.analysisStatus = "complete";
       record.analysisError = "";
       record.analyzedAt = new Date().toISOString();
