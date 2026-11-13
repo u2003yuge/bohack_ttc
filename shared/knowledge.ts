@@ -32,6 +32,21 @@ export const knowledgeKindLabels: Record<KnowledgeKind, string> = {
   company: "公司",
 };
 
+export function findKnowledgeMatch(text: string, record: KnowledgeRecord): string | null {
+  const lowerText = text.toLocaleLowerCase();
+  for (const term of [record.title, ...record.aliases].sort((left, right) => right.length - left.length)) {
+    const candidate = term.trim();
+    if (!candidate) continue;
+    const index = lowerText.indexOf(candidate.toLocaleLowerCase());
+    if (index >= 0) return text.slice(index, index + candidate.length);
+  }
+  return null;
+}
+
+export function findKnowledgeReferences(text: string, records: KnowledgeRecord[]): KnowledgeRecord[] {
+  return records.filter((record) => findKnowledgeMatch(text, record) !== null).slice(0, 6);
+}
+
 // Local seed records. The score is an explainable human-review starting point, not an objective ranking.
 export const knowledgeRecords: KnowledgeRecord[] = [
   { id: "competition-acm-icpc", kind: "competition", title: "ICPC 国际大学生程序设计竞赛", aliases: ["ACM-ICPC", "ICPC"], field: "计算机 / 算法", organizer: "ICPC Foundation", region: "国际", summary: "以团队协作和算法编程能力为核心的大学生程序设计竞赛。", signals: ["团队协作", "算法与数据结构", "限时解题", "国际赛制"], officialUrl: "https://icpc.global/", significanceScore: 92, scoreRationale: "专业相关性强，能够提供算法能力和高压协作的直接证据；仍需核对赛区、名次和年份。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },

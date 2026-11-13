@@ -30,7 +30,7 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, roleGroup, roleGroupLabel, type HistoricalCandidate } from "../shared/history";
-import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
+import { findKnowledgeMatch, findKnowledgeReferences, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -43,6 +43,12 @@ type ResumeListResponse = { resumes: Resume[]; directory: string };
 type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
 const awardPattern = /(奖|获奖|award|acm|icpc|ccf|竞赛|比赛|金牌|银牌|铜牌|一等奖|二等奖|三等奖|优胜奖|冠军|亚军|季军|csp)/i;
 function normalizeEvidence(value: string): string { return value.toLocaleLowerCase().replace(/[\s\u3000]+/g, "").replace(/[，。；：、“”‘’（）()【】[\],.:;!?！？]/g, ""); }
+function renderEvidenceText(value: string, query: string) {
+  const target = query.trim();
+  const index = target ? value.toLocaleLowerCase().indexOf(target.toLocaleLowerCase()) : -1;
+  if (index < 0) return value;
+  return <>{value.slice(0, index)}<mark className="sample-evidence-hit">{value.slice(index, index + target.length)}</mark>{value.slice(index + target.length)}</>;
+}
 
 function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
   const viewerRef = useRef<HTMLDivElement>(null);
@@ -297,13 +303,8 @@ function deriveProjects(candidate: Resume): ProjectBreakdown[] {
   return chunks.slice(0, 4).map((chunk, index) => ({ title: `简历项目 ${index + 1}`, plainTitle: "把这段经历拆成可核对的工作任务", goal: "候选人希望解决的业务或技术问题（需人工核实）", actions: translateRecruitingTerms(chunk), outcome: "简历未明确写出量化结果" }));
 }
 
-function findKnowledgeReferences(candidate: Resume, records: KnowledgeRecord[] = seedKnowledgeRecords): KnowledgeRecord[] {
-  const text = `${candidate.name} ${candidate.role} ${candidate.text}`.toLowerCase();
-  return records.filter((record) => [record.title, ...record.aliases].some((term) => term && text.includes(term.toLowerCase()))).slice(0, 6);
-}
-
 function KnowledgeReferenceBar({ candidate, records, onOpen }: { candidate: Resume; records: KnowledgeRecord[]; onOpen: (id?: string) => void }) {
-  const references = findKnowledgeReferences(candidate, records);
+  const references = findKnowledgeReferences(candidate.text, records);
   return <section className="knowledge-reference-bar"><div><span className="eyebrow">CROSS REFERENCES</span><strong>资料库交叉引用</strong><small>只根据简历原文中的名称或别名匹配</small></div><div className="knowledge-reference-list">{references.length ? references.map((record) => <button key={record.id} onClick={() => onOpen(record.id)}><span className={`knowledge-reference-dot ${record.kind}`} />{record.title}<b>{record.significanceScore}</b></button>) : <span className="knowledge-reference-empty">未识别资料</span>}<button className="knowledge-reference-search" onClick={() => onOpen()}>打开资料库 <ExternalLink size={12} /></button></div></section>;
 }
 
@@ -537,7 +538,7 @@ function KnowledgeReviewHistory({ history }: { history: KnowledgeReviewEntry[] }
   </section>;
 }
 
-function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectResume, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectResume: (id: string) => void; webSearchAvailable: boolean }) {
+function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; webSearchAvailable: boolean }) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
@@ -573,7 +574,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const enrichmentRequestId = useRef(0);
   const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
   const normalizedQuery = query.trim().toLocaleLowerCase();
-  const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeReferences(resume, [record]).length > 0).length])), [records, resumes]);
+  const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeMatch(resume.text, record) !== null).length])), [records, resumes]);
   const filtered = records.filter((record) => {
     const verificationMatches = verificationFilter === "all" || (verificationFilter === "verified" ? record.verificationStatus === "已核验" : record.verificationStatus !== "已核验");
     const linkedMatches = !linkedOnly || (linkedResumeCounts.get(record.id) ?? 0) > 0;
@@ -716,7 +717,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     finally { setSuggesting(false); }
   }
 
-  const referencedResumes = selected ? resumes.filter((resume) => findKnowledgeReferences(resume, records).some((record) => record.id === selected.id)) : [];
+  const referencedResumes = selected ? resumes.flatMap((resume) => { const match = findKnowledgeMatch(resume.text, selected); return match ? [{ resume, match }] : []; }) : [];
   return (
     <main className="knowledge-main">
       <div className="knowledge-shell">
@@ -766,7 +767,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <div className="knowledge-meta"><span><b>领域</b>{selected.field || "未填写"}</span><span><b>组织 / 主办方</b>{selected.organizer || "未填写"}</span><span><b>地区</b>{selected.region || "未填写"}</span><span><b>核验状态</b>{selected.verificationStatus}</span></div>
               <p className="knowledge-summary">{selected.summary || "尚无简介，请编辑资料补充背景和信息边界。"}</p>
               <div className="knowledge-signals"><strong>审核信号</strong><div>{selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <small>尚未添加审核信号</small>}</div></div>
-              <div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map((resume) => <button key={resume.id} onClick={() => { onSelectResume(resume.id); onClose(); }}><span className="candidate-avatar">{resume.initials}</span>{resume.name} · {resume.role}</button>) : <span>当前简历中没有匹配的名称或别名</span>}</div>
+              <div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map(({ resume, match }) => <button key={resume.id} onClick={() => { onSelectEvidence(resume.id, match); onClose(); }} title={`返回简历并定位“${match}”`}><span className="candidate-avatar">{resume.initials}</span><span>{resume.name} · {resume.role}<small>原文命中：{match}</small></span><ExternalLink size={11} /></button>) : <span>当前简历正文中没有匹配的名称或别名</span>}</div>
               <div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 建议需复核后保存</span></div>
                 <label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label>
                 <label className="review-focus">评估侧重（可选）<textarea value={reviewerFocus} onChange={(event) => setReviewerFocus(event.target.value)} maxLength={500} rows={2} placeholder="例如：优先看官方获奖名单与比赛规模，降低宣传性描述的权重" /><small>{reviewerFocus.length}/500</small></label>
@@ -1082,6 +1083,12 @@ export default function App() {
     setAgentError(resume?.analysisStatus === "failed" ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
   }
 
+  function selectResumeEvidence(id: string, evidence: string) {
+    selectResume(id);
+    setEvidenceTarget(evidence);
+    setEvidenceLocation({ query: evidence, page: null });
+  }
+
   const handleEvidenceResult = useCallback((result: { query: string; page: number | null }) => setEvidenceLocation(result), []);
   const locateEvidence = useCallback((evidence: string) => { setEvidenceTarget(evidence); setEvidenceLocation({ query: evidence, page: null }); }, []);
 
@@ -1142,7 +1149,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -1170,10 +1177,10 @@ export default function App() {
               <div className="sample-page">
                 <div className="sample-document-label"><span>BOHACK SAMPLE</span><span>简历资料 · 示例</span></div>
                 <div className="sample-name-block"><div><h3>{selected.name}</h3><p>{selected.role} <span>·</span> {selected.location}</p></div><div className="sample-contact">人才档案<br />{selected.name.toLowerCase().replace(" ", ".")}@example.com</div></div>
-                <div className="sample-summary">{selected.text.split("。")[0]}。</div>
-                <div className="sample-section"><h4>工作经历</h4>{(selected.experiences ?? []).map((experience) => <article className="experience" key={experience.company}><div className="experience-heading"><div><strong>{experience.role}</strong><span>{experience.company}</span></div><time>{experience.period}</time></div><p>{experience.detail}</p></article>)}</div>
-                <div className="sample-section"><h4>教育背景</h4><p className="sample-body">{selected.education}</p></div>
-                <div className="sample-section"><h4>专业技能</h4><div className="skill-list">{selected.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></div>
+                <div className="sample-summary">{renderEvidenceText(`${selected.text.split("。")[0]}。`, evidenceTarget)}</div>
+                <div className="sample-section"><h4>工作经历</h4>{(selected.experiences ?? []).map((experience) => <article className="experience" key={experience.company}><div className="experience-heading"><div><strong>{experience.role}</strong><span>{experience.company}</span></div><time>{experience.period}</time></div><p>{renderEvidenceText(experience.detail, evidenceTarget)}</p></article>)}</div>
+                <div className="sample-section"><h4>教育背景</h4><p className="sample-body">{renderEvidenceText(selected.education, evidenceTarget)}</p></div>
+                <div className="sample-section"><h4>专业技能</h4><div className="skill-list">{selected.skills.map((skill) => <span key={skill}>{renderEvidenceText(skill, evidenceTarget)}</span>)}</div></div>
                 <div className="sample-doc-footer">示例资料仅用于体验工作台。导入 PDF 后将在此处显示原始文件。</div>
               </div>
             )}
