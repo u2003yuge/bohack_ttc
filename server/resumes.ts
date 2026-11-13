@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
+import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates } from "../shared/history.js";
 import { knowledgeRecords, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
@@ -80,6 +80,40 @@ router.post("/knowledge", async (request, response, next) => {
     await mkdir(path.dirname(customKnowledgePath), { recursive: true });
     await writeFile(customKnowledgePath, JSON.stringify(custom, null, 2), "utf8");
     response.status(201).json({ record });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/enrich", async (request, response, next) => {
+  try {
+    const input = request.body ?? {};
+    const title = textInput(input.title, 160);
+    const kind = input.kind as KnowledgeRecord["kind"];
+    if (!title || !["competition", "journal", "company"].includes(kind)) {
+      response.status(400).json({ error: "请先填写资料名称并选择有效类别。" }); return;
+    }
+    if (!process.env.OPENAI_API_KEY) {
+      response.status(503).json({ error: "尚未配置模型服务，无法整理资料草案。" }); return;
+    }
+    const field = textInput(input.field, 120);
+    const organizer = textInput(input.organizer, 120);
+    const region = textInput(input.region, 80);
+    const summary = textInput(input.summary, 1200);
+    const signals = stringList(input.signals, 10, 100);
+    const officialUrl = safeHttpUrl(input.officialUrl);
+    const reviewerHints = textInput(input.reviewerHints, 300);
+    let sources: Awaited<ReturnType<typeof searchPublicWeb>> = [];
+    let searchStatus: "searched" | "no-results" | "not-configured" | "unavailable" = process.env.TAVILY_API_KEY ? "no-results" : "not-configured";
+    if (process.env.TAVILY_API_KEY) {
+      const category = kind === "competition" ? "竞赛" : kind === "journal" ? "期刊 会议" : "公司 官方";
+      try {
+        sources = await searchPublicWeb(`${title} ${organizer} ${field} ${category}`, 5);
+        searchStatus = sources.length ? "searched" : "no-results";
+      } catch {
+        searchStatus = "unavailable";
+      }
+    }
+    const suggestion = await enrichKnowledgeDraft({ title, kind, field, organizer, region, summary, signals, officialUrl, reviewerHints, sources });
+    response.json({ suggestion, sources, searchStatus });
   } catch (error) { next(error); }
 });
 
