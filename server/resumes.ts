@@ -3,8 +3,11 @@ import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Router } from "express";
-import OpenAI from "openai";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
+import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreWeights } from "../shared/scoring.js";
+import { historicalCandidates } from "../shared/history.js";
+import { knowledgeRecords, type KnowledgeRecord } from "../shared/knowledge.js";
 
 type ResumeRecord = {
   id: string;
@@ -19,6 +22,11 @@ type ResumeRecord = {
   education: string;
   skills: string[];
   summary: string;
+  analysisReport: string;
+  scoreCard?: ScoreCard;
+  analysisStatus: "complete" | "unavailable" | "failed";
+  analysisError: string;
+  analyzedAt: string;
   pages: number;
   size: number;
   extractionVersion: number;
@@ -28,7 +36,99 @@ const directory = path.resolve(process.env.RESUME_DIR || ".data/resumes");
 const pdfjsDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../node_modules/pdfjs-dist");
 const router = Router();
 const maxPdfSize = 30 * 1024 * 1024;
-const extractionVersion = 2;
+const extractionVersion = 3;
+const settingsPath = path.join(directory, ".metadata", "settings.json");
+const knowledgeReviewsPath = path.join(directory, ".metadata", "knowledge-reviews.json");
+const customKnowledgePath = path.join(directory, ".metadata", "knowledge-records.json");
+
+router.get("/history", (_request, response) => {
+  response.json({ candidates: historicalCandidates, source: "local-seed", description: "本地历史招聘基准样本" });
+});
+
+router.get("/knowledge", async (_request, response, next) => {
+  try {
+    const reviews = await readKnowledgeReviews();
+    const records = await readKnowledgeRecords();
+    response.json({ records: records.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })), source: "local-json" });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge", async (request, response, next) => {
+  try {
+    const input = request.body ?? {};
+    const kind = input.kind as KnowledgeRecord["kind"];
+    const title = typeof input.title === "string" ? input.title.trim().slice(0, 160) : "";
+    if (!title || !["competition", "journal", "company"].includes(kind)) {
+      response.status(400).json({ error: "请填写资料名称并选择有效类别。" }); return;
+    }
+    const record: KnowledgeRecord = {
+      id: `custom-${crypto.randomUUID()}`,
+      kind,
+      title,
+      aliases: Array.isArray(input.aliases) ? input.aliases.filter((item: unknown): item is string => typeof item === "string").map((item: string) => item.trim()).filter(Boolean).slice(0, 8) : [],
+      field: textInput(input.field, 120), organizer: textInput(input.organizer, 120), region: textInput(input.region, 80),
+      summary: textInput(input.summary, 1200), signals: Array.isArray(input.signals) ? input.signals.filter((item: unknown): item is string => typeof item === "string").slice(0, 10) : [],
+      officialUrl: safeHttpUrl(input.officialUrl), significanceScore: 50,
+      scoreRationale: "新建资料尚未评估。请核验可靠来源和岗位相关证据。",
+      verificationStatus: "示例资料，待核验", updatedAt: new Date().toISOString().slice(0, 10),
+    };
+    const custom = await readCustomKnowledge();
+    custom.unshift(record);
+    await mkdir(path.dirname(customKnowledgePath), { recursive: true });
+    await writeFile(customKnowledgePath, JSON.stringify(custom, null, 2), "utf8");
+    response.status(201).json({ record });
+  } catch (error) { next(error); }
+});
+
+router.put("/knowledge/:id/review", async (request, response, next) => {
+  try {
+    const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
+    if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
+    const score = Number(request.body?.significanceScore);
+    const rationale = typeof request.body?.scoreRationale === "string" ? request.body.scoreRationale.trim().slice(0, 500) : record.scoreRationale;
+    if (!Number.isFinite(score) || score < 0 || score > 100) { response.status(400).json({ error: "含金量评分需要是 0 到 100 之间的数字。" }); return; }
+    const reviews = await readKnowledgeReviews();
+    reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, updatedAt: new Date().toISOString().slice(0, 10) };
+    await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
+    await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
+    response.json({ record: { ...record, ...reviews[record.id] } });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/:id/suggest", async (request, response, next) => {
+  try {
+    const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
+    if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
+    const roleContext = typeof request.body?.roleContext === "string" ? request.body.roleContext.trim().slice(0, 300) : "";
+    const suggestion = await suggestKnowledgeAssessment({ ...record, roleContext });
+    response.json({ suggestion });
+  } catch (error) { next(error); }
+});
+
+router.get("/scoring/weights", async (_request, response) => {
+  response.json({ weights: await readWeights() });
+});
+
+router.put("/scoring/weights", async (request, response, next) => {
+  try {
+    const weights = normalizeWeightInput(request.body?.weights);
+    await saveWeights(weights);
+    response.json({ weights });
+  } catch (error) { next(error); }
+});
+
+router.post("/scoring/weights/adjust", async (request, response, next) => {
+  try {
+    const instruction = request.body?.instruction;
+    if (typeof instruction !== "string" || !instruction.trim()) {
+      response.status(400).json({ error: "请描述希望如何调整评分权重。" });
+      return;
+    }
+    const weights = await suggestScoreWeights(instruction, await readWeights());
+    await saveWeights(weights);
+    response.json({ weights });
+  } catch (error) { next(error); }
+});
 
 router.use(async (_request, _response, next) => {
   try {
@@ -149,6 +249,40 @@ router.delete("/:id", async (request, response, next) => {
   }
 });
 
+router.post("/:id/analyze", async (request, response, next) => {
+  try {
+    const record = await readRecord(request.params.id);
+    if (!record) {
+      response.status(404).json({ error: "找不到这份简历。" });
+      return;
+    }
+    const { roleRequirements, question } = request.body ?? {};
+    if (typeof question !== "string" || typeof roleRequirements !== "string") {
+      response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
+      return;
+    }
+    const analysisReport = await generateRoleReport({
+      name: record.name,
+      resumeText: record.text,
+      roleRequirements,
+      question,
+    });
+    const scoreCard = await generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements, weights: await readWeights() });
+    const updated = {
+      ...record,
+      analysisReport,
+      scoreCard,
+      analysisStatus: "complete" as const,
+      analysisError: "",
+      analyzedAt: new Date().toISOString(),
+    };
+    await writeRecord(updated);
+    response.json({ answer: analysisReport, resume: updated });
+  } catch (error) {
+    next(error);
+  }
+});
+
 async function readDirectory(): Promise<ResumeRecord[]> {
   const names = await readdir(directory);
   const pdfNames = names.filter((name) => name.toLowerCase().endsWith(".pdf"));
@@ -157,7 +291,9 @@ async function readDirectory(): Promise<ResumeRecord[]> {
     const batch = await Promise.all(pdfNames.slice(offset, offset + 3).map(async (name) => {
       const id = path.basename(name, path.extname(name));
       const existing = await readRecord(id);
-      if (existing?.extractionVersion === extractionVersion) return existing;
+      // Startup listing must stay responsive. Existing metadata is returned as-is;
+      // explicit scan/retry endpoints can rebuild stale records in the background.
+      if (existing) return existing;
       const record = await indexPdf(path.join(directory, name), id, name);
       await writeRecord(record);
       return record;
@@ -189,7 +325,7 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
   const fallbackName = path.basename(fileName, path.extname(fileName)).replace(/[-_]+/g, " ").trim();
   const name = ai?.name?.trim() || fallbackName || "未命名候选人";
   const fileStats = await stat(filePath);
-  return {
+  const record: ResumeRecord = {
     id,
     fileName,
     name,
@@ -202,39 +338,82 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
     education: ai?.education?.trim() || "待确认",
     skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
+    analysisReport: "",
+    analysisStatus: process.env.OPENAI_API_KEY ? "failed" : "unavailable",
+    analysisError: process.env.OPENAI_API_KEY ? "" : "未配置模型服务，无法生成初始分析报告。",
+    analyzedAt: "",
     pages: pages.length,
     size: fileStats.size,
     extractionVersion,
   };
+
+  if (process.env.OPENAI_API_KEY && text) {
+  try {
+      record.scoreCard = await generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements: "", weights: await readWeights() });
+      record.analysisReport = await generateInitialReport({
+        name: record.name,
+        role: record.role,
+        location: record.location,
+        education: record.education,
+        skills: record.skills,
+        resumeText: record.text,
+      });
+      record.analysisStatus = "complete";
+      record.analysisError = "";
+      record.analyzedAt = new Date().toISOString();
+    } catch (error) {
+      record.analysisStatus = "failed";
+      record.analysisError = error instanceof Error ? error.message : "初始分析报告生成失败";
+    }
+  } else if (!text) {
+    record.analysisStatus = "failed";
+    record.analysisError = "没有提取到可分析文本。扫描件 PDF 需要先接入 OCR。";
+  }
+  return record;
 }
 
-async function extractCandidate(text: string, fileName: string): Promise<Partial<Pick<ResumeRecord, "name" | "role" | "location" | "education" | "skills" | "summary">> | null> {
-  if (!process.env.OPENAI_API_KEY || !text) return null;
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, baseURL: process.env.OPENAI_BASE_URL || undefined, timeout: 45000 });
+async function readWeights(): Promise<ScoreWeights> {
   try {
-    const result = await client.chat.completions.create({
-      model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
-      temperature: 0,
-      messages: [
-        { role: "system", content: "你是简历信息提取器。只提取原文明确出现的信息，不推断敏感属性。仅返回合法 JSON，字段为 name、role、location、education、skills（字符串数组）、summary（不超过 80 字）。未知的字符串字段填空字符串，skills 没有证据则返回空数组。" },
-        { role: "user", content: `文件名：${fileName}\n简历原文：\n${text.slice(0, 18000)}` },
-      ],
-    });
-    const content = result.choices[0]?.message?.content ?? "";
-    const json = content.slice(content.indexOf("{"), content.lastIndexOf("}") + 1);
-    if (!json.startsWith("{") || !json.endsWith("}")) return null;
-    const parsed = JSON.parse(json) as Record<string, unknown>;
-    return {
-      name: typeof parsed.name === "string" ? parsed.name : "",
-      role: typeof parsed.role === "string" ? parsed.role : "",
-      location: typeof parsed.location === "string" ? parsed.location : "",
-      education: typeof parsed.education === "string" ? parsed.education : "",
-      skills: Array.isArray(parsed.skills) ? parsed.skills.filter((value): value is string => typeof value === "string") : [],
-      summary: typeof parsed.summary === "string" ? parsed.summary : "",
-    };
-  } catch {
-    return null;
-  }
+    const parsed = JSON.parse(await readFile(settingsPath, "utf8")) as { weights?: Partial<ScoreWeights> };
+    return normalizeWeightInput(parsed.weights);
+  } catch { return defaultScoreWeights; }
+}
+
+async function saveWeights(weights: ScoreWeights): Promise<void> {
+  await mkdir(path.dirname(settingsPath), { recursive: true });
+  await writeFile(settingsPath, JSON.stringify({ weights }, null, 2), "utf8");
+}
+
+function normalizeWeightInput(input: unknown): ScoreWeights {
+  const record = input && typeof input === "object" ? input as Partial<ScoreWeights> : {};
+  return normalizeWeights(Object.fromEntries(Object.keys(defaultScoreWeights).map((key) => {
+    const value = Number(record[key as keyof ScoreWeights]);
+    return [key, Number.isFinite(value) ? Math.max(0, value) : defaultScoreWeights[key as keyof ScoreWeights]];
+  })) as ScoreWeights);
+}
+
+async function readKnowledgeReviews(): Promise<Record<string, { significanceScore?: number; scoreRationale?: string; updatedAt?: string }>> {
+  try { return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, { significanceScore?: number; scoreRationale?: string; updatedAt?: string }>; }
+  catch { return {}; }
+}
+
+async function readCustomKnowledge(): Promise<KnowledgeRecord[]> {
+  try { return JSON.parse(await readFile(customKnowledgePath, "utf8")) as KnowledgeRecord[]; }
+  catch { return []; }
+}
+
+async function readKnowledgeRecords(): Promise<KnowledgeRecord[]> {
+  return [...await readCustomKnowledge(), ...knowledgeRecords];
+}
+
+function textInput(value: unknown, limit: number): string {
+  return typeof value === "string" ? value.trim().slice(0, limit) : "";
+}
+
+function safeHttpUrl(value: unknown): string {
+  const candidate = textInput(value, 500);
+  try { const url = new URL(candidate); return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : ""; }
+  catch { return ""; }
 }
 
 async function writeRecord(record: ResumeRecord): Promise<void> {

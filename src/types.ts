@@ -18,7 +18,15 @@ export type Resume = {
   education: string;
   skills: string[];
   summary?: string;
+  analysisReport?: string;
+  scoreCard?: ScoreCard;
+  benchmark?: Benchmark;
+  analysisStatus?: "complete" | "unavailable" | "failed";
+  analysisError?: string;
+  analyzedAt?: string;
   fileName?: string;
   pages?: number;
   size?: number;
 };
+import type { ScoreCard } from "../shared/scoring";
+import type { Benchmark } from "../shared/history";

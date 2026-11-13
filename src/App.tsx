@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDownToLine,
+  ArrowDown,
+  ArrowUp,
   ArrowUpFromLine,
+  BookOpen,
+  ExternalLink,
   BriefcaseBusiness,
   Check,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   CircleHelp,
   FileText,
   FolderOpen,
@@ -20,21 +22,30 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
+import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
+import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
+import { calculateBenchmark, type Benchmark } from "../shared/history";
+import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
+type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
+const awardPattern = /(奖|获奖|award|acm|icpc|ccf|竞赛|比赛|金牌|银牌|铜牌|一等奖|二等奖|三等奖|优胜奖|冠军|亚军|季军|csp)/i;
 
 function PdfReader({ url, title }: { url: string; title: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [textLines, setTextLines] = useState<PdfTextLine[]>([]);
+  const [awardLines, setAwardLines] = useState<PdfTextLine[]>([]);
+  const [showAwardMask, setShowAwardMask] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,6 +53,8 @@ function PdfReader({ url, title }: { url: string; title: string }) {
     setDocument(null);
     setPageNumber(1);
     setZoom(1);
+    setTextLines([]);
+    setAwardLines([]);
     setLoading(true);
     setError("");
     void (async () => {
@@ -79,49 +92,115 @@ function PdfReader({ url, title }: { url: string; title: string }) {
   }, [url]);
 
   useEffect(() => {
-    if (!document || !canvasRef.current) return;
+    if (!document) return;
     let cancelled = false;
-    let page: PDFPageProxy | undefined;
-    let renderTask: RenderTask | undefined;
+    const renderTasks: RenderTask[] = [];
     void (async () => {
       try {
-        page = await document.getPage(pageNumber);
-        if (cancelled || !canvasRef.current) return;
-        const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
-        if (!context) throw new Error("浏览器无法创建 PDF 阅读画布。");
-        const viewport = page.getViewport({ scale: zoom });
-        const outputScale = window.devicePixelRatio || 1;
-        canvas.width = Math.floor(viewport.width * outputScale);
-        canvas.height = Math.floor(viewport.height * outputScale);
-        canvas.style.width = `${viewport.width}px`;
-        canvas.style.height = `${viewport.height}px`;
-        renderTask = page.render({
-          canvasContext: context,
-          viewport,
-          transform: outputScale === 1 ? undefined : [outputScale, 0, 0, outputScale, 0, 0],
-        });
-        await renderTask.promise;
+        const pdfjs = await import("pdfjs-dist");
+        setLoading(true);
+        const detected: PdfTextLine[] = [];
+        const pageTextLines: PdfTextLine[] = [];
+        for (let currentPage = 1; currentPage <= document.numPages; currentPage += 1) {
+          if (cancelled) return;
+          const page = await document.getPage(currentPage);
+          const textContent = await page.getTextContent();
+          const pageElement = pageRefs.current[currentPage - 1];
+          const canvas = pageElement?.querySelector("canvas");
+          const context = canvas?.getContext("2d");
+          if (!canvas || !context) throw new Error("浏览器无法创建 PDF 阅读画布。");
+          const viewport = page.getViewport({ scale: zoom });
+          const outputScale = window.devicePixelRatio || 1;
+          canvas.width = Math.floor(viewport.width * outputScale);
+          canvas.height = Math.floor(viewport.height * outputScale);
+          canvas.style.width = `${viewport.width}px`;
+          canvas.style.height = `${viewport.height}px`;
+          const textLines: PdfTextLine[] = [];
+          for (const [itemIndex, rawItem] of textContent.items.entries()) {
+            if (!("str" in rawItem) || !("transform" in rawItem) || !("width" in rawItem)) continue;
+            const text = rawItem.str.trim();
+            if (!text) continue;
+            const transform = pdfjs.Util.transform(viewport.transform, rawItem.transform);
+            const height = Math.max(8, Math.hypot(transform[2], transform[3]));
+            const line: PdfTextLine = {
+              id: `${currentPage}:${itemIndex}`,
+              page: currentPage,
+              text,
+              x: transform[4],
+              y: transform[5] - height,
+              width: Math.max(1, rawItem.width * zoom),
+              height,
+              angle: Math.atan2(transform[1], transform[0]),
+            };
+            textLines.push(line);
+            pageTextLines.push(line);
+            if (awardPattern.test(text)) detected.push(line);
+          }
+          const pageContent = pageElement?.querySelector<HTMLElement>(".pdf-page-content");
+          if (pageContent) {
+            pageContent.style.width = `${viewport.width}px`;
+            pageContent.style.height = `${viewport.height}px`;
+          }
+          const renderTask = page.render({
+            canvasContext: context,
+            viewport,
+            transform: outputScale === 1 ? undefined : [outputScale, 0, 0, outputScale, 0, 0],
+          });
+          renderTasks.push(renderTask);
+          await renderTask.promise;
+          page.cleanup();
+        }
+        if (!cancelled) {
+          setTextLines(pageTextLines);
+          setAwardLines(detected);
+        }
+        if (!cancelled) setLoading(false);
       } catch (cause) {
         if (!cancelled && !(cause instanceof Error && cause.name === "RenderingCancelledException")) {
           setError(cause instanceof Error ? cause.message : "无法渲染 PDF 页面。");
+          setLoading(false);
         }
       }
     })();
     return () => {
       cancelled = true;
-      renderTask?.cancel();
-      page?.cleanup();
+      renderTasks.forEach((task) => task.cancel());
     };
-  }, [document, pageNumber, zoom]);
+  }, [document, zoom]);
+
+  function goToPage(nextPage: number) {
+    const target = Math.min(document?.numPages ?? 1, Math.max(1, nextPage));
+    setPageNumber(target);
+    const viewer = viewerRef.current;
+    const page = pageRefs.current[target - 1];
+    if (viewer && page) {
+      const top = viewer.scrollTop + page.getBoundingClientRect().top - viewer.getBoundingClientRect().top - 12;
+      viewer.scrollTo({ top, behavior: "smooth" });
+    }
+  }
+
+  function handleScroll() {
+    const containerTop = viewerRef.current?.getBoundingClientRect().top ?? 0;
+    let closestPage = pageNumber;
+    let closestDistance = Number.POSITIVE_INFINITY;
+    pageRefs.current.forEach((pageElement, index) => {
+      if (!pageElement) return;
+      const distance = Math.abs(pageElement.getBoundingClientRect().top - containerTop - 16);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestPage = index + 1;
+      }
+    });
+    if (closestPage !== pageNumber) setPageNumber(closestPage);
+  }
 
   return (
     <div className="pdf-viewer">
       <div className="pdf-viewer-toolbar">
         <div className="pdf-page-controls">
-          <button className="reader-button" onClick={() => setPageNumber((current) => Math.max(1, current - 1))} disabled={!document || pageNumber <= 1} title="上一页" aria-label="上一页"><ChevronLeft size={16} /></button>
+          <button className="reader-button" onClick={() => goToPage(pageNumber - 1)} disabled={!document || pageNumber <= 1} title="向上翻页" aria-label="向上翻页"><ArrowUp size={15} /></button>
           <span className="page-indicator">{loading ? "读取中" : `${pageNumber} / ${document?.numPages ?? 0}`}</span>
-          <button className="reader-button" onClick={() => setPageNumber((current) => Math.min(document?.numPages ?? current, current + 1))} disabled={!document || pageNumber >= (document?.numPages ?? 1)} title="下一页" aria-label="下一页"><ChevronRight size={16} /></button>
+          <button className="reader-button" onClick={() => goToPage(pageNumber + 1)} disabled={!document || pageNumber >= (document?.numPages ?? 1)} title="向下翻页" aria-label="向下翻页"><ArrowDown size={15} /></button>
         </div>
         <div className="pdf-zoom-controls">
           <button className="reader-button" onClick={() => setZoom((current) => Math.max(0.6, Math.round((current - 0.1) * 10) / 10))} disabled={zoom <= 0.6} title="缩小" aria-label="缩小"><Minus size={15} /></button>
@@ -130,13 +209,244 @@ function PdfReader({ url, title }: { url: string; title: string }) {
         </div>
         <a className="reader-button download-link" href={url} download={title} title="下载 PDF" aria-label="下载 PDF"><ArrowDownToLine size={15} /></a>
       </div>
-      <div className="pdf-canvas-wrap">
+      <label className="award-mask-toggle" title="显示或隐藏当前 PDF 中全部奖项标注">
+        <span className="award-swatch" />
+        <span>奖项标注</span>
+        <span className="award-count">{awardLines.length}</span>
+        <input className="switch-input" type="checkbox" role="switch" aria-label="显示奖项标注" checked={showAwardMask} onChange={(event) => setShowAwardMask(event.target.checked)} />
+        <span className="switch-track" aria-hidden="true"><span className="switch-thumb" /></span>
+      </label>
+      <div ref={viewerRef} className="pdf-canvas-wrap" onScroll={handleScroll}>
         {loading && <div className="reader-message"><LoaderCircle className="spin" size={18} />正在打开 PDF</div>}
         {error && <div className="reader-error">{error}</div>}
-        <canvas ref={canvasRef} className={`pdf-canvas ${loading || error ? "hidden" : ""}`} aria-label={`${title} 第 ${pageNumber} 页`} />
+        {document && !error && Array.from({ length: document.numPages }, (_, index) => (
+          <div className="pdf-page" key={index} ref={(element) => { pageRefs.current[index] = element; }} data-page={index + 1}>
+            <div className="pdf-page-label">第 {index + 1} 页</div>
+            <div className="pdf-page-content">
+              <canvas className="pdf-canvas" aria-label={`${title} 第 ${index + 1} 页`} />
+              <div className={`pdf-text-layer ${showAwardMask ? "awards-visible" : ""}`} aria-label="奖项文字标注覆盖层">
+                {textLines.filter((line) => line.page === index + 1).map((line) => <span className={`pdf-text-item ${showAwardMask && awardPattern.test(line.text) ? "award-hit" : ""}`} key={line.id} style={{ left: line.x, top: line.y, width: line.width, height: line.height, fontSize: line.height, transform: `rotate(${line.angle}rad)` }}>{line.text}</span>)}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
+}
+
+type ProjectBreakdown = { title: string; plainTitle: string; goal: string; actions: string; outcome: string };
+
+function translateRecruitingTerms(value: string): string {
+  const terms: Array<[RegExp, string]> = [
+    [/B2B\s*SaaS/gi, "面向企业的在线软件服务"], [/SaaS/gi, "在线软件服务"], [/KPI/gi, "关键工作指标"], [/OKR/gi, "目标和关键结果"], [/A\/?B\s*测试/gi, "比较两个方案哪个更有效"], [/ETL/gi, "把不同来源的数据整理到一起"], [/CI\/?CD/gi, "自动测试并发布代码"], [/RAG/gi, "让 AI 先查资料再回答"], [/LLM/gi, "大语言模型"], [/API/gi, "让不同软件互相传递数据的接口"], [/微服务/g, "把系统拆成多个可独立维护的小服务"], [/数据中台/g, "统一收集和使用业务数据的平台"], [/低代码/g, "少写代码就能搭建的工具"], [/留存分析/g, "查看用户是否持续使用产品"], [/增长实验/g, "用小范围测试验证增长办法"],
+  ];
+  return terms.reduce((result, [pattern, replacement]) => result.replace(pattern, replacement), value);
+}
+
+function deriveProjects(candidate: Resume): ProjectBreakdown[] {
+  const experiences = candidate.experiences ?? [];
+  if (experiences.length) return experiences.slice(0, 4).map((experience) => {
+    const sentences = experience.detail.split(/[。；;]/).map((item) => item.trim()).filter(Boolean);
+    return { title: `${experience.company} · ${experience.role}`, plainTitle: translateRecruitingTerms(experience.role), goal: `在 ${experience.company} 负责与岗位相关的工作`, actions: translateRecruitingTerms(sentences.slice(0, 1).join("；") || experience.detail), outcome: translateRecruitingTerms(sentences.slice(1).join("；") || "简历未明确写出量化结果") };
+  });
+  const chunks = candidate.text.split(/[。；\n]/).map((item) => item.trim()).filter((item) => /负责|主导|搭建|优化|项目|交付|提升|降低/.test(item));
+  return chunks.slice(0, 4).map((chunk, index) => ({ title: `简历项目 ${index + 1}`, plainTitle: "把这段经历拆成可核对的工作任务", goal: "候选人希望解决的业务或技术问题（需人工核实）", actions: translateRecruitingTerms(chunk), outcome: "简历未明确写出量化结果" }));
+}
+
+function findKnowledgeReferences(candidate: Resume): KnowledgeRecord[] {
+  const text = `${candidate.name} ${candidate.role} ${candidate.text}`.toLowerCase();
+  return seedKnowledgeRecords.filter((record) => [record.title, ...record.aliases].some((term) => term && text.includes(term.toLowerCase()))).slice(0, 6);
+}
+
+function KnowledgeReferenceBar({ candidate, onOpen }: { candidate: Resume; onOpen: (id?: string) => void }) {
+  const references = findKnowledgeReferences(candidate);
+  return <section className="knowledge-reference-bar"><div><span className="eyebrow">CROSS REFERENCES</span><strong>资料库交叉引用</strong><small>只根据简历原文中的名称或别名匹配</small></div><div className="knowledge-reference-list">{references.length ? references.map((record) => <button key={record.id} onClick={() => onOpen(record.id)}><span className={`knowledge-reference-dot ${record.kind}`} />{record.title}<b>{record.significanceScore}</b></button>) : <span className="knowledge-reference-empty">未识别资料</span>}<button className="knowledge-reference-search" onClick={() => onOpen()}>打开资料库 <ExternalLink size={12} /></button></div></section>;
+}
+
+function radarPoint(index: number, value: number, radius: number, center: number): string {
+  const angle = -Math.PI / 2 + (index * Math.PI * 2) / scoreCriteria.length;
+  return `${center + Math.cos(angle) * radius * value / 100},${center + Math.sin(angle) * radius * value / 100}`;
+}
+
+function ScoreRadar({ card }: { card: ScoreCard }) {
+  const center = 96;
+  const radius = 67;
+  const outer = scoreCriteria.map((_, index) => radarPoint(index, 100, radius, center)).join(" ");
+  const values = scoreCriteria.map(({ key }) => card.criteria[key].score);
+  const area = values.map((value, index) => radarPoint(index, value, radius, center)).join(" ");
+  return <div className="score-radar"><svg viewBox="0 0 192 192" role="img" aria-label="六项能力雷达图"><polygon points={outer} className="radar-grid" />{[25, 50, 75].map((level) => <polygon key={level} points={scoreCriteria.map((_, index) => radarPoint(index, level, radius, center)).join(" ")} className="radar-ring" />)}{scoreCriteria.map((_, index) => <line key={index} x1={center} y1={center} x2={radarPoint(index, 100, radius, center).split(",")[0]} y2={radarPoint(index, 100, radius, center).split(",")[1]} className="radar-axis" />)}<polygon points={area} className="radar-area" />{values.map((value, index) => { const [x, y] = radarPoint(index, value, radius, center).split(","); return <circle key={index} cx={x} cy={y} r="3" className="radar-dot" />; })}</svg><div className="radar-labels">{scoreCriteria.map(({ key, label }, index) => <span key={key} className={`radar-label radar-label-${index}`}>{label}<b>{card.criteria[key].score.toFixed(0)}</b></span>)}</div></div>;
+}
+
+function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume }) {
+  const awardCount = (candidate.text.match(/奖|获奖|award|ACM|ICPC|CCF|竞赛|冠军|金牌/gi) ?? []).length;
+  const points = [0, 1, 2, 3].map((index) => Math.min(100, Math.max(0, card.composite - (3 - index) * (4 + Math.min(awardCount, 3)) + (index > 1 ? awardCount * 1.5 : 0))));
+  const path = points.map((value, index) => `${28 + index * 76},${105 - value * 0.7}`).join(" ");
+  const labels = candidate.experiences?.slice(0, 4).map((experience) => experience.period) ?? [];
+  return <div className="score-trend"><div className="trend-legend"><span>综合分-时间趋势</span><small>基于简历时间线与奖项证据的趋势示意</small></div><svg viewBox="0 0 260 132" role="img" aria-label="综合分时间趋势折线图"><line x1="26" y1="105" x2="248" y2="105" className="trend-axis" /><line x1="26" y1="35" x2="26" y2="105" className="trend-axis" /><polyline points={path} className="trend-line" />{points.map((value, index) => <g key={index}><circle cx={28 + index * 76} cy={105 - value * 0.7} r="4" className="trend-dot" /><text x={28 + index * 76} y="122" textAnchor="middle" className="trend-label">{labels[index] || (index === 0 ? "早期" : index === 3 ? "当前" : `阶段 ${index + 1}`)}</text></g>)}</svg></div>;
+}
+
+function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
+  const projects = deriveProjects(candidate);
+  return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><span>{projects.length} 项</span></div>{projects.length ? projects.map((project) => <article className="project-item" key={project.title}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl></article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
+}
+
+function BenchmarkBadge({ benchmark }: { benchmark: Benchmark }) {
+  return <section className="benchmark-card"><div className="benchmark-main"><span className="eyebrow">HISTORICAL BENCHMARK</span><div className="benchmark-percentile"><strong>超过历史样本 {benchmark.percentile}%</strong><span>同岗位族 · {benchmark.sampleCount} 份历史简历</span></div><div className="benchmark-track"><i style={{ width: `${benchmark.percentile}%` }} /><b style={{ left: `${benchmark.percentile}%` }} /></div></div><div className="benchmark-stats"><div><span>首轮通过参考线</span><strong>{benchmark.screenCutoff}</strong></div><div><span>最终录取参考线</span><strong>{benchmark.hireCutoff}</strong></div><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div></div><p>百分位只用于辅助比较，样本来自本地历史记录；请结合岗位要求和原始证据复核。</p></section>;
+}
+
+function ScoreInsights({ card, candidate, onOpenKnowledge }: { card: ScoreCard; candidate: Resume; onOpenKnowledge: (id?: string) => void }) {
+  return <div className="score-insights"><BenchmarkBadge benchmark={calculateBenchmark(candidate.role, card.composite)} /><KnowledgeReferenceBar candidate={candidate} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} /></div></section><ProjectBreakdownView candidate={candidate} /></div>;
+}
+
+function depthScore(card: ScoreCard): number {
+  const keys: ScoreKey[] = ["leadership", "expertise", "experience", "roleFit", "growth"];
+  return Math.round(keys.reduce((total, key) => total + card.criteria[key].score, 0) / keys.length * 10) / 10;
+}
+
+function RecruitmentQualityMap({ candidates }: { candidates: Array<{ resume: Resume; card: ScoreCard }> }) {
+  const width = 620;
+  const height = 320;
+  const left = 56;
+  const right = 24;
+  const top = 28;
+  const bottom = 48;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const pointX = (breadth: number) => left + (breadth / 100) * plotWidth;
+  const pointY = (depth: number) => top + plotHeight - (depth / 100) * plotHeight;
+  const maxComposite = Math.max(...candidates.map(({ card }) => card.composite), 1);
+  return <section className="quality-map-section"><div className="quality-map-head"><div><span className="eyebrow">RECRUITING QUALITY MAP</span><h3>招聘质量图 · 深度 × 广度</h3><p>用一张图识别候选人的能力深度与经历广度。气泡越大，综合分越高。</p></div><div className="quality-map-legend"><span><i className="legend-dot legend-deep" />能力深度</span><span><i className="legend-dot legend-wide" />经历广度</span></div></div><div className="quality-map-wrap"><svg className="quality-map" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="候选人招聘质量深度广度散点图"><rect x={left} y={top} width={plotWidth} height={plotHeight} className="quality-map-bg" /><rect x={left} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-learning" /><rect x={left + plotWidth / 2} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-deep" /><rect x={left} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-narrow" /><rect x={left + plotWidth / 2} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-broad" /><line x1={left + plotWidth / 2} y1={top} x2={left + plotWidth / 2} y2={top + plotHeight} className="quality-midline" /><line x1={left} y1={top + plotHeight / 2} x2={left + plotWidth} y2={top + plotHeight / 2} className="quality-midline" /><line x1={left} y1={top + plotHeight} x2={left + plotWidth} y2={top + plotHeight} className="quality-axis" /><line x1={left} y1={top} x2={left} y2={top + plotHeight} className="quality-axis" /><text x={left + plotWidth / 4} y={top + 18} className="quality-quadrant-label">待验证的成长型</text><text x={left + plotWidth * .75} y={top + 18} className="quality-quadrant-label">深度与广度兼具</text><text x={left + plotWidth / 4} y={top + plotHeight - 12} className="quality-quadrant-label">单一领域深耕</text><text x={left + plotWidth * .75} y={top + plotHeight - 12} className="quality-quadrant-label">广泛经历待聚焦</text>{[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={pointX(tick)} y1={top + plotHeight} x2={pointX(tick)} y2={top + plotHeight + 4} className="quality-axis" /><text x={pointX(tick)} y={height - 25} textAnchor="middle" className="quality-tick">{tick}</text><line x1={left - 4} y1={pointY(tick)} x2={left} y2={pointY(tick)} className="quality-axis" /><text x={left - 9} y={pointY(tick) + 3} textAnchor="end" className="quality-tick">{tick}</text></g>)}{candidates.map(({ resume, card }, index) => { const breadth = card.criteria.perspective.score; const depth = depthScore(card); const radius = 8 + (card.composite / maxComposite) * 7; const x = pointX(breadth); const y = pointY(depth); return <g key={resume.id} className="quality-point"><title>{`${resume.name}：深度 ${depth.toFixed(0)}，广度 ${breadth.toFixed(0)}，综合分 ${card.composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={radius} className={`quality-bubble quality-bubble-${Math.min(index + 1, 4)}`} /><text x={x} y={y - radius - 5} textAnchor="middle" className="quality-name">{resume.name.length > 9 ? `${resume.name.slice(0, 9)}…` : resume.name}</text></g>; })}<text x={left + plotWidth / 2} y={height - 7} textAnchor="middle" className="quality-axis-label">经历广度（行业、领域、方法和团队经历）</text><text x="14" y={top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 14 ${top + plotHeight / 2})`} className="quality-axis-label">能力深度</text></svg></div><div className="quality-map-note"><span>深度 = 领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>广度 = 经历广度分</span></div></section>;
+}
+
+function KnowledgeBaseView({ onClose, initialId, resumes, onSelectResume }: { onClose: () => void; initialId?: string; resumes: Resume[]; onSelectResume: (id: string) => void }) {
+  const [records, setRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
+  const [kind, setKind] = useState<KnowledgeKind | "all">("all");
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState(seedKnowledgeRecords[0].id);
+  const [reviewScore, setReviewScore] = useState(seedKnowledgeRecords[0].significanceScore);
+  const [reviewNote, setReviewNote] = useState(seedKnowledgeRecords[0].scoreRationale);
+  const [saving, setSaving] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
+  const [roleContext, setRoleContext] = useState("");
+  const [suggestionQuestions, setSuggestionQuestions] = useState<string[]>([]);
+  const [reviewError, setReviewError] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [createBusy, setCreateBusy] = useState(false);
+  const [draft, setDraft] = useState({ title: "", kind: "competition" as KnowledgeKind, field: "", organizer: "", region: "", summary: "", officialUrl: "" });
+  const filtered = records.filter((record) => (kind === "all" || record.kind === kind) && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer}`.toLowerCase().includes(query.toLowerCase()));
+  const selected = records.find((record) => record.id === selectedId) ?? filtered[0] ?? records[0];
+
+  useEffect(() => {
+    fetch("/api/resumes/knowledge").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.records)) setRecords(payload.records); }).catch(() => undefined);
+  }, []);
+  useEffect(() => {
+    if (initialId && records.some((record) => record.id === initialId)) setSelectedId(initialId);
+  }, [initialId, records]);
+  useEffect(() => {
+    if (!selected) return;
+    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale);
+  }, [selected?.id]);
+
+  async function saveReview() {
+    if (!selected) return;
+    setSaving(true);
+    try {
+      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/review`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ significanceScore: reviewScore, scoreRationale: reviewNote }) });
+      const payload = await response.json();
+      if (response.ok && payload.record) setRecords((current) => current.map((record) => record.id === selected.id ? payload.record : record));
+    } finally { setSaving(false); }
+  }
+
+  async function suggestReview() {
+    if (!selected) return;
+    setSuggesting(true); setReviewError(""); setSuggestionQuestions([]);
+    try {
+      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/suggest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roleContext }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "AI 建议暂时不可用。");
+      setReviewScore(payload.suggestion.score);
+      setReviewNote(payload.suggestion.rationale);
+      setSuggestionQuestions(payload.suggestion.verificationQuestions ?? []);
+    } catch (error) { setReviewError(error instanceof Error ? error.message : "AI 建议暂时不可用。"); }
+    finally { setSuggesting(false); }
+  }
+
+  async function createRecord() {
+    if (!draft.title.trim()) return;
+    setCreateBusy(true);
+    try {
+      const response = await fetch("/api/resumes/knowledge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draft) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法新增资料。");
+      setRecords((current) => [payload.record, ...current]); setSelectedId(payload.record.id); setKind("all"); setQuery(""); setCreating(false);
+      setDraft({ title: "", kind: "competition", field: "", organizer: "", region: "", summary: "", officialUrl: "" });
+    } catch (error) { setReviewError(error instanceof Error ? error.message : "无法新增资料。"); }
+    finally { setCreateBusy(false); }
+  }
+
+  const referencedResumes = selected ? resumes.filter((resume) => findKnowledgeReferences(resume).some((record) => record.id === selected.id)) : [];
+  return <main className="knowledge-main"><div className="knowledge-shell"><div className="knowledge-header"><div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查询背景资料，形成可解释的人工含金量判断，并在简历审核时交叉引用。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></div><div className="knowledge-body"><aside className="knowledge-list"><label className="search-box knowledge-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索名称、领域或主办方" /></label><button className="add-knowledge-button" onClick={() => setCreating((value) => !value)}>{creating ? <X size={13} /> : <Plus size={13} />}{creating ? "取消新增" : "新增资料"}</button>{creating && <div className="knowledge-create-form"><input value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} placeholder="资料名称 *" /><select value={draft.kind} onChange={(event) => setDraft({ ...draft, kind: event.target.value as KnowledgeKind })}>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <option value={key} key={key}>{knowledgeKindLabels[key]}</option>)}</select><input value={draft.field} onChange={(event) => setDraft({ ...draft, field: event.target.value })} placeholder="所属领域" /><input value={draft.organizer} onChange={(event) => setDraft({ ...draft, organizer: event.target.value })} placeholder="主办方 / 组织" /><input value={draft.region} onChange={(event) => setDraft({ ...draft, region: event.target.value })} placeholder="地区" /><textarea value={draft.summary} onChange={(event) => setDraft({ ...draft, summary: event.target.value })} rows={3} placeholder="资料简介与待核验信息" /><input value={draft.officialUrl} onChange={(event) => setDraft({ ...draft, officialUrl: event.target.value })} placeholder="官方资料网址（可选）" /><button onClick={createRecord} disabled={createBusy || !draft.title.trim()}>{createBusy ? "保存中" : "创建并评估"}</button></div>}<div className="knowledge-filters"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div><div className="knowledge-record-list">{filtered.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field} · {record.region}</small></span><b>{record.significanceScore}</b></button>)}{!filtered.length && <div className="empty-list">没有匹配资料</div>}</div></aside><section className="knowledge-detail">{selected && <><div className="knowledge-detail-head"><div><span className={`knowledge-type ${selected.kind}`}>{knowledgeKindLabels[selected.kind]}</span><h3>{selected.title}</h3><p>{selected.aliases.join(" · ") || "暂无别名"}</p></div><strong className="knowledge-score">{selected.significanceScore}<small>/ 100</small></strong></div><div className="knowledge-meta"><span><b>领域</b>{selected.field}</span><span><b>组织 / 主办方</b>{selected.organizer}</span><span><b>地区</b>{selected.region}</span><span><b>状态</b>{selected.verificationStatus}</span></div><p className="knowledge-summary">{selected.summary}</p><div className="knowledge-signals"><strong>审核信号</strong><div>{selected.signals.map((signal) => <span key={signal}>{signal}</span>)}</div></div><div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map((resume) => <button key={resume.id} onClick={() => { onSelectResume(resume.id); onClose(); }}><span className="candidate-avatar">{resume.initials}</span>{resume.name} · {resume.role}</button>) : <span>当前示例简历尚未引用</span>}</div><div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 生成待复核建议，不会自动保存</span></div><label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label><button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "AI 正在评估" : "AI 建议含金量"}</button><label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => setReviewScore(Number(event.target.value))} /></label><textarea value={reviewNote} onChange={(event) => setReviewNote(event.target.value)} rows={4} placeholder="记录为什么认为它有价值，以及需要核验什么" />{suggestionQuestions.length > 0 && <div className="verification-questions"><strong>建议核实</strong>{suggestionQuestions.map((item) => <span key={item}>{item}</span>)}</div>}{reviewError && <div className="inline-error">{reviewError}</div>}<button className="save-review" onClick={saveReview} disabled={saving}>{saving ? "保存中" : "保存人工评估"}</button></div>{selected.officialUrl && <a className="official-link" href={selected.officialUrl} target="_blank" rel="noreferrer">查看官方资料 <ExternalLink size={14} /></a>}</>}</section></div></div></main>;
+}
+
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, onOpenKnowledge }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; onOpenKnowledge: (id?: string) => void }) {
+  const pages = paginateReport(answer);
+  return (
+    <div className="analysis-document-shell">
+      <div className="analysis-document-toolbar">
+        <div className="document-tab"><FileText size={15} /><span>分析报告.pdf</span></div>
+        <span className="analysis-document-meta">{answer ? `${pages.length} 页` : "待生成"}</span>
+      </div>
+      <div className="analysis-document-pages">
+        {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
+        <ScoreInsights card={scoreCard} candidate={candidate} onOpenKnowledge={onOpenKnowledge} />
+      </div>
+    </div>
+  );
+}
+
+function paginateReport(answer: string): string[] {
+  if (!answer) return [""];
+  const paragraphs = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
+  const blocks: string[] = [];
+  for (let index = 0; index < paragraphs.length; index += 1) {
+    const current = paragraphs[index];
+    if (/^#{1,6}\s/.test(current) && paragraphs[index + 1]) {
+      blocks.push(`${current}\n\n${paragraphs[index + 1]}`);
+      index += 1;
+    } else {
+      blocks.push(current);
+    }
+  }
+  const pages: string[] = [];
+  let pageBlocks: string[] = [];
+  let pageLength = 0;
+
+  for (const block of blocks) {
+    const separatorLength = pageBlocks.length ? 2 : 0;
+    if (pageBlocks.length > 0 && pageLength + separatorLength + block.length > 1050) {
+      pages.push(pageBlocks.join("\n\n"));
+      pageBlocks = [];
+      pageLength = 0;
+    }
+    pageBlocks.push(block);
+    pageLength += (pageBlocks.length > 1 ? 2 : 0) + block.length;
+  }
+
+  if (pageBlocks.length) pages.push(pageBlocks.join("\n\n"));
+  return pages.length ? pages : [answer];
+}
+
+function demoScoreCard(resume: Resume, index: number, weights: ScoreWeights): ScoreCard {
+  if (resume.scoreCard) return { ...resume.scoreCard, weights, composite: calculateComposite(resume.scoreCard.criteria, weights) };
+  const values = [78 + index * 4, 84 - index * 3, 82 + index * 2, 72 + index * 5, 86 - index * 2, 76 + index * 3];
+  const criteria = Object.fromEntries(scoreCriteria.map(({ key }, criterionIndex) => [key, { score: values[criterionIndex], evidence: ["示例资料中的工作成果与职责描述"], confidence: 0.72 }])) as ScoreCard["criteria"];
+  return { criteria, weights, composite: calculateComposite(criteria, weights), overallConfidence: 0.72, formula: "weighted-mean-v1", evaluatedAt: new Date().toISOString() };
+}
+
+function ComparisonView({ resumes, weights, onClose }: { resumes: Resume[]; weights: ScoreWeights; onClose: () => void }) {
+  const ranked = resumes.map((resume, index) => ({ resume, card: demoScoreCard(resume, index, weights) })).sort((a, b) => b.card.composite - a.card.composite);
+  return <main className="comparison-main comparison-workspace-main"><div className="comparison-panel"><div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions"><span className="comparison-count">{ranked.length} 位候选人</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div><p className="comparison-note">按当前权重计算综合分，分数仅使用简历中与工作相关的证据。</p><RecruitmentQualityMap candidates={ranked} /><div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.map(({ resume, card }, rank) => <tr key={resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><strong>{resume.name}</strong><small>{resume.role}</small></td>{scoreCriteria.map(({ key }) => <td key={key}>{card.criteria[key].score.toFixed(0)}</td>)}<td className="composite-cell">{card.composite.toFixed(1)}</td></tr>)}</tbody></table></div><div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div></div></main>;
 }
 
 export default function App() {
@@ -153,6 +463,12 @@ export default function App() {
   const [importError, setImportError] = useState("");
   const [extracting, setExtracting] = useState(false);
   const [importProgress, setImportProgress] = useState("");
+  const [comparisonOpen, setComparisonOpen] = useState(false);
+  const [knowledgeOpen, setKnowledgeOpen] = useState(false);
+  const [knowledgeTargetId, setKnowledgeTargetId] = useState<string | undefined>();
+  const [weights, setWeights] = useState<ScoreWeights>(defaultScoreWeights);
+  const [weightInstruction, setWeightInstruction] = useState("");
+  const [weightBusy, setWeightBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
 
@@ -162,7 +478,26 @@ export default function App() {
   useEffect(() => {
     loadResumes();
     fetch("/api/health").then((response) => response.json()).then(setHealth).catch(() => setHealth(null));
+    fetch("/api/resumes/scoring/weights").then((response) => response.json()).then((payload) => payload.weights && setWeights(payload.weights)).catch(() => undefined);
   }, []);
+
+  async function updateWeights(next: ScoreWeights) {
+    const normalized = normalizeWeights(next);
+    setWeights(normalized);
+    await fetch("/api/resumes/scoring/weights", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ weights: normalized }) });
+  }
+
+  async function adjustWeightsWithAgent() {
+    if (!weightInstruction.trim()) return;
+    setWeightBusy(true);
+    try {
+      const response = await fetch("/api/resumes/scoring/weights/adjust", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: weightInstruction }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "权重调整失败");
+      setWeights(payload.weights);
+      setWeightInstruction("");
+    } catch (error) { setImportError(error instanceof Error ? error.message : "权重调整失败"); } finally { setWeightBusy(false); }
+  }
 
   useEffect(() => {
     if (selected?.source !== "pdf") {
@@ -213,7 +548,10 @@ export default function App() {
     }
     if (imported.length) {
       setResumes((current) => [...imported, ...current.filter((resume) => !imported.some((item) => item.id === resume.id))]);
-      setSelectedId(imported[imported.length - 1].id);
+      const latest = imported[imported.length - 1];
+      setSelectedId(latest.id);
+      setAnswer(latest.analysisReport ?? "");
+      setAgentError(latest.analysisStatus === "failed" ? latest.analysisError ?? "自动分析未完成，可手动重试。" : "");
     }
     setImportError(errors.join("\n"));
     setImportProgress("");
@@ -238,7 +576,8 @@ export default function App() {
     setAgentError("");
     setAnswer("");
     try {
-      const response = await fetch("/api/agent", {
+      const endpoint = selected.source === "pdf" ? `/api/resumes/${encodeURIComponent(selected.id)}/analyze` : "/api/agent";
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resumeName: selected.name, resumeText: selected.text, roleRequirements, question }),
@@ -246,11 +585,27 @@ export default function App() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "分析请求失败。");
       setAnswer(payload.answer);
+      if (payload.resume) {
+        setResumes((current) => current.map((resume) => resume.id === selected.id ? payload.resume as Resume : resume));
+      }
     } catch (error) {
       setAgentError(error instanceof Error ? error.message : "无法连接 Agent 服务。");
     } finally {
       setBusy(false);
     }
+  }
+
+  function openKnowledge(id?: string) {
+    setKnowledgeTargetId(id);
+    setKnowledgeOpen(true);
+    setComparisonOpen(false);
+  }
+
+  function selectResume(id: string) {
+    const resume = resumes.find((item) => item.id === id);
+    setSelectedId(id);
+    setAnswer(resume?.analysisReport ?? "");
+    setAgentError(resume?.analysisStatus === "failed" ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
   }
 
   if (!selected) return null;
@@ -263,9 +618,11 @@ export default function App() {
           <span>bohack<span className="brand-dot">.</span></span>
         </a>
         <div className="topbar-divider" />
-        <div className="workspace-name">招聘工作台 <ChevronDown size={14} /></div>
+        <div className="workspace-name">{knowledgeOpen ? "资料库" : comparisonOpen ? "候选人对比" : "招聘工作台"} <ChevronDown size={14} /></div>
         <div className="topbar-spacer" />
         <div className="privacy-note"><ShieldCheck size={15} /> 本地存储</div>
+        <button className="compare-button" onClick={() => { setComparisonOpen((current) => !current); setKnowledgeOpen(false); }} title={comparisonOpen ? "返回单人分析" : "打开多人候选人对比"}>{comparisonOpen ? "返回分析" : <><BriefcaseBusiness size={14} />候选人对比</>}</button>
+        <button className="compare-button" onClick={() => { if (knowledgeOpen) { setKnowledgeOpen(false); } else { openKnowledge(); } }} title={knowledgeOpen ? "返回简历分析" : "打开资料库"}>{knowledgeOpen ? "返回分析" : <><BookOpen size={14} />资料库</>}</button>
         <button className="icon-button help-button" title="隐私与数据说明" aria-label="隐私与数据说明"><CircleHelp size={18} /></button>
         <div className="user-avatar" title="工作区">B</div>
       </header>
@@ -296,7 +653,7 @@ export default function App() {
           <div className="list-label"><span>候选人</span><span>最近更新</span></div>
           <div className="candidate-list">
             {filtered.map((resume, index) => (
-              <button className={`candidate-row ${resume.id === selected.id ? "selected" : ""}`} key={resume.id} onClick={() => { setSelectedId(resume.id); setAnswer(""); setAgentError(""); }}>
+              <button className={`candidate-row ${resume.id === selected.id ? "selected" : ""}`} key={resume.id} onClick={() => selectResume(resume.id)}>
                 <span className={`candidate-avatar avatar-${index % 4}`}>{resume.initials}</span>
                 <span className="candidate-copy"><strong>{resume.name}</strong><span>{resume.role}</span></span>
                 <span className="candidate-date">{resume.received}</span>
@@ -307,6 +664,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
+        {knowledgeOpen ? <KnowledgeBaseView resumes={resumes} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -317,7 +675,7 @@ export default function App() {
               {selected.source === "pdf" && pdfUrl && <a className="icon-button" href={pdfUrl} download={`${selected.name}.pdf`} title="下载原始 PDF" aria-label="下载原始 PDF"><ArrowDownToLine size={17} /></a>}
               <button className="analyze-button" onClick={analyze} disabled={busy || !health?.agent} title={!health?.agent ? "请先在 .env 配置模型服务" : "使用 Agent 分析这份简历"}>
                 {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}
-                {busy ? "分析中" : "分析简历"}
+                {busy ? "分析中" : selected.analysisStatus === "failed" ? "重试分析" : "重新分析"}
               </button>
             </div>
           </div>
@@ -344,6 +702,13 @@ export default function App() {
           </section>
         </main>
 
+        <aside className="report-column">
+          <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
+          <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
+          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} onOpenKnowledge={openKnowledge} />
+          <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
+        </aside>
+
         <aside className="analysis-column">
           <div className="analysis-header"><div><span className="eyebrow">BOHACK AGENT</span><h2>分析工作区</h2></div><span className={`agent-indicator ${health?.agent ? "ready" : ""}`} title={health?.agent ? "模型已连接" : "等待配置模型服务"}><span /></span></div>
           <div className="agent-capabilities"><div><Sparkles size={14} /><span>简历分析 Skill</span><Check size={14} className="capability-check" /></div><div><Globe2 size={14} /><span>网页搜索</span><span className={`capability-state ${health?.webSearch ? "available" : "unavailable"}`}>{health?.webSearch ? "已连接" : "待配置"}</span></div></div>
@@ -354,14 +719,11 @@ export default function App() {
           <button className="run-agent-button" onClick={analyze} disabled={busy || !health?.agent || !question.trim()}>
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}
           </button>
+          <div className="scoring-settings"><div className="scoring-settings-head"><div><span className="eyebrow">SCORING WEIGHTS</span><strong>评分权重</strong></div><span>{Object.values(weights).reduce((sum, value) => sum + value, 0)}%</span></div>{scoreCriteria.map(({ key, label }) => <label className="weight-row" key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights)} onBlur={() => updateWeights(weights)} /><span>%</span></label>)}<div className="weight-agent"><input value={weightInstruction} onChange={(event) => setWeightInstruction(event.target.value)} placeholder="让 AI 调整，例如：更看重专业能力和岗位契合度" /><button onClick={adjustWeightsWithAgent} disabled={weightBusy || !health?.agent}>{weightBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div></div>
           {!health?.agent && <div className="setup-hint"><span className="setup-icon"><CircleHelp size={15} /></span><span>配置服务密钥后即可运行分析。<code>OPENAI_API_KEY</code>{health ? "" : " · 服务连接中"}</span></div>}
 
-          <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析结果</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析结果" aria-label="清除分析结果"><X size={15} /></button>}</div>
-          <div className={`result-panel ${answer || agentError ? "has-result" : ""}`}>
-            {busy ? <div className="working-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在阅读简历</strong><span>正在提取岗位相关证据并进行比对</span><div className="loading-line"><i /></div></div> : agentError ? <div className="error-result"><strong>暂时无法完成分析</strong><p>{agentError}</p></div> : answer ? <div className="answer-content">{answer}</div> : <div className="empty-result"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待开始分析</strong><p>设置职位要求后，Agent 会依据简历内容整理证据、差距与建议追问。</p><span className="evidence-note"><ShieldCheck size={13} /> 分析结论需由招聘人员复核</span></div>}
-          </div>
-          <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，避免将自动评分作为录用决定。</span></div>
         </aside>
+        </>}
       </div>
     </div>
   );
