@@ -188,6 +188,23 @@ router.put("/knowledge/:id", async (request, response, next) => {
   } catch (error) { next(error); }
 });
 
+router.delete("/knowledge/:id", async (request, response, next) => {
+  try {
+    const custom = await readCustomKnowledge();
+    const nextRecords = custom.filter((record) => record.id !== request.params.id);
+    if (nextRecords.length === custom.length) { response.status(404).json({ error: "只能删除本地新增的资料，或该资料已不存在。" }); return; }
+    await mkdir(path.dirname(customKnowledgePath), { recursive: true });
+    await writeFile(customKnowledgePath, JSON.stringify(nextRecords, null, 2), "utf8");
+    const reviews = await readKnowledgeReviews();
+    if (reviews[request.params.id]) {
+      delete reviews[request.params.id];
+      await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
+      await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
+    }
+    response.json({ deleted: true });
+  } catch (error) { next(error); }
+});
+
 router.put("/knowledge/:id/review", async (request, response, next) => {
   try {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);

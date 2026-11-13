@@ -22,6 +22,7 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
+  Trash2,
   X,
 } from "lucide-react";
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
@@ -563,6 +564,9 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editorBusy, setEditorBusy] = useState(false);
   const [editorError, setEditorError] = useState("");
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const [enrichmentBusy, setEnrichmentBusy] = useState(false);
   const [enrichmentHints, setEnrichmentHints] = useState("");
   const [enrichmentProposal, setEnrichmentProposal] = useState<KnowledgeDraftProposal | null>(null);
@@ -595,7 +599,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   }, [initialId, records]);
   useEffect(() => {
     if (!selected) return;
-    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewSource("manual"); setReviewProposal(null); setReviewError(""); setReviewSaved(false);
+    setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewSource("manual"); setReviewProposal(null); setReviewError(""); setReviewSaved(false); setDeleteConfirmation(false); setDeleteError("");
     setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
   }, [selected?.id]);
 
@@ -672,6 +676,20 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     } finally { setEditorBusy(false); }
   }
 
+  async function deleteSelectedRecord() {
+    if (!selected || !selected.id.startsWith("custom-")) return;
+    setDeleteBusy(true); setDeleteError("");
+    try {
+      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}`, { method: "DELETE" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法删除资料。");
+      const remaining = records.filter((record) => record.id !== selected.id);
+      onRecordsChange(remaining); setSelectedId((current) => current === selected.id ? remaining[0]?.id ?? "" : current); setDeleteConfirmation(false);
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : "无法删除资料。");
+    } finally { setDeleteBusy(false); }
+  }
+
   async function saveReview() {
     if (!selected) return;
     setSaving(true); setReviewError(""); setReviewSaved(false);
@@ -743,7 +761,8 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
           </aside>
           <section className="knowledge-detail">
             {selected ? <>
-              <div className="knowledge-detail-head"><div><span className={`knowledge-type ${selected.kind}`}>{knowledgeKindLabels[selected.kind]}</span><h3>{selected.title}</h3><p>{selected.aliases.join(" · ") || "暂无别名"}</p></div><div className="knowledge-detail-controls"><strong className="knowledge-score">{selected.significanceScore}<small>/ 100</small></strong><button className="icon-button" onClick={beginEdit} title="编辑资料" aria-label="编辑资料"><Pencil size={15} /></button></div></div>
+              <div className="knowledge-detail-head"><div><span className={`knowledge-type ${selected.kind}`}>{knowledgeKindLabels[selected.kind]}</span><h3>{selected.title}</h3><p>{selected.aliases.join(" · ") || "暂无别名"}</p></div><div className="knowledge-detail-controls"><strong className="knowledge-score">{selected.significanceScore}<small>/ 100</small></strong><button className="icon-button" onClick={beginEdit} title="编辑资料" aria-label="编辑资料"><Pencil size={15} /></button>{selected.id.startsWith("custom-") && <button className="icon-button knowledge-delete-button" onClick={() => { setDeleteConfirmation(true); setDeleteError(""); }} title="删除本地资料" aria-label="删除本地资料"><Trash2 size={15} /></button>}</div></div>
+              {deleteConfirmation && <div className="knowledge-delete-confirm" role="alert"><div><strong>删除这条本地资料？</strong><span>{linkedResumeCounts.get(selected.id) ?? 0} 份简历将不再显示此资料的交叉引用，相关人工评估历史也会删除。</span>{deleteError && <small>{deleteError}</small>}</div><button type="button" onClick={() => setDeleteConfirmation(false)} disabled={deleteBusy}>取消</button><button type="button" onClick={() => void deleteSelectedRecord()} disabled={deleteBusy}>{deleteBusy ? "删除中" : "确认删除"}</button></div>}
               <div className="knowledge-meta"><span><b>领域</b>{selected.field || "未填写"}</span><span><b>组织 / 主办方</b>{selected.organizer || "未填写"}</span><span><b>地区</b>{selected.region || "未填写"}</span><span><b>核验状态</b>{selected.verificationStatus}</span></div>
               <p className="knowledge-summary">{selected.summary || "尚无简介，请编辑资料补充背景和信息边界。"}</p>
               <div className="knowledge-signals"><strong>审核信号</strong><div>{selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <small>尚未添加审核信号</small>}</div></div>
