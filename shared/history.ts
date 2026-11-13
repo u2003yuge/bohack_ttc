@@ -99,6 +99,7 @@ export const historicalCandidates: HistoricalCandidate[] = [
 
 export type Benchmark = {
   roleGroup: string;
+  sampleRoleGroup: string | "all";
   sampleCount: number;
   percentile: number | null;
   screenCutoff: number | null;
@@ -136,6 +137,7 @@ export function calculateBenchmark(role: string, score: number, year: number | n
   const hired = sample.filter((candidate) => candidate.hired).map((candidate) => candidate.composite).sort((a, b) => a - b);
   return {
     roleGroup: group,
+    sampleRoleGroup: candidates.length ? group : "all",
     sampleCount: sample.length,
     percentile,
     screenCutoff: screened.length ? percentileValue(screened) : null,

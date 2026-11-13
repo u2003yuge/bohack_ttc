@@ -6,6 +6,16 @@ test("benchmark percentile counts only historical scores strictly below the curr
   const benchmark = calculateBenchmark("产品经理", 88);
   assert.equal(benchmark.sampleCount, 6);
   assert.equal(benchmark.percentile, 67);
+  assert.equal(benchmark.sampleRoleGroup, "product");
+});
+
+test("benchmark reports when it falls back from an empty role group to all roles", () => {
+  const records: HistoricalCandidate[] = [{ id: "eng", name: "匿名样本", role: "软件工程师", year: 2025, screened: true, hired: true, composite: 82 }];
+  const benchmark = calculateBenchmark("产品经理", 80, null, records);
+  assert.equal(benchmark.roleGroup, "product");
+  assert.equal(benchmark.sampleRoleGroup, "all");
+  assert.equal(benchmark.sampleCount, 1);
+  assert.equal(benchmark.percentile, 0);
 });
 
 test("a score tied with the highest historical sample excludes the tied record", () => {
