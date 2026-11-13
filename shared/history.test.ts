@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { calculateBenchmark, normalizeHistoricalCandidate } from "./history.js";
+import { calculateBenchmark, historicalScoreBand, normalizeHistoricalCandidate } from "./history.js";
 
 test("benchmark percentile counts only historical scores strictly below the current score", () => {
   const benchmark = calculateBenchmark("产品经理", 88);
@@ -22,4 +22,15 @@ test("historical records require valid outcome and score fields", () => {
   assert.deepEqual(normalizeHistoricalCandidate({ role: "开发", year: 2025, composite: 72, screened: false, hired: true }, "id", 1), { error: "最终录取样本必须标记为通过首轮。" });
   const valid = normalizeHistoricalCandidate({ role: "开发", year: 2025, composite: 72.36, screened: true, hired: true }, "id", 1, 2025);
   assert.deepEqual(valid, { id: "id", name: "匿名样本 1", role: "开发", year: 2025, screened: true, hired: true, composite: 72.4 });
+});
+
+test("historical score buckets include both endpoints and cover the 0-100 scale", () => {
+  assert.equal(historicalScoreBand(0), "0-19");
+  assert.equal(historicalScoreBand(19), "0-19");
+  assert.equal(historicalScoreBand(20), "20-39");
+  assert.equal(historicalScoreBand(79), "60-79");
+  assert.equal(historicalScoreBand(80), "80-100");
+  assert.equal(historicalScoreBand(100), "80-100");
+  assert.equal(historicalScoreBand(-1), null);
+  assert.equal(historicalScoreBand(101), null);
 });
