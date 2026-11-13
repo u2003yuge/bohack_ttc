@@ -111,6 +111,85 @@ export type KnowledgeRecord = {
   reviewHistory?: KnowledgeReviewEntry[];
 };
 
+export type KnowledgeImportBundle = {
+  format: "bohack-knowledge-library";
+  version: 1;
+  exportedAt?: string;
+  records: KnowledgeRecord[];
+};
+
+export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  if (value.format !== "bohack-knowledge-library" || value.version !== 1 || !Array.isArray(value.records) || value.records.length > 200) {
+    return { error: "文件格式不受支持，或资料数量超过 200 条。" };
+  }
+  const seen = new Set<string>();
+  const records: KnowledgeRecord[] = [];
+  for (const [index, item] of value.records.entries()) {
+    const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+    const id = typeof record.id === "string" ? record.id.trim() : "";
+    const title = typeof record.title === "string" ? record.title.trim().slice(0, 160) : "";
+    const kind = record.kind;
+    const score = typeof record.significanceScore === "number" ? record.significanceScore : Number.NaN;
+    if (!/^custom-[a-zA-Z0-9-]{8,80}$/.test(id) || seen.has(id) || !title
+      || !["competition", "journal", "company"].includes(String(kind)) || !Number.isFinite(score) || score < 0 || score > 100) {
+      return { error: "第 " + (index + 1) + " 条资料缺少有效 ID、名称、类别或 0–100 分数；ID 不能重复。" };
+    }
+    seen.add(id);
+    const sources = normalizeKnowledgeEvidenceSources(record.evidenceSources);
+    const reviewHistory = Array.isArray(record.reviewHistory) ? record.reviewHistory.flatMap((entry): KnowledgeReviewEntry[] => {
+      if (!entry || typeof entry !== "object") return [];
+      const review = entry as Record<string, unknown>;
+      const reviewScore = typeof review.significanceScore === "number" ? review.significanceScore : Number.NaN;
+      const updatedAt = typeof review.updatedAt === "string" && !Number.isNaN(Date.parse(review.updatedAt)) ? review.updatedAt : "";
+      if (!Number.isFinite(reviewScore) || reviewScore < 0 || reviewScore > 100 || !updatedAt) return [];
+      const evidenceSourceIds = Array.isArray(review.evidenceSourceIds)
+        ? review.evidenceSourceIds.filter((sourceId): sourceId is string => typeof sourceId === "string" && sources.some((source) => source.id === sourceId)).slice(0, 12)
+        : [];
+      const sourceSnapshots = normalizeKnowledgeEvidenceSources(review.evidenceSources, Array.isArray(review.evidenceSources) ? review.evidenceSources as KnowledgeEvidenceSource[] : []);
+      return [{
+        id: typeof review.id === "string" && review.id.trim() ? review.id.slice(0, 80) : globalThis.crypto.randomUUID(),
+        significanceScore: Math.round(reviewScore),
+        scoreRationale: typeof review.scoreRationale === "string" ? review.scoreRationale.trim().slice(0, 500) : "",
+        verificationStatus: review.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验",
+        updatedAt,
+        source: review.source === "ai-assisted" ? "ai-assisted" : "manual",
+        evidenceSourceIds,
+        ...(sourceSnapshots.length ? { evidenceSources: sourceSnapshots } : {}),
+      }];
+    }).slice(-30) : [];
+    const officialUrl = typeof record.officialUrl === "string" ? record.officialUrl.trim().slice(0, 500) : "";
+    let safeOfficialUrl = "";
+    try {
+      const url = new URL(officialUrl);
+      if (url.protocol === "http:" || url.protocol === "https:") safeOfficialUrl = url.toString();
+    } catch { /* Ignore malformed import URLs. */ }
+    const verificationStatus = record.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验";
+    records.push({
+      id, kind: kind as KnowledgeKind, title,
+      aliases: Array.isArray(record.aliases) ? record.aliases.filter((alias): alias is string => typeof alias === "string").map((alias) => alias.trim().slice(0, 100)).filter(Boolean).slice(0, 8) : [],
+      field: typeof record.field === "string" ? record.field.trim().slice(0, 120) : "",
+      organizer: typeof record.organizer === "string" ? record.organizer.trim().slice(0, 120) : "",
+      region: typeof record.region === "string" ? record.region.trim().slice(0, 80) : "",
+      summary: typeof record.summary === "string" ? record.summary.trim().slice(0, 1200) : "",
+      signals: Array.isArray(record.signals) ? record.signals.filter((signal): signal is string => typeof signal === "string").map((signal) => signal.trim().slice(0, 100)).filter(Boolean).slice(0, 10) : [],
+      officialUrl: safeOfficialUrl,
+      significanceScore: Math.round(score),
+      scoreRationale: typeof record.scoreRationale === "string" ? record.scoreRationale.trim().slice(0, 500) : "",
+      verificationStatus,
+      updatedAt: typeof record.updatedAt === "string" && record.updatedAt.trim() ? record.updatedAt.slice(0, 40) : new Date().toISOString().slice(0, 10),
+      evidenceSources: sources,
+      ...(reviewHistory.length ? { reviewHistory } : {}),
+    });
+  }
+  return {
+    format: "bohack-knowledge-library",
+    version: 1,
+    exportedAt: typeof value.exportedAt === "string" ? value.exportedAt.slice(0, 40) : undefined,
+    records,
+  };
+}
+
 export function getKnowledgeReadiness(record: KnowledgeRecord): KnowledgeReadiness {
   const sources = record.evidenceSources ?? [];
   if (!record.officialUrl && sources.length === 0) return "missing-sources";

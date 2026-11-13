@@ -8,7 +8,7 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestComparisonRanking, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestKnowledgeFilters, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
-import { knowledgeRecords, normalizeKnowledgeEvidenceSources, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
+import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 
 type ResumeRecord = {
@@ -116,6 +116,71 @@ router.get("/knowledge", async (_request, response, next) => {
     const reviews = await readKnowledgeReviews();
     const records = await readKnowledgeRecords();
     response.json({ records: records.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })), source: "local-json" });
+  } catch (error) { next(error); }
+});
+
+router.get("/knowledge/export", async (_request, response, next) => {
+  try {
+    const custom = await readCustomKnowledge();
+    const reviews = await readKnowledgeReviews();
+    const records = custom.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) }));
+    response.json({ format: "bohack-knowledge-library", version: 1, exportedAt: new Date().toISOString(), records });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/import/preview", async (request, response, next) => {
+  try {
+    const bundle = normalizeKnowledgeImport(request.body);
+    if ("error" in bundle) { response.status(400).json({ error: bundle.error }); return; }
+    const existingIds = new Set((await readCustomKnowledge()).map((record) => record.id));
+    const existingBuiltInIds = new Set(knowledgeRecords.map((record) => record.id));
+    if (bundle.records.some((record) => existingBuiltInIds.has(record.id))) {
+      response.status(400).json({ error: "导入文件包含内置资料 ID；请先导出自建资料，再导入该备份。" }); return;
+    }
+    const updateCount = bundle.records.filter((record) => existingIds.has(record.id)).length;
+    response.json({ bundle, insertCount: bundle.records.length - updateCount, updateCount });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/import", async (request, response, next) => {
+  try {
+    const bundle = normalizeKnowledgeImport(request.body);
+    if ("error" in bundle) { response.status(400).json({ error: bundle.error }); return; }
+    const builtInIds = new Set(knowledgeRecords.map((record) => record.id));
+    if (bundle.records.some((record) => builtInIds.has(record.id))) {
+      response.status(400).json({ error: "导入文件包含内置资料 ID，已取消写入。" }); return;
+    }
+    const custom = await readCustomKnowledge();
+    const existingIds = new Set(custom.map((record) => record.id));
+    const importedIds = new Set(bundle.records.map((record) => record.id));
+    const nextCustom = [...bundle.records.map(({ reviewHistory: _reviewHistory, ...record }) => record), ...custom.filter((record) => !importedIds.has(record.id))];
+    const reviews = await readKnowledgeReviews();
+    for (const record of bundle.records) {
+      const history = record.reviewHistory ?? [];
+      const latest = history.at(-1);
+      if (latest) {
+        reviews[record.id] = {
+          significanceScore: latest.significanceScore,
+          scoreRationale: latest.scoreRationale,
+          verificationStatus: latest.verificationStatus,
+          updatedAt: latest.updatedAt.slice(0, 10),
+          reviewHistory: history,
+        };
+      } else {
+        delete reviews[record.id];
+      }
+    }
+    await mkdir(path.dirname(customKnowledgePath), { recursive: true });
+    await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
+    await writeFile(customKnowledgePath, JSON.stringify(nextCustom, null, 2), "utf8");
+    await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
+    const mergedReviews = await readKnowledgeReviews();
+    const allRecords = await readKnowledgeRecords();
+    response.json({
+      records: allRecords.map((record) => ({ ...record, ...(mergedReviews[record.id] ?? {}) })),
+      insertCount: bundle.records.filter((record) => !existingIds.has(record.id)).length,
+      updateCount: bundle.records.filter((record) => existingIds.has(record.id)).length,
+    });
   } catch (error) { next(error); }
 });
 

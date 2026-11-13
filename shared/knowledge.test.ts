@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
+import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -131,4 +131,26 @@ test("knowledge readiness separates source gaps, verification, human review, and
   assert.deepEqual(summarizeKnowledgeReadiness(records).map(({ key, count }) => [key, count]), [
     ["missing-sources", 1], ["sources-pending", 1], ["review-pending", 1], ["complete", 1],
   ]);
+});
+
+test("knowledge import validates and preserves custom records and bounded review history", () => {
+  const bundle = normalizeKnowledgeImport({
+    format: "bohack-knowledge-library", version: 1, exportedAt: "2026-11-14T00:00:00.000Z",
+    records: [{ ...record, id: "custom-12345678", officialUrl: "javascript:alert(1)", significanceScore: 72,
+      reviewHistory: [{ id: "review-1", significanceScore: 74, scoreRationale: "已核对", verificationStatus: "已核验", updatedAt: "2026-11-14T00:00:00.000Z", source: "manual" }],
+    }],
+  });
+  assert.equal("error" in bundle, false);
+  if ("error" in bundle) return;
+  assert.equal(bundle.records[0].officialUrl, "");
+  assert.equal(bundle.records[0].reviewHistory?.[0].significanceScore, 74);
+  assert.equal(bundle.records[0].reviewHistory?.[0].verificationStatus, "已核验");
+});
+
+test("knowledge import rejects built-in IDs, duplicates, and unsupported bundle versions", () => {
+  const base = { ...record, id: "custom-12345678" };
+  assert.ok("error" in normalizeKnowledgeImport({ format: "bohack-knowledge-library", version: 1, records: [{ ...base, id: record.id }] }));
+  assert.ok("error" in normalizeKnowledgeImport({ format: "bohack-knowledge-library", version: 1, records: [base, base] }));
+  assert.ok("error" in normalizeKnowledgeImport({ format: "other", version: 2, records: [base] }));
+  assert.ok("error" in normalizeKnowledgeImport({ format: "bohack-knowledge-library", version: 1, records: [{ ...base, significanceScore: null }] }));
 });

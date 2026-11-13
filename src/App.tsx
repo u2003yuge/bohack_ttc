@@ -11,6 +11,7 @@ import {
   ChevronDown,
   CircleHelp,
   Database,
+  Download,
   FileText,
   FolderOpen,
   Globe2,
@@ -23,6 +24,7 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
@@ -30,11 +32,12 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ComparisonRankCriterion, type ComparisonRankDraft, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
-import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
+import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
 type KnowledgeReviewSuggestion = { score: number; rationale: string };
+type KnowledgeImportPreview = { bundle: KnowledgeImportBundle; insertCount: number; updateCount: number };
 type RoleProfileProposal = { requirements: string; rationale: string };
 type WeightProposal = { weights: ScoreWeights; rationale: string };
 type WeightImpact = { currentScore: number; proposedScore: number; currentRank: number; proposedRank: number; total: number; demoCount: number };
@@ -603,6 +606,10 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editorBusy, setEditorBusy] = useState(false);
   const [editorError, setEditorError] = useState("");
+  const [transferBusy, setTransferBusy] = useState(false);
+  const [transferError, setTransferError] = useState("");
+  const [transferNotice, setTransferNotice] = useState("");
+  const [importPreview, setImportPreview] = useState<KnowledgeImportPreview | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState("");
@@ -610,6 +617,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [enrichmentHints, setEnrichmentHints] = useState("");
   const [enrichmentProposal, setEnrichmentProposal] = useState<KnowledgeDraftProposal | null>(null);
   const enrichmentRequestId = useRef(0);
+  const knowledgeImportInput = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeMatch(resume.text, record) !== null).length])), [records, resumes]);
@@ -652,6 +660,61 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewSource("manual"); setReviewSourceIds(selected.reviewHistory?.at(-1)?.evidenceSourceIds ?? []); setReviewProposal(null); setReviewError(""); setReviewSaved(false); setDeleteConfirmation(false); setDeleteError("");
     setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
   }, [selected?.id]);
+
+  async function exportKnowledgeBundle() {
+    setTransferBusy(true); setTransferError(""); setTransferNotice("");
+    try {
+      const response = await fetch("/api/resumes/knowledge/export");
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法导出资料库。");
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = globalThis.document.createElement("a");
+      anchor.href = url;
+      anchor.download = `bohack-knowledge-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setTransferNotice(`已导出 ${payload.records?.length ?? 0} 条自建资料及人工评估历史。`);
+    } catch (error) {
+      setTransferError(error instanceof Error ? error.message : "无法导出资料库。");
+    } finally { setTransferBusy(false); }
+  }
+
+  async function previewKnowledgeImport(file?: File) {
+    if (!file) return;
+    setTransferBusy(true); setTransferError(""); setTransferNotice(""); setImportPreview(null);
+    try {
+      if (file.size > 2 * 1024 * 1024) throw new Error("导入文件不能超过 2 MB。");
+      const parsed = JSON.parse(await file.text()) as unknown;
+      const response = await fetch("/api/resumes/knowledge/import/preview", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(parsed),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "文件校验失败。");
+      setImportPreview(payload as KnowledgeImportPreview);
+    } catch (error) {
+      setTransferError(error instanceof Error ? error.message : "无法读取导入文件。");
+    } finally { setTransferBusy(false); }
+  }
+
+  async function confirmKnowledgeImport() {
+    if (!importPreview) return;
+    setTransferBusy(true); setTransferError(""); setTransferNotice("");
+    try {
+      const response = await fetch("/api/resumes/knowledge/import", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(importPreview.bundle),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "导入未完成。");
+      onRecordsChange(payload.records as KnowledgeRecord[]);
+      setSelectedId(importPreview.bundle.records[0]?.id ?? "");
+      setKind("all"); setQuery(""); setVerificationFilter("all"); setEvidenceFilter("all"); setScoreBand("all"); setReviewFilter("all"); setReadinessFilter("all"); setLinkedOnly(false);
+      setTransferNotice(`导入完成：新增 ${payload.insertCount} 条，更新 ${payload.updateCount} 条。`);
+      setImportPreview(null);
+    } catch (error) {
+      setTransferError(error instanceof Error ? error.message : "导入未完成。");
+    } finally { setTransferBusy(false); }
+  }
 
   function beginCreate() {
     enrichmentRequestId.current += 1;
@@ -825,7 +888,18 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   return (
     <main className="knowledge-main">
       <div className="knowledge-shell">
-        <div className="knowledge-header"><div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></div>
+        <div className="knowledge-header">
+          <div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div>
+          <div className="knowledge-header-actions">
+            <input ref={knowledgeImportInput} className="visually-hidden" type="file" accept=".json,application/json" aria-label="选择资料库备份文件" onChange={(event) => { void previewKnowledgeImport(event.target.files?.[0]); event.target.value = ""; }} />
+            <button type="button" className="knowledge-transfer-button" onClick={() => void exportKnowledgeBundle()} disabled={transferBusy} title="导出自建资料和人工评估历史"><Download size={14} />导出</button>
+            <button type="button" className="knowledge-transfer-button" onClick={() => { setTransferError(""); setImportPreview(null); knowledgeImportInput.current?.click(); }} disabled={transferBusy}><Upload size={14} />导入</button>
+            <button className="back-to-workspace" onClick={onClose}>返回简历分析</button>
+          </div>
+        </div>
+        {transferError && <div className="knowledge-transfer-message error" role="alert">{transferError}</div>}
+        {transferNotice && <div className="knowledge-transfer-message" role="status">{transferNotice}</div>}
+        {importPreview && <section className="knowledge-import-preview" aria-label="导入预览"><div><strong>导入预览 · {importPreview.bundle.records.length} 条自建资料</strong><p>新增 {importPreview.insertCount} 条，更新 {importPreview.updateCount} 条。未包含在文件中的本地资料会保留；内置示例资料不会被覆盖。</p></div><button type="button" onClick={() => setImportPreview(null)} disabled={transferBusy}>取消</button><button type="button" onClick={() => void confirmKnowledgeImport()} disabled={transferBusy}>{transferBusy ? "正在导入" : "确认导入"}</button></section>}
         <section className="knowledge-overview" aria-label="资料库分类概览">
           <div className="knowledge-overview-heading"><div><strong>资料分布</strong><span>点击分类可筛选条目</span></div><small>已核验 {records.filter((record) => record.verificationStatus === "已核验").length} / {records.length}</small></div>
           <div className="knowledge-overview-grid">{kindSummary.map((item) => <button key={item.kind} className={`knowledge-overview-item ${kind === item.kind ? "active" : ""}`} onClick={() => setKind(kind === item.kind ? "all" : item.kind)} aria-pressed={kind === item.kind}>
