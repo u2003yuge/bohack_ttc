@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { normalizeKnowledgeEnrichment } from "./analysis.js";
+import { normalizeAnalysisTaskDraft, normalizeKnowledgeEnrichment } from "./analysis.js";
 
 const sources = [
   { title: "Official venue", url: "https://neurips.cc/", snippet: "Conference website" },
@@ -23,4 +23,13 @@ test("knowledge enrichment bounds generated lists and accepts exact source URLs"
   assert.equal(normalized.officialUrl, "https://neurips.cc/");
   assert.equal(normalized.aliases.length, 8);
   assert.equal(normalized.signals.length, 6);
+});
+
+test("analysis task drafts require a useful prompt and bound generated text", () => {
+  assert.ok("error" in normalizeAnalysisTaskDraft({ question: "太短" }));
+  const draft = normalizeAnalysisTaskDraft({ question: ` ${"请逐项核查简历证据。".repeat(100)} `, rationale: " 已拆分核查任务 " });
+  assert.equal("error" in draft, false);
+  if ("error" in draft) return;
+  assert.equal(draft.question.length, 800);
+  assert.equal(draft.rationale, "已拆分核查任务");
 });

@@ -39,6 +39,7 @@ type KnowledgeSource = { title: string; url: string; snippet: string };
 type KnowledgeReviewSuggestion = { score: number; rationale: string };
 type KnowledgeImportPreview = { bundle: KnowledgeImportBundle; insertCount: number; updateCount: number; insertReviewCount: number; updateReviewCount: number };
 type RoleProfileProposal = { requirements: string; rationale: string };
+type AnalysisTaskProposal = { question: string; rationale: string };
 type WeightProposal = { weights: ScoreWeights; rationale: string };
 type WeightImpact = { currentScore: number; proposedScore: number; currentRank: number; proposedRank: number; total: number; demoCount: number };
 
@@ -1133,6 +1134,9 @@ export default function App() {
   const [roleProfileBusy, setRoleProfileBusy] = useState(false);
   const [roleProfileProposal, setRoleProfileProposal] = useState<RoleProfileProposal | null>(null);
   const [roleProfileError, setRoleProfileError] = useState("");
+  const [taskDraftBusy, setTaskDraftBusy] = useState(false);
+  const [taskProposal, setTaskProposal] = useState<AnalysisTaskProposal | null>(null);
+  const [taskDraftError, setTaskDraftError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
 
@@ -1196,6 +1200,18 @@ export default function App() {
       setRoleProfileProposal({ requirements: payload.requirements || "", rationale: payload.rationale || "AI 已整理职位要求。" });
     } catch (error) { setRoleProfileError(error instanceof Error ? error.message : "职位要求整理失败。"); }
     finally { setRoleProfileBusy(false); }
+  }
+
+  async function structureAnalysisTask() {
+    if (!question.trim()) return;
+    setTaskDraftBusy(true); setTaskDraftError(""); setTaskProposal(null);
+    try {
+      const response = await fetch("/api/agent/task-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: question }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "分析任务整理失败。");
+      setTaskProposal({ question: payload.question || "", rationale: payload.rationale || "AI 已将任务整理为可执行的分析要求。" });
+    } catch (error) { setTaskDraftError(error instanceof Error ? error.message : "分析任务整理失败。"); }
+    finally { setTaskDraftBusy(false); }
   }
 
   useEffect(() => {
@@ -1435,9 +1451,11 @@ export default function App() {
           <textarea id="role-requirements" className="role-input" value={roleRequirements} onChange={(event) => { setRoleRequirements(event.target.value); setRoleProfileProposal(null); setRoleProfileError(""); }} placeholder="粘贴职位描述或关键要求，例如：5 年以上 B2B 产品经验，熟悉数据分析与团队协作……" rows={5} />
           {roleProfileProposal && <div className="role-profile-proposal"><strong>AI 整理草案</strong><p>{roleProfileProposal.requirements}</p><small>{roleProfileProposal.rationale}</small><div><button type="button" onClick={() => { setRoleRequirements(roleProfileProposal.requirements); setRoleProfileProposal(null); }}>采用草案</button><button type="button" onClick={() => setRoleProfileProposal(null)}>保留原文</button></div></div>}
           {roleProfileError && <div className="inline-error">{roleProfileError}</div>}
-          <label className="field-label question-label" htmlFor="agent-question">分析任务</label>
-          <textarea id="agent-question" className="question-input" value={question} onChange={(event) => setQuestion(event.target.value)} rows={3} />
-          <div className="agent-presets" aria-label="常用分析任务"><span>快捷任务</span>{["提炼核心优势与风险", "按岗位要求逐项核对证据", "生成面试追问清单"].map((preset) => <button key={preset} onClick={() => setQuestion(preset)}>{preset}</button>)}</div>
+          <label className="field-label question-label" htmlFor="agent-question"><span>分析任务</span><button type="button" className="field-agent-button" onClick={structureAnalysisTask} disabled={taskDraftBusy || !health?.agent || !question.trim()} title="只将任务文本发送给 AI，不发送简历内容">{taskDraftBusy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}优化任务</button></label>
+          <textarea id="agent-question" className="question-input" value={question} onChange={(event) => { setQuestion(event.target.value); setTaskProposal(null); setTaskDraftError(""); }} rows={3} />
+          {taskDraftError && <div className="inline-error">{taskDraftError}</div>}
+          {taskProposal && <div className="role-profile-proposal"><strong>AI 任务草案</strong><p>{taskProposal.question}</p><small>{taskProposal.rationale} · 仅发送了当前任务文本，未发送简历或候选人信息。</small><div><button type="button" onClick={() => { setQuestion(taskProposal.question); setTaskProposal(null); }}>采用草案</button><button type="button" onClick={() => setTaskProposal(null)}>保留原文</button></div></div>}
+          <div className="agent-presets" aria-label="常用分析任务"><span>快捷任务</span>{["提炼核心优势与风险", "按岗位要求逐项核对证据", "生成面试追问清单"].map((preset) => <button key={preset} onClick={() => { setQuestion(preset); setTaskProposal(null); setTaskDraftError(""); }}>{preset}</button>)}</div>
           <label className="research-toggle"><span><Globe2 size={14} /><span>联网参考岗位背景</span><small>只搜索职位要求，不发送候选人简历</small></span><input className="switch-input" type="checkbox" checked={webResearchEnabled} onChange={(event) => setWebResearchEnabled(event.target.checked)} /><i className="switch-track"><b className="switch-thumb" /></i></label>
           <button className="run-agent-button" onClick={analyze} disabled={busy || !health?.agent || !question.trim()}>
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}

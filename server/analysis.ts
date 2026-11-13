@@ -22,6 +22,7 @@ const knowledgeEnrichmentSkill = readFileSync(fileURLToPath(new URL("./skills/kn
 const historyFilterSkill = readFileSync(fileURLToPath(new URL("./skills/history-filter-assistant.md", import.meta.url)), "utf8");
 const knowledgeFilterSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-filter-assistant.md", import.meta.url)), "utf8");
 const comparisonRankSkill = readFileSync(fileURLToPath(new URL("./skills/comparison-rank-assistant.md", import.meta.url)), "utf8");
+const analysisTaskSkill = readFileSync(fileURLToPath(new URL("./skills/analysis-task-assistant.md", import.meta.url)), "utf8");
 
 function createClient(): OpenAI | null {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -191,6 +192,36 @@ export async function structureJobRequirements(rawRequirements: string): Promise
   return {
     requirements: stringField(parsed.requirements).slice(0, 1200),
     rationale: stringField(parsed.rationale).slice(0, 180),
+  };
+}
+
+export async function suggestAnalysisTask(instruction: string): Promise<{ question: string; rationale: string }> {
+  const normalizedInstruction = instruction.trim().slice(0, 1000);
+  if (!normalizedInstruction) throw new Error("请先填写分析任务。");
+  const client = createClient();
+  if (!client) throw new Error("未配置模型服务");
+  const response = await client.chat.completions.create({
+    model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+    temperature: 0,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: analysisTaskSkill },
+      { role: "user", content: JSON.stringify({ instruction: normalizedInstruction }) },
+    ],
+  });
+  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;
+  const proposal = normalizeAnalysisTaskDraft(parsed);
+  if ("error" in proposal) throw new Error(proposal.error);
+  return proposal;
+}
+
+export function normalizeAnalysisTaskDraft(input: unknown): { question: string; rationale: string } | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const question = typeof value.question === "string" ? value.question.trim().slice(0, 800) : "";
+  if (question.length < 8) return { error: "AI 没有生成足够清楚的分析任务，请调整描述后重试。" };
+  return {
+    question,
+    rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "已将任务整理为可执行的分析要求。",
   };
 }
 
