@@ -318,16 +318,33 @@ router.post("/:id/analyze", async (request, response, next) => {
       response.status(404).json({ error: "找不到这份简历。" });
       return;
     }
-    const { roleRequirements, question } = request.body ?? {};
+    const { roleRequirements, question, webResearchEnabled } = request.body ?? {};
     if (typeof question !== "string" || typeof roleRequirements !== "string") {
       response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
       return;
+    }
+    const shouldResearch = webResearchEnabled === true && Boolean(roleRequirements.trim());
+    let researchSources: Awaited<ReturnType<typeof searchPublicWeb>> = [];
+    let researchStatus: "searched" | "not-configured" | "unavailable" | "not-requested" = "not-requested";
+    if (shouldResearch) {
+      if (!process.env.TAVILY_API_KEY) {
+        researchStatus = "not-configured";
+      } else {
+        try {
+          researchSources = await searchPublicWeb(`${roleRequirements.slice(0, 320)} 岗位技能 行业背景 官方`, 4);
+          researchStatus = "searched";
+        } catch {
+          researchStatus = "unavailable";
+        }
+      }
     }
     const analysisReport = await generateRoleReport({
       name: record.name,
       resumeText: record.text,
       roleRequirements,
       question,
+      externalSources: researchSources,
+      externalSearchStatus: researchStatus,
     });
     const scoreCard = await generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements, weights: await readWeights() });
     const updated = {
@@ -340,7 +357,7 @@ router.post("/:id/analyze", async (request, response, next) => {
       analyzedAt: new Date().toISOString(),
     };
     await writeRecord(updated);
-    response.json({ answer: analysisReport, resume: updated });
+    response.json({ answer: analysisReport, resume: updated, researchSources, researchStatus });
   } catch (error) {
     next(error);
   }

@@ -1,0 +1,50 @@
+# 竞赛、期刊与公司资料库
+
+资料库是招聘工作台中的独立查询入口，用来保存候选人简历中出现的竞赛、期刊 / 会议和公司背景资料。它提供背景信息和人工审核记录，不能把名称或平台宣传直接当成候选人的个人成果证明。
+
+## 当前能力
+
+- 顶部“资料库”入口打开独立工作区，不会覆盖简历阅读器的左侧候选人列表。
+- 按类别、名称、别名、领域、组织、地区、简介和审核信号搜索；支持按名称、最近更新和人工评分排序。
+- 分类概览显示竞赛、期刊 / 会议、公司数量。核验均分只统计状态为“已核验”的条目。
+- 可以新增资料，也可以修订已有资料。别名会参与简历分析中的确定性文本匹配。
+- 每条资料都有官方来源链接、审核信号、人工含金量评分、评分理由和核验状态。
+- 可填写岗位背景和审核重点，请 Agent 给出带理由、置信度、核验问题及公开来源的建议。建议先以草稿显示，审核员点击“采用建议”后还要再次保存，才会写入历史。
+- 资料详情会反向列出命中该名称或别名的简历；简历分析报告也可以跳回对应资料。
+
+## 评分边界
+
+资料库评分是岗位相关的人工判断，不是统一的全国含金量排名。审核时应保留以下信息：
+
+- 竞赛：主办方、届次、赛区 / 赛道、参赛规模、获奖层级、结果公示和学校或学院认定文件。
+- 期刊 / 会议：ISSN、数据库、指标体系和数据年份、文章类型、正式发表状态、作者贡献以及是否为 workshop 或 poster。
+- 公司：具体团队和业务阶段、候选人的职责边界、项目结果、个人贡献和可验证材料。
+
+Tavily 返回的标题、链接和摘要只是检索线索。系统不会据此自动确认网页真实性，也不会把资料背景外推为候选人的获奖、发表或个人贡献。没有足够证据时应保留“待核验”状态。
+
+## 本地存储与接口
+
+示例资料位于 `shared/knowledge.ts`。运行时自定义数据默认写入：
+
+```text
+.data/resumes/.metadata/knowledge-records.json  # 新增或修订的资料
+.data/resumes/.metadata/knowledge-reviews.json  # 人工评分和审核历史
+```
+
+`.data/` 被 Git 忽略，简历和审核数据不会提交到 GitHub。当前服务端接口为：
+
+```text
+GET  /api/resumes/knowledge
+POST /api/resumes/knowledge
+PUT  /api/resumes/knowledge/:id
+PUT  /api/resumes/knowledge/:id/review
+POST /api/resumes/knowledge/:id/suggest
+```
+
+写入接口会限制文本长度、列表数量和来源链接协议；评分范围为 0 到 100。每次显式保存审核结果追加一条历史快照，最多保留最近 30 条，记录评分、理由、核验状态、时间和来源类型。AI 生成阶段不写历史。
+
+## 后续数据库升级建议
+
+正式部署时可把本地 JSON 替换为 SQLite、PostgreSQL 或组织内部数据库，但应保留现有 API 契约和以下字段：`id`、`kind`、`title`、`aliases`、`field`、`organizer`、`region`、`summary`、`signals`、`officialUrl`、`significanceScore`、`scoreRationale`、`verificationStatus`、`updatedAt`。指标和认定信息建议额外建成带 `sourceUrl`、`sourceType`、`dataYear`、`checkedAt`、`evidenceNote` 的证据表，避免新的核验结果覆盖旧版本。
+
+简历与资料的当前关联是“简历原文出现名称或别名”的确定性匹配。若后续需要人工确认、纠错或一对多关联，应增加关系表，至少包含 `candidateId`、`knowledgeId`、`evidence`、`reviewerConfirmed` 和 `createdAt`，不要把字符串命中直接当作事实。

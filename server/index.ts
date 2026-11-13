@@ -39,7 +39,9 @@ app.post("/api/agent", async (request, response) => {
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.OPENAI_BASE_URL || undefined,
   });
-  const canSearch = Boolean(process.env.TAVILY_API_KEY);
+  const webResearchEnabled = request.body?.webResearchEnabled === true;
+  const canSearch = webResearchEnabled && Boolean(process.env.TAVILY_API_KEY);
+  let usedSearch = false;
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
     {
       role: "system",
@@ -81,7 +83,7 @@ app.post("/api/agent", async (request, response) => {
       messages.push(message);
       const calls = message.tool_calls ?? [];
       if (calls.length === 0) {
-        response.json({ answer: message.content ?? "模型未返回文本。" });
+        response.json({ answer: message.content ?? "模型未返回文本。", researchStatus: usedSearch ? "searched" : webResearchEnabled ? (process.env.TAVILY_API_KEY ? "not-requested" : "not-configured") : "not-requested" });
         return;
       }
       const searchCalls = calls.filter((call) => call.type === "function" && call.function.name === "web_search");
@@ -94,6 +96,7 @@ app.post("/api/agent", async (request, response) => {
           return { call, content: `网页搜索失败：${error instanceof Error ? error.message : "未知错误"}` };
         }
       }));
+      usedSearch = searchResults.length > 0;
       for (const { call, content } of searchResults) messages.push({ role: "tool", tool_call_id: call.id, content });
     }
     response.status(502).json({ error: "Agent 调用工具次数过多，请缩小问题范围后重试。" });
