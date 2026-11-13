@@ -29,7 +29,7 @@ import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
-import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
+import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
@@ -403,7 +403,7 @@ function BenchmarkBadge({ role, score, candidates }: { role: string; score: numb
 type HistoricalDraft = { name: string; role: string; year: number; composite: number; screened: boolean; hired: boolean };
 const emptyHistoricalDraft = (): HistoricalDraft => ({ name: "匿名样本", role: "", year: new Date().getFullYear(), composite: 70, screened: false, hired: false });
 
-function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void }) {
+function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agentAvailable }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void; agentAvailable: boolean }) {
   const [roleFilter, setRoleFilter] = useState("all");
   const [yearFilter, setYearFilter] = useState("all");
   const [scoreBandFilter, setScoreBandFilter] = useState<HistoricalScoreBandKey | null>(null);
@@ -415,6 +415,10 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose }: { c
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [deleteTargetId, setDeleteTargetId] = useState("");
+  const [filterInstruction, setFilterInstruction] = useState("");
+  const [filterProposal, setFilterProposal] = useState<HistoricalFilterDraft | null>(null);
+  const [filterAssistantBusy, setFilterAssistantBusy] = useState(false);
+  const [filterAssistantError, setFilterAssistantError] = useState("");
   const groups = [...new Set(candidates.map((candidate) => roleGroup(candidate.role)))].sort();
   const years = [...new Set(candidates.map((candidate) => candidate.year))].sort((a, b) => b - a);
   const baseFiltered = candidates.filter((candidate) => (roleFilter === "all" || roleGroup(candidate.role) === roleFilter) && (yearFilter === "all" || candidate.year === Number(yearFilter)));
@@ -461,9 +465,34 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose }: { c
     finally { setBusy(false); }
   }
 
+  async function proposeFilters() {
+    setFilterAssistantBusy(true); setFilterAssistantError(""); setFilterProposal(null);
+    try {
+      const response = await fetch("/api/resumes/history/filter-draft", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instruction: filterInstruction }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法生成筛选草案。");
+      setFilterProposal(payload.suggestion as HistoricalFilterDraft);
+    } catch (cause) { setFilterAssistantError(cause instanceof Error ? cause.message : "无法生成筛选草案。"); }
+    finally { setFilterAssistantBusy(false); }
+  }
+
+  function applyFilterProposal() {
+    if (!filterProposal) return;
+    setRoleFilter(filterProposal.roleGroup);
+    setYearFilter(String(filterProposal.year));
+    setScoreBandFilter(filterProposal.scoreBand === "all" ? null : filterProposal.scoreBand);
+    setOutcomeFilter(filterProposal.outcome);
+    setSelectedId("");
+    setFilterProposal(null);
+  }
+
   return <main className="history-database-main">
     <div className="history-database-shell">
       <header className="history-database-header"><div><span className="eyebrow">LOCAL RECRUITING BENCHMARK</span><h2>历史招聘样本库</h2><p>只保存匿名样本的岗位、年份、综合分与筛选结果；本地录入可随时修改或删除。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></header>
+      <section className="history-filter-assistant"><div className="history-filter-assistant-title"><div><Sparkles size={14} /><strong>自然语言筛选</strong></div><small>只发送筛选选项与指令，不发送样本记录</small></div><div className="history-filter-assistant-input"><input value={filterInstruction} onChange={(event) => { setFilterInstruction(event.target.value); setFilterProposal(null); setFilterAssistantError(""); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void proposeFilters(); } }} placeholder="例如：看 2025 年高分的产品岗位最终录取样本" aria-label="描述要查找的历史样本" /><button type="button" onClick={() => void proposeFilters()} disabled={!agentAvailable || filterAssistantBusy || !filterInstruction.trim()} title={agentAvailable ? "生成筛选方案" : "请先配置模型服务"}>{filterAssistantBusy ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{filterAssistantBusy ? "整理中" : "生成方案"}</button></div>{filterAssistantError && <div className="inline-error">{filterAssistantError}</div>}{filterProposal && <div className="history-filter-proposal"><div><strong>筛选草案</strong><span>{filterProposal.rationale}</span><small>{filterProposal.roleGroup === "all" ? "全部岗位" : roleGroupLabel(filterProposal.roleGroup)} · {filterProposal.year === "all" ? "全部年份" : filterProposal.year} · {filterProposal.scoreBand === "all" ? "全部分数" : `${historicalScoreBands.find((band) => band.key === filterProposal.scoreBand)?.label} 分`} · {outcomeLabels[filterProposal.outcome]}</small></div><div><button type="button" onClick={() => setFilterProposal(null)}>放弃</button><button type="button" onClick={applyFilterProposal}>应用筛选</button></div></div>}</section>
       <section className="history-database-summary"><div><span>当前样本</span><strong>{filtered.length}</strong></div><div><span>首轮通过</span><strong>{filtered.length ? Math.round(screenedCount / filtered.length * 100) : 0}%</strong></div><div><span>最终录取</span><strong>{filtered.length ? Math.round(hiredCount / filtered.length * 100) : 0}%</strong></div><div><span>综合分中位数</span><strong>{median(filtered.map((candidate) => candidate.composite)).toFixed(1)}</strong></div><small>当前筛选范围 · 演示样本与本地样本分开标记</small></section>
       <section className="history-database-chart"><div className="history-database-section-head"><div><span className="eyebrow">SCORE DISTRIBUTION</span><h3>按招聘结果查看分数</h3></div><div className="history-database-filters"><label>岗位<select value={roleFilter} onChange={(event) => { setRoleFilter(event.target.value); setScoreBandFilter(null); setSelectedId(""); }}><option value="all">全部岗位族</option>{groups.map((group) => <option key={group} value={group}>{roleGroupLabel(group)}</option>)}</select></label><label>年份<select value={yearFilter} onChange={(event) => { setYearFilter(event.target.value); setScoreBandFilter(null); setSelectedId(""); }}><option value="all">全部年份</option>{years.map((year) => <option key={year} value={year}>{year}</option>)}</select></label></div></div>
         <div className="history-score-distribution"><div className="history-score-distribution-head"><strong>分数区间</strong><span>{filterSummary ? `当前筛选 ${filterSummary} · ${filtered.length} 份` : "点击区间或结果筛选样本"}</span></div><div className="history-score-bins">{historicalScoreBands.map((band) => { const bandRecords = baseFiltered.filter((candidate) => candidate.composite >= band.min && candidate.composite <= band.max); const hired = bandRecords.filter((candidate) => candidate.hired).length; const screened = bandRecords.filter((candidate) => candidate.screened && !candidate.hired).length; const rejected = bandRecords.length - hired - screened; return <button type="button" key={band.key} className={scoreBandFilter === band.key ? "active" : ""} disabled={!bandRecords.length} aria-pressed={scoreBandFilter === band.key} aria-label={`${band.label} 分区间：${bandRecords.length} 份，最终录取 ${hired} 份，首轮通过 ${screened} 份，未过首轮 ${rejected} 份`} onClick={() => { setScoreBandFilter((current) => current === band.key ? null : band.key); setSelectedId(""); }}><span className="history-score-bin-label">{band.label}</span><strong>{bandRecords.length}<small>份</small></strong><span className="history-score-bin-track"><i style={{ width: `${bandRecords.length / maxBandCount * 100}%` }}><b className="hired" style={{ width: `${bandRecords.length ? hired / bandRecords.length * 100 : 0}%` }} /><b className="screened" style={{ width: `${bandRecords.length ? screened / bandRecords.length * 100 : 0}%` }} /><b className="rejected" style={{ width: `${bandRecords.length ? rejected / bandRecords.length * 100 : 0}%` }} /></i></span><small className="history-score-bin-detail">录取 {hired} · 首轮 {screened} · 未过 {rejected}</small></button>; })}</div><div className="history-score-outcome-filter" role="group" aria-label="按招聘结果筛选">{(Object.keys(outcomeLabels) as HistoricalOutcomeFilter[]).map((outcome) => <button type="button" key={outcome} className={outcomeFilter === outcome ? "active" : ""} aria-pressed={outcomeFilter === outcome} onClick={() => { setOutcomeFilter(outcome); setSelectedId(""); }}>{outcome !== "all" && <i className={outcome} />}{outcomeLabels[outcome]}</button>)}</div></div>
@@ -1156,7 +1185,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} agentAvailable={Boolean(health?.agent)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">

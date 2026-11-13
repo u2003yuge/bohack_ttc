@@ -19,6 +19,37 @@ export const historicalScoreBands = [
 export type HistoricalScoreBandKey = (typeof historicalScoreBands)[number]["key"];
 export type HistoricalOutcomeFilter = "all" | "hired" | "screened" | "rejected";
 
+export type HistoricalFilterOptions = {
+  roleGroups: string[];
+  years: number[];
+};
+
+export type HistoricalFilterDraft = {
+  roleGroup: string;
+  year: number | "all";
+  scoreBand: HistoricalScoreBandKey | "all";
+  outcome: HistoricalOutcomeFilter;
+  rationale: string;
+};
+
+export function normalizeHistoricalFilterDraft(input: unknown, options: HistoricalFilterOptions): HistoricalFilterDraft | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const roleGroup = value.roleGroup === "all" || options.roleGroups.includes(String(value.roleGroup)) ? String(value.roleGroup) : "";
+  const year = value.year === "all" ? "all" : Number(value.year);
+  const scoreBand = value.scoreBand === "all" || historicalScoreBands.some((band) => band.key === value.scoreBand) ? String(value.scoreBand) : "";
+  const outcome = value.outcome;
+  if (!roleGroup || (year !== "all" && (!Number.isInteger(year) || !options.years.includes(year))) || !scoreBand || !["all", "hired", "screened", "rejected"].includes(String(outcome))) {
+    return { error: "筛选草案包含当前不可用的筛选项，请重新生成。" };
+  }
+  return {
+    roleGroup,
+    year,
+    scoreBand: scoreBand as HistoricalFilterDraft["scoreBand"],
+    outcome: outcome as HistoricalOutcomeFilter,
+    rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "",
+  };
+}
+
 export function historicalScoreBand(score: number): HistoricalScoreBandKey | null {
   return historicalScoreBands.find((band) => score >= band.min && score <= band.max)?.key ?? null;
 }

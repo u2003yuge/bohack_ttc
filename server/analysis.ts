@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreEvidence, type ScoreKey, type ScoreWeights } from "../shared/scoring.js";
+import { normalizeHistoricalFilterDraft, type HistoricalFilterOptions } from "../shared/history.js";
 
 export type CandidateFields = {
   name: string;
@@ -17,6 +18,7 @@ const knowledgeSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-as
 const scoringAdjustmentSkill = readFileSync(fileURLToPath(new URL("./skills/scoring-adjustment.md", import.meta.url)), "utf8");
 const jobProfileSkill = readFileSync(fileURLToPath(new URL("./skills/job-profile.md", import.meta.url)), "utf8");
 const knowledgeEnrichmentSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-enrichment.md", import.meta.url)), "utf8");
+const historyFilterSkill = readFileSync(fileURLToPath(new URL("./skills/history-filter-assistant.md", import.meta.url)), "utf8");
 
 function createClient(): OpenAI | null {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -220,6 +222,24 @@ export async function suggestKnowledgeAssessment(input: {
     rationale: stringField(parsed.rationale).slice(0, 500),
     verificationQuestions: Array.isArray(parsed.verificationQuestions) ? parsed.verificationQuestions.filter((item): item is string => typeof item === "string").slice(0, 3) : [],
   };
+}
+
+export async function suggestHistoricalFilters(instruction: string, options: HistoricalFilterOptions) {
+  const client = createClient();
+  if (!client) throw new Error("未配置模型服务");
+  const response = await client.chat.completions.create({
+    model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+    temperature: 0,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: historyFilterSkill },
+      { role: "user", content: JSON.stringify({ instruction: instruction.slice(0, 500), options }) },
+    ],
+  });
+  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;
+  const draft = normalizeHistoricalFilterDraft(parsed, options);
+  if ("error" in draft) throw new Error(draft.error);
+  return draft;
 }
 
 export async function enrichKnowledgeDraft(input: {

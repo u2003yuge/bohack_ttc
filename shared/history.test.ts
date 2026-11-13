@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { calculateBenchmark, historicalScoreBand, matchesHistoricalFilters, normalizeHistoricalCandidate, type HistoricalCandidate } from "./history.js";
+import { calculateBenchmark, historicalScoreBand, matchesHistoricalFilters, normalizeHistoricalCandidate, normalizeHistoricalFilterDraft, type HistoricalCandidate } from "./history.js";
 
 test("benchmark percentile counts only historical scores strictly below the current score", () => {
   const benchmark = calculateBenchmark("产品经理", 88);
@@ -45,4 +45,14 @@ test("historical score-band and outcome filters intersect without double-countin
   assert.equal(matchesHistoricalFilters(screened, "60-79", "screened"), true);
   assert.equal(matchesHistoricalFilters(rejected, "60-79", "rejected"), true);
   assert.equal(matchesHistoricalFilters(rejected, "80-100", "rejected"), false);
+});
+
+test("historical filter drafts accept only currently available values", () => {
+  const options = { roleGroups: ["product", "data"], years: [2024, 2025] };
+  assert.deepEqual(normalizeHistoricalFilterDraft({ roleGroup: "data", year: 2025, scoreBand: "80-100", outcome: "screened", rationale: "查看高分首轮样本" }, options), {
+    roleGroup: "data", year: 2025, scoreBand: "80-100", outcome: "screened", rationale: "查看高分首轮样本",
+  });
+  assert.equal("error" in normalizeHistoricalFilterDraft({ roleGroup: "finance", year: 2025, scoreBand: "80-100", outcome: "hired" }, options), true);
+  assert.equal("error" in normalizeHistoricalFilterDraft({ roleGroup: "all", year: 2023, scoreBand: "80-100", outcome: "all" }, options), true);
+  assert.equal("error" in normalizeHistoricalFilterDraft({ roleGroup: "all", year: "all", scoreBand: "invalid", outcome: "all" }, options), true);
 });

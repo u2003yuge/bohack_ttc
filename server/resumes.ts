@@ -5,9 +5,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
+import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
-import { historicalCandidates, normalizeHistoricalCandidate, type HistoricalCandidate } from "../shared/history.js";
+import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
 import { knowledgeRecords, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 
@@ -49,6 +49,21 @@ router.get("/history", async (_request, response, next) => {
   try {
     const local = await readHistoryCandidates();
     response.json({ candidates: [...historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" as const })), ...local.map((candidate) => ({ ...candidate, source: "local" as const }))], description: "本地历史招聘基准样本" });
+  } catch (error) { next(error); }
+});
+
+router.post("/history/filter-draft", async (request, response, next) => {
+  try {
+    const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
+    const records = [...historicalCandidates, ...await readHistoryCandidates()];
+    const options: HistoricalFilterOptions = {
+      roleGroups: [...new Set(records.map((candidate) => roleGroup(candidate.role)))].slice(0, 20),
+      years: [...new Set(records.map((candidate) => candidate.year))].sort((left, right) => right - left).slice(0, 30),
+    };
+    if (!instruction) { response.status(400).json({ error: "请描述希望查看的历史样本。" }); return; }
+    if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" }); return; }
+    const suggestion = await suggestHistoricalFilters(instruction, options);
+    response.json({ suggestion });
   } catch (error) { next(error); }
 });
 
