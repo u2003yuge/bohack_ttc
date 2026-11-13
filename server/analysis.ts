@@ -14,6 +14,7 @@ export type CandidateFields = {
 
 const skill = readFileSync(fileURLToPath(new URL("./skills/resume-analysis.md", import.meta.url)), "utf8");
 const knowledgeSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-assessment.md", import.meta.url)), "utf8");
+const scoringAdjustmentSkill = readFileSync(fileURLToPath(new URL("./skills/scoring-adjustment.md", import.meta.url)), "utf8");
 
 function createClient(): OpenAI | null {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -138,19 +139,27 @@ export async function generateScoreCard(input: {
   return { criteria, weights, composite: calculateComposite(criteria, weights), overallConfidence: Math.round(scoreCriteria.reduce((sum, item) => sum + criteria[item.key].confidence, 0) / scoreCriteria.length * 100) / 100, formula: "weighted-mean-v1", evaluatedAt: new Date().toISOString() };
 }
 
-export async function suggestScoreWeights(instruction: string, current: ScoreWeights): Promise<ScoreWeights> {
+export async function suggestScoreWeights(instruction: string, current: ScoreWeights): Promise<{ weights: ScoreWeights; rationale: string }> {
   const client = createClient();
   if (!client) throw new Error("未配置模型服务");
   const response = await client.chat.completions.create({
     model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini", temperature: 0,
     response_format: { type: "json_object" },
     messages: [
-      { role: "system", content: `根据用户自然语言意图调整六项评分权重。只返回 JSON 对象，键为 ${scoreCriteria.map(c => c.key).join(",")}，值为非负数字，合计尽量为 100。不得增删指标。权重仅影响工作相关标准，禁止使用受保护属性。` },
+      { role: "system", content: `${scoringAdjustmentSkill}\n\nThe exact criterion keys are: ${scoreCriteria.map(c => c.key).join(", ")}.` },
       { role: "user", content: `当前权重：${JSON.stringify(current)}\n调整要求：${instruction}` },
     ],
   });
-  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as Partial<ScoreWeights>;
-  return normalizeWeights(Object.fromEntries(scoreCriteria.map(({ key }) => [key, Number(parsed[key] ?? current[key])])) as ScoreWeights);
+  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as { weights?: Partial<ScoreWeights>; rationale?: unknown };
+  const proposed = parsed.weights ?? {};
+  const safeWeights = Object.fromEntries(scoreCriteria.map(({ key }) => {
+    const value = Number(proposed[key]);
+    return [key, Number.isFinite(value) ? Math.max(0, value) : current[key]];
+  })) as ScoreWeights;
+  return {
+    weights: normalizeWeights(safeWeights),
+    rationale: stringField(parsed.rationale).slice(0, 300) || "按你的说明调整了各项关注程度，未改变评分维度。",
+  };
 }
 
 export async function suggestKnowledgeAssessment(input: {

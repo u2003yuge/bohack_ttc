@@ -173,9 +173,11 @@ router.post("/scoring/weights/adjust", async (request, response, next) => {
       response.status(400).json({ error: "请描述希望如何调整评分权重。" });
       return;
     }
-    const weights = await suggestScoreWeights(instruction, await readWeights());
-    await saveWeights(weights);
-    response.json({ weights });
+    const currentWeights = request.body?.currentWeights
+      ? normalizeWeightInput(request.body.currentWeights)
+      : await readWeights();
+    const proposal = await suggestScoreWeights(instruction, currentWeights);
+    response.json(proposal);
   } catch (error) { next(error); }
 });
 

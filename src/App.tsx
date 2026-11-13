@@ -27,11 +27,13 @@ import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
-import { calculateBenchmark, type Benchmark } from "../shared/history";
+import { calculateBenchmark, roleGroup, type Benchmark } from "../shared/history";
 import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
+type WeightProposal = { weights: ScoreWeights; rationale: string };
+type WeightImpact = { currentScore: number; proposedScore: number; currentRank: number; proposedRank: number; total: number; demoCount: number };
 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
 type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
@@ -559,6 +561,19 @@ function demoScoreCard(resume: Resume, index: number, weights: ScoreWeights): Sc
   return { criteria, weights, composite: calculateComposite(criteria, weights), overallConfidence: 0.72, formula: "weighted-mean-v1", evaluatedAt: new Date().toISOString() };
 }
 
+function WeightProposalPreview({ proposal, currentWeights, impact, selectedHasScoreCard, onApply, onDiscard, busy }: { proposal: WeightProposal; currentWeights: ScoreWeights; impact: WeightImpact; selectedHasScoreCard: boolean; onApply: () => void; onDiscard: () => void; busy: boolean }) {
+  const scoreChange = impact.proposedScore - impact.currentScore;
+  const rankChange = impact.currentRank - impact.proposedRank;
+  return <section className="weight-proposal">
+    <div className="weight-proposal-heading"><span>AI 调整方案</span><strong>待确认</strong></div>
+    <p>{proposal.rationale}</p>
+    <div className="weight-impact"><div><span>当前候选人综合分</span><strong>{impact.currentScore.toFixed(1)} <small>→</small> {impact.proposedScore.toFixed(1)} <i className={scoreChange >= 0 ? "positive" : "negative"}>{scoreChange >= 0 ? "+" : ""}{scoreChange.toFixed(1)}</i></strong></div><div><span>同岗位族排名</span><strong>#{impact.currentRank}/{impact.total} <small>→</small> #{impact.proposedRank}/{impact.total} <i className={rankChange >= 0 ? "positive" : "negative"}>{rankChange > 0 ? `↑${rankChange}` : rankChange < 0 ? `↓${Math.abs(rankChange)}` : "不变"}</i></strong></div></div>
+    <div className="weight-proposal-rows">{scoreCriteria.map(({ key, label }) => { const before = currentWeights[key]; const after = proposal.weights[key]; const delta = after - before; return <div key={key}><span>{label}</span><b>{before}% <small>→</small> {after}%{delta !== 0 && <i className={delta > 0 ? "positive" : "negative"}>{delta > 0 ? "+" : ""}{delta}</i>}</b></div>; })}</div>
+    <small className="weight-impact-note">分数按已有单项评分重算，不会改写能力评分；排名比较 {impact.total} 份同岗位族档案，其中 {impact.demoCount} 份为演示档案。{selectedHasScoreCard ? "" : "当前候选人使用示例评分，影响仅供演示。"}</small>
+    <div className="weight-proposal-actions"><button onClick={onDiscard} disabled={busy}><X size={13} />丢弃</button><button onClick={onApply} disabled={busy}>{busy ? <LoaderCircle className="spin" size={13} /> : <Check size={13} />}{busy ? "保存中" : "应用方案"}</button></div>
+  </section>;
+}
+
 function ComparisonView({ resumes, weights, onClose }: { resumes: Resume[]; weights: ScoreWeights; onClose: () => void }) {
   const ranked = resumes.map((resume, index) => ({ resume, card: demoScoreCard(resume, index, weights) })).sort((a, b) => b.card.composite - a.card.composite);
   return <main className="comparison-main comparison-workspace-main"><div className="comparison-panel"><div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions"><span className="comparison-count">{ranked.length} 位候选人</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div><p className="comparison-note">按当前权重计算综合分，分数仅使用简历中与工作相关的证据。</p><RecruitmentQualityMap candidates={ranked} /><div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.map(({ resume, card }, rank) => <tr key={resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><strong>{resume.name}</strong><small>{resume.role}</small></td>{scoreCriteria.map(({ key }) => <td key={key}>{card.criteria[key].score.toFixed(0)}</td>)}<td className="composite-cell">{card.composite.toFixed(1)}</td></tr>)}</tbody></table></div><div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div></div></main>;
@@ -585,11 +600,29 @@ export default function App() {
   const [weights, setWeights] = useState<ScoreWeights>(defaultScoreWeights);
   const [weightInstruction, setWeightInstruction] = useState("");
   const [weightBusy, setWeightBusy] = useState(false);
+  const [weightSaving, setWeightSaving] = useState(false);
+  const [weightProposal, setWeightProposal] = useState<WeightProposal | null>(null);
+  const [weightError, setWeightError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
 
   const selected = resumes.find((resume) => resume.id === selectedId) ?? resumes[0];
   const filtered = useMemo(() => resumes.filter((resume) => `${resume.name} ${resume.role}`.toLowerCase().includes(filter.toLowerCase())), [resumes, filter]);
+  const weightImpact = useMemo<WeightImpact | null>(() => {
+    if (!weightProposal || !selected) return null;
+    const comparableResumes = resumes.filter((resume) => roleGroup(resume.role) === roleGroup(selected.role));
+    const rankFor = (nextWeights: ScoreWeights) => comparableResumes.map((resume) => ({ id: resume.id, score: demoScoreCard(resume, resumes.indexOf(resume), nextWeights).composite })).sort((a, b) => b.score - a.score);
+    const current = rankFor(weights);
+    const proposed = rankFor(weightProposal.weights);
+    return {
+      currentScore: current.find((item) => item.id === selected.id)?.score ?? 0,
+      proposedScore: proposed.find((item) => item.id === selected.id)?.score ?? 0,
+      currentRank: current.findIndex((item) => item.id === selected.id) + 1,
+      proposedRank: proposed.findIndex((item) => item.id === selected.id) + 1,
+      total: comparableResumes.length,
+      demoCount: comparableResumes.filter((resume) => resume.source === "demo").length,
+    };
+  }, [resumes, selected, weightProposal, weights]);
 
   useEffect(() => {
     loadResumes();
@@ -600,20 +633,26 @@ export default function App() {
 
   async function updateWeights(next: ScoreWeights) {
     const normalized = normalizeWeights(next);
-    setWeights(normalized);
-    await fetch("/api/resumes/scoring/weights", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ weights: normalized }) });
+    setWeightSaving(true); setWeightError("");
+    try {
+      const response = await fetch("/api/resumes/scoring/weights", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ weights: normalized }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "评分权重保存失败。");
+      setWeights(payload.weights); setWeightProposal(null);
+    } catch (error) {
+      setWeightError(error instanceof Error ? error.message : "评分权重保存失败。");
+    } finally { setWeightSaving(false); }
   }
 
   async function adjustWeightsWithAgent() {
     if (!weightInstruction.trim()) return;
-    setWeightBusy(true);
+    setWeightBusy(true); setWeightError(""); setWeightProposal(null);
     try {
-      const response = await fetch("/api/resumes/scoring/weights/adjust", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: weightInstruction }) });
+      const response = await fetch("/api/resumes/scoring/weights/adjust", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: weightInstruction, currentWeights: weights }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "权重调整失败");
-      setWeights(payload.weights);
-      setWeightInstruction("");
-    } catch (error) { setImportError(error instanceof Error ? error.message : "权重调整失败"); } finally { setWeightBusy(false); }
+      setWeightProposal({ weights: payload.weights, rationale: payload.rationale || "AI 已按你的要求生成权重建议。" });
+    } catch (error) { setWeightError(error instanceof Error ? error.message : "权重调整失败"); } finally { setWeightBusy(false); }
   }
 
   useEffect(() => {
@@ -836,7 +875,13 @@ export default function App() {
           <button className="run-agent-button" onClick={analyze} disabled={busy || !health?.agent || !question.trim()}>
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}
           </button>
-          <div className="scoring-settings"><div className="scoring-settings-head"><div><span className="eyebrow">SCORING WEIGHTS</span><strong>评分权重</strong></div><span>{Object.values(weights).reduce((sum, value) => sum + value, 0)}%</span></div>{scoreCriteria.map(({ key, label }) => <label className="weight-row" key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights)} onBlur={() => updateWeights(weights)} /><span>%</span></label>)}<div className="weight-agent"><input value={weightInstruction} onChange={(event) => setWeightInstruction(event.target.value)} placeholder="让 AI 调整，例如：更看重专业能力和岗位契合度" /><button onClick={adjustWeightsWithAgent} disabled={weightBusy || !health?.agent}>{weightBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div></div>
+          <div className="scoring-settings">
+            <div className="scoring-settings-head"><div><span className="eyebrow">SCORING WEIGHTS</span><strong>评分权重</strong></div><span>{weightSaving ? "保存中" : `${Object.values(weights).reduce((sum, value) => sum + value, 0)}%`}</span></div>
+            {scoreCriteria.map(({ key, label }) => <label className="weight-row" key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => { setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights); setWeightProposal(null); setWeightError(""); }} onBlur={() => updateWeights(weights)} /><span>%</span></label>)}
+            <div className="weight-agent"><input value={weightInstruction} onChange={(event) => { setWeightInstruction(event.target.value); setWeightProposal(null); setWeightError(""); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); adjustWeightsWithAgent(); } }} placeholder="让 AI 调整，例如：更看重专业能力和岗位契合度" /><button title="生成权重调整方案" aria-label="生成权重调整方案" onClick={adjustWeightsWithAgent} disabled={weightBusy || weightSaving || !health?.agent}>{weightBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div>
+            {weightError && <div className="inline-error">{weightError}</div>}
+            {weightProposal && weightImpact && <WeightProposalPreview proposal={weightProposal} currentWeights={weights} impact={weightImpact} selectedHasScoreCard={Boolean(selected.scoreCard)} onDiscard={() => setWeightProposal(null)} onApply={() => updateWeights(weightProposal.weights)} busy={weightSaving} />}
+          </div>
           {!health?.agent && <div className="setup-hint"><span className="setup-icon"><CircleHelp size={15} /></span><span>配置服务密钥后即可运行分析。<code>OPENAI_API_KEY</code>{health ? "" : " · 服务连接中"}</span></div>}
 
         </aside>
