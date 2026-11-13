@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import resumes from "./resumes.js";
 import { searchPublicWeb } from "./web-search.js";
-import { structureJobRequirements, suggestAnalysisTask } from "./analysis.js";
+import { normalizeProjectBreakdownSources, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -138,6 +138,23 @@ app.post("/api/agent/task-draft", async (request, response) => {
     response.json(await suggestAnalysisTask(instruction));
   } catch (error) {
     response.status(502).json({ error: error instanceof Error ? error.message : "分析任务整理失败。" });
+  }
+});
+
+app.post("/api/agent/project-breakdown", async (request, response) => {
+  const normalized = normalizeProjectBreakdownSources(request.body?.projects);
+  if ("error" in normalized) {
+    response.status(400).json({ error: normalized.error });
+    return;
+  }
+  if (!process.env.OPENAI_API_KEY) {
+    response.status(503).json({ error: "尚未配置模型服务。请在 .env 中填写 OPENAI_API_KEY。" });
+    return;
+  }
+  try {
+    response.json(await suggestProjectBreakdown(normalized.sources));
+  } catch (error) {
+    response.status(502).json({ error: error instanceof Error ? error.message : "项目拆解失败。" });
   }
 });
 

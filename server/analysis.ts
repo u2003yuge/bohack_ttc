@@ -22,6 +22,67 @@ const knowledgeEnrichmentSkill = readFileSync(fileURLToPath(new URL("./skills/kn
 const historyFilterSkill = readFileSync(fileURLToPath(new URL("./skills/history-filter-assistant.md", import.meta.url)), "utf8");
 const knowledgeFilterSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-filter-assistant.md", import.meta.url)), "utf8");
 const analysisTaskSkill = readFileSync(fileURLToPath(new URL("./skills/analysis-task-assistant.md", import.meta.url)), "utf8");
+const projectBreakdownSkill = readFileSync(fileURLToPath(new URL("./skills/project-breakdown.md", import.meta.url)), "utf8");
+
+export type ProjectBreakdownSource = { title: string; content: string };
+export type ProjectBreakdownDraft = { sourceIndex: number; title: string; plainTitle: string; goal: string; actions: string; outcome: string; evidence: string; confidence: number };
+
+export function normalizeProjectBreakdownSources(input: unknown): { sources: ProjectBreakdownSource[] } | { error: string } {
+  if (!Array.isArray(input) || input.length === 0 || input.length > 4) return { error: "请提供 1 到 4 项简历经历进行拆解。" };
+  const sources: ProjectBreakdownSource[] = [];
+  for (const item of input) {
+    const value = item && typeof item === "object" ? item as Record<string, unknown> : {};
+    const title = typeof value.title === "string" ? value.title.trim().slice(0, 240) : "";
+    const content = typeof value.content === "string" ? value.content.trim().slice(0, 2500) : "";
+    if (!title || !content) return { error: "每项经历都需要名称和简历原文。" };
+    sources.push({ title, content });
+  }
+  return { sources };
+}
+
+export function normalizeProjectBreakdownDraft(input: unknown, sources: ProjectBreakdownSource[]): { projects: ProjectBreakdownDraft[] } | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const rawProjects = Array.isArray(value.projects) ? value.projects : [];
+  const seen = new Set<number>();
+  const projects: ProjectBreakdownDraft[] = [];
+  for (const raw of rawProjects.slice(0, 4)) {
+    const item = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
+    const sourceIndex = Number(item.sourceIndex);
+    if (!Number.isInteger(sourceIndex) || sourceIndex < 0 || sourceIndex >= sources.length || seen.has(sourceIndex)) continue;
+    const evidence = stringField(item.evidence).slice(0, 500);
+    if (!evidence || !sources[sourceIndex].content.includes(evidence)) continue;
+    seen.add(sourceIndex);
+    projects.push({
+      sourceIndex,
+      title: sources[sourceIndex].title,
+      plainTitle: stringField(item.plainTitle).slice(0, 160) || "简历项目工作",
+      goal: stringField(item.goal).slice(0, 400) || "简历没有明确说明目标，建议面试核实。",
+      actions: stringField(item.actions).slice(0, 800) || "简历没有明确说明个人行动，建议面试核实。",
+      outcome: stringField(item.outcome).slice(0, 400) || "简历没有明确说明结果，建议面试核实。",
+      evidence,
+      confidence: clamp(item.confidence, 0, 1),
+    });
+  }
+  return projects.length ? { projects } : { error: "AI 拆解结果没有可回溯到简历原文的证据，请重试或使用原始拆解。" };
+}
+
+export async function suggestProjectBreakdown(sources: ProjectBreakdownSource[]): Promise<{ projects: ProjectBreakdownDraft[] }> {
+  const client = createClient();
+  if (!client) throw new Error("未配置模型服务");
+  const response = await client.chat.completions.create({
+    model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+    temperature: 0,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: projectBreakdownSkill },
+      { role: "user", content: JSON.stringify({ projects: sources.map((source, sourceIndex) => ({ sourceIndex, title: source.title, content: source.content })) }) },
+    ],
+  });
+  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;
+  const draft = normalizeProjectBreakdownDraft(parsed, sources);
+  if ("error" in draft) throw new Error(draft.error);
+  return draft;
+}
 
 function createClient(): OpenAI | null {
   if (!process.env.OPENAI_API_KEY) return null;

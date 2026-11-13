@@ -288,7 +288,8 @@ function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: stri
   );
 }
 
-type ProjectBreakdown = { title: string; plainTitle: string; goal: string; actions: string; outcome: string };
+type ProjectBreakdown = { title: string; plainTitle: string; goal: string; actions: string; outcome: string; sourceText: string };
+type ProjectBreakdownDraft = { sourceIndex: number; title: string; plainTitle: string; goal: string; actions: string; outcome: string; evidence: string; confidence: number };
 
 function translateRecruitingTerms(value: string): string {
   const terms: Array<[RegExp, string]> = [
@@ -301,10 +302,10 @@ function deriveProjects(candidate: Resume): ProjectBreakdown[] {
   const experiences = candidate.experiences ?? [];
   if (experiences.length) return experiences.slice(0, 4).map((experience) => {
     const sentences = experience.detail.split(/[。；;]/).map((item) => item.trim()).filter(Boolean);
-    return { title: `${experience.company} · ${experience.role}`, plainTitle: translateRecruitingTerms(experience.role), goal: `在 ${experience.company} 负责与岗位相关的工作`, actions: translateRecruitingTerms(sentences.slice(0, 1).join("；") || experience.detail), outcome: translateRecruitingTerms(sentences.slice(1).join("；") || "简历未明确写出量化结果") };
+    return { title: `${experience.company} · ${experience.role}`, plainTitle: translateRecruitingTerms(experience.role), goal: `在 ${experience.company} 负责与岗位相关的工作`, actions: translateRecruitingTerms(sentences.slice(0, 1).join("；") || experience.detail), outcome: translateRecruitingTerms(sentences.slice(1).join("；") || "简历未明确写出量化结果"), sourceText: experience.detail };
   });
   const chunks = candidate.text.split(/[。；\n]/).map((item) => item.trim()).filter((item) => /负责|主导|搭建|优化|项目|交付|提升|降低/.test(item));
-  return chunks.slice(0, 4).map((chunk, index) => ({ title: `简历项目 ${index + 1}`, plainTitle: "把这段经历拆成可核对的工作任务", goal: "候选人希望解决的业务或技术问题（需人工核实）", actions: translateRecruitingTerms(chunk), outcome: "简历未明确写出量化结果" }));
+  return chunks.slice(0, 4).map((chunk, index) => ({ title: `简历项目 ${index + 1}`, plainTitle: "把这段经历拆成可核对的工作任务", goal: "候选人希望解决的业务或技术问题（需人工核实）", actions: translateRecruitingTerms(chunk), outcome: "简历未明确写出量化结果", sourceText: chunk }));
 }
 
 function KnowledgeReferenceBar({ candidate, records, onOpen }: { candidate: Resume; records: KnowledgeRecord[]; onOpen: (id?: string) => void }) {
@@ -373,9 +374,26 @@ function ScoreTrend({ card, candidate, onEvidence }: { card: ScoreCard; candidat
   </div>;
 }
 
-function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
+function ProjectBreakdownView({ candidate, agentAvailable, onEvidence }: { candidate: Resume; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const projects = deriveProjects(candidate);
-  return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><span>{projects.length} 项</span></div>{projects.length ? projects.map((project) => <article className="project-item" key={project.title}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl></article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
+  const [draft, setDraft] = useState<ProjectBreakdownDraft[] | null>(null);
+  const [showAiDraft, setShowAiDraft] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  async function explainProjects() {
+    setBusy(true); setError("");
+    try {
+      const response = await fetch("/api/agent/project-breakdown", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projects: projects.map(({ title, sourceText }) => ({ title, content: sourceText })) }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "AI 项目拆解失败。");
+      if (!Array.isArray(payload.projects) || payload.projects.length === 0) throw new Error("AI 没有返回带原文依据的项目拆解。");
+      setDraft(payload.projects as ProjectBreakdownDraft[]);
+      setShowAiDraft(true);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "AI 项目拆解失败。"); }
+    finally { setBusy(false); }
+  }
+  const activeProjects = showAiDraft && draft ? draft : projects;
+  return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><div className="project-breakdown-actions">{draft && <div className="project-breakdown-modes" role="group" aria-label="项目拆解展示模式"><button type="button" className={!showAiDraft ? "active" : ""} aria-pressed={!showAiDraft} onClick={() => setShowAiDraft(false)}>规则拆解</button><button type="button" className={showAiDraft ? "active" : ""} aria-pressed={showAiDraft} onClick={() => setShowAiDraft(true)}>AI 草案</button></div>}<button type="button" className="project-ai-button" onClick={() => void explainProjects()} disabled={!agentAvailable || busy || !projects.length} title={!agentAvailable ? "请先配置模型服务" : "仅将当前列出的经历片段发送给模型"}>{busy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}{busy ? "拆解中" : "AI 人话拆解"}</button><span>{activeProjects.length} 项</span></div></div>{error && <div className="inline-error" role="status">{error}</div>}{showAiDraft && draft && <p className="project-ai-note">AI 结果是未保存草案；引用经过原文校验。请核对后再使用，未明确的目标、个人贡献或结果会保留为待核实项。</p>}{activeProjects.length ? activeProjects.map((project, index) => <article className="project-item" key={`${project.title}-${index}`}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}{"sourceIndex" in project ? ` · 依据置信度 ${Math.round(project.confidence * 100)}%` : ""}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl>{"evidence" in project && <button type="button" className="project-evidence-link" onClick={() => onEvidence(project.evidence)} title="在简历原文中定位 AI 引用">原文依据：{project.evidence}<ExternalLink size={10} /></button>}</article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
 }
 
 function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: string; score: number; candidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void }) {
@@ -514,12 +532,12 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agent
   </main>;
 }
 
-function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onOpenHistory, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onEvidence: (evidence: string) => void }) {
+function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onOpenHistory, agentAvailable, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const [selectedCriterion, setSelectedCriterion] = useState<ScoreKey | null>(null);
   const selected = selectedCriterion ? card.criteria[selectedCriterion] : null;
   const selectedLabel = scoreCriteria.find((criterion) => criterion.key === selectedCriterion)?.label;
   useEffect(() => { setSelectedCriterion(null); }, [candidate.id]);
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView candidate={candidate} /></div>;
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView key={candidate.id} candidate={candidate} agentAvailable={agentAvailable} onEvidence={onEvidence} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -988,7 +1006,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onEvidence: (evidence: string) => void }) {
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, agentAvailable, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const pages = paginateReport(answer);
   return (
     <div className="analysis-document-shell">
@@ -998,7 +1016,7 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
       </div>
       <div className="analysis-document-pages">
         {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
-        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onOpenHistory={onOpenHistory} onEvidence={onEvidence} />
+        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onOpenHistory={onOpenHistory} agentAvailable={agentAvailable} onEvidence={onEvidence} />
       </div>
     </div>
   );
@@ -1463,7 +1481,7 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
         </aside>
