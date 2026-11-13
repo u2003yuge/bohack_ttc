@@ -15,12 +15,20 @@ export type KnowledgeSort = "default" | "score" | "updated" | "title";
 export type KnowledgeVerificationFilter = "all" | "pending" | "verified";
 export type KnowledgeEvidenceFilter = "all" | "with-sources" | "verified-sources" | "without-sources";
 export type KnowledgeScoreBand = "all" | "0-49" | "50-69" | "70-84" | "85-100";
+export type KnowledgeReviewFilter = "all" | "reviewed" | "pending";
+export const knowledgeScoreBands: Array<{ key: Exclude<KnowledgeScoreBand, "all">; label: string; min: number; max: number }> = [
+  { key: "0-49", label: "0–49", min: 0, max: 49 },
+  { key: "50-69", label: "50–69", min: 50, max: 69 },
+  { key: "70-84", label: "70–84", min: 70, max: 84 },
+  { key: "85-100", label: "85–100", min: 85, max: 100 },
+];
 
 export type KnowledgeFilterDraft = {
   kind: KnowledgeKind | "all";
   verificationFilter: KnowledgeVerificationFilter;
   evidenceFilter: KnowledgeEvidenceFilter;
   scoreBand: KnowledgeScoreBand;
+  reviewFilter: KnowledgeReviewFilter;
   query: string;
   linkedOnly: boolean;
   sort: KnowledgeSort;
@@ -33,10 +41,11 @@ export function normalizeKnowledgeFilterDraft(input: unknown): KnowledgeFilterDr
   const verificationFilters = ["all", "pending", "verified"];
   const evidenceFilters = ["all", "with-sources", "verified-sources", "without-sources"];
   const scoreBands = ["all", "0-49", "50-69", "70-84", "85-100"];
+  const reviewFilters = ["all", "reviewed", "pending"];
   const sorts = ["default", "score", "updated", "title"];
   if (!kinds.includes(String(value.kind)) || !verificationFilters.includes(String(value.verificationFilter))
     || !evidenceFilters.includes(String(value.evidenceFilter)) || !scoreBands.includes(String(value.scoreBand))
-    || !sorts.includes(String(value.sort)) || typeof value.linkedOnly !== "boolean") {
+    || !reviewFilters.includes(String(value.reviewFilter)) || !sorts.includes(String(value.sort)) || typeof value.linkedOnly !== "boolean") {
     return { error: "筛选草案包含无效选项，请重新生成。" };
   }
   return {
@@ -44,11 +53,20 @@ export function normalizeKnowledgeFilterDraft(input: unknown): KnowledgeFilterDr
     verificationFilter: value.verificationFilter as KnowledgeVerificationFilter,
     evidenceFilter: value.evidenceFilter as KnowledgeEvidenceFilter,
     scoreBand: value.scoreBand as KnowledgeScoreBand,
+    reviewFilter: value.reviewFilter as KnowledgeReviewFilter,
     query: typeof value.query === "string" ? value.query.trim().slice(0, 120) : "",
     linkedOnly: value.linkedOnly,
     sort: value.sort as KnowledgeSort,
     rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "",
   };
+}
+
+export function summarizeKnowledgeScoreBands(records: KnowledgeRecord[]) {
+  return knowledgeScoreBands.map((band) => {
+    const items = records.filter((record) => record.significanceScore >= band.min && record.significanceScore <= band.max);
+    const reviewed = items.filter((record) => Boolean(record.reviewHistory?.length)).length;
+    return { ...band, count: items.length, reviewed, pending: items.length - reviewed };
+  });
 }
 
 export type KnowledgeEvidenceSource = {

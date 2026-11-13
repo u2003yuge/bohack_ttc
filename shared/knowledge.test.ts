@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { findKnowledgeMatch, findKnowledgeReferences, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, type KnowledgeRecord } from "./knowledge.js";
+import { findKnowledgeMatch, findKnowledgeReferences, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -64,7 +64,7 @@ test("changing a cited source identity clears its human verification marker", ()
 
 test("knowledge filter drafts accept only supported filters and bound free-text fields", () => {
   const draft = normalizeKnowledgeFilterDraft({
-    kind: "competition", verificationFilter: "verified", evidenceFilter: "verified-sources", scoreBand: "85-100",
+    kind: "competition", verificationFilter: "verified", evidenceFilter: "verified-sources", scoreBand: "85-100", reviewFilter: "reviewed",
     query: ` ${"x".repeat(140)} `, linkedOnly: true, sort: "score", rationale: ` ${"r".repeat(260)} `,
   });
   assert.equal("error" in draft, false);
@@ -72,9 +72,19 @@ test("knowledge filter drafts accept only supported filters and bound free-text 
   assert.equal(draft.query.length, 120);
   assert.equal(draft.rationale.length, 240);
   assert.equal(draft.linkedOnly, true);
+  assert.equal(draft.reviewFilter, "reviewed");
 });
 
 test("knowledge filter drafts reject invented filter values", () => {
   const draft = normalizeKnowledgeFilterDraft({ kind: "candidate", verificationFilter: "all", evidenceFilter: "all", scoreBand: "all", linkedOnly: false, sort: "score" });
   assert.deepEqual(draft, { error: "筛选草案包含无效选项，请重新生成。" });
+});
+
+test("knowledge score bands separate saved human reviews from pending example scores", () => {
+  const bands = summarizeKnowledgeScoreBands([
+    { ...record, significanceScore: 49, reviewHistory: [{ id: "review-1", significanceScore: 49, scoreRationale: "已核对", verificationStatus: "已核验", updatedAt: "2026-01-01", source: "manual" }] },
+    { ...record, id: "pending-50", significanceScore: 50, reviewHistory: undefined },
+  ]);
+  assert.deepEqual(bands.find((band) => band.key === "0-49"), { key: "0-49", label: "0–49", min: 0, max: 49, count: 1, reviewed: 1, pending: 0 });
+  assert.deepEqual(bands.find((band) => band.key === "50-69"), { key: "50-69", label: "50–69", min: 50, max: 69, count: 1, reviewed: 0, pending: 1 });
 });
