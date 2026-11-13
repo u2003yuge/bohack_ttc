@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestComparisonRanking, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestKnowledgeFilters, suggestScoreWeights } from "./analysis.js";
-import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
+import { defaultScoreWeights, normalizeComparisonRankDraft, normalizeWeights, type ComparisonRankDraft, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
 import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
@@ -72,7 +72,9 @@ router.post("/comparison/rank-draft", async (request, response, next) => {
     const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
     if (!instruction) { response.status(400).json({ error: "请描述希望按什么能力比较候选人。" }); return; }
     if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成排名方案。" }); return; }
-    const suggestion = await suggestComparisonRanking(instruction);
+    const currentDraft = normalizeComparisonRankDraft(request.body?.current ?? {});
+    if ("error" in currentDraft) { response.status(400).json({ error: "当前排名或图表设置无效，请刷新后重试。" }); return; }
+    const suggestion = await suggestComparisonRanking(instruction, currentDraft as ComparisonRankDraft);
     response.json({ suggestion });
   } catch (error) { next(error); }
 });

@@ -361,7 +361,7 @@ export async function suggestKnowledgeFilters(instruction: string): Promise<Know
   return draft;
 }
 
-export async function suggestComparisonRanking(instruction: string): Promise<ComparisonRankDraft> {
+export async function suggestComparisonRanking(instruction: string, current: ComparisonRankDraft): Promise<ComparisonRankDraft> {
   const client = createClient();
   if (!client) throw new Error("未配置模型服务");
   const comparisonRankSkill = readFileSync(fileURLToPath(new URL("./skills/comparison-rank-assistant.md", import.meta.url)), "utf8");
@@ -371,11 +371,11 @@ export async function suggestComparisonRanking(instruction: string): Promise<Com
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: comparisonRankSkill },
-      { role: "user", content: JSON.stringify({ instruction: instruction.slice(0, 500) }) },
+      { role: "user", content: JSON.stringify({ instruction: instruction.slice(0, 500), current }) },
     ],
   });
   const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;
-  const draft = normalizeComparisonRankDraft(parsed);
+  const draft = normalizeComparisonRankDraft(parsed, current);
   if ("error" in draft) throw new Error(draft.error);
   return draft;
 }

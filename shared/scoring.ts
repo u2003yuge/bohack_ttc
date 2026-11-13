@@ -9,8 +9,9 @@ export const scoreCriteria = [
 
 export type ScoreKey = (typeof scoreCriteria)[number]["key"];
 export type ComparisonRankCriterion = ScoreKey | "composite";
+export type ComparisonMapAxis = ScoreKey | "depth";
 export type ComparisonRatingFilter = "all" | "scored" | "demo";
-export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; rationale: string };
+export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; mapX: ComparisonMapAxis; mapY: ComparisonMapAxis; rationale: string };
 export type ScoreWeights = Record<ScoreKey, number>;
 export type ScoreEvidence = { score: number; evidence: string[]; confidence: number };
 export type ScoreCard = {
@@ -39,17 +40,25 @@ export const defaultScoreWeights: ScoreWeights = {
   growth: 5,
 };
 
-export function normalizeComparisonRankDraft(input: unknown): ComparisonRankDraft | { error: string } {
+export function normalizeComparisonRankDraft(input: unknown, defaults: Partial<ComparisonRankDraft> = {}): ComparisonRankDraft | { error: string } {
   const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
   const criteria = ["composite", ...scoreCriteria.map(({ key }) => key)];
-  const ratingFilter = value.ratingFilter === undefined ? "all" : value.ratingFilter;
-  if (!criteria.includes(String(value.criterion)) || !["asc", "desc"].includes(String(value.direction)) || !["all", "scored", "demo"].includes(String(ratingFilter))) {
+  const mapAxes = ["depth", ...scoreCriteria.map(({ key }) => key)];
+  const criterion = value.criterion === undefined ? defaults.criterion ?? "composite" : value.criterion;
+  const direction = value.direction === undefined ? defaults.direction ?? "desc" : value.direction;
+  const ratingFilter = value.ratingFilter === undefined ? defaults.ratingFilter ?? "all" : value.ratingFilter;
+  const mapX = value.mapX === undefined ? defaults.mapX ?? "perspective" : value.mapX;
+  const mapY = value.mapY === undefined ? defaults.mapY ?? "depth" : value.mapY;
+  if (!criteria.includes(String(criterion)) || !["asc", "desc"].includes(String(direction)) || !["all", "scored", "demo"].includes(String(ratingFilter))
+    || !mapAxes.includes(String(mapX)) || !mapAxes.includes(String(mapY)) || mapX === mapY) {
     return { error: "排名方案包含无效的评分维度或方向，请重新生成。" };
   }
   return {
-    criterion: value.criterion as ComparisonRankCriterion,
-    direction: value.direction as ComparisonRankDraft["direction"],
+    criterion: criterion as ComparisonRankCriterion,
+    direction: direction as ComparisonRankDraft["direction"],
     ratingFilter: ratingFilter as ComparisonRatingFilter,
+    mapX: mapX as ComparisonMapAxis,
+    mapY: mapY as ComparisonMapAxis,
     rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "",
   };
 }
