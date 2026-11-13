@@ -116,7 +116,32 @@ export type KnowledgeImportBundle = {
   version: 1;
   exportedAt?: string;
   records: KnowledgeRecord[];
+  reviews?: Record<string, KnowledgeReviewEntry[]>;
 };
+
+function normalizeKnowledgeReviewHistory(input: unknown, sources: KnowledgeEvidenceSource[], preserveUnresolvedSourceIds = false): KnowledgeReviewEntry[] {
+  return Array.isArray(input) ? input.flatMap((entry): KnowledgeReviewEntry[] => {
+    if (!entry || typeof entry !== "object") return [];
+    const review = entry as Record<string, unknown>;
+    const score = typeof review.significanceScore === "number" ? review.significanceScore : Number.NaN;
+    const updatedAt = typeof review.updatedAt === "string" && !Number.isNaN(Date.parse(review.updatedAt)) ? review.updatedAt : "";
+    if (!Number.isFinite(score) || score < 0 || score > 100 || !updatedAt) return [];
+    const evidenceSourceIds = Array.isArray(review.evidenceSourceIds)
+      ? review.evidenceSourceIds.filter((sourceId): sourceId is string => typeof sourceId === "string" && (preserveUnresolvedSourceIds || sources.some((source) => source.id === sourceId))).slice(0, 12).map((sourceId) => sourceId.slice(0, 120))
+      : [];
+    const sourceSnapshots = normalizeKnowledgeEvidenceSources(review.evidenceSources, Array.isArray(review.evidenceSources) ? review.evidenceSources as KnowledgeEvidenceSource[] : []);
+    return [{
+      id: typeof review.id === "string" && review.id.trim() ? review.id.slice(0, 80) : globalThis.crypto.randomUUID(),
+      significanceScore: Math.round(score),
+      scoreRationale: typeof review.scoreRationale === "string" ? review.scoreRationale.trim().slice(0, 500) : "",
+      verificationStatus: review.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验",
+      updatedAt,
+      source: review.source === "ai-assisted" ? "ai-assisted" : "manual",
+      evidenceSourceIds,
+      ...(sourceSnapshots.length ? { evidenceSources: sourceSnapshots } : {}),
+    }];
+  }).slice(-30) : [];
+}
 
 export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle | { error: string } {
   const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
@@ -137,27 +162,7 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
     }
     seen.add(id);
     const sources = normalizeKnowledgeEvidenceSources(record.evidenceSources);
-    const reviewHistory = Array.isArray(record.reviewHistory) ? record.reviewHistory.flatMap((entry): KnowledgeReviewEntry[] => {
-      if (!entry || typeof entry !== "object") return [];
-      const review = entry as Record<string, unknown>;
-      const reviewScore = typeof review.significanceScore === "number" ? review.significanceScore : Number.NaN;
-      const updatedAt = typeof review.updatedAt === "string" && !Number.isNaN(Date.parse(review.updatedAt)) ? review.updatedAt : "";
-      if (!Number.isFinite(reviewScore) || reviewScore < 0 || reviewScore > 100 || !updatedAt) return [];
-      const evidenceSourceIds = Array.isArray(review.evidenceSourceIds)
-        ? review.evidenceSourceIds.filter((sourceId): sourceId is string => typeof sourceId === "string" && sources.some((source) => source.id === sourceId)).slice(0, 12)
-        : [];
-      const sourceSnapshots = normalizeKnowledgeEvidenceSources(review.evidenceSources, Array.isArray(review.evidenceSources) ? review.evidenceSources as KnowledgeEvidenceSource[] : []);
-      return [{
-        id: typeof review.id === "string" && review.id.trim() ? review.id.slice(0, 80) : globalThis.crypto.randomUUID(),
-        significanceScore: Math.round(reviewScore),
-        scoreRationale: typeof review.scoreRationale === "string" ? review.scoreRationale.trim().slice(0, 500) : "",
-        verificationStatus: review.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验",
-        updatedAt,
-        source: review.source === "ai-assisted" ? "ai-assisted" : "manual",
-        evidenceSourceIds,
-        ...(sourceSnapshots.length ? { evidenceSources: sourceSnapshots } : {}),
-      }];
-    }).slice(-30) : [];
+    const reviewHistory = normalizeKnowledgeReviewHistory(record.reviewHistory, sources);
     const officialUrl = typeof record.officialUrl === "string" ? record.officialUrl.trim().slice(0, 500) : "";
     let safeOfficialUrl = "";
     try {
@@ -182,11 +187,20 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       ...(reviewHistory.length ? { reviewHistory } : {}),
     });
   }
+  const reviewsInput = value.reviews && typeof value.reviews === "object" ? value.reviews as Record<string, unknown> : {};
+  const builtInIds = new Set(knowledgeRecords.map((record) => record.id));
+  const reviews: Record<string, KnowledgeReviewEntry[]> = {};
+  for (const [id, history] of Object.entries(reviewsInput)) {
+    if (!builtInIds.has(id)) return { error: "备份包含无效的内置资料评估 ID。" };
+    const normalizedHistory = normalizeKnowledgeReviewHistory(history, [], true);
+    if (normalizedHistory.length) reviews[id] = normalizedHistory;
+  }
   return {
     format: "bohack-knowledge-library",
     version: 1,
     exportedAt: typeof value.exportedAt === "string" ? value.exportedAt.slice(0, 40) : undefined,
     records,
+    ...(Object.keys(reviews).length ? { reviews } : {}),
   };
 }
 

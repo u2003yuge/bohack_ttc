@@ -154,3 +154,32 @@ test("knowledge import rejects built-in IDs, duplicates, and unsupported bundle 
   assert.ok("error" in normalizeKnowledgeImport({ format: "other", version: 2, records: [base] }));
   assert.ok("error" in normalizeKnowledgeImport({ format: "bohack-knowledge-library", version: 1, records: [{ ...base, significanceScore: null }] }));
 });
+
+test("knowledge backup restores built-in review history without built-in record bodies", () => {
+  const builtInId = knowledgeRecords[0].id;
+  const sourceId = "official-result-2026";
+  const bundle = normalizeKnowledgeImport({
+    format: "bohack-knowledge-library", version: 1, records: [],
+    reviews: { [builtInId]: [
+      { id: "review-old", significanceScore: 61, scoreRationale: "旧评分", verificationStatus: "示例资料，待核验", updatedAt: "2026-10-01", source: "manual", evidenceSourceIds: [sourceId] },
+      { id: "review-new", significanceScore: 88, scoreRationale: "核对官方获奖名单", verificationStatus: "已核验", updatedAt: "2026-11-14", source: "ai-assisted", evidenceSourceIds: [sourceId], evidenceSources: [{ id: sourceId, title: "官方结果", url: "https://example.com/results", sourceType: "official", dataYear: "2026", note: "名单页面", verified: true, checkedAt: "2026-11-14" }] },
+    ] },
+  });
+  assert.equal("error" in bundle, false);
+  if ("error" in bundle) return;
+  assert.deepEqual(bundle.records, []);
+  const history = bundle.reviews?.[builtInId] ?? [];
+  assert.equal(history.length, 2);
+  assert.equal(history.at(-1)?.significanceScore, 88);
+  assert.equal(history.at(-1)?.verificationStatus, "已核验");
+  assert.deepEqual(history.at(-1)?.evidenceSourceIds, [sourceId]);
+  assert.equal(history.at(-1)?.evidenceSources?.[0].title, "官方结果");
+});
+
+test("knowledge backup rejects review histories for unknown record IDs", () => {
+  const result = normalizeKnowledgeImport({
+    format: "bohack-knowledge-library", version: 1, records: [],
+    reviews: { "custom-unknown1": [{ significanceScore: 80, updatedAt: "2026-11-14" }] },
+  });
+  assert.ok("error" in result);
+});

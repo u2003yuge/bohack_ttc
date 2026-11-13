@@ -124,7 +124,11 @@ router.get("/knowledge/export", async (_request, response, next) => {
     const custom = await readCustomKnowledge();
     const reviews = await readKnowledgeReviews();
     const records = custom.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) }));
-    response.json({ format: "bohack-knowledge-library", version: 1, exportedAt: new Date().toISOString(), records });
+    const builtInIds = new Set(knowledgeRecords.map((record) => record.id));
+    const builtInReviews = Object.fromEntries(Object.entries(reviews)
+      .filter(([id, review]) => builtInIds.has(id) && Boolean(review.reviewHistory?.length))
+      .map(([id, review]) => [id, review.reviewHistory]));
+    response.json({ format: "bohack-knowledge-library", version: 1, exportedAt: new Date().toISOString(), records, reviews: builtInReviews });
   } catch (error) { next(error); }
 });
 
@@ -138,7 +142,10 @@ router.post("/knowledge/import/preview", async (request, response, next) => {
       response.status(400).json({ error: "导入文件包含内置资料 ID；请先导出自建资料，再导入该备份。" }); return;
     }
     const updateCount = bundle.records.filter((record) => existingIds.has(record.id)).length;
-    response.json({ bundle, insertCount: bundle.records.length - updateCount, updateCount });
+    const existingReviews = await readKnowledgeReviews();
+    const reviewIds = Object.keys(bundle.reviews ?? {});
+    const updateReviewCount = reviewIds.filter((id) => Boolean(existingReviews[id]?.reviewHistory?.length)).length;
+    response.json({ bundle, insertCount: bundle.records.length - updateCount, updateCount, insertReviewCount: reviewIds.length - updateReviewCount, updateReviewCount });
   } catch (error) { next(error); }
 });
 
@@ -155,6 +162,8 @@ router.post("/knowledge/import", async (request, response, next) => {
     const importedIds = new Set(bundle.records.map((record) => record.id));
     const nextCustom = [...bundle.records.map(({ reviewHistory: _reviewHistory, ...record }) => record), ...custom.filter((record) => !importedIds.has(record.id))];
     const reviews = await readKnowledgeReviews();
+    const builtInReviewIds = Object.keys(bundle.reviews ?? {});
+    const updateReviewCount = builtInReviewIds.filter((id) => Boolean(reviews[id]?.reviewHistory?.length)).length;
     for (const record of bundle.records) {
       const history = record.reviewHistory ?? [];
       const latest = history.at(-1);
@@ -170,6 +179,17 @@ router.post("/knowledge/import", async (request, response, next) => {
         delete reviews[record.id];
       }
     }
+    for (const [id, history] of Object.entries(bundle.reviews ?? {})) {
+      const latest = history.at(-1);
+      if (!latest) continue;
+      reviews[id] = {
+        significanceScore: latest.significanceScore,
+        scoreRationale: latest.scoreRationale,
+        verificationStatus: latest.verificationStatus,
+        updatedAt: latest.updatedAt.slice(0, 10),
+        reviewHistory: history,
+      };
+    }
     await mkdir(path.dirname(customKnowledgePath), { recursive: true });
     await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
     await writeFile(customKnowledgePath, JSON.stringify(nextCustom, null, 2), "utf8");
@@ -180,6 +200,8 @@ router.post("/knowledge/import", async (request, response, next) => {
       records: allRecords.map((record) => ({ ...record, ...(mergedReviews[record.id] ?? {}) })),
       insertCount: bundle.records.filter((record) => !existingIds.has(record.id)).length,
       updateCount: bundle.records.filter((record) => existingIds.has(record.id)).length,
+      insertReviewCount: builtInReviewIds.length - updateReviewCount,
+      updateReviewCount,
     });
   } catch (error) { next(error); }
 });
@@ -261,6 +283,7 @@ router.put("/knowledge/:id", async (request, response, next) => {
     const records = await readKnowledgeRecords();
     const existing = records.find((item) => item.id === request.params.id);
     if (!existing) { response.status(404).json({ error: "找不到资料记录。" }); return; }
+    if (!existing.id.startsWith("custom-")) { response.status(403).json({ error: "内置示例资料只读；可直接保存其人工评估与核验记录。" }); return; }
     const input = request.body ?? {};
     const title = textInput(input.title, 160);
     const kind = input.kind as KnowledgeRecord["kind"];
