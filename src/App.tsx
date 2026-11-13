@@ -28,7 +28,7 @@ import {
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
-import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
+import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ComparisonRankCriterion, type ComparisonRankDraft, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, knowledgeScoreBands, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
@@ -968,10 +968,49 @@ function WeightProposalPreview({ proposal, currentWeights, impact, selectedHasSc
   </section>;
 }
 
-function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEvidence, onClose }: { resumes: Resume[]; weights: ScoreWeights; selectedId: string; onSelectResume: (id: string) => void; onEvidence: (evidence: string) => void; onClose: () => void }) {
-  const ranked = resumes.map((resume, index) => ({ resume, card: demoScoreCard(resume, index, weights) })).sort((a, b) => b.card.composite - a.card.composite);
+function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEvidence, onClose, agentAvailable }: { resumes: Resume[]; weights: ScoreWeights; selectedId: string; onSelectResume: (id: string) => void; onEvidence: (evidence: string) => void; onClose: () => void; agentAvailable: boolean }) {
+  const [rankCriterion, setRankCriterion] = useState<ComparisonRankCriterion>("composite");
+  const [rankDirection, setRankDirection] = useState<ComparisonRankDraft["direction"]>("desc");
+  const [rankInstruction, setRankInstruction] = useState("");
+  const [rankProposal, setRankProposal] = useState<ComparisonRankDraft | null>(null);
+  const [rankBusy, setRankBusy] = useState(false);
+  const [rankError, setRankError] = useState("");
+  const ranked = resumes.map((resume, index) => ({ resume, card: demoScoreCard(resume, index, weights) })).sort((left, right) => {
+    const leftScore = rankCriterion === "composite" ? left.card.composite : left.card.criteria[rankCriterion].score;
+    const rightScore = rankCriterion === "composite" ? right.card.composite : right.card.criteria[rankCriterion].score;
+    const primary = rankDirection === "desc" ? rightScore - leftScore : leftScore - rightScore;
+    return primary || right.card.composite - left.card.composite || left.resume.name.localeCompare(right.resume.name, "zh-CN");
+  });
   const selected = ranked.find(({ resume }) => resume.id === selectedId) ?? ranked[0];
-  return <main className="comparison-main comparison-workspace-main"><div className="comparison-panel"><div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions"><span className="comparison-count">{ranked.length} 位候选人</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div><p className="comparison-note">按当前权重计算综合分，分数仅使用简历中与工作相关的证据。点击散点、姓名或证据可以交叉查看。</p><RecruitmentQualityMap candidates={ranked} selectedId={selected?.resume.id ?? ""} onSelect={onSelectResume} /><div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.map(({ resume, card }, rank) => <tr key={resume.id} className={resume.id === selected?.resume.id ? "selected" : ""} aria-selected={resume.id === selected?.resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><button className="comparison-candidate-select" onClick={() => onSelectResume(resume.id)} aria-pressed={resume.id === selected?.resume.id}><strong>{resume.name}</strong><small>{resume.role}</small></button></td>{scoreCriteria.map(({ key }) => <td className="score-cell" key={key}><span className="score-cell-value">{card.criteria[key].score.toFixed(0)}</span><i><b style={{ width: `${card.criteria[key].score}%` }} /></i></td>)}<td className="composite-cell">{card.composite.toFixed(1)}</td></tr>)}</tbody></table></div>{selected && <section className="comparison-evidence"><div className="comparison-evidence-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{selected.resume.name} · {selected.resume.role}</h3><p>综合分 {selected.card.composite.toFixed(1)} · 深度 {depthScore(selected.card).toFixed(1)} · 广度 {selected.card.criteria.perspective.score.toFixed(0)}</p></div><button className="back-to-workspace" onClick={() => { onSelectResume(selected.resume.id); onClose(); }}>打开简历分析</button></div><div className="comparison-evidence-grid">{scoreCriteria.map(({ key, label }) => <article key={key}><div><strong>{label}</strong><b>{selected.card.criteria[key].score.toFixed(0)}</b></div>{selected.card.criteria[key].evidence.length ? selected.card.criteria[key].evidence.slice(0, 2).map((evidence, index) => <button className="comparison-evidence-link" key={`${index}-${evidence}`} onClick={() => { onSelectResume(selected.resume.id); onEvidence(evidence); onClose(); }} title="回到 PDF 定位依据">{evidence}<ExternalLink size={10} /></button>) : <p>暂无可展示的证据摘要</p>}</article>)}</div></section>}<div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div></div></main>;
+  const rankLabels: Record<ComparisonRankCriterion, string> = { composite: "综合分", ...Object.fromEntries(scoreCriteria.map(({ key, label }) => [key, label])) } as Record<ComparisonRankCriterion, string>;
+
+  async function suggestRanking() {
+    setRankBusy(true); setRankError(""); setRankProposal(null);
+    try {
+      const response = await fetch("/api/resumes/comparison/rank-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: rankInstruction }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法生成排名方案。");
+      setRankProposal(payload.suggestion as ComparisonRankDraft);
+    } catch (error) { setRankError(error instanceof Error ? error.message : "无法生成排名方案。"); }
+    finally { setRankBusy(false); }
+  }
+
+  return <main className="comparison-main comparison-workspace-main"><div className="comparison-panel">
+    <div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions"><span className="comparison-count">{ranked.length} 位候选人</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div>
+    <p className="comparison-note">按当前权重计算综合分，分数仅使用简历中与工作相关的证据。点击散点、姓名或证据可以交叉查看。</p>
+    <section className="comparison-rank-tools" aria-label="设置候选人排名依据">
+      <label>排名依据<select value={rankCriterion} onChange={(event) => setRankCriterion(event.target.value as ComparisonRankCriterion)}><option value="composite">综合分</option>{scoreCriteria.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}</select></label>
+      <label>顺序<select value={rankDirection} onChange={(event) => setRankDirection(event.target.value as ComparisonRankDraft["direction"])}><option value="desc">高分优先</option><option value="asc">低分优先</option></select></label>
+      <div className="comparison-rank-assistant"><input value={rankInstruction} onChange={(event) => { setRankInstruction(event.target.value); setRankProposal(null); setRankError(""); }} maxLength={500} placeholder="描述排名侧重，如：优先看专业能力" aria-label="描述排名侧重" onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void suggestRanking(); } }} /><button type="button" onClick={() => void suggestRanking()} disabled={!agentAvailable || rankBusy || !rankInstruction.trim()} title={agentAvailable ? "生成排名方案" : "请先配置模型服务"}>{rankBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}AI 排名</button>
+      </div>
+      {rankError && <span className="comparison-rank-error">{rankError}</span>}
+      {rankProposal && <div className="comparison-rank-proposal"><span>{rankProposal.rationale}</span><strong>{rankLabels[rankProposal.criterion]} · {rankProposal.direction === "desc" ? "高分优先" : "低分优先"}</strong><div><button type="button" onClick={() => setRankProposal(null)}>放弃</button><button type="button" onClick={() => { setRankCriterion(rankProposal.criterion); setRankDirection(rankProposal.direction); setRankProposal(null); }}>应用方案</button></div></div>}
+    </section>
+    <RecruitmentQualityMap candidates={ranked} selectedId={selected?.resume.id ?? ""} onSelect={onSelectResume} />
+    <div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.map(({ resume, card }, rank) => <tr key={resume.id} className={resume.id === selected?.resume.id ? "selected" : ""} aria-selected={resume.id === selected?.resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><button className="comparison-candidate-select" onClick={() => onSelectResume(resume.id)} aria-pressed={resume.id === selected?.resume.id}><strong>{resume.name}</strong><small>{resume.role}</small></button></td>{scoreCriteria.map(({ key }) => <td className="score-cell" key={key}><span className="score-cell-value">{card.criteria[key].score.toFixed(0)}</span><i><b style={{ width: `${card.criteria[key].score}%` }} /></i></td>)}<td className="composite-cell">{card.composite.toFixed(1)}</td></tr>)}</tbody></table></div>
+    {selected && <section className="comparison-evidence"><div className="comparison-evidence-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{selected.resume.name} · {selected.resume.role}</h3><p>{rankLabels[rankCriterion]}排名 {ranked.findIndex(({ resume }) => resume.id === selected.resume.id) + 1} · 综合分 {selected.card.composite.toFixed(1)} · 深度 {depthScore(selected.card).toFixed(1)} · 广度 {selected.card.criteria.perspective.score.toFixed(0)}</p></div><button className="back-to-workspace" onClick={() => { onSelectResume(selected.resume.id); onClose(); }}>打开简历分析</button></div><div className="comparison-evidence-grid">{scoreCriteria.map(({ key, label }) => <article key={key}><div><strong>{label}</strong><b>{selected.card.criteria[key].score.toFixed(0)}</b></div>{selected.card.criteria[key].evidence.length ? selected.card.criteria[key].evidence.slice(0, 2).map((evidence, index) => <button className="comparison-evidence-link" key={`${index}-${evidence}`} onClick={() => { onSelectResume(selected.resume.id); onEvidence(evidence); onClose(); }} title="回到 PDF 定位依据">{evidence}<ExternalLink size={10} /></button>) : <p>暂无可展示的证据摘要</p>}</article>)}</div></section>}
+    <div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div>
+  </div></main>;
 }
 
 export default function App() {
@@ -1257,7 +1296,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} agentAvailable={Boolean(health?.agent)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} agentAvailable={Boolean(health?.agent)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
