@@ -9,7 +9,8 @@ export const scoreCriteria = [
 
 export type ScoreKey = (typeof scoreCriteria)[number]["key"];
 export type ComparisonRankCriterion = ScoreKey | "composite";
-export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; rationale: string };
+export type ComparisonRatingFilter = "all" | "scored" | "demo";
+export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; rationale: string };
 export type ScoreWeights = Record<ScoreKey, number>;
 export type ScoreEvidence = { score: number; evidence: string[]; confidence: number };
 export type ScoreCard = {
@@ -41,12 +42,14 @@ export const defaultScoreWeights: ScoreWeights = {
 export function normalizeComparisonRankDraft(input: unknown): ComparisonRankDraft | { error: string } {
   const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
   const criteria = ["composite", ...scoreCriteria.map(({ key }) => key)];
-  if (!criteria.includes(String(value.criterion)) || !["asc", "desc"].includes(String(value.direction))) {
+  const ratingFilter = value.ratingFilter === undefined ? "all" : value.ratingFilter;
+  if (!criteria.includes(String(value.criterion)) || !["asc", "desc"].includes(String(value.direction)) || !["all", "scored", "demo"].includes(String(ratingFilter))) {
     return { error: "排名方案包含无效的评分维度或方向，请重新生成。" };
   }
   return {
     criterion: value.criterion as ComparisonRankCriterion,
     direction: value.direction as ComparisonRankDraft["direction"],
+    ratingFilter: ratingFilter as ComparisonRatingFilter,
     rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "",
   };
 }

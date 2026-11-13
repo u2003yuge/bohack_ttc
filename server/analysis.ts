@@ -21,7 +21,6 @@ const jobProfileSkill = readFileSync(fileURLToPath(new URL("./skills/job-profile
 const knowledgeEnrichmentSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-enrichment.md", import.meta.url)), "utf8");
 const historyFilterSkill = readFileSync(fileURLToPath(new URL("./skills/history-filter-assistant.md", import.meta.url)), "utf8");
 const knowledgeFilterSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-filter-assistant.md", import.meta.url)), "utf8");
-const comparisonRankSkill = readFileSync(fileURLToPath(new URL("./skills/comparison-rank-assistant.md", import.meta.url)), "utf8");
 const analysisTaskSkill = readFileSync(fileURLToPath(new URL("./skills/analysis-task-assistant.md", import.meta.url)), "utf8");
 
 function createClient(): OpenAI | null {
@@ -297,6 +296,7 @@ export async function suggestKnowledgeFilters(instruction: string): Promise<Know
 export async function suggestComparisonRanking(instruction: string): Promise<ComparisonRankDraft> {
   const client = createClient();
   if (!client) throw new Error("未配置模型服务");
+  const comparisonRankSkill = readFileSync(fileURLToPath(new URL("./skills/comparison-rank-assistant.md", import.meta.url)), "utf8");
   const response = await client.chat.completions.create({
     model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
     temperature: 0,

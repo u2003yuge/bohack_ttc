@@ -356,6 +356,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .comparison-head h2 { margin: 5px 0 0; font-size: 20px; }
 .comparison-count { padding: 5px 8px; border-radius: 5px; background: #eef5f1; color: #4e7b68; font-size: 10px; }
 .comparison-note { margin: 10px 0 18px; color: #7c8982; font-size: 11px; }
+.comparison-source-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0 0 10px; }.comparison-source-filter > span { margin-right: 4px; color: #7b8981; font-size: 9px; }.comparison-source-filter button { min-height: 27px; display: inline-flex; align-items: center; gap: 6px; padding: 0 8px; border: 1px solid #e3eae5; border-radius: 4px; background: #fff; color: #718078; font-size: 9px; cursor: pointer; }.comparison-source-filter button:hover, .comparison-source-filter button.active { border-color: #a8cbb4; background: #f0f7f2; color: #397553; }.comparison-source-filter button b { min-width: 16px; color: #8a9890; font-size: 8px; text-align: center; }.comparison-source-filter button.active b { color: #397553; }
+.comparison-empty { margin: 0 0 14px; padding: 24px 14px; border: 1px dashed #dce7e0; color: #74847a; font-size: 10px; text-align: center; }.comparison-empty-cell { padding: 24px !important; color: #89968e !important; text-align: center !important; }
 .quality-map-section { margin: 0 0 24px; padding: 16px; border: 1px solid #e1ebe5; border-radius: 7px; background: #fbfdfb; }
 .quality-map-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .quality-map-head h3 { margin: 4px 0 4px; color: #2f4438; font-size: 15px; }
@@ -432,6 +434,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 640px) {
+  .comparison-source-filter { align-items: stretch; }.comparison-source-filter > span { width: 100%; }.comparison-source-filter button { flex: 1 1 auto; justify-content: center; }
   .quality-map-head { flex-direction: column; }.quality-map-legend { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 5px 10px; white-space: normal; }
   .comparison-workspace-main { padding: 18px 12px 28px; }
   .knowledge-main { padding: 12px; }
