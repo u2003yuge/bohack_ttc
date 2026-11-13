@@ -11,6 +11,45 @@ export type KnowledgeReviewEntry = {
 };
 
 export type KnowledgeEvidenceSourceType = "official" | "school-policy" | "index" | "publisher" | "other";
+export type KnowledgeSort = "default" | "score" | "updated" | "title";
+export type KnowledgeVerificationFilter = "all" | "pending" | "verified";
+export type KnowledgeEvidenceFilter = "all" | "with-sources" | "verified-sources" | "without-sources";
+export type KnowledgeScoreBand = "all" | "0-49" | "50-69" | "70-84" | "85-100";
+
+export type KnowledgeFilterDraft = {
+  kind: KnowledgeKind | "all";
+  verificationFilter: KnowledgeVerificationFilter;
+  evidenceFilter: KnowledgeEvidenceFilter;
+  scoreBand: KnowledgeScoreBand;
+  query: string;
+  linkedOnly: boolean;
+  sort: KnowledgeSort;
+  rationale: string;
+};
+
+export function normalizeKnowledgeFilterDraft(input: unknown): KnowledgeFilterDraft | { error: string } {
+  const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  const kinds = ["all", "competition", "journal", "company"];
+  const verificationFilters = ["all", "pending", "verified"];
+  const evidenceFilters = ["all", "with-sources", "verified-sources", "without-sources"];
+  const scoreBands = ["all", "0-49", "50-69", "70-84", "85-100"];
+  const sorts = ["default", "score", "updated", "title"];
+  if (!kinds.includes(String(value.kind)) || !verificationFilters.includes(String(value.verificationFilter))
+    || !evidenceFilters.includes(String(value.evidenceFilter)) || !scoreBands.includes(String(value.scoreBand))
+    || !sorts.includes(String(value.sort)) || typeof value.linkedOnly !== "boolean") {
+    return { error: "筛选草案包含无效选项，请重新生成。" };
+  }
+  return {
+    kind: value.kind as KnowledgeFilterDraft["kind"],
+    verificationFilter: value.verificationFilter as KnowledgeVerificationFilter,
+    evidenceFilter: value.evidenceFilter as KnowledgeEvidenceFilter,
+    scoreBand: value.scoreBand as KnowledgeScoreBand,
+    query: typeof value.query === "string" ? value.query.trim().slice(0, 120) : "",
+    linkedOnly: value.linkedOnly,
+    sort: value.sort as KnowledgeSort,
+    rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "",
+  };
+}
 
 export type KnowledgeEvidenceSource = {
   id: string;

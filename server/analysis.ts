@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreEvidence, type ScoreKey, type ScoreWeights } from "../shared/scoring.js";
 import { normalizeHistoricalFilterDraft, type HistoricalFilterOptions } from "../shared/history.js";
+import { normalizeKnowledgeFilterDraft, type KnowledgeFilterDraft } from "../shared/knowledge.js";
 
 export type CandidateFields = {
   name: string;
@@ -19,6 +20,7 @@ const scoringAdjustmentSkill = readFileSync(fileURLToPath(new URL("./skills/scor
 const jobProfileSkill = readFileSync(fileURLToPath(new URL("./skills/job-profile.md", import.meta.url)), "utf8");
 const knowledgeEnrichmentSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-enrichment.md", import.meta.url)), "utf8");
 const historyFilterSkill = readFileSync(fileURLToPath(new URL("./skills/history-filter-assistant.md", import.meta.url)), "utf8");
+const knowledgeFilterSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-filter-assistant.md", import.meta.url)), "utf8");
 
 function createClient(): OpenAI | null {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -238,6 +240,24 @@ export async function suggestHistoricalFilters(instruction: string, options: His
   });
   const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;
   const draft = normalizeHistoricalFilterDraft(parsed, options);
+  if ("error" in draft) throw new Error(draft.error);
+  return draft;
+}
+
+export async function suggestKnowledgeFilters(instruction: string): Promise<KnowledgeFilterDraft> {
+  const client = createClient();
+  if (!client) throw new Error("未配置模型服务");
+  const response = await client.chat.completions.create({
+    model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+    temperature: 0,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: knowledgeFilterSkill },
+      { role: "user", content: JSON.stringify({ instruction: instruction.slice(0, 500) }) },
+    ],
+  });
+  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as unknown;
+  const draft = normalizeKnowledgeFilterDraft(parsed);
   if ("error" in draft) throw new Error(draft.error);
   return draft;
 }

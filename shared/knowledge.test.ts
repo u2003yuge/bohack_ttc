@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { findKnowledgeMatch, findKnowledgeReferences, normalizeKnowledgeEvidenceSources, type KnowledgeRecord } from "./knowledge.js";
+import { findKnowledgeMatch, findKnowledgeReferences, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -60,4 +60,21 @@ test("changing a cited source identity clears its human verification marker", ()
   const updated = normalizeKnowledgeEvidenceSources([{ ...previous[0], url: "https://example.org/b" }], previous);
   assert.equal(updated[0].verified, false);
   assert.equal(updated[0].checkedAt, "");
+});
+
+test("knowledge filter drafts accept only supported filters and bound free-text fields", () => {
+  const draft = normalizeKnowledgeFilterDraft({
+    kind: "competition", verificationFilter: "verified", evidenceFilter: "verified-sources", scoreBand: "85-100",
+    query: ` ${"x".repeat(140)} `, linkedOnly: true, sort: "score", rationale: ` ${"r".repeat(260)} `,
+  });
+  assert.equal("error" in draft, false);
+  if ("error" in draft) return;
+  assert.equal(draft.query.length, 120);
+  assert.equal(draft.rationale.length, 240);
+  assert.equal(draft.linkedOnly, true);
+});
+
+test("knowledge filter drafts reject invented filter values", () => {
+  const draft = normalizeKnowledgeFilterDraft({ kind: "candidate", verificationFilter: "all", evidenceFilter: "all", scoreBand: "all", linkedOnly: false, sort: "score" });
+  assert.deepEqual(draft, { error: "筛选草案包含无效选项，请重新生成。" });
 });

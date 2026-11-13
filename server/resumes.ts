@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestScoreWeights } from "./analysis.js";
+import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestKnowledgeFilters, suggestScoreWeights } from "./analysis.js";
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
 import { knowledgeRecords, normalizeKnowledgeEvidenceSources, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
@@ -106,6 +106,16 @@ router.get("/knowledge", async (_request, response, next) => {
     const reviews = await readKnowledgeReviews();
     const records = await readKnowledgeRecords();
     response.json({ records: records.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })), source: "local-json" });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/filter-draft", async (request, response, next) => {
+  try {
+    const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
+    if (!instruction) { response.status(400).json({ error: "请描述希望查找的资料。" }); return; }
+    if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" }); return; }
+    const suggestion = await suggestKnowledgeFilters(instruction);
+    response.json({ suggestion });
   } catch (error) { next(error); }
 });
 

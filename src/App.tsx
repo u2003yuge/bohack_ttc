@@ -30,7 +30,7 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
-import { findKnowledgeMatch, findKnowledgeReferences, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge";
+import { findKnowledgeMatch, findKnowledgeReferences, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -535,10 +535,6 @@ function RecruitmentQualityMap({ candidates, selectedId, onSelect }: { candidate
 
 type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string; evidenceSources: KnowledgeEvidenceSource[] };
 type KnowledgeDraftProposal = Omit<KnowledgeDraft, "title" | "kind" | "aliases" | "signals" | "evidenceSources"> & { aliases: string[]; signals: string[]; confidence: number; rationale: string; unknowns: string[]; sources: KnowledgeSource[]; searchStatus: "searched" | "no-results" | "not-configured" | "unavailable"; inputFingerprint: string };
-type KnowledgeSort = "default" | "score" | "updated" | "title";
-type KnowledgeVerificationFilter = "all" | "pending" | "verified";
-type KnowledgeEvidenceFilter = "all" | "with-sources" | "verified-sources" | "without-sources";
-type KnowledgeScoreBand = "all" | "0-49" | "50-69" | "70-84" | "85-100";
 const knowledgeScoreBands: Array<{ key: Exclude<KnowledgeScoreBand, "all">; label: string; min: number; max: number }> = [
   { key: "0-49", label: "0–49", min: 0, max: 49 },
   { key: "50-69", label: "50–69", min: 50, max: 69 },
@@ -574,11 +570,11 @@ function KnowledgeReviewHistory({ history, sources }: { history: KnowledgeReview
       {history.length > 1 && <text x={right} y="112" textAnchor="end" className="review-history-date">{new Date(history.at(-1)!.updatedAt).toLocaleDateString("zh-CN")}</text>}
       <text x={pointX(history.findIndex((entry) => entry.id === active.id))} y={Math.max(9, pointY(active.significanceScore) - 8)} textAnchor="middle" className="review-history-score">{active.significanceScore}</text>
     </svg>
-    <div className="review-history-detail"><div><strong>{active.significanceScore}<small>/ 100</small></strong><span>{new Date(active.updatedAt).toLocaleString("zh-CN")}</span><span>{active.verificationStatus === "已核验" ? "已核验" : "待核验"}</span><span>{active.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}</span></div><p>{active.scoreRationale || "未填写评估依据。"}</p>{activeSources.length > 0 && <div className="review-history-sources"><span>引用来源</span>{activeSources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer">{source.title}<ExternalLink size={10} /></a>)}</div>}</div>
+    <div className="review-history-detail"><div><strong>{active.significanceScore}<small>/ 100</small></strong><span>{new Date(active.updatedAt).toLocaleString("zh-CN")}</span><span>{active.verificationStatus === "已核验" ? "已核验" : "待核验"}</span><span>{active.source === "ai-assisted" ? "AI 建议经人工确认" : "人工填写"}</span></div><p>{active.scoreRationale || "未填写评估依据。"}</p>{activeSources.length > 0 && <div className="review-history-sources"><span>本次引用</span>{activeSources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}<ExternalLink size={10} /></strong><small>{[knowledgeEvidenceSourceTypeLabels[source.sourceType], source.dataYear, source.verified ? "当时已核对" : "当时待核对"].filter(Boolean).join(" · ")}</small>{source.note && <small>{source.note}</small>}</a>)}</div>}</div>
   </section>;
 }
 
-function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; webSearchAvailable: boolean }) {
+function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, agentAvailable, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; agentAvailable: boolean; webSearchAvailable: boolean }) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
@@ -586,6 +582,10 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [evidenceFilter, setEvidenceFilter] = useState<KnowledgeEvidenceFilter>("all");
   const [scoreBand, setScoreBand] = useState<KnowledgeScoreBand>("all");
   const [linkedOnly, setLinkedOnly] = useState(false);
+  const [filterInstruction, setFilterInstruction] = useState("");
+  const [filterProposal, setFilterProposal] = useState<KnowledgeFilterDraft | null>(null);
+  const [filterAssistantBusy, setFilterAssistantBusy] = useState(false);
+  const [filterAssistantError, setFilterAssistantError] = useState("");
   const [selectedId, setSelectedId] = useState(initialId && records.some((record) => record.id === initialId) ? initialId : seedKnowledgeRecords[0].id);
   const [reviewScore, setReviewScore] = useState(seedKnowledgeRecords[0].significanceScore);
   const [reviewNote, setReviewNote] = useState(seedKnowledgeRecords[0].scoreRationale);
@@ -783,6 +783,42 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     finally { setSuggesting(false); }
   }
 
+  async function proposeKnowledgeFilters() {
+    setFilterAssistantBusy(true); setFilterAssistantError(""); setFilterProposal(null);
+    try {
+      const response = await fetch("/api/resumes/knowledge/filter-draft", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instruction: filterInstruction }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法生成筛选草案。");
+      setFilterProposal(payload.suggestion as KnowledgeFilterDraft);
+    } catch (error) { setFilterAssistantError(error instanceof Error ? error.message : "无法生成筛选草案。"); }
+    finally { setFilterAssistantBusy(false); }
+  }
+
+  function countFilterProposalMatches(proposal: KnowledgeFilterDraft): number {
+    const band = knowledgeScoreBands.find((item) => item.key === proposal.scoreBand);
+    const search = proposal.query.trim().toLocaleLowerCase();
+    return records.filter((record) => {
+      const hasSources = Boolean(record.officialUrl || record.evidenceSources?.length);
+      const statusMatches = proposal.verificationFilter === "all" || (proposal.verificationFilter === "verified" ? record.verificationStatus === "已核验" : record.verificationStatus !== "已核验");
+      const evidenceMatches = proposal.evidenceFilter === "all" || (proposal.evidenceFilter === "with-sources" && hasSources) || (proposal.evidenceFilter === "verified-sources" && record.evidenceSources?.some((source) => source.verified)) || (proposal.evidenceFilter === "without-sources" && !hasSources);
+      const queryMatches = !search || `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")} ${(record.evidenceSources ?? []).map((source) => `${source.title} ${source.dataYear} ${source.note}`).join(" ")}`.toLocaleLowerCase().includes(search);
+      return (proposal.kind === "all" || record.kind === proposal.kind) && statusMatches && evidenceMatches
+        && (!band || (record.significanceScore >= band.min && record.significanceScore <= band.max))
+        && (!proposal.linkedOnly || (linkedResumeCounts.get(record.id) ?? 0) > 0) && queryMatches;
+    }).length;
+  }
+
+  function applyKnowledgeFilterProposal() {
+    if (!filterProposal) return;
+    setKind(filterProposal.kind); setVerificationFilter(filterProposal.verificationFilter);
+    setEvidenceFilter(filterProposal.evidenceFilter); setScoreBand(filterProposal.scoreBand);
+    setQuery(filterProposal.query); setLinkedOnly(filterProposal.linkedOnly); setSort(filterProposal.sort);
+    setSelectedId(""); setFilterProposal(null);
+  }
+
   const referencedResumes = selected ? resumes.flatMap((resume) => { const match = findKnowledgeMatch(resume.text, selected); return match ? [{ resume, match }] : []; }) : [];
   return (
     <main className="knowledge-main">
@@ -806,6 +842,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
         <div className="knowledge-body">
           <aside className="knowledge-list">
             <label className="search-box knowledge-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索名称、别名、领域或内容" /></label>
+            <section className="knowledge-filter-assistant"><div className="knowledge-filter-assistant-title"><Sparkles size={13} /><strong>AI 自然语言筛选</strong><small>只发送筛选指令，不发送资料或简历</small></div><div className="knowledge-filter-assistant-input"><input value={filterInstruction} onChange={(event) => { setFilterInstruction(event.target.value); setFilterProposal(null); setFilterAssistantError(""); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void proposeKnowledgeFilters(); } }} maxLength={500} placeholder="如：找有已核来源的计算机竞赛" aria-label="描述要查找的资料" /><button type="button" onClick={() => void proposeKnowledgeFilters()} disabled={!agentAvailable || filterAssistantBusy || !filterInstruction.trim()} title={agentAvailable ? "生成筛选方案" : "请先配置模型服务"}>{filterAssistantBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div>{filterAssistantError && <div className="inline-error">{filterAssistantError}</div>}{filterProposal && <div className="knowledge-filter-proposal"><p>{filterProposal.rationale || "按以下条件筛选"}</p><div>{[filterProposal.kind === "all" ? "全部类别" : knowledgeKindLabels[filterProposal.kind], filterProposal.verificationFilter === "all" ? "全部核验状态" : filterProposal.verificationFilter === "verified" ? "已核验" : "待核验", filterProposal.evidenceFilter === "all" ? "全部来源状态" : evidenceCoverage.find((item) => item.key === filterProposal.evidenceFilter)?.label ?? "全部来源状态", filterProposal.scoreBand === "all" ? "全部评分" : `${filterProposal.scoreBand} 分`, filterProposal.query ? `关键词：${filterProposal.query}` : "无关键词", filterProposal.linkedOnly ? "仅简历引用" : "不限简历引用", `排序：${({ default: "默认", score: "评分高低", updated: "最近更新", title: "名称" } as Record<KnowledgeSort, string>)[filterProposal.sort]}`].map((label) => <span key={label}>{label}</span>)}</div><small>预计匹配 {countFilterProposalMatches(filterProposal)} / {records.length} 条</small><footer><button type="button" onClick={() => setFilterProposal(null)}>放弃</button><button type="button" onClick={applyKnowledgeFilterProposal}>应用筛选</button></footer></div>}</section>
             <button className="add-knowledge-button" onClick={editorOpen ? closeEditor : beginCreate}>{editorOpen ? <X size={13} /> : <Plus size={13} />}{editorOpen ? "关闭编辑" : "新增资料"}</button>
             {editorOpen && <div className="knowledge-create-form">
               <strong>{editingId ? "编辑资料" : "新增资料"}</strong>
@@ -1221,7 +1258,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} agentAvailable={Boolean(health?.agent)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} agentAvailable={Boolean(health?.agent)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
