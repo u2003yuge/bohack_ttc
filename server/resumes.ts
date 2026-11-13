@@ -80,6 +80,39 @@ router.post("/knowledge", async (request, response, next) => {
   } catch (error) { next(error); }
 });
 
+router.put("/knowledge/:id", async (request, response, next) => {
+  try {
+    const records = await readKnowledgeRecords();
+    const existing = records.find((item) => item.id === request.params.id);
+    if (!existing) { response.status(404).json({ error: "找不到资料记录。" }); return; }
+    const input = request.body ?? {};
+    const title = textInput(input.title, 160);
+    const kind = input.kind as KnowledgeRecord["kind"];
+    if (!title || !["competition", "journal", "company"].includes(kind)) {
+      response.status(400).json({ error: "请填写资料名称并选择有效类别。" }); return;
+    }
+    const updated: KnowledgeRecord = {
+      ...existing,
+      title,
+      kind,
+      aliases: stringList(input.aliases, 8, 100),
+      field: textInput(input.field, 120),
+      organizer: textInput(input.organizer, 120),
+      region: textInput(input.region, 80),
+      summary: textInput(input.summary, 1200),
+      signals: stringList(input.signals, 10, 100),
+      officialUrl: safeHttpUrl(input.officialUrl),
+      updatedAt: new Date().toISOString().slice(0, 10),
+    };
+    const custom = await readCustomKnowledge();
+    const next = [updated, ...custom.filter((item) => item.id !== updated.id)];
+    await mkdir(path.dirname(customKnowledgePath), { recursive: true });
+    await writeFile(customKnowledgePath, JSON.stringify(next, null, 2), "utf8");
+    const reviews = await readKnowledgeReviews();
+    response.json({ record: { ...updated, ...(reviews[updated.id] ?? {}) } });
+  } catch (error) { next(error); }
+});
+
 router.put("/knowledge/:id/review", async (request, response, next) => {
   try {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
@@ -405,7 +438,15 @@ async function readCustomKnowledge(): Promise<KnowledgeRecord[]> {
 }
 
 async function readKnowledgeRecords(): Promise<KnowledgeRecord[]> {
-  return [...await readCustomKnowledge(), ...knowledgeRecords];
+  const custom = await readCustomKnowledge();
+  const customIds = new Set(custom.map((record) => record.id));
+  return [...custom, ...knowledgeRecords.filter((record) => !customIds.has(record.id))];
+}
+
+function stringList(value: unknown, maxItems: number, maxLength: number): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim().slice(0, maxLength)).filter(Boolean).slice(0, maxItems);
 }
 
 function textInput(value: unknown, limit: number): string {

@@ -16,6 +16,7 @@ import {
   LoaderCircle,
   MessageSquareText,
   Minus,
+  Pencil,
   Plus,
   Search,
   ShieldCheck,
@@ -254,13 +255,13 @@ function deriveProjects(candidate: Resume): ProjectBreakdown[] {
   return chunks.slice(0, 4).map((chunk, index) => ({ title: `简历项目 ${index + 1}`, plainTitle: "把这段经历拆成可核对的工作任务", goal: "候选人希望解决的业务或技术问题（需人工核实）", actions: translateRecruitingTerms(chunk), outcome: "简历未明确写出量化结果" }));
 }
 
-function findKnowledgeReferences(candidate: Resume): KnowledgeRecord[] {
+function findKnowledgeReferences(candidate: Resume, records: KnowledgeRecord[] = seedKnowledgeRecords): KnowledgeRecord[] {
   const text = `${candidate.name} ${candidate.role} ${candidate.text}`.toLowerCase();
-  return seedKnowledgeRecords.filter((record) => [record.title, ...record.aliases].some((term) => term && text.includes(term.toLowerCase()))).slice(0, 6);
+  return records.filter((record) => [record.title, ...record.aliases].some((term) => term && text.includes(term.toLowerCase()))).slice(0, 6);
 }
 
-function KnowledgeReferenceBar({ candidate, onOpen }: { candidate: Resume; onOpen: (id?: string) => void }) {
-  const references = findKnowledgeReferences(candidate);
+function KnowledgeReferenceBar({ candidate, records, onOpen }: { candidate: Resume; records: KnowledgeRecord[]; onOpen: (id?: string) => void }) {
+  const references = findKnowledgeReferences(candidate, records);
   return <section className="knowledge-reference-bar"><div><span className="eyebrow">CROSS REFERENCES</span><strong>资料库交叉引用</strong><small>只根据简历原文中的名称或别名匹配</small></div><div className="knowledge-reference-list">{references.length ? references.map((record) => <button key={record.id} onClick={() => onOpen(record.id)}><span className={`knowledge-reference-dot ${record.kind}`} />{record.title}<b>{record.significanceScore}</b></button>) : <span className="knowledge-reference-empty">未识别资料</span>}<button className="knowledge-reference-search" onClick={() => onOpen()}>打开资料库 <ExternalLink size={12} /></button></div></section>;
 }
 
@@ -295,8 +296,8 @@ function BenchmarkBadge({ benchmark }: { benchmark: Benchmark }) {
   return <section className="benchmark-card"><div className="benchmark-main"><span className="eyebrow">HISTORICAL BENCHMARK</span><div className="benchmark-percentile"><strong>超过历史样本 {benchmark.percentile}%</strong><span>同岗位族 · {benchmark.sampleCount} 份历史简历</span></div><div className="benchmark-track"><i style={{ width: `${benchmark.percentile}%` }} /><b style={{ left: `${benchmark.percentile}%` }} /></div></div><div className="benchmark-stats"><div><span>首轮通过参考线</span><strong>{benchmark.screenCutoff}</strong></div><div><span>最终录取参考线</span><strong>{benchmark.hireCutoff}</strong></div><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div></div><p>百分位只用于辅助比较，样本来自本地历史记录；请结合岗位要求和原始证据复核。</p></section>;
 }
 
-function ScoreInsights({ card, candidate, onOpenKnowledge }: { card: ScoreCard; candidate: Resume; onOpenKnowledge: (id?: string) => void }) {
-  return <div className="score-insights"><BenchmarkBadge benchmark={calculateBenchmark(candidate.role, card.composite)} /><KnowledgeReferenceBar candidate={candidate} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} /></div></section><ProjectBreakdownView candidate={candidate} /></div>;
+function ScoreInsights({ card, candidate, records, onOpenKnowledge }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void }) {
+  return <div className="score-insights"><BenchmarkBadge benchmark={calculateBenchmark(candidate.role, card.composite)} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} /></div></section><ProjectBreakdownView candidate={candidate} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -319,8 +320,10 @@ function RecruitmentQualityMap({ candidates }: { candidates: Array<{ resume: Res
   return <section className="quality-map-section"><div className="quality-map-head"><div><span className="eyebrow">RECRUITING QUALITY MAP</span><h3>招聘质量图 · 深度 × 广度</h3><p>用一张图识别候选人的能力深度与经历广度。气泡越大，综合分越高。</p></div><div className="quality-map-legend"><span><i className="legend-dot legend-deep" />能力深度</span><span><i className="legend-dot legend-wide" />经历广度</span></div></div><div className="quality-map-wrap"><svg className="quality-map" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="候选人招聘质量深度广度散点图"><rect x={left} y={top} width={plotWidth} height={plotHeight} className="quality-map-bg" /><rect x={left} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-learning" /><rect x={left + plotWidth / 2} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-deep" /><rect x={left} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-narrow" /><rect x={left + plotWidth / 2} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-broad" /><line x1={left + plotWidth / 2} y1={top} x2={left + plotWidth / 2} y2={top + plotHeight} className="quality-midline" /><line x1={left} y1={top + plotHeight / 2} x2={left + plotWidth} y2={top + plotHeight / 2} className="quality-midline" /><line x1={left} y1={top + plotHeight} x2={left + plotWidth} y2={top + plotHeight} className="quality-axis" /><line x1={left} y1={top} x2={left} y2={top + plotHeight} className="quality-axis" /><text x={left + plotWidth / 4} y={top + 18} className="quality-quadrant-label">待验证的成长型</text><text x={left + plotWidth * .75} y={top + 18} className="quality-quadrant-label">深度与广度兼具</text><text x={left + plotWidth / 4} y={top + plotHeight - 12} className="quality-quadrant-label">单一领域深耕</text><text x={left + plotWidth * .75} y={top + plotHeight - 12} className="quality-quadrant-label">广泛经历待聚焦</text>{[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={pointX(tick)} y1={top + plotHeight} x2={pointX(tick)} y2={top + plotHeight + 4} className="quality-axis" /><text x={pointX(tick)} y={height - 25} textAnchor="middle" className="quality-tick">{tick}</text><line x1={left - 4} y1={pointY(tick)} x2={left} y2={pointY(tick)} className="quality-axis" /><text x={left - 9} y={pointY(tick) + 3} textAnchor="end" className="quality-tick">{tick}</text></g>)}{candidates.map(({ resume, card }, index) => { const breadth = card.criteria.perspective.score; const depth = depthScore(card); const radius = 8 + (card.composite / maxComposite) * 7; const x = pointX(breadth); const y = pointY(depth); return <g key={resume.id} className="quality-point"><title>{`${resume.name}：深度 ${depth.toFixed(0)}，广度 ${breadth.toFixed(0)}，综合分 ${card.composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={radius} className={`quality-bubble quality-bubble-${Math.min(index + 1, 4)}`} /><text x={x} y={y - radius - 5} textAnchor="middle" className="quality-name">{resume.name.length > 9 ? `${resume.name.slice(0, 9)}…` : resume.name}</text></g>; })}<text x={left + plotWidth / 2} y={height - 7} textAnchor="middle" className="quality-axis-label">经历广度（行业、领域、方法和团队经历）</text><text x="14" y={top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 14 ${top + plotHeight / 2})`} className="quality-axis-label">能力深度</text></svg></div><div className="quality-map-note"><span>深度 = 领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>广度 = 经历广度分</span></div></section>;
 }
 
-function KnowledgeBaseView({ onClose, initialId, resumes, onSelectResume }: { onClose: () => void; initialId?: string; resumes: Resume[]; onSelectResume: (id: string) => void }) {
-  const [records, setRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
+type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string };
+const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "" };
+
+function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectResume }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectResume: (id: string) => void }) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(seedKnowledgeRecords[0].id);
@@ -333,22 +336,55 @@ function KnowledgeBaseView({ onClose, initialId, resumes, onSelectResume }: { on
   const [suggestionQuestions, setSuggestionQuestions] = useState<string[]>([]);
   const [reviewError, setReviewError] = useState("");
   const [reviewSaved, setReviewSaved] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [createBusy, setCreateBusy] = useState(false);
-  const [draft, setDraft] = useState({ title: "", kind: "competition" as KnowledgeKind, field: "", organizer: "", region: "", summary: "", officialUrl: "" });
-  const filtered = records.filter((record) => (kind === "all" || record.kind === kind) && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer}`.toLowerCase().includes(query.toLowerCase()));
-  const selected = records.find((record) => record.id === selectedId) ?? filtered[0] ?? records[0];
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editorBusy, setEditorBusy] = useState(false);
+  const [editorError, setEditorError] = useState("");
+  const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const filtered = records.filter((record) => (kind === "all" || record.kind === kind) && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")}`.toLocaleLowerCase().includes(normalizedQuery));
+  const selected = filtered.find((record) => record.id === selectedId) ?? filtered[0] ?? null;
 
   useEffect(() => {
-    fetch("/api/resumes/knowledge").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.records)) setRecords(payload.records); }).catch(() => undefined);
-  }, []);
-  useEffect(() => {
-    if (initialId && records.some((record) => record.id === initialId)) setSelectedId(initialId);
+    if (initialId && records.some((record) => record.id === initialId)) {
+      setKind("all"); setQuery(""); setSelectedId(initialId);
+    }
   }, [initialId, records]);
   useEffect(() => {
     if (!selected) return;
     setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewError(""); setReviewSaved(false);
   }, [selected?.id]);
+
+  function beginCreate() {
+    setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEditorOpen(true);
+  }
+
+  function beginEdit() {
+    if (!selected) return;
+    setEditingId(selected.id);
+    setDraft({ ...selected, aliases: selected.aliases.join("\n"), signals: selected.signals.join("\n") });
+    setEditorError(""); setEditorOpen(true);
+  }
+
+  function closeEditor() {
+    setEditorOpen(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError("");
+  }
+
+  async function saveRecord() {
+    if (!draft.title.trim()) return;
+    setEditorBusy(true); setEditorError("");
+    const values = { ...draft, aliases: draft.aliases.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean), signals: draft.signals.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean) };
+    try {
+      const response = await fetch(editingId ? `/api/resumes/knowledge/${encodeURIComponent(editingId)}` : "/api/resumes/knowledge", { method: editingId ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法保存资料。");
+      const updated = payload.record as KnowledgeRecord;
+      onRecordsChange(editingId ? records.map((record) => record.id === editingId ? updated : record) : [updated, ...records]);
+      setSelectedId(updated.id); setKind("all"); setQuery(""); closeEditor();
+    } catch (error) {
+      setEditorError(error instanceof Error ? error.message : "无法保存资料。");
+    } finally { setEditorBusy(false); }
+  }
 
   async function saveReview() {
     if (!selected) return;
@@ -357,7 +393,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, onSelectResume }: { on
       const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/review`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ significanceScore: reviewScore, scoreRationale: reviewNote, verificationStatus }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "无法保存人工评估。");
-      if (payload.record) { setRecords((current) => current.map((record) => record.id === selected.id ? payload.record : record)); setReviewSaved(true); }
+      if (payload.record) { onRecordsChange(records.map((record) => record.id === selected.id ? payload.record : record)); setReviewSaved(true); }
     } catch (error) {
       setReviewError(error instanceof Error ? error.message : "无法保存人工评估。");
     } finally { setSaving(false); }
@@ -370,31 +406,64 @@ function KnowledgeBaseView({ onClose, initialId, resumes, onSelectResume }: { on
       const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/suggest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roleContext }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "AI 建议暂时不可用。");
-      setReviewScore(payload.suggestion.score);
-      setReviewNote(payload.suggestion.rationale);
-      setSuggestionQuestions(payload.suggestion.verificationQuestions ?? []);
+      setReviewScore(payload.suggestion.score); setReviewNote(payload.suggestion.rationale); setSuggestionQuestions(payload.suggestion.verificationQuestions ?? []);
     } catch (error) { setReviewError(error instanceof Error ? error.message : "AI 建议暂时不可用。"); }
     finally { setSuggesting(false); }
   }
 
-  async function createRecord() {
-    if (!draft.title.trim()) return;
-    setCreateBusy(true);
-    try {
-      const response = await fetch("/api/resumes/knowledge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draft) });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "无法新增资料。");
-      setRecords((current) => [payload.record, ...current]); setSelectedId(payload.record.id); setKind("all"); setQuery(""); setCreating(false);
-      setDraft({ title: "", kind: "competition", field: "", organizer: "", region: "", summary: "", officialUrl: "" });
-    } catch (error) { setReviewError(error instanceof Error ? error.message : "无法新增资料。"); }
-    finally { setCreateBusy(false); }
-  }
-
-  const referencedResumes = selected ? resumes.filter((resume) => findKnowledgeReferences(resume).some((record) => record.id === selected.id)) : [];
-  return <main className="knowledge-main"><div className="knowledge-shell"><div className="knowledge-header"><div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查询背景资料，形成可解释的人工含金量判断，并在简历审核时交叉引用。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></div><div className="knowledge-body"><aside className="knowledge-list"><label className="search-box knowledge-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索名称、领域或主办方" /></label><button className="add-knowledge-button" onClick={() => setCreating((value) => !value)}>{creating ? <X size={13} /> : <Plus size={13} />}{creating ? "取消新增" : "新增资料"}</button>{creating && <div className="knowledge-create-form"><input value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} placeholder="资料名称 *" /><select value={draft.kind} onChange={(event) => setDraft({ ...draft, kind: event.target.value as KnowledgeKind })}>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <option value={key} key={key}>{knowledgeKindLabels[key]}</option>)}</select><input value={draft.field} onChange={(event) => setDraft({ ...draft, field: event.target.value })} placeholder="所属领域" /><input value={draft.organizer} onChange={(event) => setDraft({ ...draft, organizer: event.target.value })} placeholder="主办方 / 组织" /><input value={draft.region} onChange={(event) => setDraft({ ...draft, region: event.target.value })} placeholder="地区" /><textarea value={draft.summary} onChange={(event) => setDraft({ ...draft, summary: event.target.value })} rows={3} placeholder="资料简介与待核验信息" /><input value={draft.officialUrl} onChange={(event) => setDraft({ ...draft, officialUrl: event.target.value })} placeholder="官方资料网址（可选）" /><button onClick={createRecord} disabled={createBusy || !draft.title.trim()}>{createBusy ? "保存中" : "创建并评估"}</button></div>}<div className="knowledge-filters"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div><div className="knowledge-record-list">{filtered.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field} · {record.region}</small></span><b>{record.significanceScore}</b></button>)}{!filtered.length && <div className="empty-list">没有匹配资料</div>}</div></aside><section className="knowledge-detail">{selected && <><div className="knowledge-detail-head"><div><span className={`knowledge-type ${selected.kind}`}>{knowledgeKindLabels[selected.kind]}</span><h3>{selected.title}</h3><p>{selected.aliases.join(" · ") || "暂无别名"}</p></div><strong className="knowledge-score">{selected.significanceScore}<small>/ 100</small></strong></div><div className="knowledge-meta"><span><b>领域</b>{selected.field}</span><span><b>组织 / 主办方</b>{selected.organizer}</span><span><b>地区</b>{selected.region}</span><span><b>状态</b>{selected.verificationStatus}</span></div><p className="knowledge-summary">{selected.summary}</p><div className="knowledge-signals"><strong>审核信号</strong><div>{selected.signals.map((signal) => <span key={signal}>{signal}</span>)}</div></div><div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map((resume) => <button key={resume.id} onClick={() => { onSelectResume(resume.id); onClose(); }}><span className="candidate-avatar">{resume.initials}</span>{resume.name} · {resume.role}</button>) : <span>当前示例简历尚未引用</span>}</div><div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 生成待复核建议，不会自动保存</span></div><label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label><button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "AI 正在评估" : "AI 建议含金量"}</button><label>核验状态<select value={verificationStatus} onChange={(event) => setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"])}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label><label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => setReviewScore(Number(event.target.value))} /></label><textarea value={reviewNote} onChange={(event) => setReviewNote(event.target.value)} rows={4} placeholder="记录为什么认为它有价值，以及需要核验什么" />{suggestionQuestions.length > 0 && <div className="verification-questions"><strong>建议核实</strong>{suggestionQuestions.map((item) => <span key={item}>{item}</span>)}</div>}{reviewError && <div className="inline-error">{reviewError}</div>}{reviewSaved && <div className="review-saved">人工评估已保存</div>}<button className="save-review" onClick={saveReview} disabled={saving}>{saving ? "保存中" : "保存人工评估"}</button></div>{selected.officialUrl && <a className="official-link" href={selected.officialUrl} target="_blank" rel="noreferrer">查看官方资料 <ExternalLink size={14} /></a>}</>}</section></div></div></main>;
+  const referencedResumes = selected ? resumes.filter((resume) => findKnowledgeReferences(resume, records).some((record) => record.id === selected.id)) : [];
+  return (
+    <main className="knowledge-main">
+      <div className="knowledge-shell">
+        <div className="knowledge-header"><div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></div>
+        <div className="knowledge-body">
+          <aside className="knowledge-list">
+            <label className="search-box knowledge-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索名称、别名、领域或内容" /></label>
+            <button className="add-knowledge-button" onClick={editorOpen ? closeEditor : beginCreate}>{editorOpen ? <X size={13} /> : <Plus size={13} />}{editorOpen ? "关闭编辑" : "新增资料"}</button>
+            {editorOpen && <div className="knowledge-create-form">
+              <strong>{editingId ? "编辑资料" : "新增资料"}</strong>
+              <input value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} placeholder="资料名称 *" />
+              <select value={draft.kind} onChange={(event) => setDraft({ ...draft, kind: event.target.value as KnowledgeKind })}>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <option value={key} key={key}>{knowledgeKindLabels[key]}</option>)}</select>
+              <textarea value={draft.aliases} onChange={(event) => setDraft({ ...draft, aliases: event.target.value })} rows={2} placeholder="别名，每行一项" />
+              <input value={draft.field} onChange={(event) => setDraft({ ...draft, field: event.target.value })} placeholder="所属领域" />
+              <input value={draft.organizer} onChange={(event) => setDraft({ ...draft, organizer: event.target.value })} placeholder="主办方 / 组织" />
+              <input value={draft.region} onChange={(event) => setDraft({ ...draft, region: event.target.value })} placeholder="地区" />
+              <textarea value={draft.summary} onChange={(event) => setDraft({ ...draft, summary: event.target.value })} rows={3} placeholder="简介与信息边界" />
+              <textarea value={draft.signals} onChange={(event) => setDraft({ ...draft, signals: event.target.value })} rows={2} placeholder="人工审核信号，每行一项" />
+              <input value={draft.officialUrl} onChange={(event) => setDraft({ ...draft, officialUrl: event.target.value })} placeholder="官方来源网址（可选）" />
+              {editorError && <div className="inline-error">{editorError}</div>}
+              <button onClick={saveRecord} disabled={editorBusy || !draft.title.trim()}>{editorBusy ? "保存中" : editingId ? "保存修改" : "创建资料"}</button>
+            </div>}
+            <div className="knowledge-filters"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div>
+            <div className="knowledge-record-list">{filtered.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"}</small></span><b>{record.significanceScore}</b></button>)}{!filtered.length && <div className="empty-list">没有匹配资料</div>}</div>
+          </aside>
+          <section className="knowledge-detail">
+            {selected ? <>
+              <div className="knowledge-detail-head"><div><span className={`knowledge-type ${selected.kind}`}>{knowledgeKindLabels[selected.kind]}</span><h3>{selected.title}</h3><p>{selected.aliases.join(" · ") || "暂无别名"}</p></div><div className="knowledge-detail-controls"><strong className="knowledge-score">{selected.significanceScore}<small>/ 100</small></strong><button className="icon-button" onClick={beginEdit} title="编辑资料" aria-label="编辑资料"><Pencil size={15} /></button></div></div>
+              <div className="knowledge-meta"><span><b>领域</b>{selected.field || "未填写"}</span><span><b>组织 / 主办方</b>{selected.organizer || "未填写"}</span><span><b>地区</b>{selected.region || "未填写"}</span><span><b>核验状态</b>{selected.verificationStatus}</span></div>
+              <p className="knowledge-summary">{selected.summary || "尚无简介，请编辑资料补充背景和信息边界。"}</p>
+              <div className="knowledge-signals"><strong>审核信号</strong><div>{selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <small>尚未添加审核信号</small>}</div></div>
+              <div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map((resume) => <button key={resume.id} onClick={() => { onSelectResume(resume.id); onClose(); }}><span className="candidate-avatar">{resume.initials}</span>{resume.name} · {resume.role}</button>) : <span>当前简历中没有匹配的名称或别名</span>}</div>
+              <div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 建议需复核后保存</span></div>
+                <label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label>
+                <button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "AI 正在评估" : "AI 建议含金量"}</button>
+                <label>核验状态<select value={verificationStatus} onChange={(event) => setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"])}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label>
+                <label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => setReviewScore(Number(event.target.value))} /></label>
+                <textarea value={reviewNote} onChange={(event) => setReviewNote(event.target.value)} rows={4} placeholder="说明评分依据、岗位相关性和待核验事项" />
+                {suggestionQuestions.length > 0 && <div className="verification-questions"><strong>建议核实</strong>{suggestionQuestions.map((item) => <span key={item}>{item}</span>)}</div>}
+                {reviewError && <div className="inline-error">{reviewError}</div>}{reviewSaved && <div className="review-saved">人工评估已保存</div>}
+                <button className="save-review" onClick={saveReview} disabled={saving}>{saving ? "保存中" : "保存人工评估"}</button>
+              </div>
+              {selected.officialUrl && <a className="official-link" href={selected.officialUrl} target="_blank" rel="noreferrer">打开官方来源 <ExternalLink size={14} /></a>}
+            </> : <div className="knowledge-empty-detail">没有符合筛选条件的资料。</div>}
+          </section>
+        </div>
+      </div>
+    </main>
+  );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, onOpenKnowledge }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; onOpenKnowledge: (id?: string) => void }) {
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, onOpenKnowledge }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void }) {
   const pages = paginateReport(answer);
   return (
     <div className="analysis-document-shell">
@@ -404,7 +473,7 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
       </div>
       <div className="analysis-document-pages">
         {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
-        <ScoreInsights card={scoreCard} candidate={candidate} onOpenKnowledge={onOpenKnowledge} />
+        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} onOpenKnowledge={onOpenKnowledge} />
       </div>
     </div>
   );
@@ -471,6 +540,7 @@ export default function App() {
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [knowledgeTargetId, setKnowledgeTargetId] = useState<string | undefined>();
+  const [knowledgeRecords, setKnowledgeRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
   const [weights, setWeights] = useState<ScoreWeights>(defaultScoreWeights);
   const [weightInstruction, setWeightInstruction] = useState("");
   const [weightBusy, setWeightBusy] = useState(false);
@@ -484,6 +554,7 @@ export default function App() {
     loadResumes();
     fetch("/api/health").then((response) => response.json()).then(setHealth).catch(() => setHealth(null));
     fetch("/api/resumes/scoring/weights").then((response) => response.json()).then((payload) => payload.weights && setWeights(payload.weights)).catch(() => undefined);
+    fetch("/api/resumes/knowledge").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.records)) setKnowledgeRecords(payload.records); }).catch(() => undefined);
   }, []);
 
   async function updateWeights(next: ScoreWeights) {
@@ -669,7 +740,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {knowledgeOpen ? <KnowledgeBaseView resumes={resumes} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} onClose={() => setComparisonOpen(false)} /> : <>
+        {knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -710,7 +781,7 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} onOpenKnowledge={openKnowledge} />
+          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} onOpenKnowledge={openKnowledge} />
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
         </aside>
 
