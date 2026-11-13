@@ -28,8 +28,20 @@ test("does not create a cross reference from an empty or unrelated resume body",
   assert.deepEqual(findKnowledgeReferences("负责算法平台开发。", [record]), []);
 });
 
+test("matches Latin abbreviations on word boundaries but allows adjacent Chinese text", () => {
+  const abbreviated = { ...record, title: "人工智能", aliases: ["AI"] };
+  assert.equal(findKnowledgeMatch("AI竞赛项目", abbreviated), "AI");
+  assert.equal(findKnowledgeMatch("trained models with AIdetection", abbreviated), null);
+});
+
 test("returns only records that match the supplied resume body", () => {
   assert.deepEqual(findKnowledgeReferences("获得 ICPC 区域赛奖项。", [record]), [record]);
+});
+
+test("cross references prioritize the most specific matching name", () => {
+  const broad = { ...record, id: "broad", title: "AI", aliases: [] };
+  const specific = { ...record, id: "specific", title: "AI 研究竞赛", aliases: [] };
+  assert.deepEqual(findKnowledgeReferences("AI 研究竞赛获奖。", [broad, specific]), [specific, broad]);
 });
 
 test("seed knowledge library covers all three categories with distinct official entries", () => {

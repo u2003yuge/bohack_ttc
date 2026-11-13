@@ -156,14 +156,26 @@ export function findKnowledgeMatch(text: string, record: KnowledgeRecord): strin
   for (const term of [record.title, ...record.aliases].sort((left, right) => right.length - left.length)) {
     const candidate = term.trim();
     if (!candidate) continue;
-    const index = lowerText.indexOf(candidate.toLocaleLowerCase());
-    if (index >= 0) return text.slice(index, index + candidate.length);
+    const lowerCandidate = candidate.toLocaleLowerCase();
+    let index = lowerText.indexOf(lowerCandidate);
+    while (index >= 0) {
+      const previous = Array.from(text.slice(0, index)).at(-1) ?? "";
+      const next = Array.from(text.slice(index + candidate.length))[0] ?? "";
+      const isLatinOrNumber = (character: string) => /[\p{Script=Latin}\p{N}]/u.test(character);
+      if (!isLatinOrNumber(previous) && !isLatinOrNumber(next)) return text.slice(index, index + candidate.length);
+      index = lowerText.indexOf(lowerCandidate, index + 1);
+    }
   }
   return null;
 }
 
 export function findKnowledgeReferences(text: string, records: KnowledgeRecord[]): KnowledgeRecord[] {
-  return records.filter((record) => findKnowledgeMatch(text, record) !== null).slice(0, 6);
+  return records
+    .map((record, index) => ({ record, index, match: findKnowledgeMatch(text, record) }))
+    .filter((item): item is { record: KnowledgeRecord; index: number; match: string } => item.match !== null)
+    .sort((left, right) => right.match.length - left.match.length || left.index - right.index)
+    .slice(0, 6)
+    .map(({ record }) => record);
 }
 
 // Local seed records. The score is an explainable human-review starting point, not an objective ranking.
