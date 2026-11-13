@@ -378,7 +378,7 @@ function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
   return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><span>{projects.length} 项</span></div>{projects.length ? projects.map((project) => <article className="project-item" key={project.title}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl></article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
 }
 
-function BenchmarkBadge({ role, score, candidates }: { role: string; score: number; candidates: HistoricalCandidate[] }) {
+function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: string; score: number; candidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null) => void }) {
   const [year, setYear] = useState<number | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const benchmark = calculateBenchmark(role, score, year, candidates);
@@ -401,15 +401,16 @@ function BenchmarkBadge({ role, score, candidates }: { role: string; score: numb
     {selectedHistory && <div className="benchmark-selected"><strong>{selectedHistory.name}</strong><span>{selectedHistory.year} 年 · {selectedHistory.composite} 分 · {selectedHistory.screened ? "通过首轮" : "未通过首轮"} · {selectedHistory.hired ? "最终录取" : "未录取"}</span><button onClick={() => setSelectedHistoryId(null)} aria-label="关闭历史样本详情"><X size={12} /></button></div>}
     <div className="benchmark-stats"><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div><div><span>首轮参考分数</span><strong>{benchmark.screenCutoff}</strong></div><div><span>录取参考分数</span><strong>{benchmark.hireCutoff}</strong></div></div>
     <p>本地演示样本仅用于说明比较方式，不代表真实招聘结果；百分位和参考线均为辅助信息。</p>
+    <button type="button" className="benchmark-database-link" onClick={() => onOpenHistory(candidates.some((candidate) => roleGroup(candidate.role) === benchmark.roleGroup) ? benchmark.roleGroup : "all", benchmark.year)}><Database size={12} />查看当前岗位样本库</button>
   </section>;
 }
 
 type HistoricalDraft = { name: string; role: string; year: number; composite: number; screened: boolean; hired: boolean };
 const emptyHistoricalDraft = (): HistoricalDraft => ({ name: "匿名样本", role: "", year: new Date().getFullYear(), composite: 70, screened: false, hired: false });
 
-function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agentAvailable }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void; agentAvailable: boolean }) {
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [yearFilter, setYearFilter] = useState("all");
+function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agentAvailable, initialFilter }: { candidates: HistoricalCandidate[]; onCandidatesChange: (candidates: HistoricalCandidate[]) => void; onClose: () => void; agentAvailable: boolean; initialFilter: { roleGroup: string; year: number | null } | null }) {
+  const [roleFilter, setRoleFilter] = useState(initialFilter?.roleGroup ?? "all");
+  const [yearFilter, setYearFilter] = useState(initialFilter?.year === null || initialFilter?.year === undefined ? "all" : String(initialFilter.year));
   const [scoreBandFilter, setScoreBandFilter] = useState<HistoricalScoreBandKey | null>(null);
   const [outcomeFilter, setOutcomeFilter] = useState<HistoricalOutcomeFilter>("all");
   const [selectedId, setSelectedId] = useState("");
@@ -513,12 +514,12 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agent
   </main>;
 }
 
-function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
+function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onOpenHistory, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null) => void; onEvidence: (evidence: string) => void }) {
   const [selectedCriterion, setSelectedCriterion] = useState<ScoreKey | null>(null);
   const selected = selectedCriterion ? card.criteria[selectedCriterion] : null;
   const selectedLabel = scoreCriteria.find((criterion) => criterion.key === selectedCriterion)?.label;
   useEffect(() => { setSelectedCriterion(null); }, [candidate.id]);
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView candidate={candidate} /></div>;
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView candidate={candidate} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -987,7 +988,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null) => void; onEvidence: (evidence: string) => void }) {
   const pages = paginateReport(answer);
   return (
     <div className="analysis-document-shell">
@@ -997,7 +998,7 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
       </div>
       <div className="analysis-document-pages">
         {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
-        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onEvidence={onEvidence} />
+        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onOpenHistory={onOpenHistory} onEvidence={onEvidence} />
       </div>
     </div>
   );
@@ -1137,6 +1138,7 @@ export default function App() {
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyLaunchFilter, setHistoryLaunchFilter] = useState<{ roleGroup: string; year: number | null } | null>(null);
   const [historyCandidates, setHistoryCandidates] = useState<HistoricalCandidate[]>(historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" })));
   const [knowledgeTargetId, setKnowledgeTargetId] = useState<string | undefined>();
   const [knowledgeRecords, setKnowledgeRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
@@ -1336,6 +1338,13 @@ export default function App() {
     setHistoryOpen(false);
   }
 
+  function openHistory(roleGroupFilter?: string, year?: number | null) {
+    setHistoryLaunchFilter(roleGroupFilter ? { roleGroup: roleGroupFilter, year: year ?? null } : null);
+    setHistoryOpen(true);
+    setKnowledgeOpen(false);
+    setComparisonOpen(false);
+  }
+
   function selectResume(id: string) {
     const resume = resumes.find((item) => item.id === id);
     setSelectedId(id);
@@ -1371,7 +1380,7 @@ export default function App() {
         <div className="privacy-note"><ShieldCheck size={15} /> 本地存储</div>
         <button className="compare-button" onClick={() => { setComparisonOpen((current) => !current); setKnowledgeOpen(false); setHistoryOpen(false); }} title={comparisonOpen ? "返回单人分析" : "打开多人候选人对比"}>{comparisonOpen ? "返回分析" : <><BriefcaseBusiness size={14} />候选人对比</>}</button>
         <button className="compare-button" onClick={() => { if (knowledgeOpen) { setKnowledgeOpen(false); } else { openKnowledge(); } }} title={knowledgeOpen ? "返回简历分析" : "打开资料库"}>{knowledgeOpen ? "返回分析" : <><BookOpen size={14} />资料库</>}</button>
-        <button className="compare-button" onClick={() => { setHistoryOpen((current) => !current); setKnowledgeOpen(false); setComparisonOpen(false); }} title={historyOpen ? "返回简历分析" : "管理历史招聘样本"}>{historyOpen ? "返回分析" : <><Database size={14} />历史样本</>}</button>
+        <button className="compare-button" onClick={() => { if (historyOpen) { setHistoryOpen(false); setHistoryLaunchFilter(null); } else { openHistory(); } }} title={historyOpen ? "返回简历分析" : "管理历史招聘样本"}>{historyOpen ? "返回分析" : <><Database size={14} />历史样本</>}</button>
         <button className="icon-button help-button" title="隐私与数据说明" aria-label="隐私与数据说明"><CircleHelp size={18} /></button>
         <div className="user-avatar" title="工作区">B</div>
       </header>
@@ -1413,7 +1422,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => setHistoryOpen(false)} agentAvailable={Boolean(health?.agent)} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -1454,7 +1463,7 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
         </aside>
