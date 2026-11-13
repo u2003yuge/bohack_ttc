@@ -23,10 +23,32 @@ import {
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
+import type { AnalysisEvent, AnalysisProgress, ResearchBatch } from "./research-types";
+import { readAnalysisEvents } from "./analysis-stream";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
+
+function ResearchResults({ batch }: { batch: ResearchBatch }) {
+  const labels = { competition: "竞赛", paper: "论文", project: "项目" };
+  const statuses = { cached: "数据库命中", researched: "已检索并入库", pending: "待补充", error: "检索失败" };
+  return <div className="research-results" aria-label="成果资料核查结果">
+    <strong>成果资料 · {batch.items.length} 项</strong>
+    {batch.notes.map((note, index) => <p key={index}>{note}</p>)}
+    {!batch.items.length && !batch.notes.length && <p>未提取到竞赛、论文或具体项目。</p>}
+    {batch.items.map((result, index) => <details key={index}>
+      <summary><span>{labels[result.item.kind]} · {String(result.item.input.competition_name ?? result.item.input.title ?? result.item.input.project_name)}</span><small>{statuses[result.status]}</small></summary>
+      <blockquote>{result.item.evidence}</blockquote>
+      {result.error && <p>{result.error}</p>}
+      {result.item.notes.map((note, noteIndex) => <p key={noteIndex}>{note}</p>)}
+      {result.report && <>
+        <ul>{result.report.sources.filter((source) => source.url).map((source, sourceIndex) => <li key={sourceIndex}><a href={source.url!} target="_blank" rel="noreferrer">{source.title}</a><p>{source.information}</p></li>)}</ul>
+        <details><summary>查看完整资料</summary><pre>{JSON.stringify(result.report, null, 2)}</pre></details>
+      </>}
+    </details>)}
+  </div>;
+}
 
 function PdfReader({ url, title }: { url: string; title: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -148,6 +170,13 @@ export default function App() {
   const [answer, setAnswer] = useState("");
   const [agentError, setAgentError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [researchResults, setResearchResults] = useState<ResearchBatch | null>(null);
+  const [includeResearch, setIncludeResearch] = useState(true);
+  const [ocrText, setOcrText] = useState("");
+  const analysisRequest = useRef(0);
+  const analysisController = useRef<AbortController | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
+  const [analysisElapsed, setAnalysisElapsed] = useState(0);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [importError, setImportError] = useState("");
@@ -158,6 +187,24 @@ export default function App() {
 
   const selected = resumes.find((resume) => resume.id === selectedId) ?? resumes[0];
   const filtered = useMemo(() => resumes.filter((resume) => `${resume.name} ${resume.role}`.toLowerCase().includes(filter.toLowerCase())), [resumes, filter]);
+
+  useEffect(() => {
+    analysisController.current?.abort();
+    analysisRequest.current += 1;
+    setBusy(false);
+    setResearchResults(null);
+    setOcrText("");
+    setAnalysisProgress(null);
+    return () => analysisController.current?.abort();
+  }, [selectedId]);
+
+  useEffect(() => {
+    if (!busy) return;
+    const started = Date.now();
+    setAnalysisElapsed(0);
+    const timer = setInterval(() => setAnalysisElapsed(Math.floor((Date.now() - started) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, [busy]);
 
   useEffect(() => {
     loadResumes();
@@ -234,23 +281,55 @@ export default function App() {
 
   async function analyze() {
     if (!selected) return;
+    const requestId = ++analysisRequest.current;
+    analysisController.current?.abort();
+    const controller = new AbortController();
+    analysisController.current = controller;
+    const timeout = setTimeout(() => controller.abort(new Error("分析响应超时，已完成资料仍可查看，请重试。")), 310_000);
     setBusy(true);
     setAgentError("");
     setAnswer("");
+    setResearchResults(null);
+    setAnalysisProgress({ stage: includeResearch ? "extracting" : "analyzing", message: "正在连接分析服务。" });
     try {
       const response = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeName: selected.name, resumeText: selected.text, roleRequirements, question }),
+        body: JSON.stringify({ resumeName: selected.name, resumeText: ocrText.trim() ? ocrText : selected.text, roleRequirements, question, includeResearch, streamProgress: true }),
+        signal: controller.signal,
       });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "分析请求失败。");
-      setAnswer(payload.answer);
+      if (!response.ok || !response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
+        const payload = await response.json();
+        if (requestId !== analysisRequest.current) return;
+        setResearchResults(includeResearch ? payload.research ?? null : null);
+        if (!response.ok) throw new Error(payload.error || "分析请求失败。");
+        setAnswer(payload.answer);
+      } else {
+        await readAnalysisEvents(response, (event: AnalysisEvent) => {
+          if (requestId !== analysisRequest.current) return;
+          if (event.type === "progress") setAnalysisProgress(event.progress);
+          if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
+          if (event.type === "research") setResearchResults(event.research);
+          if (event.type === "complete") { setAnswer(event.answer); setResearchResults(includeResearch ? event.research : null); }
+          if (event.type === "error" && event.research) setResearchResults(event.research);
+        });
+      }
     } catch (error) {
-      setAgentError(error instanceof Error ? error.message : "无法连接 Agent 服务。");
+      if (requestId !== analysisRequest.current) return;
+      const reason = controller.signal.aborted ? controller.signal.reason : error;
+      setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
     } finally {
-      setBusy(false);
+      clearTimeout(timeout);
+      if (analysisController.current === controller) analysisController.current = null;
+      if (requestId === analysisRequest.current) setBusy(false);
     }
+  }
+
+  function stopAnalysis() {
+    analysisRequest.current += 1;
+    analysisController.current?.abort();
+    setBusy(false);
+    setAgentError("分析已停止，已完成的成果资料仍可查看。");
   }
 
   if (!selected) return null;
@@ -296,7 +375,7 @@ export default function App() {
           <div className="list-label"><span>候选人</span><span>最近更新</span></div>
           <div className="candidate-list">
             {filtered.map((resume, index) => (
-              <button className={`candidate-row ${resume.id === selected.id ? "selected" : ""}`} key={resume.id} onClick={() => { setSelectedId(resume.id); setAnswer(""); setAgentError(""); }}>
+              <button className={`candidate-row ${resume.id === selected.id ? "selected" : ""}`} key={resume.id} onClick={() => { analysisRequest.current += 1; setBusy(false); setSelectedId(resume.id); setAnswer(""); setAgentError(""); setResearchResults(null); setOcrText(""); }}>
                 <span className={`candidate-avatar avatar-${index % 4}`}>{resume.initials}</span>
                 <span className="candidate-copy"><strong>{resume.name}</strong><span>{resume.role}</span></span>
                 <span className="candidate-date">{resume.received}</span>
@@ -351,15 +430,22 @@ export default function App() {
           <textarea id="role-requirements" className="role-input" value={roleRequirements} onChange={(event) => setRoleRequirements(event.target.value)} placeholder="粘贴职位描述或关键要求，例如：5 年以上 B2B 产品经验，熟悉数据分析与团队协作……" rows={5} />
           <label className="field-label question-label" htmlFor="agent-question">分析任务</label>
           <textarea id="agent-question" className="question-input" value={question} onChange={(event) => setQuestion(event.target.value)} rows={3} />
+          <label className="research-toggle"><input type="checkbox" checked={includeResearch} onChange={(event) => setIncludeResearch(event.target.checked)} disabled={busy} />核查竞赛、论文和项目资料</label>
+          <p className="research-hint">优先查询本地资料库，缺失时联网补充。</p>
+          <details className="ocr-input"><summary>补充 OCR 文本</summary><textarea aria-label="简历 OCR 文本" className="question-input" value={ocrText} onChange={(event) => setOcrText(event.target.value)} placeholder="扫描件可在此粘贴外部 OCR 结果；填写后将用于本次分析。" rows={4} disabled={busy} /></details>
           <button className="run-agent-button" onClick={analyze} disabled={busy || !health?.agent || !question.trim()}>
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}
           </button>
+          {busy && <button className="stop-agent-button" onClick={stopAnalysis}>停止分析</button>}
           {!health?.agent && <div className="setup-hint"><span className="setup-icon"><CircleHelp size={15} /></span><span>配置服务密钥后即可运行分析。<code>OPENAI_API_KEY</code>{health ? "" : " · 服务连接中"}</span></div>}
 
-          <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析结果</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析结果" aria-label="清除分析结果"><X size={15} /></button>}</div>
+          {researchResults && <ResearchResults batch={researchResults} />}
+          <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析结果</h3></div>{answer && <button className="clear-result" onClick={() => { setAnswer(""); setResearchResults(null); }} title="清除分析结果" aria-label="清除分析结果"><X size={15} /></button>}</div>
           <div className={`result-panel ${answer || agentError ? "has-result" : ""}`}>
-            {busy ? <div className="working-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在阅读简历</strong><span>正在提取岗位相关证据并进行比对</span><div className="loading-line"><i /></div></div> : agentError ? <div className="error-result"><strong>暂时无法完成分析</strong><p>{agentError}</p></div> : answer ? <div className="answer-content">{answer}</div> : <div className="empty-result"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待开始分析</strong><p>设置职位要求后，Agent 会依据简历内容整理证据、差距与建议追问。</p><span className="evidence-note"><ShieldCheck size={13} /> 分析结论需由招聘人员复核</span></div>}
+            {busy ? <div className="working-state"><span className="working-mark"><Sparkles size={18} /></span><strong>{analysisProgress?.stage === "extracting" ? "正在提取成果信息" : analysisProgress?.stage === "researching" ? "正在核查成果资料" : "正在生成分析"}</strong><span role="status">{analysisProgress?.message || "正在处理分析请求。"}</span><span>已用时 {analysisElapsed} 秒</span>{Boolean(analysisProgress?.total) && <progress className="research-progress" max={analysisProgress!.total} value={analysisProgress!.completed ?? 0} aria-label="成果资料核查进度" />}<div className="loading-line"><i /></div></div> : agentError ? <div className="error-result"><strong>暂时无法完成分析</strong><p>{agentError}</p></div> : answer ? <div className="answer-content">{answer}</div> : <div className="empty-result"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待开始分析</strong><p>设置职位要求后，Agent 会依据简历内容整理证据、差距与建议追问。</p><span className="evidence-note"><ShieldCheck size={13} /> 分析结论需由招聘人员复核</span></div>}
           </div>
+          {busy && answer && <div className="answer-content partial-answer" aria-label="正在生成的分析正文">{answer}</div>}
+          {!busy && agentError && answer && <div className="answer-content partial-answer">{answer}</div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，避免将自动评分作为录用决定。</span></div>
         </aside>
       </div>
