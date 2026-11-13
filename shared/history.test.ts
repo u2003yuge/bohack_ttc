@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { calculateBenchmark, historicalScoreBand, normalizeHistoricalCandidate } from "./history.js";
+import { calculateBenchmark, historicalScoreBand, matchesHistoricalFilters, normalizeHistoricalCandidate, type HistoricalCandidate } from "./history.js";
 
 test("benchmark percentile counts only historical scores strictly below the current score", () => {
   const benchmark = calculateBenchmark("产品经理", 88);
@@ -33,4 +33,16 @@ test("historical score buckets include both endpoints and cover the 0-100 scale"
   assert.equal(historicalScoreBand(100), "80-100");
   assert.equal(historicalScoreBand(-1), null);
   assert.equal(historicalScoreBand(101), null);
+});
+
+test("historical score-band and outcome filters intersect without double-counting hires as screen-only", () => {
+  const makeCandidate = (id: string, composite: number, screened: boolean, hired: boolean): HistoricalCandidate => ({ id, name: id, role: "产品经理", year: 2025, composite, screened, hired });
+  const hired = makeCandidate("hired", 84, true, true);
+  const screened = makeCandidate("screened", 74, true, false);
+  const rejected = makeCandidate("rejected", 74, false, false);
+  assert.equal(matchesHistoricalFilters(hired, "80-100", "hired"), true);
+  assert.equal(matchesHistoricalFilters(hired, "80-100", "screened"), false);
+  assert.equal(matchesHistoricalFilters(screened, "60-79", "screened"), true);
+  assert.equal(matchesHistoricalFilters(rejected, "60-79", "rejected"), true);
+  assert.equal(matchesHistoricalFilters(rejected, "80-100", "rejected"), false);
 });

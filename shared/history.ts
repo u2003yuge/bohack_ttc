@@ -17,9 +17,20 @@ export const historicalScoreBands = [
   { key: "80-100", label: "80–100", min: 80, max: 100 },
 ] as const;
 export type HistoricalScoreBandKey = (typeof historicalScoreBands)[number]["key"];
+export type HistoricalOutcomeFilter = "all" | "hired" | "screened" | "rejected";
 
 export function historicalScoreBand(score: number): HistoricalScoreBandKey | null {
   return historicalScoreBands.find((band) => score >= band.min && score <= band.max)?.key ?? null;
+}
+
+export function matchesHistoricalFilters(candidate: HistoricalCandidate, scoreBand: HistoricalScoreBandKey | null, outcome: HistoricalOutcomeFilter): boolean {
+  const band = scoreBand ? historicalScoreBands.find((item) => item.key === scoreBand) : null;
+  const scoreMatches = !band || (candidate.composite >= band.min && candidate.composite <= band.max);
+  const outcomeMatches = outcome === "all"
+    || (outcome === "hired" && candidate.hired)
+    || (outcome === "screened" && candidate.screened && !candidate.hired)
+    || (outcome === "rejected" && !candidate.screened);
+  return scoreMatches && outcomeMatches;
 }
 
 export function normalizeHistoricalCandidate(input: unknown, id: string, fallbackIndex: number, currentYear = new Date().getFullYear()): HistoricalCandidate | { error: string } {

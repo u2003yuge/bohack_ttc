@@ -478,3 +478,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .report-column .analysis-paper { min-height: 540px; padding: 28px 23px 20px; }
   .analysis-column { order: 3; min-height: 520px; padding: 21px 15px; border-top: 1px solid var(--line); }
 }
+
+.history-score-outcome-filter { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.history-score-outcome-filter button { min-height: 25px; display: inline-flex; align-items: center; gap: 5px; padding: 0 7px; border: 1px solid #e6ece7; border-radius: 4px; background: #fff; color: #78867d; font-size: 8px; cursor: pointer; }
+.history-score-outcome-filter button:hover, .history-score-outcome-filter button.active { border-color: #a8cbb5; background: #f1f7f3; color: #427557; }
+.history-score-outcome-filter i { width: 7px; height: 7px; border-radius: 2px; }
+.history-score-outcome-filter .hired { background: #3e8060; }
+.history-score-outcome-filter .screened { background: #89b59a; }
+.history-score-outcome-filter .rejected { background: #c8d0ca; }
