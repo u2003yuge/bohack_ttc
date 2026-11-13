@@ -258,6 +258,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .benchmark-percentile strong { color: #9c6c19; font-size: 15px; }.benchmark-percentile span { color: #827e70; font-size: 9px; }
 .benchmark-year-filter { display: flex; flex: 0 0 auto; gap: 3px; }.benchmark-year-filter button { height: 22px; padding: 0 6px; border: 1px solid #e8e0ce; border-radius: 4px; background: #fff; color: #857c68; font-size: 8px; cursor: pointer; }.benchmark-year-filter button.active { border-color: #c5a963; background: #fbf3dc; color: #795c19; }
 .benchmark-distribution { position: relative; display: flex; flex-direction: column; margin-top: 12px; }
+.benchmark-no-samples { position: absolute; inset: 0 0 20px 76px; display: grid; place-items: center; padding: 12px; background: #fffdf7e8; color: #897c5d; font-size: 9px; text-align: center; }
 .benchmark-overlay { position: absolute; z-index: 2; top: 0; right: 4px; bottom: 21px; left: 76px; pointer-events: none; }
 .benchmark-overlay > i { position: absolute; top: 0; bottom: 0; width: 1px; }
 .benchmark-current-line { background: #202b28; }.benchmark-current-line b { position: absolute; top: -2px; left: 50%; padding: 2px 4px; border-radius: 3px; background: #202b28; color: #fff; font-size: 7px; font-style: normal; font-weight: 500; white-space: nowrap; transform: translate(-50%, -100%); }

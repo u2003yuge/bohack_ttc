@@ -100,9 +100,9 @@ export const historicalCandidates: HistoricalCandidate[] = [
 export type Benchmark = {
   roleGroup: string;
   sampleCount: number;
-  percentile: number;
-  screenCutoff: number;
-  hireCutoff: number;
+  percentile: number | null;
+  screenCutoff: number | null;
+  hireCutoff: number | null;
   screenedRate: number;
   hiredRate: number;
   candidates: HistoricalCandidate[];
@@ -131,18 +131,17 @@ export function calculateBenchmark(role: string, score: number, year: number | n
   const yearSample = year === null ? roleSample : roleSample.filter((candidate) => candidate.year === year);
   const sample = yearSample.length ? yearSample : roleSample;
   const activeYear = yearSample.length ? year : null;
-  const percentile = Math.round(sample.filter((candidate) => candidate.composite < score).length / sample.length * 100);
+  const percentile = sample.length ? Math.round(sample.filter((candidate) => candidate.composite < score).length / sample.length * 100) : null;
   const screened = sample.filter((candidate) => candidate.screened).map((candidate) => candidate.composite).sort((a, b) => a - b);
   const hired = sample.filter((candidate) => candidate.hired).map((candidate) => candidate.composite).sort((a, b) => a - b);
-  const allScores = sample.map((candidate) => candidate.composite).sort((a, b) => a - b);
   return {
     roleGroup: group,
     sampleCount: sample.length,
     percentile,
-    screenCutoff: percentileValue(screened.length ? screened : allScores),
-    hireCutoff: percentileValue(hired.length ? hired : allScores),
-    screenedRate: Math.round(sample.filter((candidate) => candidate.screened).length / sample.length * 100),
-    hiredRate: Math.round(sample.filter((candidate) => candidate.hired).length / sample.length * 100),
+    screenCutoff: screened.length ? percentileValue(screened) : null,
+    hireCutoff: hired.length ? percentileValue(hired) : null,
+    screenedRate: sample.length ? Math.round(screened.length / sample.length * 100) : 0,
+    hiredRate: sample.length ? Math.round(hired.length / sample.length * 100) : 0,
     candidates: sample,
     availableYears,
     year: activeYear,

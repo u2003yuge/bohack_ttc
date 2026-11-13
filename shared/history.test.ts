@@ -18,6 +18,25 @@ test("a score above the highest historical sample exceeds every sample", () => {
   assert.equal(benchmark.percentile, 100);
 });
 
+test("benchmark leaves outcome cutoffs unavailable when that outcome has no samples", () => {
+  const records: HistoricalCandidate[] = [{ id: "screened", name: "匿名样本", role: "产品经理", year: 2025, screened: true, hired: false, composite: 74 }];
+  const benchmark = calculateBenchmark("产品经理", 80, null, records);
+  assert.equal(benchmark.percentile, 100);
+  assert.equal(benchmark.screenCutoff, 74);
+  assert.equal(benchmark.hireCutoff, null);
+  assert.equal(benchmark.hiredRate, 0);
+});
+
+test("benchmark returns unavailable comparisons rather than NaN for an empty history", () => {
+  const benchmark = calculateBenchmark("产品经理", 80, null, []);
+  assert.equal(benchmark.sampleCount, 0);
+  assert.equal(benchmark.percentile, null);
+  assert.equal(benchmark.screenCutoff, null);
+  assert.equal(benchmark.hireCutoff, null);
+  assert.equal(benchmark.screenedRate, 0);
+  assert.equal(benchmark.hiredRate, 0);
+});
+
 test("historical records require valid outcome and score fields", () => {
   assert.deepEqual(normalizeHistoricalCandidate({ role: "开发", year: 2025, composite: 72, screened: false, hired: true }, "id", 1), { error: "最终录取样本必须标记为通过首轮。" });
   const valid = normalizeHistoricalCandidate({ role: "开发", year: 2025, composite: 72.36, screened: true, hired: true }, "id", 1, 2025);
