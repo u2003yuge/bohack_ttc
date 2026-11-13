@@ -33,6 +33,7 @@ import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type Kno
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
 type KnowledgeReviewSuggestion = { score: number; rationale: string };
+type RoleProfileProposal = { requirements: string; rationale: string };
 type WeightProposal = { weights: ScoreWeights; rationale: string };
 type WeightImpact = { currentScore: number; proposedScore: number; currentRank: number; proposedRank: number; total: number; demoCount: number };
 
@@ -697,6 +698,9 @@ export default function App() {
   const [weightSaving, setWeightSaving] = useState(false);
   const [weightProposal, setWeightProposal] = useState<WeightProposal | null>(null);
   const [weightError, setWeightError] = useState("");
+  const [roleProfileBusy, setRoleProfileBusy] = useState(false);
+  const [roleProfileProposal, setRoleProfileProposal] = useState<RoleProfileProposal | null>(null);
+  const [roleProfileError, setRoleProfileError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
 
@@ -747,6 +751,18 @@ export default function App() {
       if (!response.ok) throw new Error(payload.error || "权重调整失败");
       setWeightProposal({ weights: payload.weights, rationale: payload.rationale || "AI 已按你的要求生成权重建议。" });
     } catch (error) { setWeightError(error instanceof Error ? error.message : "权重调整失败"); } finally { setWeightBusy(false); }
+  }
+
+  async function structureRoleRequirements() {
+    if (!roleRequirements.trim()) return;
+    setRoleProfileBusy(true); setRoleProfileError(""); setRoleProfileProposal(null);
+    try {
+      const response = await fetch("/api/agent/role-profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rawRequirements: roleRequirements }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "职位要求整理失败。");
+      setRoleProfileProposal({ requirements: payload.requirements || "", rationale: payload.rationale || "AI 已整理职位要求。" });
+    } catch (error) { setRoleProfileError(error instanceof Error ? error.message : "职位要求整理失败。"); }
+    finally { setRoleProfileBusy(false); }
   }
 
   useEffect(() => {
@@ -968,8 +984,10 @@ export default function App() {
         <aside className="analysis-column">
           <div className="analysis-header"><div><span className="eyebrow">BOHACK AGENT</span><h2>分析工作区</h2></div><span className={`agent-indicator ${health?.agent ? "ready" : ""}`} title={health?.agent ? "模型已连接" : "等待配置模型服务"}><span /></span></div>
           <div className="agent-capabilities"><div><Sparkles size={14} /><span>简历分析 Skill</span><Check size={14} className="capability-check" /></div><div><Globe2 size={14} /><span>网页搜索</span><span className={`capability-state ${health?.webSearch ? "available" : "unavailable"}`}>{health?.webSearch ? "已连接" : "待配置"}</span></div></div>
-          <label className="field-label" htmlFor="role-requirements">职位要求 <span>可选</span></label>
-          <textarea id="role-requirements" className="role-input" value={roleRequirements} onChange={(event) => setRoleRequirements(event.target.value)} placeholder="粘贴职位描述或关键要求，例如：5 年以上 B2B 产品经验，熟悉数据分析与团队协作……" rows={5} />
+          <label className="field-label" htmlFor="role-requirements"><span className="field-label-title">职位要求 <em>可选</em></span><button type="button" className="field-agent-button" onClick={structureRoleRequirements} disabled={roleProfileBusy || !health?.agent || !roleRequirements.trim()} title="让 AI 整理职位要求">{roleProfileBusy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}整理岗位重点</button></label>
+          <textarea id="role-requirements" className="role-input" value={roleRequirements} onChange={(event) => { setRoleRequirements(event.target.value); setRoleProfileProposal(null); setRoleProfileError(""); }} placeholder="粘贴职位描述或关键要求，例如：5 年以上 B2B 产品经验，熟悉数据分析与团队协作……" rows={5} />
+          {roleProfileProposal && <div className="role-profile-proposal"><strong>AI 整理草案</strong><p>{roleProfileProposal.requirements}</p><small>{roleProfileProposal.rationale}</small><div><button type="button" onClick={() => { setRoleRequirements(roleProfileProposal.requirements); setRoleProfileProposal(null); }}>采用草案</button><button type="button" onClick={() => setRoleProfileProposal(null)}>保留原文</button></div></div>}
+          {roleProfileError && <div className="inline-error">{roleProfileError}</div>}
           <label className="field-label question-label" htmlFor="agent-question">分析任务</label>
           <textarea id="agent-question" className="question-input" value={question} onChange={(event) => setQuestion(event.target.value)} rows={3} />
           <div className="agent-presets" aria-label="常用分析任务"><span>快捷任务</span>{["提炼核心优势与风险", "按岗位要求逐项核对证据", "生成面试追问清单"].map((preset) => <button key={preset} onClick={() => setQuestion(preset)}>{preset}</button>)}</div>

@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import resumes from "./resumes.js";
 import { searchPublicWeb } from "./web-search.js";
+import { structureJobRequirements } from "./analysis.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -103,6 +104,23 @@ app.post("/api/agent", async (request, response) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : "未知错误";
     response.status(502).json({ error: `Agent 请求失败：${message}` });
+  }
+});
+
+app.post("/api/agent/role-profile", async (request, response) => {
+  const rawRequirements = request.body?.rawRequirements;
+  if (typeof rawRequirements !== "string" || !rawRequirements.trim()) {
+    response.status(400).json({ error: "请先输入职位要求。" });
+    return;
+  }
+  if (!process.env.OPENAI_API_KEY) {
+    response.status(503).json({ error: "尚未配置模型服务。请在 .env 中填写 OPENAI_API_KEY。" });
+    return;
+  }
+  try {
+    response.json(await structureJobRequirements(rawRequirements));
+  } catch (error) {
+    response.status(502).json({ error: error instanceof Error ? error.message : "职位要求整理失败。" });
   }
 });
 

@@ -15,6 +15,7 @@ export type CandidateFields = {
 const skill = readFileSync(fileURLToPath(new URL("./skills/resume-analysis.md", import.meta.url)), "utf8");
 const knowledgeSkill = readFileSync(fileURLToPath(new URL("./skills/knowledge-assessment.md", import.meta.url)), "utf8");
 const scoringAdjustmentSkill = readFileSync(fileURLToPath(new URL("./skills/scoring-adjustment.md", import.meta.url)), "utf8");
+const jobProfileSkill = readFileSync(fileURLToPath(new URL("./skills/job-profile.md", import.meta.url)), "utf8");
 
 function createClient(): OpenAI | null {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -165,6 +166,25 @@ export async function suggestScoreWeights(instruction: string, current: ScoreWei
   return {
     weights: normalizeWeights(safeWeights),
     rationale: stringField(parsed.rationale).slice(0, 300) || "按你的说明调整了各项关注程度，未改变评分维度。",
+  };
+}
+
+export async function structureJobRequirements(rawRequirements: string): Promise<{ requirements: string; rationale: string }> {
+  const client = createClient();
+  if (!client) throw new Error("未配置模型服务");
+  const response = await client.chat.completions.create({
+    model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+    temperature: 0,
+    response_format: { type: "json_object" },
+    messages: [
+      { role: "system", content: jobProfileSkill },
+      { role: "user", content: `原始职位要求：\n${rawRequirements.slice(0, 6000)}` },
+    ],
+  });
+  const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as { requirements?: unknown; rationale?: unknown };
+  return {
+    requirements: stringField(parsed.requirements).slice(0, 1200),
+    rationale: stringField(parsed.rationale).slice(0, 180),
   };
 }
 

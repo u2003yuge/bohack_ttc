@@ -218,6 +218,8 @@ AI 资料评估由 `server/skills/knowledge-assessment.md` 约束。配置 Tavil
 
 分析工作区还提供固定的常用任务模板，模板只替换用户问题，不改变职位要求和评分权重。任何由 AI 提出的权重或资料评分仍先进入草稿，必须人工确认并显式保存；联网开关属于用户可见的请求参数，不由模型自行开启。
 
+职位要求输入旁的“整理岗位重点”调用 `server/skills/job-profile.md`，只对招聘人员已经输入的文本做去重、分组和结构化，不补写岗位事实，也不参与候选人评分。服务端通过 `POST /api/agent/role-profile` 返回 `requirements` 和 `rationale`；前端先显示草案，只有点击采用才替换输入框内容，原文可以通过保留操作继续使用。这样职位要求、评分权重和分析任务三个可交互参数都有明确的人工确认边界。
+
 ### OCR
 
 当 `text` 为空或字符密度异常时，把 PDF 页面送入 OCR 适配器，保存 `textSource: "ocr"`、语言和置信度。OCR 应是 `extractText()` 的可替换实现，不应改变前端和报告 API。
