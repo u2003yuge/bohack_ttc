@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { findKnowledgeMatch, findKnowledgeReferences, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
+import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -109,4 +109,19 @@ test("knowledge score bands separate saved human reviews from pending example sc
   ]);
   assert.deepEqual(bands.find((band) => band.key === "0-49"), { key: "0-49", label: "0–49", min: 0, max: 49, count: 1, reviewed: 1, pending: 0 });
   assert.deepEqual(bands.find((band) => band.key === "50-69"), { key: "50-69", label: "50–69", min: 50, max: 69, count: 1, reviewed: 0, pending: 1 });
+});
+
+test("knowledge readiness separates source gaps, verification, human review, and completion", () => {
+  const verifiedSource = normalizeKnowledgeEvidenceSources([{ id: "checked", title: "Official result", url: "https://example.org/result", verified: true }])[0];
+  const reviewed = { id: "review-1", significanceScore: 74, scoreRationale: "核对完毕", verificationStatus: "已核验" as const, updatedAt: "2026-11-14", source: "manual" as const };
+  const records = [
+    { ...record, id: "missing", officialUrl: "", evidenceSources: [] },
+    { ...record, id: "unverified", evidenceSources: [] },
+    { ...record, id: "review-pending", evidenceSources: [verifiedSource] },
+    { ...record, id: "complete", evidenceSources: [verifiedSource], verificationStatus: "已核验" as const, reviewHistory: [reviewed] },
+  ];
+  assert.deepEqual(records.map(getKnowledgeReadiness), ["missing-sources", "sources-pending", "review-pending", "complete"]);
+  assert.deepEqual(summarizeKnowledgeReadiness(records).map(({ key, count }) => [key, count]), [
+    ["missing-sources", 1], ["sources-pending", 1], ["review-pending", 1], ["complete", 1],
+  ]);
 });

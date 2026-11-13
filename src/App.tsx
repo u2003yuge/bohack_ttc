@@ -30,7 +30,7 @@ import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ComparisonRankCriterion, type ComparisonRankDraft, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
-import { findKnowledgeMatch, findKnowledgeReferences, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, knowledgeScoreBands, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeKind, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
+import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -576,6 +576,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [evidenceFilter, setEvidenceFilter] = useState<KnowledgeEvidenceFilter>("all");
   const [scoreBand, setScoreBand] = useState<KnowledgeScoreBand>("all");
   const [reviewFilter, setReviewFilter] = useState<KnowledgeReviewFilter>("all");
+  const [readinessFilter, setReadinessFilter] = useState<KnowledgeReadiness | "all">("all");
   const [linkedOnly, setLinkedOnly] = useState(false);
   const [filterInstruction, setFilterInstruction] = useState("");
   const [filterProposal, setFilterProposal] = useState<KnowledgeFilterDraft | null>(null);
@@ -621,7 +622,8 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     const scoreMatches = !selectedBand || (record.significanceScore >= selectedBand.min && record.significanceScore <= selectedBand.max);
     const hasReview = Boolean(record.reviewHistory?.length);
     const reviewMatches = reviewFilter === "all" || (reviewFilter === "reviewed" ? hasReview : !hasReview);
-    return (kind === "all" || record.kind === kind) && verificationMatches && evidenceMatches && linkedMatches && scoreMatches && reviewMatches && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")} ${(record.evidenceSources ?? []).map((source) => `${source.title} ${source.dataYear} ${source.note}`).join(" ")}`.toLocaleLowerCase().includes(normalizedQuery);
+    const readinessMatches = readinessFilter === "all" || getKnowledgeReadiness(record) === readinessFilter;
+    return (kind === "all" || record.kind === kind) && verificationMatches && evidenceMatches && linkedMatches && scoreMatches && reviewMatches && readinessMatches && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")} ${(record.evidenceSources ?? []).map((source) => `${source.title} ${source.dataYear} ${source.note}`).join(" ")}`.toLocaleLowerCase().includes(normalizedQuery);
   });
   const sortedRecords = [...filtered].sort((a, b) => sort === "score" ? b.significanceScore - a.significanceScore : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "title" ? a.title.localeCompare(b.title, "zh-CN") : 0);
   const selected = sortedRecords.find((record) => record.id === selectedId) ?? sortedRecords[0] ?? null;
@@ -633,6 +635,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     return { kind: value, count: items.length, reviewed: reviewed.length, average };
   });
   const scoreBandCounts = summarizeKnowledgeScoreBands(records);
+  const readinessCounts = summarizeKnowledgeReadiness(records);
   const evidenceCoverage = [
     { key: "with-sources" as const, label: "有来源", count: records.filter((record) => Boolean(record.officialUrl || record.evidenceSources?.length)).length },
     { key: "verified-sources" as const, label: "有已核来源", count: records.filter((record) => record.evidenceSources?.some((source) => source.verified)).length },
@@ -641,7 +644,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
   useEffect(() => {
     if (initialId && records.some((record) => record.id === initialId)) {
-      setKind("all"); setQuery(""); setVerificationFilter("all"); setEvidenceFilter("all"); setScoreBand("all"); setReviewFilter("all"); setLinkedOnly(false); setSelectedId(initialId);
+      setKind("all"); setQuery(""); setVerificationFilter("all"); setEvidenceFilter("all"); setScoreBand("all"); setReviewFilter("all"); setReadinessFilter("all"); setLinkedOnly(false); setSelectedId(initialId);
     }
   }, [initialId, records]);
   useEffect(() => {
@@ -813,7 +816,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     if (!filterProposal) return;
     setKind(filterProposal.kind); setVerificationFilter(filterProposal.verificationFilter);
     setEvidenceFilter(filterProposal.evidenceFilter); setScoreBand(filterProposal.scoreBand);
-    setReviewFilter(filterProposal.reviewFilter); setQuery(filterProposal.query); setLinkedOnly(filterProposal.linkedOnly); setSort(filterProposal.sort);
+    setReviewFilter(filterProposal.reviewFilter); setReadinessFilter("all"); setQuery(filterProposal.query); setLinkedOnly(filterProposal.linkedOnly); setSort(filterProposal.sort);
     setSelectedId(""); setFilterProposal(null);
   }
 
@@ -834,6 +837,10 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
             <div className="knowledge-score-bands">{scoreBandCounts.map((band) => <button type="button" key={band.key} className={scoreBand === band.key ? "active" : ""} onClick={() => setScoreBand(scoreBand === band.key ? "all" : band.key)} aria-pressed={scoreBand === band.key} aria-label={`${band.label} 分：${band.count} 条资料，其中已人工评估 ${band.reviewed} 条、待评估 ${band.pending} 条，点击筛选`}><span className="knowledge-score-band-count">{band.count}</span><span className="knowledge-score-band-track"><i style={{ width: `${records.length ? band.count / records.length * 100 : 0}%` }}><b style={{ width: `${band.count ? band.reviewed / band.count * 100 : 0}%` }} /></i></span><span className="knowledge-score-band-label">{band.label}</span><small className="knowledge-score-band-status">人工 {band.reviewed} · 待评 {band.pending}</small></button>)}</div>
             <div className="knowledge-score-band-legend" role="group" aria-label="按人工评估状态筛选评分分布"><button type="button" className={reviewFilter === "reviewed" ? "active" : ""} aria-pressed={reviewFilter === "reviewed"} onClick={() => setReviewFilter(reviewFilter === "reviewed" ? "all" : "reviewed")}><i className="reviewed" />已人工评估</button><button type="button" className={reviewFilter === "pending" ? "active" : ""} aria-pressed={reviewFilter === "pending"} onClick={() => setReviewFilter(reviewFilter === "pending" ? "all" : "pending")}><i />待人工评估</button></div>
           </div>
+          <section className="knowledge-readiness" aria-label="资料审核准备度">
+            <div className="knowledge-readiness-heading"><strong>审核准备度</strong><span>按流程状态筛选 · 不代表资料含金量</span></div>
+            <div className="knowledge-readiness-grid">{readinessCounts.map((stage) => <button type="button" key={stage.key} className={`knowledge-readiness-item stage-${stage.key} ${readinessFilter === stage.key ? "active" : ""}`} onClick={() => setReadinessFilter(readinessFilter === stage.key ? "all" : stage.key)} aria-pressed={readinessFilter === stage.key} aria-label={`${stage.label} ${stage.count} 条：${stage.description}，点击筛选`} title={stage.description}><span>{stage.label}</span><strong>{stage.count}</strong><i><b style={{ width: `${records.length ? stage.count / records.length * 100 : 0}%` }} /></i></button>)}</div>
+          </section>
           <div className="knowledge-evidence-coverage" role="group" aria-label="来源覆盖情况">
             {evidenceCoverage.map((item) => <button type="button" key={item.key} className={evidenceFilter === item.key ? "active" : ""} onClick={() => setEvidenceFilter(evidenceFilter === item.key ? "all" : item.key)} aria-pressed={evidenceFilter === item.key}><span>{item.label}</span><strong>{item.count}</strong><i><b style={{ width: `${records.length ? item.count / records.length * 100 : 0}%` }} /></i></button>)}
           </div>
@@ -863,7 +870,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
             </div>}
             <div className="knowledge-filters"><div className="knowledge-filter-buttons"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div><label className="knowledge-sort-label"><span>排序</span><select value={sort} onChange={(event) => setSort(event.target.value as KnowledgeSort)} aria-label="资料排序"><option value="default">默认</option><option value="updated">最近更新</option><option value="score">评分高低</option><option value="title">名称</option></select></label></div>
             <div className="knowledge-secondary-filters"><div className="knowledge-filter-buttons"><button className={verificationFilter === "all" ? "active" : ""} onClick={() => setVerificationFilter("all")}>全部状态</button><button className={verificationFilter === "pending" ? "active" : ""} onClick={() => setVerificationFilter("pending")}>待核验</button><button className={verificationFilter === "verified" ? "active" : ""} onClick={() => setVerificationFilter("verified")}>已核验</button></div><button className={`linked-filter ${linkedOnly ? "active" : ""}`} onClick={() => setLinkedOnly((value) => !value)} aria-pressed={linkedOnly}>仅看已被简历引用</button></div>
-            <div className="knowledge-result-count"><span>显示 {sortedRecords.length} / {records.length} 条{[kind !== "all" ? knowledgeKindLabels[kind] : "", query.trim() ? `关键词 ${query.trim()}` : "", scoreBand !== "all" ? `分数 ${scoreBand}` : "", evidenceFilter !== "all" ? evidenceCoverage.find((item) => item.key === evidenceFilter)?.label ?? "" : "", reviewFilter !== "all" ? reviewFilter === "reviewed" ? "已有人工评估" : "待人工评估" : "", verificationFilter !== "all" ? verificationFilter === "verified" ? "已核验" : "待核验" : "", linkedOnly ? "仅简历引用" : ""].filter(Boolean).map((item) => ` · ${item}`).join("")}</span>{(scoreBand !== "all" || query || kind !== "all" || verificationFilter !== "all" || evidenceFilter !== "all" || reviewFilter !== "all" || linkedOnly) && <button type="button" onClick={() => { setScoreBand("all"); setQuery(""); setKind("all"); setVerificationFilter("all"); setEvidenceFilter("all"); setReviewFilter("all"); setLinkedOnly(false); }}>清除筛选</button>}</div>
+            <div className="knowledge-result-count"><span>显示 {sortedRecords.length} / {records.length} 条{[kind !== "all" ? knowledgeKindLabels[kind] : "", query.trim() ? `关键词 ${query.trim()}` : "", scoreBand !== "all" ? `分数 ${scoreBand}` : "", evidenceFilter !== "all" ? evidenceCoverage.find((item) => item.key === evidenceFilter)?.label ?? "" : "", reviewFilter !== "all" ? reviewFilter === "reviewed" ? "已有人工评估" : "待人工评估" : "", verificationFilter !== "all" ? verificationFilter === "verified" ? "已核验" : "待核验" : "", readinessFilter !== "all" ? knowledgeReadinessStages.find((stage) => stage.key === readinessFilter)?.label ?? "" : "", linkedOnly ? "仅简历引用" : ""].filter(Boolean).map((item) => ` · ${item}`).join("")}</span>{(scoreBand !== "all" || query || kind !== "all" || verificationFilter !== "all" || evidenceFilter !== "all" || reviewFilter !== "all" || readinessFilter !== "all" || linkedOnly) && <button type="button" onClick={() => { setScoreBand("all"); setQuery(""); setKind("all"); setVerificationFilter("all"); setEvidenceFilter("all"); setReviewFilter("all"); setReadinessFilter("all"); setLinkedOnly(false); }}>清除筛选</button>}</div>
             <div className="knowledge-record-list">{sortedRecords.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"} · {record.verificationStatus === "已核验" ? "已核验" : "待核验"}</small></span><span className="knowledge-row-links" title={`${linkedResumeCounts.get(record.id) ?? 0} 份简历引用`}>{linkedResumeCounts.get(record.id) ?? 0}<ExternalLink size={10} /></span><b>{record.significanceScore}</b></button>)}{!sortedRecords.length && <div className="empty-list">没有匹配资料</div>}</div>
           </aside>
           <section className="knowledge-detail">

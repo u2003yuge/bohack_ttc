@@ -16,6 +16,13 @@ export type KnowledgeVerificationFilter = "all" | "pending" | "verified";
 export type KnowledgeEvidenceFilter = "all" | "with-sources" | "verified-sources" | "without-sources";
 export type KnowledgeScoreBand = "all" | "0-49" | "50-69" | "70-84" | "85-100";
 export type KnowledgeReviewFilter = "all" | "reviewed" | "pending";
+export type KnowledgeReadiness = "missing-sources" | "sources-pending" | "review-pending" | "complete";
+export const knowledgeReadinessStages: Array<{ key: KnowledgeReadiness; label: string; description: string }> = [
+  { key: "missing-sources", label: "待补来源", description: "没有资料入口或证据来源" },
+  { key: "sources-pending", label: "待核来源", description: "有资料入口，但没有已核证据" },
+  { key: "review-pending", label: "待人工评估", description: "有已核来源，尚未完成评分或状态核验" },
+  { key: "complete", label: "已完成", description: "有已核来源且已保存人工评估" },
+];
 export const knowledgeScoreBands: Array<{ key: Exclude<KnowledgeScoreBand, "all">; label: string; min: number; max: number }> = [
   { key: "0-49", label: "0–49", min: 0, max: 49 },
   { key: "50-69", label: "50–69", min: 50, max: 69 },
@@ -98,6 +105,21 @@ export type KnowledgeRecord = {
   evidenceSources?: KnowledgeEvidenceSource[];
   reviewHistory?: KnowledgeReviewEntry[];
 };
+
+export function getKnowledgeReadiness(record: KnowledgeRecord): KnowledgeReadiness {
+  const sources = record.evidenceSources ?? [];
+  if (!record.officialUrl && sources.length === 0) return "missing-sources";
+  if (!sources.some((source) => source.verified)) return "sources-pending";
+  if (!record.reviewHistory?.length || record.verificationStatus !== "已核验") return "review-pending";
+  return "complete";
+}
+
+export function summarizeKnowledgeReadiness(records: KnowledgeRecord[]) {
+  return knowledgeReadinessStages.map((stage) => ({
+    ...stage,
+    count: records.filter((record) => getKnowledgeReadiness(record) === stage.key).length,
+  }));
+}
 
 export const knowledgeEvidenceSourceTypeLabels: Record<KnowledgeEvidenceSourceType, string> = {
   official: "官方来源",
