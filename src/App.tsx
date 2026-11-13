@@ -422,7 +422,7 @@ function RecruitmentQualityMap({ candidates, selectedId, onSelect }: { candidate
 }
 
 type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string };
-type KnowledgeDraftProposal = Omit<KnowledgeDraft, "title" | "kind" | "aliases" | "signals"> & { aliases: string[]; signals: string[]; confidence: number; rationale: string; unknowns: string[]; sources: KnowledgeSource[]; searchStatus: "searched" | "no-results" | "not-configured" | "unavailable" };
+type KnowledgeDraftProposal = Omit<KnowledgeDraft, "title" | "kind" | "aliases" | "signals"> & { aliases: string[]; signals: string[]; confidence: number; rationale: string; unknowns: string[]; sources: KnowledgeSource[]; searchStatus: "searched" | "no-results" | "not-configured" | "unavailable"; inputFingerprint: string };
 type KnowledgeSort = "default" | "score" | "updated" | "title";
 type KnowledgeVerificationFilter = "all" | "pending" | "verified";
 type KnowledgeScoreBand = "all" | "0-49" | "50-69" | "70-84" | "85-100";
@@ -492,6 +492,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [enrichmentBusy, setEnrichmentBusy] = useState(false);
   const [enrichmentHints, setEnrichmentHints] = useState("");
   const [enrichmentProposal, setEnrichmentProposal] = useState<KnowledgeDraftProposal | null>(null);
+  const enrichmentRequestId = useRef(0);
   const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeReferences(resume, [record]).length > 0).length])), [records, resumes]);
@@ -504,6 +505,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   });
   const sortedRecords = [...filtered].sort((a, b) => sort === "score" ? b.significanceScore - a.significanceScore : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "title" ? a.title.localeCompare(b.title, "zh-CN") : 0);
   const selected = sortedRecords.find((record) => record.id === selectedId) ?? sortedRecords[0] ?? null;
+  const enrichmentProposalStale = Boolean(enrichmentProposal && enrichmentProposal.inputFingerprint !== JSON.stringify({ draft, reviewerHints: enrichmentHints }));
   const kindSummary = (Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((value) => {
     const items = records.filter((record) => record.kind === value);
     const reviewed = items.filter((record) => record.verificationStatus === "已核验");
@@ -524,34 +526,45 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   }, [selected?.id]);
 
   function beginCreate() {
-    setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
+    enrichmentRequestId.current += 1;
+    setEnrichmentBusy(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
   }
 
   function beginEdit() {
     if (!selected) return;
+    enrichmentRequestId.current += 1;
     setEditingId(selected.id);
     setDraft({ ...selected, aliases: selected.aliases.join("\n"), signals: selected.signals.join("\n") });
-    setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
+    setEnrichmentBusy(false); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
   }
 
   function closeEditor() {
-    setEditorOpen(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null);
+    enrichmentRequestId.current += 1;
+    setEnrichmentBusy(false); setEditorOpen(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null);
   }
 
   async function enrichDraft() {
     if (!draft.title.trim()) return;
+    const requestId = ++enrichmentRequestId.current;
+    const requestDraft = draft;
+    const requestHints = enrichmentHints;
+    const inputFingerprint = JSON.stringify({ draft: requestDraft, reviewerHints: requestHints });
     setEnrichmentBusy(true); setEditorError(""); setEnrichmentProposal(null);
     try {
-      const response = await fetch("/api/resumes/knowledge/enrich", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...draft, aliases: draft.aliases.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean), signals: draft.signals.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean), reviewerHints: enrichmentHints }) });
+      const response = await fetch("/api/resumes/knowledge/enrich", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...requestDraft, aliases: requestDraft.aliases.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean), signals: requestDraft.signals.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean), reviewerHints: requestHints }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "AI 资料整理失败。");
-      setEnrichmentProposal({ ...payload.suggestion, sources: Array.isArray(payload.sources) ? payload.sources : [], searchStatus: payload.searchStatus ?? "not-configured" });
-    } catch (error) { setEditorError(error instanceof Error ? error.message : "AI 资料整理失败。"); }
-    finally { setEnrichmentBusy(false); }
+      if (requestId === enrichmentRequestId.current) setEnrichmentProposal({ ...payload.suggestion, sources: Array.isArray(payload.sources) ? payload.sources : [], searchStatus: payload.searchStatus ?? "not-configured", inputFingerprint });
+    } catch (error) { if (requestId === enrichmentRequestId.current) setEditorError(error instanceof Error ? error.message : "AI 资料整理失败。"); }
+    finally { if (requestId === enrichmentRequestId.current) setEnrichmentBusy(false); }
   }
 
   function applyEnrichment(replaceExisting: boolean) {
     if (!enrichmentProposal) return;
+    if (enrichmentProposalStale) {
+      setEditorError("资料内容已变化，请按当前内容重新生成草案。");
+      return;
+    }
     const currentAliases = draft.aliases.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean);
     const currentSignals = draft.signals.split(/[\n,，]/).map((value) => value.trim()).filter(Boolean);
     const mergeLines = (current: string[], proposed: string[]) => [...new Set(replaceExisting ? proposed : [...current, ...proposed.filter((item) => !current.includes(item))])].join("\n");
@@ -638,7 +651,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <select value={draft.kind} onChange={(event) => setDraft({ ...draft, kind: event.target.value as KnowledgeKind })}>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <option value={key} key={key}>{knowledgeKindLabels[key]}</option>)}</select>
               <textarea value={enrichmentHints} onChange={(event) => setEnrichmentHints(event.target.value)} maxLength={300} rows={2} placeholder="AI 整理重点（可选）：希望优先确认哪些背景信息？" />
               <button className="knowledge-enrich-button" onClick={enrichDraft} disabled={enrichmentBusy || !draft.title.trim()}>{enrichmentBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}{enrichmentBusy ? "正在整理资料" : webSearchAvailable ? "AI 整理资料草案 · 联网参考" : "AI 整理资料草案"}</button>
-              {enrichmentProposal && <section className="knowledge-enrichment-proposal"><div className="knowledge-enrichment-head"><strong>AI 草案 · 置信度 {Math.round(enrichmentProposal.confidence * 100)}%</strong><button type="button" onClick={() => setEnrichmentProposal(null)} aria-label="关闭 AI 整理草案"><X size={12} /></button></div><p>{enrichmentProposal.rationale}</p><dl><div><dt>别名</dt><dd>{enrichmentProposal.aliases.join("、") || "暂无可靠别名"}</dd></div><div><dt>领域 / 组织</dt><dd>{[enrichmentProposal.field, enrichmentProposal.organizer].filter(Boolean).join(" · ") || "待核验"}</dd></div><div><dt>地区</dt><dd>{enrichmentProposal.region || "待核验"}</dd></div><div><dt>简介</dt><dd>{enrichmentProposal.summary || "暂无足够资料"}</dd></div><div><dt>审核信号</dt><dd>{enrichmentProposal.signals.join("；") || "需人工补充"}</dd></div><div><dt>建议来源</dt><dd>{enrichmentProposal.officialUrl || "未找到可确认的来源链接"}</dd></div></dl>{enrichmentProposal.unknowns.length > 0 && <div className="knowledge-enrichment-unknown"><strong>待核实</strong><span>{enrichmentProposal.unknowns.join("；")}</span></div>}<div className="knowledge-enrichment-sources"><strong>{enrichmentProposal.searchStatus === "searched" ? `联网线索 ${enrichmentProposal.sources.length} 条` : enrichmentProposal.searchStatus === "unavailable" ? "联网检索不可用" : enrichmentProposal.searchStatus === "not-configured" ? "未配置联网搜索" : "未找到网页线索"}</strong>{enrichmentProposal.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title}<ExternalLink size={10} /></a>)}</div><div className="knowledge-enrichment-actions"><button type="button" onClick={() => applyEnrichment(false)}>补全空白项</button><button type="button" onClick={() => applyEnrichment(true)}>采用草案字段</button></div><small>只会更新当前编辑草稿；还需人工检查并保存。来源摘要不代表已经核实。</small></section>}
+              {enrichmentProposal && <section className="knowledge-enrichment-proposal"><div className="knowledge-enrichment-head"><strong>AI 草案 · 置信度 {Math.round(enrichmentProposal.confidence * 100)}%</strong><button type="button" onClick={() => setEnrichmentProposal(null)} aria-label="关闭 AI 整理草案"><X size={12} /></button></div><p>{enrichmentProposal.rationale}</p><dl><div><dt>别名</dt><dd>{enrichmentProposal.aliases.join("、") || "暂无可靠别名"}</dd></div><div><dt>领域 / 组织</dt><dd>{[enrichmentProposal.field, enrichmentProposal.organizer].filter(Boolean).join(" · ") || "待核验"}</dd></div><div><dt>地区</dt><dd>{enrichmentProposal.region || "待核验"}</dd></div><div><dt>简介</dt><dd>{enrichmentProposal.summary || "暂无足够资料"}</dd></div><div><dt>审核信号</dt><dd>{enrichmentProposal.signals.join("；") || "需人工补充"}</dd></div><div><dt>建议来源</dt><dd>{enrichmentProposal.officialUrl || "未找到可确认的来源链接"}</dd></div></dl>{enrichmentProposal.unknowns.length > 0 && <div className="knowledge-enrichment-unknown"><strong>待核实</strong><span>{enrichmentProposal.unknowns.join("；")}</span></div>}{enrichmentProposalStale && <div className="knowledge-enrichment-stale">资料名称、类别或内容已变化，请重新生成草案后再采用。</div>}<div className="knowledge-enrichment-sources"><strong>{enrichmentProposal.searchStatus === "searched" ? `联网线索 ${enrichmentProposal.sources.length} 条` : enrichmentProposal.searchStatus === "unavailable" ? "联网检索不可用" : enrichmentProposal.searchStatus === "not-configured" ? "未配置联网搜索" : "未找到网页线索"}</strong>{enrichmentProposal.sources.map((source) => <div className="knowledge-enrichment-source" key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<ExternalLink size={10} /></a>{source.snippet && <p>{source.snippet}</p>}</div>)}</div><div className="knowledge-enrichment-actions"><button type="button" disabled={enrichmentProposalStale} onClick={() => applyEnrichment(false)}>补全空白项</button><button type="button" disabled={enrichmentProposalStale} onClick={() => applyEnrichment(true)}>采用草案字段</button></div><small>只会更新当前编辑草稿；还需人工检查并保存。来源摘要不代表已经核实。</small></section>}
               <textarea value={draft.aliases} onChange={(event) => setDraft({ ...draft, aliases: event.target.value })} rows={2} placeholder="别名，每行一项" />
               <input value={draft.field} onChange={(event) => setDraft({ ...draft, field: event.target.value })} placeholder="所属领域" />
               <input value={draft.organizer} onChange={(event) => setDraft({ ...draft, organizer: event.target.value })} placeholder="主办方 / 组织" />

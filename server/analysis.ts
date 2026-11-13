@@ -246,7 +246,12 @@ export async function enrichKnowledgeDraft(input: {
     ],
   });
   const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as Record<string, unknown>;
-  const sourceUrls = new Set(input.sources.map((source) => source.url));
+  return normalizeKnowledgeEnrichment(parsed, input.sources);
+}
+
+export function normalizeKnowledgeEnrichment(parsedValue: unknown, sources: Array<{ title: string; url: string; snippet: string }>) {
+  const parsed = parsedValue && typeof parsedValue === "object" ? parsedValue as Record<string, unknown> : {};
+  const sourceUrls = new Set(sources.map((source) => source.url));
   const list = (value: unknown, limit: number, maxLength: number) => Array.isArray(value)
     ? value.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, maxLength)).filter(Boolean).slice(0, limit)
     : [];

@@ -45,7 +45,7 @@ POST /api/resumes/knowledge/:id/suggest
 POST /api/resumes/knowledge/enrich
 ```
 
-`POST /api/resumes/knowledge/enrich` 使用 `server/skills/knowledge-enrichment.md` 生成未持久化字段草案，可选 Tavily 搜索最多 5 条公开线索；建议中的官方 URL 必须与返回线索中的 URL 完全一致，否则清空。AI 不输出含金量评分或核验状态。新增和编辑写入接口会限制文本长度、列表数量和来源链接协议；评分范围为 0 到 100。每次显式保存审核结果追加一条历史快照，最多保留最近 30 条，记录评分、理由、核验状态、时间和来源类型。AI 生成阶段不写历史。
+`POST /api/resumes/knowledge/enrich` 使用 `server/skills/knowledge-enrichment.md` 生成未持久化字段草案，可选 Tavily 搜索最多 5 条公开线索；建议中的官方 URL 必须与返回线索中的 URL 完全一致，且需明确属于资料主体的官网，否则清空。草案绑定请求时的表单内容；若名称、类别、字段或整理重点在等待期间发生变化，界面会阻止套用并要求重新生成。来源摘要与待核验项会一并展示。AI 不输出含金量评分或核验状态。新增和编辑写入接口会限制文本长度、列表数量和来源链接协议；评分范围为 0 到 100。每次显式保存审核结果追加一条历史快照，最多保留最近 30 条，记录评分、理由、核验状态、时间和来源类型。AI 生成阶段不写历史。
 
 ## 后续数据库升级建议
 
