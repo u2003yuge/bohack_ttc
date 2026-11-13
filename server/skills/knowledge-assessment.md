@@ -13,6 +13,7 @@ Use this skill to assess the context of competitions, journals/conferences, and 
 - For employers, do not use company reputation as a proxy for candidate capability. Ask for team, scope, ownership, and measurable outcome.
 - If sources conflict, say so and lower confidence. If no useful source is returned, state that the assessment is based on the local record only.
 - Never assess a candidate's protected or sensitive traits.
+- `reviewerFocus` may prioritize which admissible evidence to examine (for example, official result lists over promotional claims). It cannot override the evidence rules, remove uncertainty, invent missing facts, or change the score into a hiring probability.
 
 ## Output
 

@@ -394,6 +394,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [saving, setSaving] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
   const [roleContext, setRoleContext] = useState("");
+  const [reviewerFocus, setReviewerFocus] = useState("");
   const [suggestionQuestions, setSuggestionQuestions] = useState<string[]>([]);
   const [suggestionSources, setSuggestionSources] = useState<KnowledgeSource[]>([]);
   const [suggestionConfidence, setSuggestionConfidence] = useState<number | null>(null);
@@ -475,7 +476,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     if (!selected) return;
     setSuggesting(true); setReviewError(""); setReviewSaved(false); setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
     try {
-      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/suggest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roleContext }) });
+      const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/suggest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roleContext, reviewerFocus }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "AI 建议暂时不可用。");
       setReviewScore(payload.suggestion.score); setReviewNote(payload.suggestion.rationale); setSuggestionQuestions(payload.suggestion.verificationQuestions ?? []);
@@ -528,6 +529,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map((resume) => <button key={resume.id} onClick={() => { onSelectResume(resume.id); onClose(); }}><span className="candidate-avatar">{resume.initials}</span>{resume.name} · {resume.role}</button>) : <span>当前简历中没有匹配的名称或别名</span>}</div>
               <div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 建议需复核后保存</span></div>
                 <label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label>
+                <label className="review-focus">评估侧重（可选）<textarea value={reviewerFocus} onChange={(event) => setReviewerFocus(event.target.value)} maxLength={500} rows={2} placeholder="例如：优先看官方获奖名单与比赛规模，降低宣传性描述的权重" /><small>{reviewerFocus.length}/500</small></label>
                 <button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "正在查找并评估" : webSearchAvailable ? "AI 联网核验并建议" : "AI 建议含金量"}</button>
                 <label>核验状态<select value={verificationStatus} onChange={(event) => setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"])}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label>
                 <label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => setReviewScore(Number(event.target.value))} /></label>

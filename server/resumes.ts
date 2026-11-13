@@ -137,6 +137,7 @@ router.post("/knowledge/:id/suggest", async (request, response, next) => {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
     if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
     const roleContext = typeof request.body?.roleContext === "string" ? request.body.roleContext.trim().slice(0, 300) : "";
+    const reviewerFocus = typeof request.body?.reviewerFocus === "string" ? request.body.reviewerFocus.trim().slice(0, 500) : "";
     const searchConfigured = Boolean(process.env.TAVILY_API_KEY);
     let sources: Awaited<ReturnType<typeof searchPublicWeb>> = [];
     let searchStatus: "searched" | "no-results" | "not-configured" | "unavailable" = searchConfigured ? "no-results" : "not-configured";
@@ -149,7 +150,7 @@ router.post("/knowledge/:id/suggest", async (request, response, next) => {
         searchStatus = "unavailable";
       }
     }
-    const suggestion = await suggestKnowledgeAssessment({ ...record, roleContext, sources, searchStatus });
+    const suggestion = await suggestKnowledgeAssessment({ ...record, roleContext, reviewerFocus, sources, searchStatus });
     response.json({ suggestion, sources, searchStatus });
   } catch (error) { next(error); }
 });

@@ -84,13 +84,17 @@ app.post("/api/agent", async (request, response) => {
         response.json({ answer: message.content ?? "模型未返回文本。" });
         return;
       }
-
-      for (const call of calls) {
-        if (call.type !== "function" || call.function.name !== "web_search") continue;
-        const args = JSON.parse(call.function.arguments) as { query?: string };
-        const searchResult = await searchWeb(String(args.query ?? ""));
-        messages.push({ role: "tool", tool_call_id: call.id, content: searchResult });
-      }
+      const searchCalls = calls.filter((call) => call.type === "function" && call.function.name === "web_search");
+      const searchResults = await Promise.all(searchCalls.map(async (call, index) => {
+        if (index >= 4) return { call, content: "本轮搜索请求过多，请合并查询条件后再搜索。" };
+        try {
+          const args = JSON.parse(call.function.arguments) as { query?: string };
+          return { call, content: await searchWeb(String(args.query ?? "")) };
+        } catch (error) {
+          return { call, content: `网页搜索失败：${error instanceof Error ? error.message : "未知错误"}` };
+        }
+      }));
+      for (const { call, content } of searchResults) messages.push({ role: "tool", tool_call_id: call.id, content });
     }
     response.status(502).json({ error: "Agent 调用工具次数过多，请缩小问题范围后重试。" });
   } catch (error) {
