@@ -57,7 +57,7 @@ export function normalizeProjectBreakdownDraft(input: unknown, sources: ProjectB
     const sourceIndex = Number(item.sourceIndex);
     if (!Number.isInteger(sourceIndex) || sourceIndex < 0 || sourceIndex >= sources.length || seen.has(sourceIndex)) continue;
     const evidence = stringField(item.evidence).slice(0, 500);
-    if (!evidence || !sources[sourceIndex].content.includes(evidence)) continue;
+    if (Array.from(evidence).length < 6 || !sources[sourceIndex].content.includes(evidence)) continue;
     seen.add(sourceIndex);
     projects.push({
       sourceIndex,

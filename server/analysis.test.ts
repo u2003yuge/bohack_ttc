@@ -56,6 +56,7 @@ test("project breakdown reviewer focus is trimmed and bounded separately from re
 test("project breakdown drafts accept only unique in-range indexes with exact resume evidence", () => {
   const sources = [{ title: "项目 A", content: "主导搭建数据分析平台，降低报表耗时 30%。" }, { title: "项目 B", content: "负责客户需求调研和方案交付。" }];
   assert.ok("error" in normalizeProjectBreakdownDraft({ projects: [{ sourceIndex: 0, evidence: "模型编造的内容" }] }, sources));
+  assert.ok("error" in normalizeProjectBreakdownDraft({ projects: [{ sourceIndex: 0, evidence: "负责" }] }, sources));
   const normalized = normalizeProjectBreakdownDraft({ projects: [
     { sourceIndex: 0, plainTitle: "让数据报表更快", goal: "提升报表效率", actions: "搭建平台", outcome: "报表耗时降低 30%", evidence: "降低报表耗时 30%", confidence: 0.8 },
     { sourceIndex: 0, plainTitle: "重复项目", evidence: "主导搭建" },
