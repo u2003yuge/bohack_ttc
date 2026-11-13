@@ -24,6 +24,7 @@ Desktop.ini
 
 # Build and dependency output
 dist/
+public/pdfjs/
 build/
 out/
 coverage/

@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "copy:pdf-assets": "node scripts/copy-pdf-assets.mjs",
+    "predev": "npm run copy:pdf-assets",
+    "predev:web": "npm run copy:pdf-assets",
+    "prebuild": "npm run copy:pdf-assets",
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",
     "dev:web": "vite --host 127.0.0.1",
     "dev:server": "tsx watch server/index.ts",

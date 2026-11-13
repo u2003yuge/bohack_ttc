@@ -8,6 +8,7 @@ Bohack 是一个本地运行的招聘简历阅读与分析工作台。它可以�
 - 导入单份 PDF、多份 PDF，或选择整个文件夹批量导入。
 - 将原始 PDF 和候选人信息保存到本地简历目录。
 - 使用应用内阅读器查看 PDF，支持翻页、缩放和下载。
+- 自动加载 PDF.js 中文字符映射与标准字体资源，支持包含中文 CID 字体的 PDF。
 - 提取 PDF 文本，并调用模型识别姓名、岗位、地点、教育背景、技能和简介。
 - 粘贴职位要求，让 Agent 汇总证据、差距、建议追问及辅助评分。
 - 可选接入 Tavily 网页搜索；分析 Skill 位于 `server/skills/resume-analysis.md`。
@@ -33,6 +34,8 @@ npm install
 ```powershell
 npm run dev
 ```
+
+`npm run dev` 和 `npm run build` 会自动从 PDF.js 复制中文 CMap 与标准字体到本地静态资源目录，无需手动下载。该生成目录已忽略，不会提交到 Git。
 
 Vite 默认地址为 `http://127.0.0.1:5173/`。开发服务器仅监听本机回环地址。首次启动或修改 `.env` 后，请重启 `npm run dev`，让 Agent 服务重新读取配置。
 

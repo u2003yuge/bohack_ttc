@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import OpenAI from "openai";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
@@ -20,11 +21,14 @@ type ResumeRecord = {
   summary: string;
   pages: number;
   size: number;
+  extractionVersion: number;
 };
 
 const directory = path.resolve(process.env.RESUME_DIR || ".data/resumes");
+const pdfjsDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../node_modules/pdfjs-dist");
 const router = Router();
 const maxPdfSize = 30 * 1024 * 1024;
+const extractionVersion = 2;
 
 router.use(async (_request, _response, next) => {
   try {
@@ -52,7 +56,7 @@ router.post("/scan", async (_request, response, next) => {
       const filePath = path.join(directory, name);
       const id = path.basename(name, path.extname(name));
       const existing = await readRecord(id);
-      if (existing) {
+      if (existing?.extractionVersion === extractionVersion) {
         records.push(existing);
         continue;
       }
@@ -153,7 +157,7 @@ async function readDirectory(): Promise<ResumeRecord[]> {
     const batch = await Promise.all(pdfNames.slice(offset, offset + 3).map(async (name) => {
       const id = path.basename(name, path.extname(name));
       const existing = await readRecord(id);
-      if (existing) return existing;
+      if (existing?.extractionVersion === extractionVersion) return existing;
       const record = await indexPdf(path.join(directory, name), id, name);
       await writeRecord(record);
       return record;
@@ -165,7 +169,13 @@ async function readDirectory(): Promise<ResumeRecord[]> {
 
 async function indexPdf(filePath: string, id: string, fileName: string): Promise<ResumeRecord> {
   const buffer = await readFile(filePath);
-  const pdf = await getDocument({ data: new Uint8Array(buffer), useSystemFonts: true }).promise;
+  const pdf = await getDocument({
+    data: new Uint8Array(buffer),
+    cMapUrl: `${path.join(pdfjsDirectory, "cmaps")}${path.sep}`,
+    cMapPacked: true,
+    standardFontDataUrl: `${path.join(pdfjsDirectory, "standard_fonts")}${path.sep}`,
+    useSystemFonts: true,
+  }).promise;
   const pages: string[] = [];
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
@@ -194,6 +204,7 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
     summary: ai?.summary?.trim() || "",
     pages: pages.length,
     size: fileStats.size,
+    extractionVersion,
   };
 }
 

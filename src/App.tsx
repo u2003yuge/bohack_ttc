@@ -51,7 +51,13 @@ function PdfReader({ url, title }: { url: string; title: string }) {
           import("pdfjs-dist/build/pdf.worker.min.mjs?url"),
         ]);
         pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
-        loadingTask = pdfjs.getDocument(url);
+        loadingTask = pdfjs.getDocument({
+          url,
+          cMapUrl: "/pdfjs/cmaps/",
+          cMapPacked: true,
+          standardFontDataUrl: "/pdfjs/standard_fonts/",
+          useSystemFonts: true,
+        });
         const pdf = await loadingTask.promise;
         if (cancelled) {
           await pdf.destroy();
