@@ -34,6 +34,9 @@ export type Benchmark = {
   hireCutoff: number;
   screenedRate: number;
   hiredRate: number;
+  candidates: HistoricalCandidate[];
+  availableYears: number[];
+  year: number | null;
 };
 
 export function roleGroup(role: string): string {
@@ -45,10 +48,18 @@ export function roleGroup(role: string): string {
   return "general";
 }
 
-export function calculateBenchmark(role: string, score: number): Benchmark {
+export function roleGroupLabel(group: string): string {
+  return ({ product: "产品", data: "数据分析", frontend: "前端开发", engineering: "软件工程", general: "综合" } as Record<string, string>)[group] ?? "综合";
+}
+
+export function calculateBenchmark(role: string, score: number, year: number | null = null): Benchmark {
   const group = roleGroup(role);
   const candidates = historicalCandidates.filter((candidate) => roleGroup(candidate.role) === group);
-  const sample = candidates.length ? candidates : historicalCandidates;
+  const roleSample = candidates.length ? candidates : historicalCandidates;
+  const availableYears = [...new Set(roleSample.map((candidate) => candidate.year))].sort((a, b) => b - a);
+  const yearSample = year === null ? roleSample : roleSample.filter((candidate) => candidate.year === year);
+  const sample = yearSample.length ? yearSample : roleSample;
+  const activeYear = yearSample.length ? year : null;
   const percentile = Math.round(sample.filter((candidate) => candidate.composite <= score).length / sample.length * 100);
   const screened = sample.filter((candidate) => candidate.screened).map((candidate) => candidate.composite).sort((a, b) => a - b);
   const hired = sample.filter((candidate) => candidate.hired).map((candidate) => candidate.composite).sort((a, b) => a - b);
@@ -61,6 +72,9 @@ export function calculateBenchmark(role: string, score: number): Benchmark {
     hireCutoff: percentileValue(hired.length ? hired : allScores),
     screenedRate: Math.round(sample.filter((candidate) => candidate.screened).length / sample.length * 100),
     hiredRate: Math.round(sample.filter((candidate) => candidate.hired).length / sample.length * 100),
+    candidates: sample,
+    availableYears,
+    year: activeYear,
   };
 }
 

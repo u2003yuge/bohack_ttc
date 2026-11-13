@@ -27,7 +27,7 @@ import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
 import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
-import { calculateBenchmark, roleGroup, type Benchmark } from "../shared/history";
+import { calculateBenchmark, roleGroup, roleGroupLabel } from "../shared/history";
 import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
@@ -329,12 +329,34 @@ function ProjectBreakdownView({ candidate }: { candidate: Resume }) {
   return <section className="project-breakdown"><div className="insight-section-head"><div><span className="eyebrow">PROJECT BREAKDOWN</span><h4>项目拆解 · 人话版</h4></div><span>{projects.length} 项</span></div>{projects.length ? projects.map((project) => <article className="project-item" key={project.title}><div className="project-title"><strong>{project.plainTitle}</strong><span>{project.title}</span></div><dl><div><dt>要解决什么</dt><dd>{project.goal}</dd></div><div><dt>具体做了什么</dt><dd>{project.actions}</dd></div><div><dt>带来什么结果</dt><dd>{project.outcome}</dd></div></dl></article>) : <p className="project-empty">当前简历没有足够的项目描述，建议在面试中追问目标、个人贡献和结果。</p>}</section>;
 }
 
-function BenchmarkBadge({ benchmark }: { benchmark: Benchmark }) {
-  return <section className="benchmark-card"><div className="benchmark-main"><span className="eyebrow">HISTORICAL BENCHMARK</span><div className="benchmark-percentile"><strong>超过历史样本 {benchmark.percentile}%</strong><span>同岗位族 · {benchmark.sampleCount} 份历史简历</span></div><div className="benchmark-track"><i style={{ width: `${benchmark.percentile}%` }} /><b style={{ left: `${benchmark.percentile}%` }} /></div></div><div className="benchmark-stats"><div><span>首轮通过参考线</span><strong>{benchmark.screenCutoff}</strong></div><div><span>最终录取参考线</span><strong>{benchmark.hireCutoff}</strong></div><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div></div><p>百分位只用于辅助比较，样本来自本地历史记录；请结合岗位要求和原始证据复核。</p></section>;
+function BenchmarkBadge({ role, score }: { role: string; score: number }) {
+  const [year, setYear] = useState<number | null>(null);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
+  const benchmark = calculateBenchmark(role, score, year);
+  useEffect(() => { setYear(null); setSelectedHistoryId(null); }, [role]);
+  const selectedHistory = benchmark.candidates.find((candidate) => candidate.id === selectedHistoryId);
+  const lanes = [
+    { key: "hired", label: "最终录取", candidates: benchmark.candidates.filter((candidate) => candidate.hired) },
+    { key: "screened", label: "首轮通过", candidates: benchmark.candidates.filter((candidate) => candidate.screened && !candidate.hired) },
+    { key: "rejected", label: "未过首轮", candidates: benchmark.candidates.filter((candidate) => !candidate.screened) },
+  ];
+  const selectCandidate = (candidate: (typeof benchmark.candidates)[number]) => setSelectedHistoryId(candidate.id);
+  return <section className="benchmark-card">
+    <div className="benchmark-head"><div><span className="eyebrow">HISTORICAL BENCHMARK</span><div className="benchmark-percentile"><strong>超过历史样本 {benchmark.percentile}%</strong><span>{roleGroupLabel(benchmark.roleGroup)}岗位族 · {benchmark.sampleCount} 份</span></div></div><div className="benchmark-year-filter" role="group" aria-label="筛选历史样本年份"><button className={year === null ? "active" : ""} onClick={() => { setYear(null); setSelectedHistoryId(null); }}>全部</button>{benchmark.availableYears.map((value) => <button className={year === value ? "active" : ""} key={value} onClick={() => { setYear(value); setSelectedHistoryId(null); }}>{value}</button>)}</div></div>
+    <div className="benchmark-distribution" role="group" aria-label="历史候选人综合分分布图">
+      <div className="benchmark-overlay" aria-hidden="true"><i className="benchmark-current-line" style={{ left: `${score}%` }}><b>当前 {score.toFixed(0)}</b></i><i className="benchmark-screen-line" style={{ left: `${benchmark.screenCutoff}%` }} /><i className="benchmark-hire-line" style={{ left: `${benchmark.hireCutoff}%` }} /></div>
+      {lanes.map((lane) => <div className="benchmark-lane" key={lane.key}><span className="benchmark-lane-label">{lane.label}</span><div className={`benchmark-lane-track ${lane.key}`}>{lane.candidates.map((candidate) => <button key={candidate.id} className={`benchmark-dot ${selectedHistoryId === candidate.id ? "selected" : ""}`} style={{ left: `${candidate.composite}%` }} title={`${candidate.year} · ${candidate.name} · ${candidate.composite} 分`} aria-label={`${candidate.year} ${candidate.name}，综合分 ${candidate.composite}，${candidate.screened ? "通过首轮" : "未通过首轮"}${candidate.hired ? "，最终录取" : ""}`} aria-pressed={selectedHistoryId === candidate.id} onClick={() => selectCandidate(candidate)} />)}</div></div>)}
+      <div className="benchmark-axis"><span /><div><i>0</i><i>25</i><i>50</i><i>75</i><i>100</i></div></div>
+    </div>
+    <div className="benchmark-legend"><span><i className="legend-current" />当前候选人</span><span><i className="legend-screen" />首轮参考线 {benchmark.screenCutoff}</span><span><i className="legend-hire" />录取参考线 {benchmark.hireCutoff}</span><span><i className="legend-sample" />历史记录</span></div>
+    {selectedHistory && <div className="benchmark-selected"><strong>{selectedHistory.name}</strong><span>{selectedHistory.year} 年 · {selectedHistory.composite} 分 · {selectedHistory.screened ? "通过首轮" : "未通过首轮"} · {selectedHistory.hired ? "最终录取" : "未录取"}</span><button onClick={() => setSelectedHistoryId(null)} aria-label="关闭历史样本详情"><X size={12} /></button></div>}
+    <div className="benchmark-stats"><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div><div><span>首轮参考分数</span><strong>{benchmark.screenCutoff}</strong></div><div><span>录取参考分数</span><strong>{benchmark.hireCutoff}</strong></div></div>
+    <p>本地演示样本仅用于说明比较方式，不代表真实招聘结果；百分位和参考线均为辅助信息。</p>
+  </section>;
 }
 
 function ScoreInsights({ card, candidate, records, onOpenKnowledge }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void }) {
-  return <div className="score-insights"><BenchmarkBadge benchmark={calculateBenchmark(candidate.role, card.composite)} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} /></div></section><ProjectBreakdownView candidate={candidate} /></div>;
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} /></div></section><ProjectBreakdownView candidate={candidate} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -358,11 +380,13 @@ function RecruitmentQualityMap({ candidates }: { candidates: Array<{ resume: Res
 }
 
 type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string };
+type KnowledgeSort = "default" | "score" | "updated" | "title";
 const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "" };
 
 function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectResume, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectResume: (id: string) => void; webSearchAvailable: boolean }) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<KnowledgeSort>("default");
   const [selectedId, setSelectedId] = useState(seedKnowledgeRecords[0].id);
   const [reviewScore, setReviewScore] = useState(seedKnowledgeRecords[0].significanceScore);
   const [reviewNote, setReviewNote] = useState(seedKnowledgeRecords[0].scoreRationale);
@@ -383,7 +407,14 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const filtered = records.filter((record) => (kind === "all" || record.kind === kind) && `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")}`.toLocaleLowerCase().includes(normalizedQuery));
-  const selected = filtered.find((record) => record.id === selectedId) ?? filtered[0] ?? null;
+  const sortedRecords = [...filtered].sort((a, b) => sort === "score" ? b.significanceScore - a.significanceScore : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "title" ? a.title.localeCompare(b.title, "zh-CN") : 0);
+  const selected = sortedRecords.find((record) => record.id === selectedId) ?? sortedRecords[0] ?? null;
+  const kindSummary = (Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((value) => {
+    const items = records.filter((record) => record.kind === value);
+    const reviewed = items.filter((record) => record.verificationStatus === "已核验");
+    const average = reviewed.length ? Math.round(reviewed.reduce((sum, record) => sum + record.significanceScore, 0) / reviewed.length) : null;
+    return { kind: value, count: items.length, reviewed: reviewed.length, average };
+  });
 
   useEffect(() => {
     if (initialId && records.some((record) => record.id === initialId)) {
@@ -458,6 +489,14 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     <main className="knowledge-main">
       <div className="knowledge-shell">
         <div className="knowledge-header"><div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></div>
+        <section className="knowledge-overview" aria-label="资料库分类概览">
+          <div className="knowledge-overview-heading"><div><strong>资料分布</strong><span>点击分类可筛选条目</span></div><small>已核验 {records.filter((record) => record.verificationStatus === "已核验").length} / {records.length}</small></div>
+          <div className="knowledge-overview-grid">{kindSummary.map((item) => <button key={item.kind} className={`knowledge-overview-item ${kind === item.kind ? "active" : ""}`} onClick={() => setKind(kind === item.kind ? "all" : item.kind)} aria-pressed={kind === item.kind}>
+            <span className="knowledge-overview-top"><strong>{knowledgeKindLabels[item.kind]}</strong><b>{item.count}</b></span>
+            <span className="knowledge-overview-track" role="img" aria-label={`${knowledgeKindLabels[item.kind]}占资料库 ${records.length ? Math.round(item.count / records.length * 100) : 0}%`}><i style={{ width: `${records.length ? item.count / records.length * 100 : 0}%` }} /></span>
+            <span className="knowledge-overview-bottom"><span>{item.reviewed} 条已核验</span><span>{item.average === null ? "均分待积累" : `核验均分 ${item.average}`}</span></span>
+          </button>)}</div>
+        </section>
         <div className="knowledge-body">
           <aside className="knowledge-list">
             <label className="search-box knowledge-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索名称、别名、领域或内容" /></label>
@@ -476,8 +515,9 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               {editorError && <div className="inline-error">{editorError}</div>}
               <button onClick={saveRecord} disabled={editorBusy || !draft.title.trim()}>{editorBusy ? "保存中" : editingId ? "保存修改" : "创建资料"}</button>
             </div>}
-            <div className="knowledge-filters"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div>
-            <div className="knowledge-record-list">{filtered.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"}</small></span><b>{record.significanceScore}</b></button>)}{!filtered.length && <div className="empty-list">没有匹配资料</div>}</div>
+            <div className="knowledge-filters"><div className="knowledge-filter-buttons"><button className={kind === "all" ? "active" : ""} onClick={() => setKind("all")}>全部</button>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((key) => <button className={kind === key ? "active" : ""} key={key} onClick={() => setKind(key)}>{knowledgeKindLabels[key]}</button>)}</div><label className="knowledge-sort-label"><span>排序</span><select value={sort} onChange={(event) => setSort(event.target.value as KnowledgeSort)} aria-label="资料排序"><option value="default">默认</option><option value="updated">最近更新</option><option value="score">评分高低</option><option value="title">名称</option></select></label></div>
+            <div className="knowledge-result-count">显示 {sortedRecords.length} / {records.length} 条</div>
+            <div className="knowledge-record-list">{sortedRecords.map((record) => <button className={`knowledge-record-row ${record.id === selected?.id ? "selected" : ""}`} key={record.id} onClick={() => setSelectedId(record.id)}><span className={`knowledge-kind-icon ${record.kind}`}><BookOpen size={15} /></span><span><strong>{record.title}</strong><small>{record.field || "未分类"} · {record.region || "地区待补充"} · {record.verificationStatus === "已核验" ? "已核验" : "待核验"}</small></span><b>{record.significanceScore}</b></button>)}{!sortedRecords.length && <div className="empty-list">没有匹配资料</div>}</div>
           </aside>
           <section className="knowledge-detail">
             {selected ? <>
