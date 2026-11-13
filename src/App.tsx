@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowDown,
@@ -40,8 +40,9 @@ type WeightImpact = { currentScore: number; proposedScore: number; currentRank: 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
 type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
 const awardPattern = /(奖|获奖|award|acm|icpc|ccf|竞赛|比赛|金牌|银牌|铜牌|一等奖|二等奖|三等奖|优胜奖|冠军|亚军|季军|csp)/i;
+function normalizeEvidence(value: string): string { return value.toLocaleLowerCase().replace(/[\s\u3000]+/g, "").replace(/[，。；：、“”‘’（）()【】[\],.:;!?！？]/g, ""); }
 
-function PdfReader({ url, title }: { url: string; title: string }) {
+function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
@@ -52,6 +53,7 @@ function PdfReader({ url, title }: { url: string; title: string }) {
   const [textLines, setTextLines] = useState<PdfTextLine[]>([]);
   const [awardLines, setAwardLines] = useState<PdfTextLine[]>([]);
   const [showAwardMask, setShowAwardMask] = useState(true);
+  const [evidenceLineIds, setEvidenceLineIds] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,6 +63,7 @@ function PdfReader({ url, title }: { url: string; title: string }) {
     setZoom(1);
     setTextLines([]);
     setAwardLines([]);
+    setEvidenceLineIds([]);
     setLoading(true);
     setError("");
     void (async () => {
@@ -174,6 +177,38 @@ function PdfReader({ url, title }: { url: string; title: string }) {
     };
   }, [document, zoom]);
 
+  useEffect(() => {
+    const query = normalizeEvidence(evidenceTarget);
+    if (!query) { setEvidenceLineIds([]); return; }
+    if (loading || !textLines.length) return;
+    const linesByPage = new Map<number, PdfTextLine[]>();
+    for (const line of textLines) linesByPage.set(line.page, [...(linesByPage.get(line.page) ?? []), line]);
+    for (const [page, lines] of linesByPage) {
+      const characters: string[] = [];
+      const lineAtCharacter: string[] = [];
+      for (const line of lines) {
+        const normalized = normalizeEvidence(line.text);
+        for (const character of normalized) { characters.push(character); lineAtCharacter.push(line.id); }
+      }
+      const pageText = characters.join("");
+      const start = pageText.indexOf(query);
+      if (start < 0) continue;
+      const ids = [...new Set(lineAtCharacter.slice(start, start + query.length))];
+      setEvidenceLineIds(ids);
+      onEvidenceResult({ query: evidenceTarget, page });
+      setPageNumber(page);
+      const viewer = viewerRef.current;
+      const target = ids[0] ? globalThis.document.getElementById(`pdf-text-${ids[0]}`) : null;
+      if (viewer && target) {
+        const top = viewer.scrollTop + target.getBoundingClientRect().top - viewer.getBoundingClientRect().top - 90;
+        viewer.scrollTo({ top, behavior: "smooth" });
+      }
+      return;
+    }
+    setEvidenceLineIds([]);
+    onEvidenceResult({ query: evidenceTarget, page: null });
+  }, [document, evidenceTarget, loading, onEvidenceResult, textLines]);
+
   function goToPage(nextPage: number) {
     const target = Math.min(document?.numPages ?? 1, Math.max(1, nextPage));
     setPageNumber(target);
@@ -231,7 +266,7 @@ function PdfReader({ url, title }: { url: string; title: string }) {
             <div className="pdf-page-content">
               <canvas className="pdf-canvas" aria-label={`${title} 第 ${index + 1} 页`} />
               <div className={`pdf-text-layer ${showAwardMask ? "awards-visible" : ""}`} aria-label="奖项文字标注覆盖层">
-                {textLines.filter((line) => line.page === index + 1).map((line) => <span className={`pdf-text-item ${showAwardMask && awardPattern.test(line.text) ? "award-hit" : ""}`} key={line.id} style={{ left: line.x, top: line.y, width: line.width, height: line.height, fontSize: line.height, transform: `rotate(${line.angle}rad)` }}>{line.text}</span>)}
+                {textLines.filter((line) => line.page === index + 1).map((line) => <span id={`pdf-text-${line.id}`} data-evidence-hit={evidenceLineIds.includes(line.id) || undefined} className={`pdf-text-item ${showAwardMask && awardPattern.test(line.text) ? "award-hit" : ""}`} key={line.id} style={{ left: line.x, top: line.y, width: line.width, height: line.height, fontSize: line.height, transform: `rotate(${line.angle}rad)` }}>{line.text}</span>)}
               </div>
             </div>
           </div>
@@ -289,7 +324,7 @@ function ScoreContribution({ card }: { card: ScoreCard }) {
   return <section className="score-contribution"><div className="insight-section-head"><div><span className="eyebrow">SCORE DECOMPOSITION</span><h4>综合分贡献拆解</h4></div><span className="score-formula">按当前权重</span></div><div className="contribution-list">{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const contribution = criterion.score * card.weights[key] / totalWeight; return <div className="contribution-row" key={key}><div className="contribution-row-head"><span>{label}</span><strong>{contribution.toFixed(1)} 分</strong><small>权重 {card.weights[key]}% · 置信度 {Math.round(criterion.confidence * 100)}%</small></div><div className="contribution-track"><i style={{ width: `${criterion.score}%` }} /><b style={{ left: `${criterion.score}%` }} /></div></div>; })}</div><p className="contribution-note">条形长度表示单项评分，右侧贡献值表示该项进入综合分后的实际影响；两者不要混为同一个分数。</p></section>;
 }
 
-function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume }) {
+function ScoreTrend({ card, candidate, onEvidence }: { card: ScoreCard; candidate: Resume; onEvidence: (evidence: string) => void }) {
   const history = candidate.scoreHistory?.length ? candidate.scoreHistory : candidate.scoreCard ? [{ id: `legacy-${candidate.scoreCard.evaluatedAt}`, evaluatedAt: candidate.scoreCard.evaluatedAt, reason: "import" as const, scoreCard: candidate.scoreCard }] : [];
   const [selectedId, setSelectedId] = useState(history.at(-1)?.id ?? "");
   const [focusedCriterion, setFocusedCriterion] = useState<ScoreKey | null>(null);
@@ -324,7 +359,7 @@ function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume })
       {selected && <div className="trend-selection"><div className="trend-selection-head"><span>{selected.reason === "import" ? "导入初评" : "复评"} · {new Date(selected.evaluatedAt).toLocaleString("zh-CN", { dateStyle: "medium", timeStyle: "short" })}</span><strong>{selected.scoreCard.composite.toFixed(1)} 分{previous && selectedIndex >= 0 ? <small className={selected.scoreCard.composite >= previous.scoreCard.composite ? "trend-up" : "trend-down"}>{selected.scoreCard.composite >= previous.scoreCard.composite ? "+" : ""}{(selected.scoreCard.composite - previous.scoreCard.composite).toFixed(1)}</small> : null}</strong></div>
         <div className="trend-criteria">{scoreCriteria.map(({ key, label }) => { const criterion = selected.scoreCard.criteria[key]; return <button key={key} className={focusedCriterion === key ? "focused" : ""} onClick={() => setFocusedCriterion(focusedCriterion === key ? null : key)}><span>{label}</span><i><b style={{ width: `${criterion.score}%` }} /></i><strong>{criterion.score.toFixed(0)}</strong></button>; })}</div>
         {selected.roleRequirements && <div className="trend-role-context"><strong>当时的岗位要求</strong><span>{selected.roleRequirements}</span></div>}
-        {focus && focusedCriterion && <div className="trend-evidence"><strong>{scoreCriteria.find((item) => item.key === focusedCriterion)?.label} · 评分依据</strong>{focus.evidence.length ? focus.evidence.map((item, index) => <span key={`${index}-${item}`}>{item}</span>) : <span>本次评估未提取到明确证据</span>}</div>}
+        {focus && focusedCriterion && <div className="trend-evidence"><strong>{scoreCriteria.find((item) => item.key === focusedCriterion)?.label} · 评分依据</strong>{focus.evidence.length ? focus.evidence.map((item, index) => <button key={`${index}-${item}`} onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={10} /></button>) : <span>本次评估未提取到明确证据</span>}</div>}
         <small className="trend-weight-note">按该次评估保存的权重计算，旧记录不会随当前权重变化而重算。</small>
       </div>}
     </> : <div className="trend-empty"><strong>{candidate.source === "demo" ? "示例简历没有真实评估历史" : "尚无评分记录"}</strong><span>{candidate.source === "demo" ? "导入 PDF 并完成分析后，这里会显示实际评估结果。" : "导入初评会记录第一个分数；后续复评后形成真实趋势。"}</span></div>}
@@ -362,8 +397,8 @@ function BenchmarkBadge({ role, score }: { role: string; score: number }) {
   </section>;
 }
 
-function ScoreInsights({ card, candidate, records, onOpenKnowledge }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void }) {
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} /></div></section><ScoreContribution card={card} /><ProjectBreakdownView candidate={candidate} /></div>;
+function ScoreInsights({ card, candidate, records, onOpenKnowledge, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} /><ProjectBreakdownView candidate={candidate} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -597,7 +632,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, onOpenKnowledge }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void }) {
+function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, onOpenKnowledge, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; onOpenKnowledge: (id?: string) => void; onEvidence: (evidence: string) => void }) {
   const pages = paginateReport(answer);
   return (
     <div className="analysis-document-shell">
@@ -607,7 +642,7 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
       </div>
       <div className="analysis-document-pages">
         {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
-        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} onOpenKnowledge={onOpenKnowledge} />
+        <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} onOpenKnowledge={onOpenKnowledge} onEvidence={onEvidence} />
       </div>
     </div>
   );
@@ -680,6 +715,8 @@ export default function App() {
   const [webResearchEnabled, setWebResearchEnabled] = useState(false);
   const [researchSources, setResearchSources] = useState<KnowledgeSource[]>([]);
   const [researchStatus, setResearchStatus] = useState<"searched" | "not-configured" | "unavailable" | "not-requested" | null>(null);
+  const [evidenceTarget, setEvidenceTarget] = useState("");
+  const [evidenceLocation, setEvidenceLocation] = useState<{ query: string; page: number | null } | null>(null);
   const [answer, setAnswer] = useState("");
   const [agentError, setAgentError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -877,8 +914,13 @@ export default function App() {
     setAnswer(resume?.analysisReport ?? "");
     setResearchSources([]);
     setResearchStatus(null);
+    setEvidenceTarget("");
+    setEvidenceLocation(null);
     setAgentError(resume?.analysisStatus === "failed" ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
   }
+
+  const handleEvidenceResult = useCallback((result: { query: string; page: number | null }) => setEvidenceLocation(result), []);
+  const locateEvidence = useCallback((evidence: string) => { setEvidenceTarget(evidence); setEvidenceLocation({ query: evidence, page: null }); }, []);
 
   if (!selected) return null;
 
@@ -959,7 +1001,7 @@ export default function App() {
 
           <section className="reader-area" aria-label="简历阅读区">
             {selected.source === "pdf" && pdfUrl ? (
-              <PdfReader key={selected.id} url={pdfUrl} title={selected.fileName ?? `${selected.name}.pdf`} />
+              <PdfReader key={selected.id} url={pdfUrl} title={selected.fileName ?? `${selected.name}.pdf`} evidenceTarget={evidenceTarget} onEvidenceResult={handleEvidenceResult} />
             ) : (
               <div className="sample-page">
                 <div className="sample-document-label"><span>BOHACK SAMPLE</span><span>简历资料 · 示例</span></div>
@@ -977,7 +1019,8 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} onOpenKnowledge={openKnowledge} />
+          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} onOpenKnowledge={openKnowledge} onEvidence={locateEvidence} />
+          {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
         </aside>
 

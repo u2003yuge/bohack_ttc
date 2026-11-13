@@ -49,3 +49,5 @@ POST /api/resumes/knowledge/:id/suggest
 正式部署时可把本地 JSON 替换为 SQLite、PostgreSQL 或组织内部数据库，但应保留现有 API 契约和以下字段：`id`、`kind`、`title`、`aliases`、`field`、`organizer`、`region`、`summary`、`signals`、`officialUrl`、`significanceScore`、`scoreRationale`、`verificationStatus`、`updatedAt`。指标和认定信息建议额外建成带 `sourceUrl`、`sourceType`、`dataYear`、`checkedAt`、`evidenceNote` 的证据表，避免新的核验结果覆盖旧版本。
 
 简历与资料的当前关联是“简历原文出现名称或别名”的确定性匹配。若后续需要人工确认、纠错或一对多关联，应增加关系表，至少包含 `candidateId`、`knowledgeId`、`evidence`、`reviewerConfirmed` 和 `createdAt`，不要把字符串命中直接当作事实。
+
+分析报告中的评分依据也支持回到 PDF 原文：点击评分历史中的证据句子后，阅读器会按页查找归一化后的精确文本并高亮命中的文字块。找不到完整句子时只提示未定位，不把近似文本当作证据。资料库交叉引用仍采用名称 / 别名确定性匹配，两种引用都应由审核员回看原文确认。
