@@ -8,6 +8,7 @@ import { extractCandidate, generateInitialReport, generateRoleReport, generateSc
 import { defaultScoreWeights, normalizeWeights, type ScoreCard, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates } from "../shared/history.js";
 import { knowledgeRecords, type KnowledgeRecord } from "../shared/knowledge.js";
+import { searchPublicWeb } from "./web-search.js";
 
 type ResumeRecord = {
   id: string;
@@ -135,8 +136,20 @@ router.post("/knowledge/:id/suggest", async (request, response, next) => {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
     if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
     const roleContext = typeof request.body?.roleContext === "string" ? request.body.roleContext.trim().slice(0, 300) : "";
-    const suggestion = await suggestKnowledgeAssessment({ ...record, roleContext });
-    response.json({ suggestion });
+    const searchConfigured = Boolean(process.env.TAVILY_API_KEY);
+    let sources: Awaited<ReturnType<typeof searchPublicWeb>> = [];
+    let searchStatus: "searched" | "no-results" | "not-configured" | "unavailable" = searchConfigured ? "no-results" : "not-configured";
+    if (searchConfigured) {
+      const category = record.kind === "competition" ? "竞赛" : record.kind === "journal" ? "期刊 会议" : "公司 官方";
+      try {
+        sources = await searchPublicWeb(`${record.title} ${record.organizer} ${record.field} ${category}`, 5);
+        searchStatus = sources.length ? "searched" : "no-results";
+      } catch {
+        searchStatus = "unavailable";
+      }
+    }
+    const suggestion = await suggestKnowledgeAssessment({ ...record, roleContext, sources, searchStatus });
+    response.json({ suggestion, sources, searchStatus });
   } catch (error) { next(error); }
 });
 

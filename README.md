@@ -102,9 +102,9 @@ RESUME_DIR=.data/resumes
 
 ### 竞赛、期刊与公司资料库
 
-顶部“资料库”入口打开本地资料查询工作区。资料支持按类别筛选、关键词搜索、查看领域与官方链接、查看审核信号，也可以新增或修订资料的名称、别名、来源、简介和审核信号。别名会参与简历中的交叉引用，修改后分析报告同步使用最新资料。审核员可通过滑块和备注保存人工含金量评估及核验状态；输入岗位背景后，还能让 AI 给出待复核分数、理由和核验问题，AI 建议不会自动保存。示例数据位于 `shared/knowledge.ts`；自定义资料、种子资料修订副本和人工评估分别保存在 `.data/resumes/.metadata/knowledge-records.json` 与 `knowledge-reviews.json`，不会提交到 GitHub。
+顶部“资料库”入口打开本地资料查询工作区。资料支持按类别筛选、关键词搜索、查看领域与官方链接、查看审核信号，也可以新增或修订资料的名称、别名、来源、简介和审核信号。别名会参与简历中的交叉引用，修改后分析报告同步使用最新资料。审核员可通过滑块和备注保存人工含金量评估及核验状态；输入岗位背景后，AI 会在 Tavily 已配置时联网查找该竞赛、期刊或公司的公开背景，展示来源链接和摘要，再给出待复核分数、理由、置信度和核验问题。搜索不可用时会降级为本地资料建议并明确标注。联网核验只发送资料条目的名称、领域和组织，不发送候选人简历。AI 建议不会自动保存。示例数据位于 `shared/knowledge.ts`；自定义资料、种子资料修订副本和人工评估分别保存在 `.data/resumes/.metadata/knowledge-records.json` 与 `knowledge-reviews.json`，不会提交到 GitHub。
 
-资料库 API 为 `GET /api/resumes/knowledge`、`POST /api/resumes/knowledge`、`PUT /api/resumes/knowledge/:id`、`PUT /api/resumes/knowledge/:id/review` 和 `POST /api/resumes/knowledge/:id/suggest`。分析报告和资料详情支持双向跳转；引用仅由简历中出现的资料名称或别名确定性匹配，不代表已核实。示例评分只用于演示界面和审核流程，使用真实招聘时应核对官方来源、具体名次、作者贡献、岗位职责和项目结果。
+资料库 API 为 `GET /api/resumes/knowledge`、`POST /api/resumes/knowledge`、`PUT /api/resumes/knowledge/:id`、`PUT /api/resumes/knowledge/:id/review` 和 `POST /api/resumes/knowledge/:id/suggest`。资料建议使用 `server/skills/knowledge-assessment.md` 约束证据口径；Tavily 返回的网页摘要只是检索线索，系统不宣称已独立核实网页内容。分析报告和资料详情支持双向跳转；引用仅由简历中出现的资料名称或别名确定性匹配，不代表已核实。示例评分只用于演示界面和审核流程，使用真实招聘时应核对官方来源、具体名次、作者贡献、岗位职责和项目结果。
 
 ## 数据与隐私
 

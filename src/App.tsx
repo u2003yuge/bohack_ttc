@@ -31,6 +31,7 @@ import { calculateBenchmark, type Benchmark } from "../shared/history";
 import { knowledgeKindLabels, knowledgeRecords as seedKnowledgeRecords, type KnowledgeKind, type KnowledgeRecord } from "../shared/knowledge";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
+type KnowledgeSource = { title: string; url: string; snippet: string };
 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
 type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
@@ -323,7 +324,7 @@ function RecruitmentQualityMap({ candidates }: { candidates: Array<{ resume: Res
 type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string };
 const emptyKnowledgeDraft: KnowledgeDraft = { title: "", kind: "competition", aliases: "", field: "", organizer: "", region: "", summary: "", signals: "", officialUrl: "" };
 
-function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectResume }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectResume: (id: string) => void }) {
+function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectResume, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectResume: (id: string) => void; webSearchAvailable: boolean }) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(seedKnowledgeRecords[0].id);
@@ -334,6 +335,9 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const [suggesting, setSuggesting] = useState(false);
   const [roleContext, setRoleContext] = useState("");
   const [suggestionQuestions, setSuggestionQuestions] = useState<string[]>([]);
+  const [suggestionSources, setSuggestionSources] = useState<KnowledgeSource[]>([]);
+  const [suggestionConfidence, setSuggestionConfidence] = useState<number | null>(null);
+  const [suggestionSearchStatus, setSuggestionSearchStatus] = useState<"searched" | "no-results" | "not-configured" | "unavailable" | null>(null);
   const [reviewError, setReviewError] = useState("");
   const [reviewSaved, setReviewSaved] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -353,6 +357,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   useEffect(() => {
     if (!selected) return;
     setSelectedId(selected.id); setReviewScore(selected.significanceScore); setReviewNote(selected.scoreRationale); setVerificationStatus(selected.verificationStatus); setReviewError(""); setReviewSaved(false);
+    setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
   }, [selected?.id]);
 
   function beginCreate() {
@@ -401,12 +406,13 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
   async function suggestReview() {
     if (!selected) return;
-    setSuggesting(true); setReviewError(""); setReviewSaved(false); setSuggestionQuestions([]);
+    setSuggesting(true); setReviewError(""); setReviewSaved(false); setSuggestionQuestions([]); setSuggestionSources([]); setSuggestionConfidence(null); setSuggestionSearchStatus(null);
     try {
       const response = await fetch(`/api/resumes/knowledge/${encodeURIComponent(selected.id)}/suggest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ roleContext }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "AI 建议暂时不可用。");
       setReviewScore(payload.suggestion.score); setReviewNote(payload.suggestion.rationale); setSuggestionQuestions(payload.suggestion.verificationQuestions ?? []);
+      setSuggestionSources(Array.isArray(payload.sources) ? payload.sources : []); setSuggestionConfidence(payload.suggestion.confidence ?? null); setSuggestionSearchStatus(payload.searchStatus ?? "not-configured");
     } catch (error) { setReviewError(error instanceof Error ? error.message : "AI 建议暂时不可用。"); }
     finally { setSuggesting(false); }
   }
@@ -446,11 +452,12 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
               <div className="knowledge-referenced-resumes"><strong>被这些简历引用</strong>{referencedResumes.length ? referencedResumes.map((resume) => <button key={resume.id} onClick={() => { onSelectResume(resume.id); onClose(); }}><span className="candidate-avatar">{resume.initials}</span>{resume.name} · {resume.role}</button>) : <span>当前简历中没有匹配的名称或别名</span>}</div>
               <div className="knowledge-review"><div className="review-heading"><div><span className="eyebrow">HUMAN REVIEW</span><h4>人工含金量评估</h4></div><span>AI 建议需复核后保存</span></div>
                 <label className="review-role">岗位背景<input value={roleContext} onChange={(event) => setRoleContext(event.target.value)} placeholder="例如：算法工程师、数据产品经理" /></label>
-                <button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "AI 正在评估" : "AI 建议含金量"}</button>
+                <button className="suggest-review" onClick={suggestReview} disabled={suggesting}>{suggesting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{suggesting ? "正在查找并评估" : webSearchAvailable ? "AI 联网核验并建议" : "AI 建议含金量"}</button>
                 <label>核验状态<select value={verificationStatus} onChange={(event) => setVerificationStatus(event.target.value as KnowledgeRecord["verificationStatus"])}><option value="示例资料，待核验">待核验</option><option value="已核验">已核验</option></select></label>
                 <label>评分 <output>{reviewScore}</output><input type="range" min="0" max="100" value={reviewScore} onChange={(event) => setReviewScore(Number(event.target.value))} /></label>
                 <textarea value={reviewNote} onChange={(event) => setReviewNote(event.target.value)} rows={4} placeholder="说明评分依据、岗位相关性和待核验事项" />
                 {suggestionQuestions.length > 0 && <div className="verification-questions"><strong>建议核实</strong>{suggestionQuestions.map((item) => <span key={item}>{item}</span>)}</div>}
+                {suggestionSearchStatus && <div className="research-result"><div className="research-result-head"><strong>{suggestionSearchStatus === "searched" ? `联网参考 · ${suggestionSources.length} 个来源` : suggestionSearchStatus === "no-results" ? "没有找到可用网页来源" : suggestionSearchStatus === "unavailable" ? "联网检索暂不可用" : "基于本地资料建议"}</strong>{suggestionConfidence !== null && <span>参考置信度 {Math.round(suggestionConfidence * 100)}%</span>}</div><p>{suggestionSearchStatus === "searched" ? "来源用于了解赛事、期刊或组织背景；不能证明候选人的具体获奖、发表或个人贡献。" : suggestionSearchStatus === "unavailable" ? "本次建议只参考本地资料字段，请通过官方来源人工核验。" : suggestionSearchStatus === "not-configured" ? "尚未配置网页搜索，本次建议仅依据本地资料字段。" : "本次建议仅依据本地资料字段，未引用外部来源。"}</p>{suggestionSources.map((source) => <a className="research-source" key={source.url} href={source.url} target="_blank" rel="noreferrer"><strong>{source.title}<ExternalLink size={12} /></strong><small>{source.url}</small>{source.snippet && <span>{source.snippet}</span>}</a>)}</div>}
                 {reviewError && <div className="inline-error">{reviewError}</div>}{reviewSaved && <div className="review-saved">人工评估已保存</div>}
                 <button className="save-review" onClick={saveReview} disabled={saving}>{saving ? "保存中" : "保存人工评估"}</button>
               </div>
@@ -740,7 +747,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} onClose={() => setComparisonOpen(false)} /> : <>
+        {knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectResume={selectResume} onClose={() => setKnowledgeOpen(false)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} onClose={() => setComparisonOpen(false)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">

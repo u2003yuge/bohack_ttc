@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import resumes from "./resumes.js";
+import { searchPublicWeb } from "./web-search.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -100,22 +101,7 @@ app.post("/api/agent", async (request, response) => {
 
 async function searchWeb(query: string): Promise<string> {
   if (!process.env.TAVILY_API_KEY) return "网页搜索未配置。";
-  const searchResponse = await fetch("https://api.tavily.com/search", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      api_key: process.env.TAVILY_API_KEY,
-      query,
-      search_depth: "basic",
-      max_results: 5,
-      include_answer: false,
-    }),
-  });
-  if (!searchResponse.ok) throw new Error(`网页搜索服务返回 ${searchResponse.status}。`);
-  const data = (await searchResponse.json()) as {
-    results?: Array<{ title?: string; url?: string; content?: string }>;
-  };
-  return JSON.stringify(data.results ?? []);
+  return JSON.stringify(await searchPublicWeb(query));
 }
 
 app.use((error: unknown, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
