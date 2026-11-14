@@ -39,7 +39,7 @@ import { calculateComposite, calculateGrowthTimeline, comparisonMapQuadrants, de
 import { calculateBenchmark, historicalYears, roleGroup, roleGroupLabel, type HistoricalCandidate } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 import ScoringWorkspace from "./ScoringWorkspace";
-import MaterialAssessment, { MaterialAssessmentRadar } from "./MaterialAssessment";
+import { MaterialAssessmentRadar } from "./MaterialAssessment";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type ResumeDecision = "pending" | "passed" | "rejected";
@@ -460,7 +460,7 @@ function deriveProjects(candidate: Resume): ProjectBreakdown[] {
   return chunks.slice(0, 4).map((chunk, index) => ({ title: `简历项目 ${index + 1}`, plainTitle: "把这段经历拆成可核对的工作任务", goal: "候选人希望解决的业务或技术问题（需人工核实）", actions: translateRecruitingTerms(chunk), outcome: "简历未明确写出量化结果", sourceText: chunk }));
 }
 
-function KnowledgeReferenceBar({ candidate, records, onOpen }: { candidate: Resume; records: KnowledgeRecord[]; onOpen: (id?: string) => void }) {
+export function KnowledgeReferenceBar({ candidate, records, onOpen }: { candidate: Resume; records: KnowledgeRecord[]; onOpen: (id?: string) => void }) {
   const references = findKnowledgeReferences(candidate.text, records);
   return <section className="knowledge-reference-bar"><div><span className="eyebrow">CROSS REFERENCES</span><strong>资料库交叉引用</strong><small>只根据简历原文中的名称或别名匹配</small></div><div className="knowledge-reference-list">{references.length ? references.map((record) => <button key={record.id} onClick={() => onOpen(record.id)}><span className={`knowledge-reference-dot ${record.kind}`} />{record.title}<b>{record.significanceScore}</b></button>) : <span className="knowledge-reference-empty">未识别资料</span>}<button className="knowledge-reference-search" onClick={() => onOpen()}>打开资料库 <ExternalLink size={12} /></button></div></section>;
 }
@@ -480,7 +480,7 @@ function ScoreRadar({ card, selectedKey, onSelect }: { card: ScoreCard; selected
   return <div className="score-radar"><svg viewBox="0 0 192 192" role="group" aria-label="六项能力雷达图，选择维度查看评分依据"> <polygon points={outer} className="radar-grid" />{[25, 50, 75].map((level) => <polygon key={level} points={scoreCriteria.map((_, index) => radarPoint(index, level, radius, center)).join(" ")} className="radar-ring" />)}{scoreCriteria.map((_, index) => <line key={index} x1={center} y1={center} x2={radarPoint(index, 100, radius, center).split(",")[0]} y2={radarPoint(index, 100, radius, center).split(",")[1]} className="radar-axis" />)}<polygon points={area} className="radar-area" />{values.map((value, index) => { const [x, y] = radarPoint(index, value, radius, center).split(","); const criterion = scoreCriteria[index]; return <circle key={criterion.key} cx={x} cy={y} r="5" className={`radar-dot ${selectedKey === criterion.key ? "selected" : ""}`} role="button" tabIndex={0} aria-label={`${criterion.label} ${value.toFixed(0)} 分，查看评分依据`} aria-pressed={selectedKey === criterion.key} onClick={() => onSelect(criterion.key)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(criterion.key); } }}><title>{`${criterion.label} ${value.toFixed(0)} 分 · 查看评分依据`}</title></circle>; })}</svg><div className="radar-labels">{scoreCriteria.map(({ key, label }, index) => { const value = actualScore(card.criteria[key].score); return <button type="button" key={key} className={`radar-label radar-label-${index} ${selectedKey === key ? "selected" : ""}`} aria-pressed={selectedKey === key} onClick={() => onSelect(key)}>{label}<b className={value >= 100 ? "score-at-limit" : ""}>{value.toFixed(0)}</b></button>; })}</div></div>;
 }
 
-function ScoreContribution({ card, selectedKey, onSelect }: { card: ScoreCard; selectedKey: ScoreKey | null; onSelect: (key: ScoreKey) => void }) {
+export function ScoreContribution({ card, selectedKey, onSelect }: { card: ScoreCard; selectedKey: ScoreKey | null; onSelect: (key: ScoreKey) => void }) {
   const totalWeight = scoreCriteria.reduce((sum, criterion) => sum + card.weights[criterion.key], 0) || 100;
   return <section className="score-contribution"><div className="insight-section-head"><div><span className="eyebrow">SCORE DECOMPOSITION</span><h4>综合分贡献拆解</h4></div><span className="score-formula">按当前权重</span></div><div className="contribution-list">{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const score = actualScore(criterion.score); const visualScore = boundedScore(score); const atLimit = score >= 100; const contribution = score * card.weights[key] / totalWeight; return <button type="button" className={`contribution-row ${selectedKey === key ? "selected" : ""}`} key={key} aria-pressed={selectedKey === key} onClick={() => onSelect(key)} aria-label={`${label}，单项 ${score.toFixed(0)} 分，贡献 ${contribution.toFixed(1)} 分，点击查看评分依据`}><div className="contribution-row-head"><span>{label}</span><strong>{contribution.toFixed(1)} 分</strong><small>权重 {card.weights[key]}%</small></div><div className="contribution-track"><i className={atLimit ? "at-limit" : ""} style={{ width: `${visualScore}%` }} /><b className={atLimit ? "at-limit-marker" : ""} style={{ left: `${visualScore}%` }} /></div></button>; })}</div><p className="contribution-note">分数和贡献值显示实际计算结果；条形在 100 分位置停止，并以轻微高亮表示超出常规范围。</p></section>;
 }
@@ -490,29 +490,33 @@ function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume })
   const [selectedYear, setSelectedYear] = useState(timeline.at(-1)?.year ?? new Date().getFullYear());
   const selected = timeline.find((entry) => entry.year === selectedYear) ?? timeline.at(-1);
   useEffect(() => { setSelectedYear(timeline.at(-1)?.year ?? new Date().getFullYear()); }, [candidate.id, timeline]);
-  const chartWidth = Math.max(260, timeline.length * 58 + 24);
+  const chartHeight = 176;
+  const chartWidth = Math.max(320, timeline.length * 62 + 52);
+  const plotTop = 16;
+  const plotBottom = 136;
   const x = (index: number) => timeline.length < 2 ? chartWidth / 2 : 34 + (index / (timeline.length - 1)) * (chartWidth - 52);
-  const y = (score: number) => 104 - (boundedScore(score) / 100) * 72;
+  const y = (score: number) => plotBottom - (boundedScore(score) / 100) * (plotBottom - plotTop);
   const points = timeline.map((entry, index) => `${x(index)},${y(entry.score)}`).join(" ");
+  const areaPoints = timeline.length ? `${x(0)},${plotBottom} ${points} ${x(timeline.length - 1)},${plotBottom}` : "";
   return <div className="score-trend">
-    <div className="trend-legend"><span>进步分年度累计曲线</span><small>当前进步分 {actualScore(card.criteria.growth.score).toFixed(1)} · 每年年末回看前 3 年累计</small></div>
+    <div className="trend-heading"><div><span className="trend-kicker">成长轨迹</span><strong>进步分年度累计</strong></div><b>{actualScore(card.criteria.growth.score).toFixed(1)}<small> 分</small></b></div>
     {timeline.length ? <>
-      <div className="trend-chart-scroll"><svg viewBox={`0 0 ${chartWidth} 142`} style={{ width: `${chartWidth}px` }} role="img" aria-label="按年份累计计算的进步分增长曲线">
-        {[0, 50, 100].map((tick) => <g key={tick}><line x1="28" y1={y(tick)} x2={chartWidth - 12} y2={y(tick)} className="trend-grid" /><text x="23" y={y(tick) + 3} textAnchor="end" className="trend-label">{tick}</text></g>)}
-        <line x1="28" y1="104" x2={chartWidth - 12} y2="104" className="trend-axis" />
+      <div className="trend-chart-scroll"><svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{ width: `${chartWidth}px` }} role="img" aria-label="按年份累计计算的进步分增长曲线，每年一个数据点">
+        {[0, 50, 100].map((tick) => <g key={tick}><line x1="28" y1={y(tick)} x2={chartWidth - 12} y2={y(tick)} className="trend-grid" /><text x="22" y={y(tick) + 3} textAnchor="end" className="trend-label">{tick}</text></g>)}
+        <line x1="28" y1={plotBottom} x2={chartWidth - 12} y2={plotBottom} className="trend-axis" />
+        {timeline.length > 1 && <polygon points={areaPoints} className="trend-area" />}
         {timeline.length > 1 && <polyline points={points} className="trend-line" />}
         {timeline.map((entry, index) => {
           const active = entry.year === selected?.year;
           return <g key={entry.year} className={`trend-point ${active ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${entry.year} 年末，进步分 ${entry.score.toFixed(1)}`} aria-pressed={active} onClick={() => setSelectedYear(entry.year)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedYear(entry.year); } }}>
-            <title>{`${entry.year} 年末 · 进步分 ${entry.score.toFixed(1)} · 近${entry.windowYears}年累计 ${entry.rollingContribution}`}</title>
-            <circle cx={x(index)} cy={y(entry.score)} r={active ? 5 : 4} className="trend-dot" />
-            <text x={x(index)} y="124" textAnchor="middle" className="trend-label">{entry.year}</text>
+            <title>{`${entry.year} 年末 · 进步分 ${entry.score.toFixed(1)} · 累计贡献 ${entry.rollingContribution}`}</title>
+            <circle cx={x(index)} cy={y(entry.score)} r={active ? 5.5 : 4.5} className="trend-dot" />
+            <text x={x(index)} y="157" textAnchor="middle" className="trend-label">{entry.year}</text>
           </g>;
         })}
       </svg></div>
-      {selected && <div className="trend-selection"><div className="trend-selection-head"><span>{selected.year} 年末 · 近 {selected.windowYears} 年滚动累计</span><strong>{selected.score.toFixed(1)} 分</strong></div>
+      {selected && <div className="trend-selection"><div className="trend-selection-head"><span>{selected.year} 年末</span><strong>{selected.score.toFixed(1)} 分</strong></div>
         <div className="trend-criteria"><div className="trend-growth-summary"><span>本年度新增贡献</span><strong>{selected.annualContribution}</strong><small>累计贡献 {selected.rollingContribution}</small></div></div>
-        <small className="trend-weight-note">计算口径：每年年末汇总该年及前 2 年的经历成果与奖项贡献，再将最新年度累计值校准到当前进步分。</small>
       </div>}
     </> : <div className="trend-empty"><strong>尚无可解析的成长时间线</strong><span>需要简历中的工作年份、项目年份或奖项年份才能生成进步分曲线。</span></div>}
   </div>;
@@ -534,7 +538,7 @@ function scoreCardFromAssessment(assessment: NonNullable<Resume["assessment"]>, 
   return { criteria, weights, composite, formula: "weighted-mean-v1", evaluatedAt: assessment.evaluatedAt };
 }
 
-function ProjectBreakdownView({ candidate, agentAvailable, onEvidence }: { candidate: Resume; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
+export function ProjectBreakdownView({ candidate, agentAvailable, onEvidence }: { candidate: Resume; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const projects = deriveProjects(candidate);
   const [reviewerFocus, setReviewerFocus] = useState("");
   const [draft, setDraft] = useState<ProjectBreakdownDraft[] | null>(null);
@@ -732,15 +736,6 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, initialFilter,
       </section>
     </div>
   </main>;
-}
-
-function ScoreInsights({ card, candidate, records, historyCandidates: historyRecords, onOpenKnowledge, onOpenHistory, agentAvailable, onEvidence }: { card: ScoreCard; candidate: Resume; records: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
-  const [selectedCriterion, setSelectedCriterion] = useState<ScoreKey | null>(null);
-  const selected = selectedCriterion ? card.criteria[selectedCriterion] : null;
-  const selectedLabel = scoreCriteria.find((criterion) => criterion.key === selectedCriterion)?.label;
-  useEffect(() => { setSelectedCriterion(null); }, [candidate.id]);
-  const composite = actualScore(card.composite);
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className={`score-formula ${composite >= 100 ? "score-at-limit" : ""}`}>综合分 {composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {actualScore(selected.score).toFixed(0)} 分</strong><small>评分证据 · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据。</p>}</section>}<ProjectBreakdownView key={candidate.id} candidate={candidate} agentAvailable={agentAvailable} onEvidence={onEvidence} /></div>;
 }
 
 type KnowledgeDraft = { title: string; kind: KnowledgeKind; aliases: string; field: string; organizer: string; region: string; summary: string; signals: string; officialUrl: string; evidenceSources: KnowledgeEvidenceSource[] };
@@ -1292,9 +1287,9 @@ function ComparisonAnalysisPreview({ candidate, card }: { candidate: Resume; car
   const report = candidate.analysisReport?.trim() || "";
   if (!card && !report) return <div className="comparison-analysis-preview comparison-analysis-empty-state"><span className="empty-result-icon"><Sparkles size={20} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>;
   const reportText = report || "这份候选人还没有生成分析报告。返回工作台后可重新运行 Agent。";
-  if (!card) return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><h3>{candidate.name} · 分析文档</h3><p className="score-pending">真实评分尚未生成，暂不显示评分卡。</p><div className="comparison-analysis-text">{reportText}</div></article></div>;
+  if (!card) return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><h3>{candidate.name} · 分析文档</h3><p className="score-pending">真实评分尚未生成，暂不显示评分卡。</p><div className="comparison-analysis-text analysis-markdown">{renderAnalysisCards(reportText)}</div></article></div>;
   const composite = actualScore(card.composite);
-  return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>分析文档</span></div><h3>{candidate.name} · 分析报告</h3><p className={`analysis-paper-subtitle ${composite >= 100 ? "score-at-limit" : ""}`}>{candidate.role} · 综合分 {composite.toFixed(1)}</p><div className="comparison-preview-score-grid">{scoreCriteria.map(({ key, label }) => { const score = actualScore(card.criteria[key].score); return <div key={key}><span>{label}</span><strong className={score >= 100 ? "score-at-limit" : ""}>{score.toFixed(0)}</strong></div>; })}</div><div className="comparison-analysis-text">{report}</div><small className="analysis-paper-foot">分析结果仅作招聘决策参考 · 需要招聘人员复核</small></article></div>;
+  return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>分析文档</span></div><h3>{candidate.name} · 分析报告</h3><p className={`analysis-paper-subtitle ${composite >= 100 ? "score-at-limit" : ""}`}>{candidate.role} · 综合分 {composite.toFixed(1)}</p><div className="comparison-preview-score-grid">{scoreCriteria.map(({ key, label }) => { const score = actualScore(card.criteria[key].score); return <div key={key}><span>{label}</span><strong className={score >= 100 ? "score-at-limit" : ""}>{score.toFixed(0)}</strong></div>; })}</div><div className="comparison-analysis-text analysis-markdown">{renderAnalysisCards(report)}</div><small className="analysis-paper-foot">分析结果仅作招聘决策参考 · 需要招聘人员复核</small></article></div>;
 }
 
 function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEvidence, onClose, agentAvailable }: { resumes: Resume[]; weights: ScoreWeights; selectedId: string; onSelectResume: (id: string) => void; onEvidence: (evidence: string) => void; onClose: () => void; agentAvailable: boolean }) {
@@ -1379,7 +1374,7 @@ function ComparisonSelectedSidebar({ candidate, weights }: { candidate: Resume; 
   </section>;
 }
 
-function AnalysisDocument({ answer, sections, busy, error, candidate, roleRequirements, weights, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, agentAvailable, onEvidence }: { answer: string; sections: AnalysisSection[]; busy: boolean; error: string; candidate: Resume; roleRequirements: string; weights: ScoreWeights; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
+function AnalysisDocument({ answer, sections, busy, error, candidate, roleRequirements, weights, historyCandidates, onOpenHistory }: { answer: string; sections: AnalysisSection[]; busy: boolean; error: string; candidate: Resume; roleRequirements: string; weights: ScoreWeights; historyCandidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void }) {
   const pages = sections.length ? sections.map((section) => section.markdown) : paginateReport(answer);
   const visualScoreCard = candidate.assessment
     ? scoreCardFromAssessment(candidate.assessment, weights)
@@ -1393,26 +1388,32 @@ function AnalysisDocument({ answer, sections, busy, error, candidate, roleRequir
         {error && answer && <div className="inline-error" role="alert">{error}</div>}
         {visualScoreCard && <section className="analysis-visuals-top" aria-label="核心评分图表">
           <div className="analysis-visual-card analysis-radar-top">
-            <div className="analysis-visual-card-head"><span className="eyebrow">核心能力雷达图</span><small>{candidate.assessment ? "当前 Agent 评分结果" : "当前评分卡"}</small></div>
+            <div className="analysis-visual-card-head"><span className="eyebrow">能力画像</span><small>{candidate.assessment ? "五项能力评分" : "六项能力评分"}</small></div>
             {candidate.assessment ? <MaterialAssessmentRadar assessment={candidate.assessment} /> : <ScoreRadar card={visualScoreCard} selectedKey={null} onSelect={() => undefined} />}
           </div>
           <div className="analysis-visual-card"><ScoreTrend card={visualScoreCard} candidate={candidate} /></div>
           <div className="analysis-visual-card"><BenchmarkBadge role={candidate.role} score={actualScore(visualScoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} /></div>
         </section>}
-        {busy && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : (answer || sections.length) ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>简阅 / 候选人评阅</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · {sections[index]?.label || "简历分析"}</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state analysis-empty-state"><span className="empty-result-icon"><Sparkles size={20} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
-        {candidate.assessment ? <>
-          <details className="analysis-score-detail-card">
-            <summary><span><strong>详细计分分析</strong><small>{candidate.assessment.materials.length} 项材料 · 能力贡献、因素分解与原文依据</small></span><ChevronDown size={16} /></summary>
-            <MaterialAssessment assessment={candidate.assessment} history={candidate.assessmentHistory} onEvidence={onEvidence} />
-          </details>
-        </> : visualScoreCard ? <details className="score-history-details"><summary>查看历史评分记录</summary><p className="contribution-note">这部分数据用于查看已有档案记录，不参与材料评分 v1 的当前排序。</p><ScoreInsights card={visualScoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onOpenHistory={onOpenHistory} agentAvailable={agentAvailable} onEvidence={onEvidence} /></details> : null}
+        {busy && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理七个分析卡片。</p><div className="loading-line"><i /></div></div> : error && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : (answer || sections.length) ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>简阅 / 候选人评阅</span><span>{String(index + 1).padStart(2, "0")}</span></div>{sections[index]?.agentId !== "analysis-report" && <h3>{candidate.name} · {sections[index]?.label || "简历分析"}</h3>}<p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderAnalysisCards(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state analysis-empty-state"><span className="empty-result-icon"><Sparkles size={20} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
+        {visualScoreCard && <AnalysisScoreHighlights card={visualScoreCard} />}
       </div>
     </div>
   );
 }
 
+function AnalysisScoreHighlights({ card }: { card: ScoreCard }) {
+  return <section className="analysis-score-highlights" aria-label="评分重点摘要">
+    <div className="analysis-score-highlights-head"><div><span className="eyebrow">评分重点</span><strong>能力摘要</strong></div><b>{actualScore(card.composite).toFixed(1)}<small> 综合分</small></b></div>
+    <div className="analysis-score-highlight-grid">{scoreCriteria.map(({ key, label }) => {
+      const score = actualScore(card.criteria[key].score);
+      return <article key={key} className="analysis-score-highlight"><div><span>{label}</span><strong>{score.toFixed(0)}</strong></div><i><b style={{ width: `${Math.min(100, Math.max(0, score))}%` }} /></i></article>;
+    })}</div>
+  </section>;
+}
+
 function paginateReport(answer: string): string[] {
   if (!answer) return [""];
+  if (analysisCardTitles.some((title) => answer.includes(`## ${title}`) || answer.includes(`### ${title}`))) return [answer];
   const paragraphs = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
   const blocks: string[] = [];
   for (let index = 0; index < paragraphs.length; index += 1) {
@@ -1463,6 +1464,7 @@ function renderMarkdown(markdown: string) {
   while (index < lines.length) {
     const line = lines[index].trim();
     if (!line) { index += 1; continue; }
+    if (isAnalysisWrapperHeading(line)) { index += 1; continue; }
     if (/^```/.test(line)) {
       const code: string[] = [];
       index += 1;
@@ -1473,8 +1475,9 @@ function renderMarkdown(markdown: string) {
     }
     const heading = line.match(/^(#{1,6})\s+(.+)$/);
     if (heading) {
+      if (isAnalysisWrapperHeading(heading[2])) { index += 1; continue; }
       const Heading = `h${Math.min(4, heading[1].length + 1)}` as "h2" | "h3" | "h4";
-      blocks.push(<Heading key={`heading-${index}`}>{renderMarkdownInline(heading[2])}</Heading>);
+      blocks.push(<Heading key={`heading-${index}`}>{renderMarkdownInline(stripHeadingNumber(heading[2]))}</Heading>);
       index += 1;
       continue;
     }
@@ -1493,10 +1496,10 @@ function renderMarkdown(markdown: string) {
       while (index < lines.length) {
         const item = lines[index].match(ordered ? /^\s*\d+[.)]\s+(.+)$/ : /^\s*[-*+]\s+(.+)$/);
         if (!item) break;
-        items.push(<li key={index}>{renderMarkdownInline(item[1])}</li>);
+        if (!isAnalysisWrapperHeading(item[1])) items.push(<li key={index}>{renderMarkdownInline(item[1])}</li>);
         index += 1;
       }
-      blocks.push(ordered ? <ol key={`list-${index}`}>{items}</ol> : <ul key={`list-${index}`}>{items}</ul>);
+      if (items.length) blocks.push(<ul className={ordered ? "markdown-list-plain" : undefined} key={`list-${index}`}>{items}</ul>);
       continue;
     }
     if (/^>\s?/.test(line)) {
@@ -1512,6 +1515,64 @@ function renderMarkdown(markdown: string) {
     blocks.push(<p key={`paragraph-${index}`}>{renderMarkdownInline(paragraph.join(" "))}</p>);
   }
   return blocks;
+}
+
+const analysisCardTitles = [
+  "求职者基本信息",
+  "简历材料信息",
+  "项目经历人话拆解",
+  "疑点",
+  "与岗位需求重合度",
+  "建议提问",
+  "结论",
+] as const;
+
+const analysisCardAliases: Record<string, (typeof analysisCardTitles)[number]> = {
+  "候选人信息": "求职者基本信息",
+  "候选人基本信息提取": "求职者基本信息",
+  "简历材料提取": "简历材料信息",
+  "材料信息提取": "简历材料信息",
+};
+
+function stripHeadingNumber(value: string): string {
+  return value.replace(/^\s*(?:第\s*)?\d+\s*(?:[.)、:：·•\-—]|\s+)\s*/, "").trim();
+}
+
+function isAnalysisWrapperHeading(value: string): boolean {
+  const cleaned = stripHeadingNumber(value).replace(/[：:]\s*$/, "").trim();
+  return cleaned === "分析报告生成" || cleaned === "分析文档" || cleaned === "综合分析";
+}
+
+function matchAnalysisCardTitle(value: string): (typeof analysisCardTitles)[number] | null {
+  const cleaned = stripHeadingNumber(value).replace(/[：:]\s*$/, "").trim();
+  if (analysisCardAliases[cleaned]) return analysisCardAliases[cleaned];
+  return analysisCardTitles.find((title) => cleaned === title || cleaned.startsWith(`${title} `) || cleaned.startsWith(`${title}：`)) ?? null;
+}
+
+function renderAnalysisCards(markdown: string) {
+  const lines = markdown.replace(/\r/g, "").split("\n");
+  const cards: Array<{ title: (typeof analysisCardTitles)[number]; body: string[] }> = [];
+  let current: { title: (typeof analysisCardTitles)[number]; body: string[] } | null = null;
+  for (const line of lines) {
+    const heading = line.match(/^#{1,6}\s+(.+)$/);
+    const numberedHeading = line.match(/^\s*(?:第\s*)?\d+\s*(?:[.)、:：·•\-—]|\s+)\s*(.+)$/);
+    if ((heading && isAnalysisWrapperHeading(heading[1])) || (numberedHeading && isAnalysisWrapperHeading(numberedHeading[1]))) continue;
+    const title = heading ? matchAnalysisCardTitle(heading[1]) : numberedHeading ? matchAnalysisCardTitle(numberedHeading[1]) : null;
+    if (title) {
+      if (current) cards.push(current);
+      current = { title, body: [] };
+      continue;
+    }
+    if (heading || numberedHeading) {
+      if (current) cards.push(current);
+      current = null;
+      continue;
+    }
+    if (current) current.body.push(line);
+  }
+  if (current) cards.push(current);
+  if (!cards.length) return renderMarkdown(markdown);
+  return <div className="analysis-card-list">{cards.map((card) => <section className="analysis-content-card" key={card.title}><h2>{card.title}</h2><div className="analysis-content-card-body">{renderMarkdown(card.body.join("\n"))}</div></section>)}</div>;
 }
 
 function comparisonScoreCard(resume: Resume, weights: ScoreWeights): ScoreCard | null {
@@ -1962,7 +2023,7 @@ export default function App() {
             setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: event.assessment } : resume));
           }
           if (event.type === "agent" && !background) {
-            setAnalysisSections((current) => {
+            if (event.markdown) setAnalysisSections((current) => {
               const next = current.filter((section) => section.agentId !== event.agentId);
               return [...next, { agentId: event.agentId, label: event.label, markdown: event.markdown, timing: event.timing }];
             });
@@ -2246,7 +2307,7 @@ export default function App() {
         {!comparisonOpen && <aside className="report-column">
           <div className="analysis-header report-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><div className="report-header-actions"><div className="report-popover-anchor"><button type="button" className={`report-action-button ${scoringWeightsOpen ? "active" : ""}`} aria-expanded={scoringWeightsOpen} onClick={() => setScoringWeightsOpen((open) => !open)}>评分权重<ChevronDown size={14} /></button>{scoringWeightsOpen && <div className="scoring-popover" role="dialog" aria-label="评分权重设置"><div className="scoring-settings-head"><div><span className="eyebrow">SCORE SETTINGS</span><strong>评分权重</strong></div><button type="button" className="scoring-popover-close" onClick={() => setScoringWeightsOpen(false)} aria-label="关闭评分权重">×</button></div>{scoreCriteria.map(({ key, label }) => <label className="weight-row" key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => { setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights); setWeightProposal(null); setWeightError(""); }} onBlur={() => updateWeights(weights)} /><span>%</span></label>)}<div className="weight-agent"><input value={weightInstruction} onChange={(event) => { setWeightInstruction(event.target.value); setWeightProposal(null); setWeightError(""); }} placeholder="让 AI 调整权重" /><button title="生成权重调整方案" aria-label="生成权重调整方案" onClick={adjustWeightsWithAgent} disabled={weightBusy || weightSaving || !health?.agent}>{weightBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div>{weightError && <div className="inline-error">{weightError}</div>}{weightProposal && weightImpact && <WeightProposalPreview proposal={weightProposal} currentWeights={weights} impact={weightImpact} onDiscard={() => setWeightProposal(null)} onApply={() => updateWeights(weightProposal.weights)} busy={weightSaving} />}</div>}</div><button type="button" className="report-action-button" onClick={() => { setScoringOpen(true); setScoringRulesOpen(false); setKnowledgeOpen(false); setHistoryOpen(false); setComparisonOpen(false); }}>评分详情</button><button type="button" className="report-action-button" onClick={() => { setScoringOpen(false); setScoringRulesOpen(true); setKnowledgeOpen(false); setHistoryOpen(false); setComparisonOpen(false); }}>算法参数</button><button type="button" className={`report-action-button trace-toggle ${traceOpen ? "active" : ""}`} aria-expanded={traceOpen} onClick={() => setTraceOpen((open) => !open)}><Activity size={16} />轨迹{traceOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</button><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "processing" ? "processing" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "processing" ? "分析中" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div></div>
           {traceOpen && <AnalysisTrace debug={analysisDebug} elapsed={analysisElapsed} />}
-          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy || selected.analysisStatus === "processing"} error={agentError} candidate={selected} roleRequirements={roleRequirements} weights={weights} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy || selected.analysisStatus === "processing"} error={agentError} candidate={selected} roleRequirements={roleRequirements} weights={weights} historyCandidates={historyCandidates} onOpenHistory={openHistory} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
            <div className="analysis-footer"><ShieldCheck size={14} /><span>分析基于当前简历文本和已生成的规则评分。</span></div>
         </aside>}

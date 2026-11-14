@@ -853,8 +853,8 @@ router.post("/:id/analyze", async (request, response, next) => {
         signal,
         onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {
           if (section) {
-            markdown.push(section);
-            emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total, timing });
+            if (id === "analysis-report") markdown.push(section);
+            emit({ type: "agent", agentId: id, label, markdown: id === "analysis-report" ? section : "", reused, completed, total, timing });
           }
           if (id === "score-calculation") emit({ type: "assessment", assessment: output as Assessment });
           emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
