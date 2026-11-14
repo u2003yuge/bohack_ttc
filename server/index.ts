@@ -67,6 +67,7 @@ app.post("/api/agent", async (request, response) => {
           markdown.push(section);
           emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total, timing });
         }
+        if (id === "score-calculation") emit({ type: "assessment", assessment: output as NonNullable<AnalysisResult["assessment"]> });
         emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
         console.log(`[agent ${requestId}] ${id} ${completed}/${total} +${Date.now() - started}ms`);
       },

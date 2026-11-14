@@ -1147,12 +1147,16 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
       </div>
       <div className="analysis-document-pages">
         {error && answer && <div className="inline-error" role="alert">{error}</div>}
+        <section className="analysis-visuals-top" aria-label="核心评分图表">
+          <div className="analysis-visual-card analysis-radar-top">
+            <div className="analysis-visual-card-head"><span className="eyebrow">CORE ABILITY PROFILE</span><strong>核心能力雷达图</strong><small>{candidate.assessment ? "当前 Agent 评分结果" : "当前评分卡"}</small></div>
+            {candidate.assessment ? <MaterialAssessmentRadar assessment={candidate.assessment} /> : <ScoreRadar card={scoreCard} selectedKey={null} onSelect={() => undefined} />}
+          </div>
+          <div className="analysis-visual-card"><ScoreTrend card={scoreCard} candidate={candidate} /></div>
+          <div className="analysis-visual-card"><BenchmarkBadge role={candidate.role} score={candidate.assessment ? actualScore(scoreCard.composite) : actualScore(scoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} /></div>
+        </section>
         {busy && !answer ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
         {candidate.assessment ? <>
-          <section className="analysis-score-overview">
-            <div className="analysis-score-overview-head"><span className="eyebrow">CORE ABILITY PROFILE</span><strong>核心能力雷达图</strong><small>仅展示五项能力分；详细因素、证据与计算过程已收纳。</small></div>
-            <MaterialAssessmentRadar assessment={candidate.assessment} />
-          </section>
           <details className="analysis-score-detail-card">
             <summary><span><strong>详细计分分析</strong><small>{candidate.assessment.materials.length} 项材料 · 能力贡献、因素分解与原文依据</small></span><ChevronDown size={16} /></summary>
             <MaterialAssessment assessment={candidate.assessment} history={candidate.assessmentHistory} onEvidence={onEvidence} />
@@ -1164,10 +1168,6 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
           </div>
           <details className="score-history-details"><summary>查看历史评分记录</summary><p className="contribution-note">这部分数据用于查看已有档案记录，不参与材料评分 v1 的当前排序。</p><ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onOpenHistory={onOpenHistory} agentAvailable={agentAvailable} onEvidence={onEvidence} /></details>
         </>}
-        {!candidate.assessment && <section className="analysis-restored-charts" aria-label="评分趋势与历史对比">
-          <ScoreTrend card={scoreCard} candidate={candidate} />
-          <BenchmarkBadge role={candidate.role} score={actualScore(scoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} />
-        </section>}
       </div>
     </div>
   );
@@ -1312,7 +1312,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
   const [analysisElapsed, setAnalysisElapsed] = useState(0);
-  const [analysisDebug, setAnalysisDebug] = useState<AnalysisResult["debug"]>(null);
+  const [analysisDebug, setAnalysisDebug] = useState<AnalysisResult["debug"] | null>(null);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [importError, setImportError] = useState("");
@@ -1532,7 +1532,10 @@ export default function App() {
     const applyResult = (result: AnalysisResult) => {
       setAnswer(result.answer);
       if (result.debug) setAnalysisDebug(result.debug);
-      if (result.resume) setResumes((current) => current.map((resume) => resume.id === target.id ? result.resume! : resume));
+      if (result.resume) {
+        setAnalysisDebug(result.debug ?? result.resume.analysisDebug ?? null);
+        setResumes((current) => current.map((resume) => resume.id === target.id ? result.resume! : resume));
+      }
       else if (result.assessment) setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: result.assessment, assessmentHistory: [...(resume.assessmentHistory ?? []), { reason: "review", assessment: result.assessment! }], analysisReport: result.answer } : resume));
     };
     try {
@@ -1554,6 +1557,9 @@ export default function App() {
         await readAnalysisEvents(response, (event: AnalysisEvent) => {
           if (requestId !== analysisRequest.current) return;
           if (event.type === "progress") setAnalysisProgress(event.progress);
+          if (event.type === "assessment" && event.assessment) {
+            setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: event.assessment } : resume));
+          }
           if (event.type === "agent") {
             if (event.timing) setAnalysisDebug((current) => ({ totalDurationMs: current?.totalDurationMs ?? 0, maxParallel: Math.max(current?.maxParallel ?? 1, event.timing!.parallelWith.length + 1), timings: [...(current?.timings ?? []).filter((item) => item.id !== event.timing!.id), event.timing!] }));
             if (event.markdown) setAnswer((current) => `${current}${current ? "\n\n" : ""}${event.markdown}`);
@@ -1633,6 +1639,7 @@ export default function App() {
     const resume = resumes.find((item) => item.id === id);
     setSelectedId(id);
     setAnswer(resume?.analysisReport ?? "");
+    setAnalysisDebug(resume?.analysisDebug ?? null);
     setAnalysisProgress(null);
     setEvidenceTarget("");
     setEvidenceLocation(null);
@@ -1797,6 +1804,7 @@ export default function App() {
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}
           </button>
           {busy && <><button className="stop-agent-button" onClick={stopAnalysis}>停止分析</button><div className="analysis-progress" role="status"><strong>{analysisProgress?.message || "正在处理分析请求。"}</strong><span>已用时 {analysisElapsed} 秒</span>{Boolean(analysisProgress?.total) && <progress className="research-progress" max={analysisProgress!.total} value={analysisProgress!.completed ?? 0} aria-label="分析进度" />}</div></>}
+          {analysisDebug && <details className="analysis-debug-panel"><summary>Agent 调试计时 · 并发峰值 {analysisDebug.maxParallel} · 总计 {analysisDebug.totalDurationMs} ms</summary><div className="analysis-debug-table">{[...analysisDebug.timings].sort((a, b) => a.startedAtMs - b.startedAtMs).map((timing) => <div className="analysis-debug-row" key={`${timing.id}-${timing.stage}`}><strong>{timing.label}</strong><span>{timing.durationMs} ms</span><small>阶段 {timing.stage + 1}{timing.parallelWith.length ? ` · 并行：${timing.parallelWith.join("、")}` : " · 串行"}</small></div>)}</div></details>}
           {!selected.assessment && <div className="scoring-settings">
             <div className="scoring-settings-head"><div><span className="eyebrow">SCORE SETTINGS</span><strong>评分权重</strong></div><span>{weightSaving ? "保存中" : `${Object.values(weights).reduce((sum, value) => sum + value, 0)}%`}</span></div>
             {scoreCriteria.map(({ key, label }) => <label className="weight-row" key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => { setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights); setWeightProposal(null); setWeightError(""); }} onBlur={() => updateWeights(weights)} /><span>%</span></label>)}

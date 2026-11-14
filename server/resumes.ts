@@ -692,6 +692,7 @@ router.post("/:id/analyze", async (request, response, next) => {
             markdown.push(section);
             emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total, timing });
           }
+          if (id === "score-calculation") emit({ type: "assessment", assessment: output as Assessment });
           emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
         },
       });
@@ -758,7 +759,7 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
   const text = pages.join("\n\n").trim();
   const initialContext = { resumeText: text, fileName, useModel: true, includeResearch: false };
   const initialAgents = text
-    ? await runResumeAgents({ context: initialContext, requested: ["candidate-profile"] })
+    ? await runResumeAgents({ context: initialContext, requested: [...resumeAnalysisAgentIds] })
     : null;
   const ai = initialAgents?.outputs["candidate-profile"] as {
     name?: string; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
@@ -791,24 +792,12 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
 
   if (text) {
   try {
-      const scoringRun = await runResumeAgents({
-        context: initialContext,
-        requested: ["score-calculation"],
-        artifacts: record.agentArtifacts,
-      });
-      record.agentArtifacts = scoringRun.artifacts;
-      const assessment = scoringRun.outputs["score-calculation"] as Assessment;
+      const assessment = initialAgents?.outputs["score-calculation"] as Assessment;
       record.assessment = assessment;
       record.assessmentHistory = [{ reason: "import", assessment }];
       let analysisReport = assessmentReport(assessment);
       if (process.env.OPENAI_API_KEY) try {
-        const reportRun = await runResumeAgents({
-          context: initialContext,
-          requested: ["analysis-report"],
-          artifacts: record.agentArtifacts,
-        });
-        record.agentArtifacts = reportRun.artifacts;
-        const reportOutput = reportRun.outputs["analysis-report"];
+        const reportOutput = initialAgents?.outputs["analysis-report"];
         if (reportOutput && typeof reportOutput === "object" && typeof (reportOutput as { answer?: unknown }).answer === "string") {
           analysisReport = (reportOutput as { answer: string }).answer;
         } else if (typeof reportOutput === "string") {
@@ -819,6 +808,7 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
       record.analysisStatus = "complete";
       record.analysisError = "";
       record.analyzedAt = new Date().toISOString();
+      record.analysisDebug = initialAgents?.debug;
     } catch (error) {
       record.analysisStatus = "failed";
       record.analysisError = error instanceof Error ? error.message : "初始分析报告生成失败";

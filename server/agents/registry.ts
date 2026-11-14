@@ -23,8 +23,10 @@ export type ResumeAgentId = (typeof resumeAgentIds)[number];
 export const resumeAnalysisAgentIds = resumeAgentIds;
 const agentVersions: Record<ResumeAgentId, number> = {
   "candidate-profile": 1,
-  "material-extraction": 1,
-  "score-calculation": 1,
+  // Bump both stages so older artifacts without the current action evidence
+  // shape are recalculated instead of reusing all-NA ability scores.
+  "material-extraction": 2,
+  "score-calculation": 2,
   "analysis-report": 2,
   "plain-language-breakdown": 2,
 };

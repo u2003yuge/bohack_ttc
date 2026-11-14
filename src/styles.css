@@ -512,6 +512,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .research-results pre { max-height: 360px; overflow: auto; white-space: pre-wrap; font-size: 9px; }
 .stop-agent-button { margin-top: 7px; padding: 7px; border: 1px solid #e2e4e8; border-radius: 6px; background: #fff; color: #636971; font-size: 10px; cursor: pointer; }
 .research-progress { width: 78%; height: 7px; margin-top: 12px; accent-color: var(--brand-blue); }
+.analysis-debug-panel { margin-top: 8px; border: 1px solid #dbe5f2; border-radius: 8px; background: #f7faff; color: #526274; font-size: 10px; }
+.analysis-debug-panel summary { cursor: pointer; padding: 7px 9px; color: #2f5f95; font-weight: 650; }
+.analysis-debug-table { display: grid; gap: 4px; padding: 0 9px 8px; }
+.analysis-debug-row { display: grid; grid-template-columns: minmax(100px, 1fr) auto; gap: 2px 8px; padding: 5px 0; border-top: 1px solid #e6edf5; }
+.analysis-debug-row strong { color: #344b67; font-size: 10px; }
+.analysis-debug-row span { color: #1f6fb2; font-variant-numeric: tabular-nums; }
+.analysis-debug-row small { grid-column: 1 / -1; color: #8290a0; }
 .partial-answer { flex-shrink: 0; margin-top: 10px; border: 1px solid #e2e4e8; border-radius: 6px; }
 .analysis-progress-status { display: grid; gap: 4px; margin-top: 8px; padding: 8px 9px; border: 1px solid #e2e4e8; border-radius: 6px; background: #fbfbfc; color: #606872; font-size: 9px; line-height: 1.5; } .analysis-progress-status strong { color: #3f5676; } .analysis-progress-status progress { width: 100%; height: 7px; accent-color: var(--brand-blue); }
 @keyframes spin { to { transform: rotate(360deg); } }
