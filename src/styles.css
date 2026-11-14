@@ -1847,6 +1847,8 @@ body { font-size: 14px; }
 .candidate-copy { gap: 5px; }
 .candidate-copy strong { font-size: 14px; }
 .candidate-copy > span { font-size: 12px; }
+.candidate-row { min-height: 82px; }
+.candidate-keywords { overflow: hidden; color: #75839a; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .candidate-date { font-size: 11px; }
 .sidebar-footer { height: 50px; flex-basis: 50px; padding: 0 18px; font-size: 12px; }
 
