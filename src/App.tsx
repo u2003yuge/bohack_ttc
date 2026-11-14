@@ -109,28 +109,6 @@ function renderEvidenceText(value: string, query: string) {
   return <>{value.slice(0, index)}<mark className="sample-evidence-hit">{value.slice(index, index + target.length)}</mark>{value.slice(index + target.length)}</>;
 }
 
-function ResearchResults({ batch, onEvidence }: { batch: ResearchBatch; onEvidence: (evidence: string) => void }) {
-  const labels = { competition: "竞赛", paper: "论文", project: "项目" };
-  const statuses = { cached: "核查缓存命中", researched: "核查报告已保存", pending: "待补充", error: "检索失败" };
-  return <div className="research-results" aria-label="成果资料核查结果">
-    <strong>成果资料 · {batch.items.length} 项</strong>
-    {batch.notes.map((note, index) => <p key={index}>{note}</p>)}
-    {Boolean(batch.catalog?.length) && <section aria-label="标准资料入库结果"><strong>资料库条目整理</strong>{batch.catalog!.map((result, index) => <p key={index}>{result.kind === "competition" ? "竞赛" : "期刊会议"} · {result.name}：{result.message}</p>)}</section>}
-    {!batch.items.length && !batch.notes.length && <p>未提取到竞赛、论文或具体项目。</p>}
-    {batch.items.map((result, index) => <details key={index}>
-      <summary><span>{labels[result.item.kind]} · {String(result.item.input.competition_name ?? result.item.input.title ?? result.item.input.project_name)}</span><small>{statuses[result.status]}</small></summary>
-      <blockquote>{result.item.evidence}</blockquote>
-      <button type="button" className="research-evidence" onClick={() => onEvidence(result.item.evidence)}>定位简历原文</button>
-      {result.error && <p>{result.error}</p>}
-      {result.item.notes.map((note, noteIndex) => <p key={noteIndex}>{note}</p>)}
-      {result.report && <>
-        <ul>{result.report.sources.filter((source) => source.url).map((source, sourceIndex) => <li key={sourceIndex}><a href={source.url!} target="_blank" rel="noreferrer">{source.title}</a><p>{source.information}</p></li>)}</ul>
-        <details><summary>查看完整资料</summary><pre>{JSON.stringify(result.report, null, 2)}</pre></details>
-      </>}
-    </details>)}
-  </div>;
-}
-
 function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -1547,7 +1525,6 @@ export default function App() {
     setBusy(true);
     setAgentError("");
     setAnswer("");
-    setResearchResults(null);
     setResearchSources([]);
     setResearchStatus(null);
     setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });

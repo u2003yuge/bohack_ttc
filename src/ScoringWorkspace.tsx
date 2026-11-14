@@ -50,7 +50,6 @@ export default function ScoringWorkspace({
   initialSelectedIds,
 }: Props) {
   const [tab, setTab] = useState<"candidate" | "comparison" | "rules">(initialTab);
-  const [includeResearch, setIncludeResearch] = useState(true);
   const [useModel, setUseModel] = useState(true);
   const [ocrText, setOcrText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -164,7 +163,7 @@ export default function ScoringWorkspace({
             body: JSON.stringify({
               text,
               ocrText: candidates.length === 1 ? ocrText : "",
-              includeResearch: includeResearch && candidate.source !== "demo",
+              includeResearch: false,
               useModel: useModel && agentAvailable,
               streamProgress: true,
             }),
@@ -328,15 +327,6 @@ export default function ScoringWorkspace({
         ))}
       </nav>
       <div className="ms-controls">
-        <label>
-          <input
-            type="checkbox"
-            checked={includeResearch}
-            disabled={busy}
-            onChange={(e) => setIncludeResearch(e.target.checked)}
-          />
-          查询竞赛、论文和项目背景
-        </label>
         <label>
           <input
             type="checkbox"
