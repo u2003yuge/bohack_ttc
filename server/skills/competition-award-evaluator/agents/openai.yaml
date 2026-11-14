@@ -1,0 +1,4 @@
+interface:
+  display_name: "竞赛资料采集"
+  short_description: "收集赛事官网和当届详细资料，以六块简单结构保存为 JSON 文件"
+  default_prompt: "使用 $competition-award-evaluator 收集这项竞赛及获奖年份的详细资料，按简单模板保存为 JSON 文件。"

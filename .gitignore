@@ -21,6 +21,11 @@ Desktop.ini
 
 # Local application data
 .data/
+db/competition/
+db/paper/
+db/project/
+db/library/
+.npm-cache/
 
 # Build and dependency output
 dist/
