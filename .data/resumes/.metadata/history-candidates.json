@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "hist-pdf-161",
+    "fileName": "161.pdf",
+    "name": "张大仙",
+    "role": "AI应用研发工程师 / AI 应用评测与质量工程",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-162",
+    "fileName": "162.pdf",
+    "name": "药水哥",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-163",
+    "fileName": "163.pdf",
+    "name": "乔碧萝",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-164",
+    "fileName": "164.pdf",
+    "name": "牢大",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-165",
+    "fileName": "165.pdf",
+    "name": "乌蝇哥",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-166",
+    "fileName": "166.pdf",
+    "name": "张益达",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-167",
+    "fileName": "167.pdf",
+    "name": "高启强",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-168",
+    "fileName": "168.pdf",
+    "name": "张东升",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-169",
+    "fileName": "169.pdf",
+    "name": "光头强",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2024,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-170",
+    "fileName": "170.pdf",
+    "name": "熊大",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-171",
+    "fileName": "171.pdf",
+    "name": "熊二",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-172",
+    "fileName": "172.pdf",
+    "name": "派大星",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-173",
+    "fileName": "173.pdf",
+    "name": "海绵宝宝",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-174",
+    "fileName": "174.pdf",
+    "name": "灰太狼",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-175",
+    "fileName": "175.pdf",
+    "name": "懒羊羊",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-176",
+    "fileName": "176.pdf",
+    "name": "喜羊羊",
+    "role": "后端工程师 / 后端开发与分布式系统",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-177",
+    "fileName": "177.pdf",
+    "name": "美羊羊",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-178",
+    "fileName": "178.pdf",
+    "name": "贾君鹏",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-179",
+    "fileName": "179.pdf",
+    "name": "芙蓉姐姐",
+    "role": "AI应用研发工程师 / AI 产品功能与应用集成",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-180",
+    "fileName": "180.pdf",
+    "name": "凤姐",
+    "role": "后端工程师 / 后端开发与分布式系统",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-181",
+    "fileName": "181.pdf",
+    "name": "木子美",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-182",
+    "fileName": "182.pdf",
+    "name": "沉珂",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-183",
+    "fileName": "183.pdf",
+    "name": "奶茶妹妹",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-184",
+    "fileName": "184.pdf",
+    "name": "网络小胖",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-185",
+    "fileName": "185.pdf",
+    "name": "后舍男生",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-186",
+    "fileName": "186.pdf",
+    "name": "犀利哥",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-187",
+    "fileName": "187.pdf",
+    "name": "傅园慧",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-188",
+    "fileName": "188.pdf",
+    "name": "留几手",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-189",
+    "fileName": "189.pdf",
+    "name": "谷大白话",
+    "role": "AI应用研发工程师 / AI 产品功能与应用集成",
+    "year": 2024,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-190",
+    "fileName": "190.pdf",
+    "name": "艾克里里",
+    "role": "后端工程师 / 后端开发与分布式系统",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-191",
+    "fileName": "191.pdf",
+    "name": "王尼玛",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-192",
+    "fileName": "192.pdf",
+    "name": "大司马",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-193",
+    "fileName": "193.pdf",
+    "name": "电棍",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-194",
+    "fileName": "194.pdf",
+    "name": "半佛仙人",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-195",
+    "fileName": "195.pdf",
+    "name": "张雪峰",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-196",
+    "fileName": "196.pdf",
+    "name": "丁真",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-197",
+    "fileName": "197.pdf",
+    "name": "李子柒",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-198",
+    "fileName": "198.pdf",
+    "name": "董宇辉",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-199",
+    "fileName": "199.pdf",
+    "name": "罗永浩",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-200",
+    "fileName": "200.pdf",
+    "name": "何同学",
+    "role": "数据开发工程师 / 数据平台与数据工程",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-201",
+    "fileName": "201.pdf",
+    "name": "敬汉卿",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2024,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-202",
+    "fileName": "202.pdf",
+    "name": "老番茄",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-203",
+    "fileName": "203.pdf",
+    "name": "郭有才",
+    "role": "AI应用研发工程师 / 智能客服与对话应用",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-204",
+    "fileName": "204.pdf",
+    "name": "张同学",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-205",
+    "fileName": "205.pdf",
+    "name": "刘畊宏",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-206",
+    "fileName": "206.pdf",
+    "name": "李熙凝",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-207",
+    "fileName": "207.pdf",
+    "name": "葛平",
+    "role": "AI应用研发工程师 / AI 应用评测与质量工程",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-208",
+    "fileName": "208.pdf",
+    "name": "金馆长",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-209",
+    "fileName": "209.pdf",
+    "name": "雪王",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-210",
+    "fileName": "210.pdf",
+    "name": "Doro",
+    "role": "AI应用研发工程师",
+    "year": 2024,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-211",
+    "fileName": "211.pdf",
+    "name": "阿罗娜",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-212",
+    "fileName": "212.pdf",
+    "name": "14酱",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-213",
+    "fileName": "213.pdf",
+    "name": "神鹰哥",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-214",
+    "fileName": "214.pdf",
+    "name": "曼波",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-215",
+    "fileName": "215.pdf",
+    "name": "GO学长",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-216",
+    "fileName": "216.pdf",
+    "name": "瓦学弟",
+    "role": "后端工程师 / 后端开发与分布式系统",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-217",
+    "fileName": "217.pdf",
+    "name": "小马云",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-218",
+    "fileName": "218.pdf",
+    "name": "冯提莫",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-219",
+    "fileName": "219.pdf",
+    "name": "周淑怡",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-220",
+    "fileName": "220.pdf",
+    "name": "茄子",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-221",
+    "fileName": "221.pdf",
+    "name": "韦神",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-222",
+    "fileName": "222.pdf",
+    "name": "厂长",
+    "role": "测试开发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-223",
+    "fileName": "223.pdf",
+    "name": "Uzi",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-224",
+    "fileName": "224.pdf",
+    "name": "李诞",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-225",
+    "fileName": "225.pdf",
+    "name": "黄子韬",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-226",
+    "fileName": "226.pdf",
+    "name": "赵本山",
+    "role": "算法工程师 / 自然语言处理算法",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-227",
+    "fileName": "227.pdf",
+    "name": "宋小宝",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-228",
+    "fileName": "228.pdf",
+    "name": "竹影清瞳",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-229",
+    "fileName": "229.pdf",
+    "name": "流氓燕",
+    "role": "测试开发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-230",
+    "fileName": "230.pdf",
+    "name": "天仙妹妹",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-231",
+    "fileName": "231.pdf",
+    "name": "西单女孩",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-232",
+    "fileName": "232.pdf",
+    "name": "窃格瓦拉",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-233",
+    "fileName": "233.pdf",
+    "name": "王冰冰",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-234",
+    "fileName": "234.pdf",
+    "name": "钟美美",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-235",
+    "fileName": "235.pdf",
+    "name": "小吴",
+    "role": "AI应用研发工程师 / 智能客服与对话应用",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-236",
+    "fileName": "236.pdf",
+    "name": "薇娅",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-237",
+    "fileName": "237.pdf",
+    "name": "李雪琴",
+    "role": "AI应用研发工程师 / 大模型应用与检索增强",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-238",
+    "fileName": "238.pdf",
+    "name": "杨笠",
+    "role": "AI应用研发工程师 / AI 应用评测与质量工程",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-239",
+    "fileName": "239.pdf",
+    "name": "游乐王子",
+    "role": "AI应用研发工程师 / 多模态 AI 应用研发",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-240",
+    "fileName": "240.pdf",
+    "name": "洪世贤",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-241",
+    "fileName": "241.pdf",
+    "name": "雪姨",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-242",
+    "fileName": "242.pdf",
+    "name": "王思聪",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-243",
+    "fileName": "243.pdf",
+    "name": "马云",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-244",
+    "fileName": "244.pdf",
+    "name": "马化腾",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-245",
+    "fileName": "245.pdf",
+    "name": "张麻子",
+    "role": "算法工程师 / 计算机视觉算法",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-246",
+    "fileName": "246.pdf",
+    "name": "黄四郎",
+    "role": "AI应用研发工程师 / AI 产品功能与应用集成",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-247",
+    "fileName": "247.pdf",
+    "name": "赵公子",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-248",
+    "fileName": "248.pdf",
+    "name": "沈腾",
+    "role": "算法工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-249",
+    "fileName": "249.pdf",
+    "name": "马丽",
+    "role": "AI应用研发工程师 / 智能客服与对话应用",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-250",
+    "fileName": "250.pdf",
+    "name": "贾玲",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-251",
+    "fileName": "251.pdf",
+    "name": "冯巩",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-252",
+    "fileName": "252.pdf",
+    "name": "赵丽蓉",
+    "role": "AI应用研发工程师 / 企业知识库与问答应用",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-253",
+    "fileName": "253.pdf",
+    "name": "蔡明",
+    "role": "AI应用研发工程师 / AI 产品功能与应用集成",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-254",
+    "fileName": "254.pdf",
+    "name": "郭冬临",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-255",
+    "fileName": "255.pdf",
+    "name": "范伟",
+    "role": "AI应用研发工程师 / 智能体与工具调用应用",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-256",
+    "fileName": "256.pdf",
+    "name": "潘长江",
+    "role": "AI应用研发工程师 / AI 产品功能与应用集成",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-257",
+    "fileName": "257.pdf",
+    "name": "小沈阳",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-258",
+    "fileName": "258.pdf",
+    "name": "岳云鹏",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": true,
+    "hired": true,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-259",
+    "fileName": "259.pdf",
+    "name": "敖厂长",
+    "role": "AI应用研发工程师 / 大模型应用服务与工程化",
+    "year": 2025,
+    "screened": true,
+    "hired": false,
+    "composite": null
+  },
+  {
+    "id": "hist-pdf-260",
+    "fileName": "260.pdf",
+    "name": "逍遥散人",
+    "role": "AI应用研发工程师",
+    "year": 2025,
+    "screened": false,
+    "hired": false,
+    "composite": null
+  }
+]

@@ -59,12 +59,32 @@ const settingsPath = path.join(directory, ".metadata", "settings.json");
 const knowledgeReviewsPath = path.join(directory, ".metadata", "knowledge-reviews.json");
 const customKnowledgePath = path.join(directory, ".metadata", "knowledge-records.json");
 const historyCandidatesPath = path.join(directory, ".metadata", "history-candidates.json");
+const historicalResumesDirectory = path.resolve(".pre_data/resumes");
 const assessmentSaves = new Map<string, Promise<ResumeRecord>>();
 
 router.get("/history", async (_request, response, next) => {
   try {
     const local = await readHistoryCandidates();
     response.json({ candidates: local.map((candidate) => ({ ...candidate, source: "local" as const })), description: "本地历史招聘基准样本" });
+  } catch (error) { next(error); }
+});
+
+router.get("/history/:id/file", async (request, response, next) => {
+  try {
+    const candidate = (await readHistoryCandidates()).find((item) => item.id === request.params.id);
+    const fileName = candidate?.fileName;
+    if (!fileName || !/^[\w-]+\.pdf$/i.test(fileName)) {
+      response.status(404).json({ error: "此历史样本没有关联简历。" }); return;
+    }
+    const filePath = path.join(historicalResumesDirectory, fileName);
+    try { await stat(filePath); }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      response.status(404).json({ error: "找不到历史样本简历文件。" }); return;
+    }
+    response.type("application/pdf");
+    response.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+    response.sendFile(filePath);
   } catch (error) { next(error); }
 });
 
@@ -113,6 +133,7 @@ router.put("/history/:id", async (request, response, next) => {
     if (index < 0) { response.status(404).json({ error: "找不到本地历史样本。" }); return; }
     const candidate = normalizeHistoricalCandidate(request.body, local[index].id, index + 1);
     if ("error" in candidate) { response.status(400).json({ error: candidate.error }); return; }
+    if (local[index].fileName) candidate.fileName = local[index].fileName;
     local[index] = candidate;
     await writeHistoryCandidates(local);
     response.json({ candidate: { ...candidate, source: "local" } });
@@ -970,7 +991,7 @@ async function saveWeights(weights: ScoreWeights): Promise<void> {
   await writeFile(settingsPath, JSON.stringify({ weights }, null, 2), "utf8");
 }
 
-async function readHistoryCandidates(): Promise<HistoricalCandidate[]> {
+export async function readHistoryCandidates(): Promise<HistoricalCandidate[]> {
   try {
     const parsed = JSON.parse(await readFile(historyCandidatesPath, "utf8"));
     if (!Array.isArray(parsed)) return [];
@@ -981,9 +1002,13 @@ async function readHistoryCandidates(): Promise<HistoricalCandidate[]> {
   catch { return []; }
 }
 
-async function writeHistoryCandidates(candidates: HistoricalCandidate[]): Promise<void> {
+export async function writeHistoryCandidates(candidates: HistoricalCandidate[]): Promise<void> {
   await mkdir(path.dirname(historyCandidatesPath), { recursive: true });
-  await writeFile(historyCandidatesPath, JSON.stringify(candidates, null, 2), "utf8");
+  const temporary = `${historyCandidatesPath}.${randomUUID()}.tmp`;
+  try {
+    await writeFile(temporary, JSON.stringify(candidates, null, 2), "utf8");
+    await rename(temporary, historyCandidatesPath);
+  } catch (error) { await rm(temporary, { force: true }); throw error; }
 }
 
 function normalizeWeightInput(input: unknown): ScoreWeights {

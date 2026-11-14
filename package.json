@@ -17,6 +17,7 @@
     "import:competitions": "node scripts/import-competitions.mjs",
     "import:papers": "tsx scripts/import-papers.ts",
     "import:resumes": "tsx scripts/import-resumes.ts",
+    "import:history": "tsx scripts/import-history-resumes.ts",
     "cache:reports": "tsx scripts/cache-resume-reports.ts"
   },
   "dependencies": {

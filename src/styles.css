@@ -2088,3 +2088,68 @@ button:active { transform: translateY(1px); }
   .comparison-table { font-size: 12px; }
   .competition-heading { align-items: flex-start; }
 }
+
+/* Historical samples share the candidate comparison table, grouped by year. */
+.history-list-page .history-database-header { margin-bottom: 16px; }
+.history-list-page .history-database-header h2 { margin: 0; }
+.history-year-tabs { display: flex; gap: 28px; overflow-x: auto; border-bottom: 1px solid #dfe5ef; }
+.history-year-tabs button { display: flex; align-items: center; gap: 9px; flex-shrink: 0; padding: 12px 2px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: #596579; font-size: 18px; font-weight: 600; cursor: pointer; }
+.history-year-tabs button.active { border-bottom-color: #2563eb; color: #2563eb; }
+.history-year-tabs button span { padding: 2px 7px; border-radius: 5px; background: #edf1f7; color: #596579; font-size: 13px; font-variant-numeric: tabular-nums; }
+.history-year-tabs button.active span { background: #e5efff; color: #245fd1; }
+.history-samples-panel { min-width: 0; padding-top: 18px; }
+.history-list-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+.history-list-count { color: #526176; font-size: 14px; }
+.history-list-toolbar .history-add-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin-left: auto; padding: 9px 13px; border: 1px solid #2563eb; border-radius: 6px; background: #2563eb; color: #fff; font-size: 14px; cursor: pointer; }
+.history-list-page .history-samples-table { min-width: 720px; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
+.history-samples-table th { color: #4b5b70; }
+.history-samples-table td { border-top: 1px solid #e4e9f0; border-bottom: 1px solid #e4e9f0; background: #fff; }
+.history-samples-table td:first-child { width: 68px; border-left: 1px solid #e4e9f0; border-radius: 6px 0 0 6px; padding-left: 14px; }
+.history-samples-table td:last-child { width: 190px; border-right: 1px solid #e4e9f0; border-radius: 0 6px 6px 0; }
+.history-samples-table td:nth-child(2) { min-width: 130px; }
+.history-samples-table a.comparison-candidate-select { text-decoration: none; }
+.history-samples-table a.comparison-candidate-select:hover strong { color: #2563eb; text-decoration: underline; text-underline-offset: 4px; }
+.history-samples-table td:nth-child(3) { min-width: 140px; }
+.history-samples-table td:nth-child(5) { white-space: nowrap; }
+.history-samples-table tr.history-result-screened td { border-top: 2px solid #5b92e5; border-bottom: 2px solid #5b92e5; background: #f2f7ff; }
+.history-samples-table tr.history-result-screened td:first-child { border-left: 2px solid #5b92e5; }
+.history-samples-table tr.history-result-screened td:last-child { border-right: 2px solid #5b92e5; }
+.history-samples-table tr.history-result-hired td { border-top: 2px solid #42a57a; border-bottom: 2px solid #42a57a; background: #f0faf5; }
+.history-samples-table tr.history-result-hired td:first-child { border-left: 2px solid #42a57a; }
+.history-samples-table tr.history-result-hired td:last-child { border-right: 2px solid #42a57a; }
+.history-samples-table .history-selected .comparison-candidate-select strong { color: #2563eb; text-decoration: underline; text-underline-offset: 4px; }
+.history-samples-table .history-composite strong { color: #2455a4; font-size: 18px; font-variant-numeric: tabular-nums; }
+.history-result-badge { display: inline-block; padding: 5px 9px; border-radius: 5px; background: #f0f2f5; color: #526176; font-size: 14px; font-weight: 600; }
+.history-result-badge.screened { background: #dfecff; color: #245bc0; }
+.history-result-badge.hired { background: #d9f2e5; color: #20764e; }
+.history-list-page .history-record-actions { gap: 7px; }
+.history-list-page .history-record-actions button { display: inline-flex; gap: 4px; height: 32px; padding: 0 8px; font-size: 13px; white-space: nowrap; }
+.history-list-page .history-readonly { color: #526176; font-size: 13px; }
+.history-list-page .history-record-form { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 18px; border: 1px solid #d5e1f2; border-radius: 8px; background: #f7faff; }
+.history-list-page .history-record-form > strong { grid-column: 1 / -1; color: #334155; font-size: 16px; }
+.history-samples-table .history-inline-editor > td { width: auto; padding: 0 0 8px; border: 0; border-radius: 0; background: transparent; }
+.history-list-page .history-inline-editor .history-record-form { width: fit-content; max-width: 100%; grid-template-columns: 220px 76px 130px auto; gap: 10px; margin: 0; padding: 10px; border-radius: 6px; }
+.history-list-page .history-record-form > .inline-error { grid-column: 1 / -1; }
+.history-list-page .history-record-form label { gap: 7px; color: #42526a; font-size: 14px; }
+.history-list-page .history-record-form input,
+.history-list-page .history-record-form select { width: 100%; min-width: 0; padding: 9px 10px; font-size: 14px; }
+.history-list-page .history-record-form .history-form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.history-list-page .history-record-form .history-form-actions button { height: 34px; padding: 8px 14px; font-size: 14px; }
+.history-list-page .history-inline-editor .history-record-form label { gap: 4px; }
+.history-list-page .history-inline-editor .history-record-form input,
+.history-list-page .history-inline-editor .history-record-form select { height: 30px; padding: 0 7px; }
+.history-list-page .history-inline-editor .history-form-actions { grid-column: auto; gap: 6px; }
+.history-list-page .history-inline-editor .history-form-actions button { height: 30px; padding: 0 10px; white-space: nowrap; }
+.history-list-empty { padding: 48px 16px; text-align: center; color: #526176; font-size: 16px; }
+.history-list-page button:disabled { opacity: .55; cursor: not-allowed; }
+.history-year-tabs button:focus-visible { outline: 2px solid #2563eb; outline-offset: -3px; }
+@media (max-width: 640px) {
+  .history-list-page .history-database-header { gap: 12px; flex-wrap: wrap; }
+  .history-list-page .history-record-form { grid-template-columns: 1fr; padding: 14px; }
+  .history-list-page .history-inline-editor .history-record-form { width: min(100%, calc(100vw - 64px)); grid-template-columns: 88px minmax(0, 1fr); }
+  .history-list-page .history-inline-editor .history-record-form > label:first-child,
+  .history-list-page .history-inline-editor .history-form-actions { grid-column: 1 / -1; }
+  .history-list-toolbar { gap: 10px; }
+  .history-list-toolbar .history-add-button { padding: 8px 10px; }
+  .history-list-count { font-size: 13px; }
+}

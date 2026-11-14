@@ -68,6 +68,21 @@ test("historical records require valid outcome and score fields", () => {
   assert.deepEqual(valid, { id: "id", name: "匿名样本 1", role: "开发", year: 2025, screened: true, hired: true, composite: 72.4 });
 });
 
+test("unscored historical resumes stay unscored and do not affect benchmarks or score bands", () => {
+  const unscored: HistoricalCandidate = { id: "pdf-161", fileName: "161.pdf", name: "历史候选人", role: "产品经理", year: 2024, screened: true, hired: true, composite: null };
+  const normalized = normalizeHistoricalCandidate(unscored, unscored.id, 1);
+  assert.equal("error" in normalized, false);
+  if ("error" in normalized) return;
+  assert.equal(normalized.composite, null);
+  assert.equal(matchesHistoricalFilters(unscored, null, "hired"), true);
+  assert.equal(matchesHistoricalFilters(unscored, "0-19", "hired"), false);
+  const empty = calculateBenchmark("产品经理", 80, null, [unscored]);
+  assert.equal(empty.sampleCount, 0);
+  assert.equal(empty.percentile, null);
+  assert.equal(empty.hireCutoff, null);
+  assert.deepEqual(calculateBenchmark("产品经理", 80, null, [...benchmarkRecords, unscored]), calculateBenchmark("产品经理", 80, null, benchmarkRecords));
+});
+
 test("historical score buckets include both endpoints and cover the 0-100 scale", () => {
   assert.equal(historicalScoreBand(0), "0-19");
   assert.equal(historicalScoreBand(19), "0-19");

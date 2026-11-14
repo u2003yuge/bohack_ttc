@@ -5,9 +5,12 @@ export type HistoricalCandidate = {
   year: number;
   screened: boolean;
   hired: boolean;
-  composite: number;
+  composite: number | null;
+  fileName?: string;
   source?: "demo" | "local";
 };
+
+type ScoredHistoricalCandidate = HistoricalCandidate & { composite: number };
 
 /** Supported recruiting benchmark years. Records are created only from reviewed or authorized samples. */
 export const historicalYears = [2024, 2025] as const;
@@ -59,7 +62,7 @@ export function historicalScoreBand(score: number): HistoricalScoreBandKey | nul
 
 export function matchesHistoricalFilters(candidate: HistoricalCandidate, scoreBand: HistoricalScoreBandKey | null, outcome: HistoricalOutcomeFilter): boolean {
   const band = scoreBand ? historicalScoreBands.find((item) => item.key === scoreBand) : null;
-  const scoreMatches = !band || (candidate.composite >= band.min && candidate.composite <= band.max);
+  const scoreMatches = !band || (candidate.composite !== null && candidate.composite >= band.min && candidate.composite <= band.max);
   const outcomeMatches = outcome === "all"
     || (outcome === "hired" && candidate.hired)
     || (outcome === "screened" && candidate.screened && !candidate.hired)
@@ -72,14 +75,14 @@ export function normalizeHistoricalCandidate(input: unknown, id: string, fallbac
   const name = typeof value.name === "string" ? value.name.trim().slice(0, 80) : "";
   const role = typeof value.role === "string" ? value.role.trim().slice(0, 120) : "";
   const year = Number(value.year);
-  const composite = Number(value.composite);
+  const composite = value.composite === null ? null : Number(value.composite);
   const screened = value.screened === true;
   const hired = value.hired === true;
   if (!role) return { error: "请填写岗位名称。" };
   if (!Number.isInteger(year) || !historicalYears.includes(year as (typeof historicalYears)[number])) return { error: "招聘年份只能选择 2024 或 2025。" };
-  if (!Number.isFinite(composite) || composite < 0 || composite > 100) return { error: "综合分需要在 0 到 100 之间。" };
+  if (composite !== null && (!Number.isFinite(composite) || composite < 0 || composite > 100)) return { error: "综合分需要在 0 到 100 之间。" };
   if (hired && !screened) return { error: "最终录取样本必须标记为通过首轮。" };
-  return { id, name: name || `匿名样本 ${fallbackIndex}`, role, year, screened, hired, composite: Math.round(composite * 10) / 10 };
+  return { id, name: name || `匿名样本 ${fallbackIndex}`, role, year, screened, hired, composite: composite === null ? null : Math.round(composite * 10) / 10 };
 }
 
 // Seed data for the local recruiting benchmark. Replace with approved historical records in production.
@@ -94,7 +97,7 @@ export type Benchmark = {
   hireCutoff: number | null;
   screenedRate: number;
   hiredRate: number;
-  candidates: HistoricalCandidate[];
+  candidates: ScoredHistoricalCandidate[];
   availableYears: number[];
   year: number | null;
 };
@@ -113,9 +116,10 @@ export function roleGroupLabel(group: string): string {
 }
 
 export function calculateBenchmark(role: string, score: number, year: number | null = null, records: HistoricalCandidate[] = historicalCandidates): Benchmark {
+  const scoredRecords = records.filter((candidate): candidate is ScoredHistoricalCandidate => typeof candidate.composite === "number" && Number.isFinite(candidate.composite));
   const group = roleGroup(role);
-  const candidates = records.filter((candidate) => roleGroup(candidate.role) === group);
-  const roleSample = candidates.length ? candidates : records;
+  const candidates = scoredRecords.filter((candidate) => roleGroup(candidate.role) === group);
+  const roleSample = candidates.length ? candidates : scoredRecords;
   const availableYears = [...new Set([...historicalYears, ...roleSample.map((candidate) => candidate.year)])].sort((a, b) => b - a);
   const yearSample = year === null ? roleSample : roleSample.filter((candidate) => candidate.year === year);
   const sample = yearSample.length ? yearSample : roleSample;
