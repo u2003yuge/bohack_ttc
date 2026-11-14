@@ -1,0 +1,34 @@
+{
+  "input": {
+    "project_name": null,
+    "project_year": null,
+    "organization": null,
+    "role": null
+  },
+  "project": {
+    "official_name": null,
+    "official_website": null,
+    "project_type": null,
+    "organizations": null,
+    "description": null,
+    "other_details": null
+  },
+  "year_data": {
+    "year": null,
+    "timeline": null,
+    "work_content": null,
+    "technology": null,
+    "participation": null,
+    "resources": null,
+    "team": null,
+    "outcomes": null,
+    "other_details": null
+  },
+  "role_information": {
+    "role_name": null,
+    "responsibilities": null,
+    "other_details": null
+  },
+  "sources": [],
+  "notes": []
+}

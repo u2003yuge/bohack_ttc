@@ -36,6 +36,8 @@ import type { Resume } from "./types";
 import { calculateComposite, calculateGrowthTimeline, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
+import type { AnalysisEvent, AnalysisProgress, AnalysisResult, ResearchBatch } from "./research-types";
+import { readAnalysisEvents } from "./analysis-stream";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -83,6 +85,27 @@ function renderEvidenceText(value: string, query: string) {
   const index = target ? value.toLocaleLowerCase().indexOf(target.toLocaleLowerCase()) : -1;
   if (index < 0) return value;
   return <>{value.slice(0, index)}<mark className="sample-evidence-hit">{value.slice(index, index + target.length)}</mark>{value.slice(index + target.length)}</>;
+}
+
+function ResearchResults({ batch, onEvidence }: { batch: ResearchBatch; onEvidence: (evidence: string) => void }) {
+  const labels = { competition: "竞赛", paper: "论文", project: "项目" };
+  const statuses = { cached: "数据库命中", researched: "已检索并入库", pending: "待补充", error: "检索失败" };
+  return <div className="research-results" aria-label="成果资料核查结果">
+    <strong>成果资料 · {batch.items.length} 项</strong>
+    {batch.notes.map((note, index) => <p key={index}>{note}</p>)}
+    {!batch.items.length && !batch.notes.length && <p>未提取到竞赛、论文或具体项目。</p>}
+    {batch.items.map((result, index) => <details key={index}>
+      <summary><span>{labels[result.item.kind]} · {String(result.item.input.competition_name ?? result.item.input.title ?? result.item.input.project_name)}</span><small>{statuses[result.status]}</small></summary>
+      <blockquote>{result.item.evidence}</blockquote>
+      <button type="button" className="research-evidence" onClick={() => onEvidence(result.item.evidence)}>定位简历原文</button>
+      {result.error && <p>{result.error}</p>}
+      {result.item.notes.map((note, noteIndex) => <p key={noteIndex}>{note}</p>)}
+      {result.report && <>
+        <ul>{result.report.sources.filter((source) => source.url).map((source, sourceIndex) => <li key={sourceIndex}><a href={source.url!} target="_blank" rel="noreferrer">{source.title}</a><p>{source.information}</p></li>)}</ul>
+        <details><summary>查看完整资料</summary><pre>{JSON.stringify(result.report, null, 2)}</pre></details>
+      </>}
+    </details>)}
+  </div>;
 }
 
 function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
@@ -1106,7 +1129,8 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
         <span className="analysis-document-meta">{answer ? `${pages.length} 页` : "待生成"}</span>
       </div>
       <div className="analysis-document-pages">
-        {busy ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
+        {error && answer && <div className="inline-error" role="alert">{error}</div>}
+        {busy && !answer ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在整理简历证据、岗位匹配和建议追问。</p><div className="loading-line"><i /></div></div> : error && !answer ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body">{page}</div><div className="analysis-paper-foot">分析结果仅作招聘决策参考 · 第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p><span className="evidence-note"><ShieldCheck size={13} /> 需要招聘人员复核</span></div>}
         <ScoreInsights card={scoreCard} candidate={candidate} records={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={onOpenKnowledge} onOpenHistory={onOpenHistory} agentAvailable={agentAvailable} onEvidence={onEvidence} />
       </div>
     </div>
@@ -1258,6 +1282,13 @@ export default function App() {
   const [answer, setAnswer] = useState("");
   const [agentError, setAgentError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [researchResults, setResearchResults] = useState<ResearchBatch | null>(null);
+  const [includeResearch, setIncludeResearch] = useState(true);
+  const [ocrText, setOcrText] = useState("");
+  const analysisRequest = useRef(0);
+  const analysisController = useRef<AbortController | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
+  const [analysisElapsed, setAnalysisElapsed] = useState(0);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [importError, setImportError] = useState("");
@@ -1302,6 +1333,24 @@ export default function App() {
       demoCount: comparableResumes.filter((resume) => resume.source === "demo").length,
     };
   }, [resumes, selected, weightProposal, weights]);
+
+  useEffect(() => {
+    analysisController.current?.abort();
+    analysisRequest.current += 1;
+    setBusy(false);
+    setResearchResults(null);
+    setOcrText("");
+    setAnalysisProgress(null);
+    return () => analysisController.current?.abort();
+  }, [selectedId]);
+
+  useEffect(() => {
+    if (!busy) return;
+    const started = Date.now();
+    setAnalysisElapsed(0);
+    const timer = setInterval(() => setAnalysisElapsed(Math.floor((Date.now() - started) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, [busy]);
 
   useEffect(() => {
     loadResumes();
@@ -1434,28 +1483,57 @@ export default function App() {
 
   async function analyze() {
     if (!selected) return;
+    const requestId = ++analysisRequest.current;
+    analysisController.current?.abort();
+    const controller = new AbortController();
+    analysisController.current = controller;
+    const timeout = setTimeout(() => controller.abort(new Error("分析响应超时，已完成资料仍可查看，请重试。")), 310_000);
     setBusy(true);
     setAgentError("");
     setAnswer("");
+    setResearchResults(null);
+    setResearchSources([]);
+    setResearchStatus(null);
+    setAnalysisProgress({ stage: includeResearch ? "extracting" : "analyzing", message: "正在连接分析服务。" });
+    const applyResult = (result: AnalysisResult) => {
+      setAnswer(result.answer);
+      setResearchResults(includeResearch ? result.research : null);
+      setResearchSources(result.researchSources ?? []);
+      setResearchStatus(result.researchStatus ?? null);
+      if (result.resume) setResumes((current) => current.map((resume) => resume.id === selected.id ? result.resume! : resume));
+    };
     try {
       const endpoint = selected.source === "pdf" ? `/api/resumes/${encodeURIComponent(selected.id)}/analyze` : "/api/agent";
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeName: selected.name, resumeText: selected.text, roleRequirements, question, webResearchEnabled }),
+        body: JSON.stringify({ resumeName: selected.name, resumeText: ocrText.trim() ? ocrText : selected.text, ocrText, roleRequirements, question, webResearchEnabled, includeResearch, streamProgress: true }),
+        signal: controller.signal,
       });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "分析请求失败。");
-      setAnswer(payload.answer);
-      setResearchSources(Array.isArray(payload.researchSources) ? payload.researchSources : []);
-      setResearchStatus(payload.researchStatus ?? (selected.source === "pdf" ? "not-requested" : null));
-      if (payload.resume) {
-        setResumes((current) => current.map((resume) => resume.id === selected.id ? payload.resume as Resume : resume));
+      if (!response.ok || !response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
+        const payload = await response.json();
+        if (requestId !== analysisRequest.current) return;
+        setResearchResults(includeResearch ? payload.research ?? null : null);
+        if (!response.ok) throw new Error(payload.error || "分析请求失败。");
+        applyResult(payload);
+      } else {
+        await readAnalysisEvents(response, (event: AnalysisEvent) => {
+          if (requestId !== analysisRequest.current) return;
+          if (event.type === "progress") setAnalysisProgress(event.progress);
+          if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
+          if (event.type === "research") setResearchResults(event.research);
+          if (event.type === "complete") applyResult(event);
+          if (event.type === "error" && event.research) setResearchResults(event.research);
+        });
       }
     } catch (error) {
-      setAgentError(error instanceof Error ? error.message : "无法连接 Agent 服务。");
+      if (requestId !== analysisRequest.current) return;
+      const reason = controller.signal.aborted ? controller.signal.reason : error;
+      setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
     } finally {
-      setBusy(false);
+      clearTimeout(timeout);
+      if (analysisController.current === controller) analysisController.current = null;
+      if (requestId === analysisRequest.current) setBusy(false);
     }
   }
 
@@ -1474,6 +1552,12 @@ export default function App() {
   }
 
   function selectResume(id: string) {
+    analysisRequest.current += 1;
+    analysisController.current?.abort();
+    setBusy(false);
+    setResearchResults(null);
+    setOcrText("");
+    setAnalysisProgress(null);
     const resume = resumes.find((item) => item.id === id);
     setSelectedId(id);
     setAnswer(resume?.analysisReport ?? "");
@@ -1492,6 +1576,13 @@ export default function App() {
 
   const handleEvidenceResult = useCallback((result: { query: string; page: number | null }) => setEvidenceLocation(result), []);
   const locateEvidence = useCallback((evidence: string) => { setEvidenceTarget(evidence); setEvidenceLocation({ query: evidence, page: null }); }, []);
+
+  function stopAnalysis() {
+    analysisRequest.current += 1;
+    analysisController.current?.abort();
+    setBusy(false);
+    setAgentError("分析已停止，已完成的成果资料仍可查看。");
+  }
 
   if (!selected) return null;
 
@@ -1591,6 +1682,7 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
+          {researchResults && <ResearchResults batch={researchResults} onEvidence={locateEvidence} />}
           <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
@@ -1609,9 +1701,13 @@ export default function App() {
           {taskProposal && <div className="role-profile-proposal"><strong>AI 任务草案</strong><p>{taskProposal.question}</p><small>{taskProposal.rationale} · 仅发送了当前任务文本，未发送简历或候选人信息。</small><div><button type="button" onClick={() => { setQuestion(taskProposal.question); setTaskProposal(null); }}>采用草案</button><button type="button" onClick={() => setTaskProposal(null)}>保留原文</button></div></div>}
           <div className="agent-presets" aria-label="常用分析任务"><span>快捷任务</span>{["提炼核心优势与风险", "按岗位要求逐项核对证据", "生成面试追问清单"].map((preset) => <button key={preset} onClick={() => { setQuestion(preset); setTaskProposal(null); setTaskDraftError(""); }}>{preset}</button>)}</div>
           <label className="research-toggle"><span><Globe2 size={14} /><span>联网参考岗位背景</span><small>只搜索职位要求，不发送候选人简历</small></span><input className="switch-input" type="checkbox" checked={webResearchEnabled} onChange={(event) => setWebResearchEnabled(event.target.checked)} /><i className="switch-track"><b className="switch-thumb" /></i></label>
+          <label className="material-research-toggle"><input type="checkbox" checked={includeResearch} onChange={(event) => setIncludeResearch(event.target.checked)} disabled={busy} />核查竞赛、论文和项目资料</label>
+          <p className="research-hint">优先查询本地成果资料库，缺失时联网补充。</p>
+          <details className="ocr-input"><summary>补充 OCR 文本</summary><textarea aria-label="简历 OCR 文本" className="question-input" value={ocrText} onChange={(event) => setOcrText(event.target.value)} placeholder="扫描件可粘贴外部 OCR 结果，用于本次分析。" rows={4} disabled={busy} /></details>
           <button className="run-agent-button" onClick={analyze} disabled={busy || !health?.agent || !question.trim()}>
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}
           </button>
+          {busy && <><button className="stop-agent-button" onClick={stopAnalysis}>停止分析</button><div className="analysis-progress" role="status"><strong>{analysisProgress?.message || "正在处理分析请求。"}</strong><span>已用时 {analysisElapsed} 秒</span>{Boolean(analysisProgress?.total) && <progress className="research-progress" max={analysisProgress!.total} value={analysisProgress!.completed ?? 0} aria-label="成果资料核查进度" />}</div></>}
           {researchStatus && researchStatus !== "not-requested" && <div className={`agent-research-summary ${researchStatus}`}><strong>{researchStatus === "searched" ? `岗位背景参考 · ${researchSources.length} 个来源` : researchStatus === "not-configured" ? "联网参考未配置" : "联网参考暂不可用"}</strong><span>{researchStatus === "searched" ? "来源只用于解释岗位背景，报告中的候选人结论仍需回到简历证据。" : "本次分析仍可继续，报告未将网络资料当作候选人证据。"}</span>{researchSources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title}<ExternalLink size={11} /></a>)}</div>}
           <div className="scoring-settings">
             <div className="scoring-settings-head"><div><span className="eyebrow">SCORING WEIGHTS</span><strong>评分权重</strong></div><span>{weightSaving ? "保存中" : `${Object.values(weights).reduce((sum, value) => sum + value, 0)}%`}</span></div>

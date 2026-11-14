@@ -1,0 +1,34 @@
+{
+  "input": {
+    "competition_name": null,
+    "award_name": null,
+    "award_year": null,
+    "age_at_award": null
+  },
+  "competition": {
+    "official_name": null,
+    "official_website": null,
+    "organizers": null,
+    "description": null,
+    "eligibility": null,
+    "other_details": null
+  },
+  "year_data": {
+    "year": null,
+    "division_and_stage": null,
+    "participants": null,
+    "winners": null,
+    "award_rate": null,
+    "award_structure": null,
+    "other_details": null
+  },
+  "prizes_and_rules": {
+    "cash_prize": null,
+    "other_rewards": null,
+    "competition_format": null,
+    "judging_rules": null,
+    "other_details": null
+  },
+  "sources": [],
+  "notes": []
+}

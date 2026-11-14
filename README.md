@@ -26,6 +26,7 @@ Bohack 是一个本地运行的招聘简历阅读与分析工作台。它可以�
 - 新增资料库入口，支持查询、增改和删除本地竞赛、期刊 / 会议及公司资料；删除前会提示受影响的简历引用，详情中的引用可跳回 PDF 命中词；审核员可填写可解释的含金量评分与备注。
 - 资料库的人工评分历史按真实时间间隔绘制，点选记录即可回看当时的评分理由、核验状态和证据来源。
 - 可选接入 Tavily 网页搜索；分析 Skill 位于 `server/skills/resume-analysis.md`。
+- 从 PDF 提取文本或外部 OCR 结果中提取竞赛、论文和项目，调用对应 Skill 联网核查，保存到项目根目录 `db/`，之后优先复用有效缓存。
 - 从工作台打开本地简历文件夹，或将已有文件夹中的 PDF 导入工作台。
 
 ## 环境要求
@@ -138,6 +139,7 @@ RESUME_DIR=.data/resumes
 - 简历 PDF 和提取文本保存在本机 `RESUME_DIR`，不会因为导入操作自动上传到 GitHub。
 - 导入 PDF 时，提取出的简历文本会发送给 `.env` 中配置的模型，用于整理候选人基本信息。用户主动运行分析时，简历文本、职位要求和提问也会发送给模型服务。
 - 若 Agent 调用 Tavily，发送给搜索服务的是搜索查询和搜索请求，不会自动上传整份 PDF。
+- 开启成果核查时，简历文本会额外发送给模型提取成果条目，再将成果名称、年份、机构等线索交给检索流程；成果报告保存在本机 `db/`，已加入 Git 忽略规则。关闭“核查竞赛、论文和项目资料”可跳过这一步。
 - 请确认你的模型和搜索服务的数据处理方式符合组织的招聘、隐私和数据保留要求。
 
 ## 项目结构
@@ -146,6 +148,11 @@ RESUME_DIR=.data/resumes
 src/                         React 工作台和 PDF 阅读器
 server/index.ts              本地 API 与 Agent 工具调用
 server/resumes.ts            PDF 文件夹、文本提取和候选人信息识别
+server/research/              成果输入提取、网页正文读取、报告校验与数据库缓存
+server/skills/competition-award-evaluator/
+server/skills/paper-value-evaluator/
+server/skills/resume-project-research/
+                             三类成果检索 Skill、参考规则和 JSON 模板
 server/skills/resume-analysis.md
                              简历分析 Skill 指令
 docs/IMPORT_ANALYSIS_ARCHITECTURE.md
@@ -153,6 +160,7 @@ docs/IMPORT_ANALYSIS_ARCHITECTURE.md
 docs/KNOWLEDGE_DATABASE.md
                              竞赛、期刊与公司资料库设计与审核边界
 .data/resumes/               默认本地简历目录（运行时创建，不提交）
+db/                          三类成果资料库（报告运行时创建，不提交）
 ```
 
 ## 构建和检查
@@ -162,3 +170,51 @@ npm run build
 npm test
 npx tsc --noEmit --project tsconfig.server.json
 ```
+
+## 竞赛、论文和项目资料核查
+
+分析区默认勾选“核查竞赛、论文和项目资料”。点击分析后，服务先从简历文本中提取输入，附带连续原文证据，再查询 `db/`；缓存未命中且配置了 `TAVILY_API_KEY` 时，使用对应 Skill 搜索并读取网页正文，生成符合原模板的六块 JSON。界面实时显示提取、核查、生成分析的阶段、已用时间和完成项数；每项完成即展示资料，可展开查看原文证据、来源和完整报告。“停止分析”、切换候选人或关闭页面会取消后台模型与网页请求。
+
+核查默认同时处理两项，每项最多 90 秒，整个资料提取与核查阶段最多 180 秒；到达时限后保留已完成资料，将剩余条目标为失败并继续基本简历分析。模型分析阶段最多 120 秒，正文随模型返回逐段显示，整个分析请求最多 300 秒。提取和研究阶段每次模型请求默认 60 秒且不自动重试，最终分析请求遵循分析阶段时限；网页请求最多 15 秒。超时、断线会明确显示错误并保留已收到的正文，避免持续转圈。首次检索仍可能需要数分钟，速度受配置的模型和成果数量影响。
+
+可在本机 `.env` 中按需调整下列配置，修改后重启服务：
+
+| 配置 | 默认值 | 含义 |
+| --- | --- | --- |
+| `OPENAI_EXTRACTION_MODEL` | 跟随 `OPENAI_MODEL` | 提取成果所用模型，可填写服务商支持的较快模型 |
+| `OPENAI_RESEARCH_MODEL` | 跟随 `OPENAI_MODEL` | 成果检索所用模型 |
+| `MODEL_REQUEST_TIMEOUT_MS` | `60000` | 每次模型请求超时，毫秒 |
+| `WEB_REQUEST_TIMEOUT_MS` | `15000` | 每次网页请求超时，毫秒 |
+| `RESEARCH_ITEM_TIMEOUT_MS` | `90000` | 单项成果核查上限，毫秒 |
+| `RESEARCH_TIMEOUT_MS` | `180000` | 提取与核查总时限，毫秒 |
+| `ANALYSIS_TIMEOUT_MS` | `120000` | 最后生成分析阶段的总时限，毫秒 |
+| `AGENT_TIMEOUT_MS` | `300000` | 整个分析请求总时限，毫秒 |
+
+| 类型 | 提取的 skill 输入 | 可缺省 |
+| --- | --- | --- |
+| 竞赛 | `competition_name`、`award_name`、`award_year`、`age_at_award` | 获奖年龄；只保留原文明确写出的获奖时年龄，不计算、不用于评价 |
+| 论文 | `title`、`description`；已提供的作者、年份、DOI 等映射到 `extra_context` | 描述和额外线索 |
+| 项目 | `project_name`、`project_year`、`organization`、`role` | 角色；年份区间保留原文 |
+
+缺少检索所需的名称、年份或所属机构时，保留 `null` 并提示待补充，不借用无关教育或工作信息。竞赛组别、赛区、阶段、论文版本等原文线索参与检索和缓存匹配；年龄不参与缓存匹配。系统采用保守的精确匹配，不自动合并简称或同名成果。
+
+扫描件仍需外部 OCR：在“补充 OCR 文本”中粘贴识别结果后，它将替代本次分析的 PDF 文本；切换候选人会清空补充内容。此功能没有新增扫描件 OCR 引擎。
+
+也可以直接调用 API，`text` 支持 1 到 100000 字符：
+
+```http
+POST /api/research/extract
+Content-Type: application/json
+
+{"text":"这里填写简历的 PDF 提取文本或 OCR 结果"}
+```
+
+`/api/research/extract` 只提取，返回 `{items, notes}`；每条包含 `kind`、`input`、`context`、`evidence`、`missingFields` 和 `notes`。`POST /api/research/enrich` 使用相同输入，额外查询数据库并检索，返回 `{items, notes}`，每条包含 `item`、`status`、`report` 和 `error`。
+
+`POST /api/agent` 和已保存 PDF 的 `POST /api/resumes/:id/analyze` 都支持布尔字段 `includeResearch`（默认 `true`），结果额外返回 `research`。成果核查开关与“联网参考岗位背景”独立；后者仍由 `webResearchEnabled` 控制，默认关闭。PDF 接口支持可选 `ocrText`，只替代本次分析输入，不改写原始 PDF 或保存的提取文本。
+
+传入 `streamProgress:true` 时，两种分析接口均返回 `application/x-ndjson`，逐行推送 `progress`、`research`、`answer`、`heartbeat`、`complete` 或 `error` 事件；`answer.text` 是生成中的正文片段，`answer.replace:true` 表示重置当前草稿。PDF 的 `complete` 事件还包含保存后的 `resume`，供评分卡、评分历史和候选人对比同步更新；报告与原有评分卡都成功后才保存。未传入时仍返回 JSON 响应。导入时的初评沿用原流程，成果核查在手动分析时执行。
+
+未配置 Tavily 时仍会提取条目并查询已有缓存，未命中条目标为待补充，不声称完成联网核查。所有提取和生成都需要模型服务。来源必须是网页工具本次实际读取的正文；未知事实填 `null`，缺口写入 `notes`。身份或年份未确认的报告保存但不作为后续缓存命中。缓存默认有效 30 天，过期重查、保留旧版本，具体布局见 [db/README.md](db/README.md)。现有目录外的旧报告不会自动导入。
+
+竞赛与项目 Skill 采集事实，不计算含金量；论文 Skill 按可核实的发表渠道、年份和轨道给出有限评价。公共资料无法证明简历持有人的实际获奖、署名、参与或个人贡献，分析时与简历自述分别处理。

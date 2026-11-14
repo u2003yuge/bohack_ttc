@@ -5,7 +5,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateRoleReport, generateScoreCard, suggestComparisonRanking, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestKnowledgeFilters, suggestScoreWeights } from "./analysis.js";
+import { enrichKnowledgeDraft, extractCandidate, generateInitialReport, generateScoreCard, suggestComparisonRanking, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestKnowledgeFilters, suggestScoreWeights } from "./analysis.js";
+import { analyzeResume } from "./agent.js";
+import { respondWithAnalysis } from "./analysis-response.js";
+import { interruptible } from "./operations.js";
 import { defaultScoreWeights, normalizeComparisonRankDraft, normalizeWeights, type ComparisonRankDraft, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
 import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
@@ -541,49 +544,68 @@ router.post("/:id/analyze", async (request, response, next) => {
       response.status(404).json({ error: "找不到这份简历。" });
       return;
     }
-    const { roleRequirements, question, webResearchEnabled } = request.body ?? {};
+    const { roleRequirements, question, webResearchEnabled = false, includeResearch = true, streamProgress = false, ocrText = "" } = request.body ?? {};
     if (typeof question !== "string" || typeof roleRequirements !== "string") {
       response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
       return;
     }
-    const shouldResearch = webResearchEnabled === true && Boolean(roleRequirements.trim());
-    let researchSources: Awaited<ReturnType<typeof searchPublicWeb>> = [];
-    let researchStatus: "searched" | "not-configured" | "unavailable" | "not-requested" = "not-requested";
-    if (shouldResearch) {
-      if (!process.env.TAVILY_API_KEY) {
-        researchStatus = "not-configured";
-      } else {
-        try {
-          researchSources = await searchPublicWeb(`${roleRequirements.slice(0, 320)} 岗位技能 行业背景 官方`, 4);
-          researchStatus = "searched";
-        } catch {
-          researchStatus = "unavailable";
+    if (typeof includeResearch !== "boolean" || typeof streamProgress !== "boolean" || typeof webResearchEnabled !== "boolean"
+      || typeof ocrText !== "string" || ocrText.length > 100_000) {
+      response.status(400).json({ error: "核查和进度开关必须为布尔值，OCR 文本不得超过 100000 字符。" });
+      return;
+    }
+    if (!process.env.OPENAI_API_KEY) {
+      response.status(503).json({ error: "尚未配置模型服务。请在 .env 中填写 OPENAI_API_KEY。" });
+      return;
+    }
+    const resumeText = ocrText.trim() ? ocrText : record.text;
+    if (resumeText.length > 100_000) {
+      response.status(400).json({ error: "简历文本不得超过 100000 字符。" });
+      return;
+    }
+    await respondWithAnalysis(request, response, async ({ signal, emit }) => {
+      const shouldResearch = webResearchEnabled === true && Boolean(roleRequirements.trim());
+      let researchSources: Awaited<ReturnType<typeof searchPublicWeb>> = [];
+      let researchStatus: "searched" | "not-configured" | "unavailable" | "not-requested" = "not-requested";
+      if (shouldResearch) {
+        if (!process.env.TAVILY_API_KEY) {
+          researchStatus = "not-configured";
+        } else {
+          try {
+            researchSources = await interruptible(searchPublicWeb(`${roleRequirements.slice(0, 320)} 岗位技能 行业背景 官方`, 4), signal);
+            researchStatus = "searched";
+          } catch {
+            researchStatus = "unavailable";
+          }
         }
       }
-    }
-    const weights = await readWeights();
-    const [analysisReport, scoreCard] = await Promise.all([
-      generateRoleReport({
-        name: record.name,
-        resumeText: record.text,
-        roleRequirements,
-        question,
-        externalSources: researchSources,
-        externalSearchStatus: researchStatus,
-      }),
-      generateScoreCard({ name: record.name, resumeText: record.text, roleRequirements, weights }),
-    ]);
-    const updated = {
-      ...record,
-      analysisReport,
-      scoreCard,
-      scoreHistory: appendScoreHistory(record, scoreCard, "review", roleRequirements),
-      analysisStatus: "complete" as const,
-      analysisError: "",
-      analyzedAt: new Date().toISOString(),
-    };
-    await writeRecord(updated);
-    response.json({ answer: analysisReport, resume: updated, researchSources, researchStatus });
+      const weights = await readWeights();
+      signal.throwIfAborted();
+      const [analysis, scoreCard] = await Promise.all([
+        analyzeResume({
+          resumeName: record.name,
+          resumeText,
+          roleRequirements,
+          question,
+          includeResearch,
+          externalSources: researchSources,
+          externalSearchStatus: researchStatus,
+        }, { signal, emit }),
+        generateScoreCard({ name: record.name, resumeText, roleRequirements, weights }, { signal }),
+      ]);
+      signal.throwIfAborted();
+      const updated = {
+        ...record,
+        analysisReport: analysis.answer,
+        scoreCard,
+        scoreHistory: appendScoreHistory(record, scoreCard, "review", roleRequirements),
+        analysisStatus: "complete" as const,
+        analysisError: "",
+        analyzedAt: new Date().toISOString(),
+      };
+      await writeRecord(updated);
+      return { ...analysis, resume: updated };
+    });
   } catch (error) {
     next(error);
   }

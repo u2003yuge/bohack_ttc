@@ -102,7 +102,9 @@ POST /api/resumes  (application/pdf)
 
 ### `POST /api/resumes/:id/analyze`
 
-请求体：`{ roleRequirements: string, question: string }`。使用已缓存的 `text` 生成岗位分析报告，成功后更新 `analysisReport`、`analysisStatus` 和 `analyzedAt`。
+请求体包含 `roleRequirements` 和 `question`，可选 `includeResearch`（默认开启）、`webResearchEnabled`（默认关闭）、`ocrText` 和 `streamProgress`。使用已缓存的 `text` 或本次补充的 OCR 文本生成岗位分析报告和原有评分卡；二者都成功后保存报告、评分卡及评分历史。
+
+成果核查先提取竞赛、论文和项目，查询 `db/`，必要时调用对应 Skill 联网补全。核查结果随响应返回，且作为背景资料传入分析，不直接进入现有评分公式。开启流式响应时，以 NDJSON 推送阶段、核查结果和报告正文，最终 `complete` 事件包含更新后的 `resume`；普通请求继续返回 JSON。停止分析或断开连接会取消请求，已完成成果报告仍保存在资料库。
 
 ### `GET /api/resumes/:id/file`
 
@@ -133,7 +135,7 @@ PDF 阅读器在原始画布上方维护一个透明的文字层。文字层使�
 
 1. `extractCandidate`：低温度、JSON 输出、字段少、只读原文；用于列表展示。
 2. `generateInitialReport`：没有职位要求，输出候选人概览和证据；导入时自动运行。
-3. `generateRoleReport`：接收职位要求和用户问题，输出匹配分析；用户点击分析或重试时运行。
+3. `analyzeResume`（`server/agent.ts`）：接收职位要求、用户问题和可选成果核查结果，输出匹配分析；用户点击分析或重试时运行。保存 PDF 的分析接口并行生成原有评分卡，通过 `server/analysis-response.ts` 统一处理流式进度、超时和取消。
 
 三个阶段共享 `server/skills/resume-analysis.md` 的安全与证据规则，但输入和输出职责不同。任何阶段都将简历放在 `<resume>` 标记中，并把简历视为不可信数据，避免执行 PDF 中可能出现的提示注入内容。
 
