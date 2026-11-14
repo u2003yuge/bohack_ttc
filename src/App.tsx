@@ -41,6 +41,7 @@ import { calculateBenchmark, historicalCandidates, historicalScoreBands, matches
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 import ScoringWorkspace from "./ScoringWorkspace";
 import MaterialAssessment, { MaterialAssessmentRadar } from "./MaterialAssessment";
+import type { Assessment } from "../shared/material-scoring";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -50,6 +51,7 @@ type RoleProfileProposal = { requirements: string; rationale: string };
 type AnalysisTaskProposal = { question: string; rationale: string };
 type WeightProposal = { weights: ScoreWeights; rationale: string };
 type WeightImpact = { currentScore: number; proposedScore: number; currentRank: number; proposedRank: number; total: number; demoCount: number };
+type AnalysisSection = { agentId: string; label: string; markdown: string; timing?: import("./research-types.js").AgentTiming };
 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
 const defaultAiRoleRequirements = `岗位：AI 应用研发工程师
@@ -476,6 +478,23 @@ function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume })
       </div>}
     </> : <div className="trend-empty"><strong>尚无可解析的成长时间线</strong><span>需要简历中的工作年份、项目年份或奖项年份才能生成进步分曲线。</span></div>}
   </div>;
+}
+
+function scoreCardFromAssessment(assessment: Assessment, fallback: ScoreCard): ScoreCard {
+  const ability = (key: keyof Assessment["abilities"]) => assessment.abilities[key].score ?? 0;
+  const values: Record<ScoreKey, number> = {
+    leadership: ability("ownership_delivery"),
+    expertise: ability("professional_execution"),
+    experience: ability("problem_solving"),
+    perspective: ability("collaboration_organization"),
+    roleFit: ability("professional_execution"),
+    growth: ability("learning_research"),
+  };
+  const criteria = Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: values[key], evidence: [] }])) as ScoreCard["criteria"];
+  const weights = fallback.weights;
+  const totalWeight = scoreCriteria.reduce((sum, item) => sum + weights[item.key], 0) || 100;
+  const composite = Math.round(scoreCriteria.reduce((sum, item) => sum + values[item.key] * weights[item.key], 0) / totalWeight * 10) / 10;
+  return { ...fallback, criteria, composite, evaluatedAt: assessment.evaluatedAt };
 }
 
 function ProjectBreakdownView({ candidate, agentAvailable, onEvidence }: { candidate: Resume; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
@@ -1139,6 +1158,10 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
 function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onOpenScoring, agentAvailable, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onOpenScoring: () => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const pages = paginateReport(answer);
+  // Keep every chart on the same score source. Once the material Agent has
+  // returned an assessment, the trend and peer comparison must not fall back
+  // to the demo score card while the radar uses live data.
+  const visualScoreCard = candidate.assessment ? scoreCardFromAssessment(candidate.assessment, scoreCard.weights) : scoreCard;
   return (
     <div className="analysis-document-shell">
       <div className="analysis-document-toolbar">
@@ -1152,8 +1175,8 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
             <div className="analysis-visual-card-head"><span className="eyebrow">CORE ABILITY PROFILE</span><strong>核心能力雷达图</strong><small>{candidate.assessment ? "当前 Agent 评分结果" : "当前评分卡"}</small></div>
             {candidate.assessment ? <MaterialAssessmentRadar assessment={candidate.assessment} /> : <ScoreRadar card={scoreCard} selectedKey={null} onSelect={() => undefined} />}
           </div>
-          <div className="analysis-visual-card"><ScoreTrend card={scoreCard} candidate={candidate} /></div>
-          <div className="analysis-visual-card"><BenchmarkBadge role={candidate.role} score={candidate.assessment ? actualScore(scoreCard.composite) : actualScore(scoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} /></div>
+          <div className="analysis-visual-card"><ScoreTrend card={visualScoreCard} candidate={candidate} /></div>
+          <div className="analysis-visual-card"><BenchmarkBadge role={candidate.role} score={actualScore(visualScoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} /></div>
         </section>
         {busy && !answer ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
         {candidate.assessment ? <>
@@ -1203,6 +1226,19 @@ function paginateReport(answer: string): string[] {
 
   if (pageBlocks.length) pages.push(pageBlocks.join("\n\n"));
   return pages.length ? pages : [answer];
+}
+
+function scoreCardFromAssessment(assessment: NonNullable<Resume["assessment"]>, weights: ScoreWeights): ScoreCard {
+  const value = (key: keyof typeof assessment.abilities) => assessment.abilities[key].score ?? 0;
+  const criteria = {
+    leadership: { score: value("ownership_delivery"), evidence: assessment.abilities.ownership_delivery.terms.slice(0, 3).flatMap((term) => term.evidence.map((item) => item.quote)) },
+    expertise: { score: value("professional_execution"), evidence: assessment.abilities.professional_execution.terms.slice(0, 3).flatMap((term) => term.evidence.map((item) => item.quote)) },
+    experience: { score: Math.round((value("ownership_delivery") + value("problem_solving")) / 2), evidence: assessment.abilities.ownership_delivery.terms.slice(0, 2).flatMap((term) => term.evidence.map((item) => item.quote)) },
+    perspective: { score: Math.round((value("collaboration_organization") + value("learning_research")) / 2), evidence: assessment.abilities.learning_research.terms.slice(0, 2).flatMap((term) => term.evidence.map((item) => item.quote)) },
+    roleFit: { score: Math.round((value("professional_execution") + value("problem_solving")) / 2), evidence: assessment.abilities.professional_execution.terms.slice(0, 2).flatMap((term) => term.evidence.map((item) => item.quote)) },
+    growth: { score: value("learning_research"), evidence: assessment.abilities.learning_research.terms.slice(0, 3).flatMap((term) => term.evidence.map((item) => item.quote)) },
+  } satisfies ScoreCard["criteria"];
+  return { criteria, weights, composite: calculateComposite(criteria, weights), formula: "weighted-mean-v1", evaluatedAt: assessment.evaluatedAt };
 }
 
 function renderMarkdownInline(value: string) {
