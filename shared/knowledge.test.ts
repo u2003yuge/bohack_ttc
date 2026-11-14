@@ -72,12 +72,12 @@ test("cross references prioritize the most specific matching name", () => {
 });
 
 test("seed knowledge library covers all three categories with distinct official entries", () => {
-  assert.equal(demoKnowledgeRecords.length, 23);
+  assert.ok(demoKnowledgeRecords.length >= 23);
   assert.deepEqual(new Set(demoKnowledgeRecords.map((item) => item.kind)), new Set(["competition", "journal", "company"]));
   assert.equal(new Set(demoKnowledgeRecords.map((item) => item.id)).size, demoKnowledgeRecords.length);
   assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "competition").length >= 8);
   assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "journal").length >= 7);
-  assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "company").length >= 8);
+  assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "company").length >= 14);
   assert.ok(demoKnowledgeRecords.every((item) => item.verificationStatus === "示例资料，待核验"));
 });
 

@@ -1,4 +1,2 @@
 # Keep reviewed SVG asset hashes stable across Windows and Unix checkouts.
 public/competitions_logo/*.svg text eol=lf
-# Development mock PDFs are shared as exact binary fixtures.
-dev-data/mock-resumes/*.pdf -text

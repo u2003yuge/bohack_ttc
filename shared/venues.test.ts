@@ -30,8 +30,8 @@ test("all seven overlapping venues keep historical review IDs and other categori
   assert.deepEqual(merged.filter((record) => record.kind !== "journal"), demoKnowledgeRecords.filter((record) => record.kind !== "journal"));
   assert.equal(knowledgeRecords.filter((record) => record.kind === "journal").length, 100);
   assert.equal(knowledgeRecords.filter((record) => record.kind === "competition").length, 122);
-  assert.equal(knowledgeRecords.filter((record) => record.kind === "company").length, 8);
-  assert.equal(new Set(knowledgeRecords.map((record) => record.id)).size, 230);
+  assert.ok(knowledgeRecords.filter((record) => record.kind === "company").length >= 14);
+  assert.equal(new Set(knowledgeRecords.map((record) => record.id)).size, knowledgeRecords.length);
 });
 
 test("venue references avoid generic skills and degree subjects while supporting publication names", () => {

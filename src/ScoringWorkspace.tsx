@@ -314,7 +314,7 @@ export default function ScoringWorkspace({
     <main className="scoring-workspace">
       <header className="ms-workspace-heading">
         <div>
-          <span className="ms-eyebrow">BOHACK / MATERIAL SCORING</span>
+          <span className="ms-eyebrow">简阅 / 材料评分</span>
           <h1>让每一分都有材料依据</h1>
           <p>先理解经历，再评估材料与个人行动，最后按岗位偏好比较。</p>
         </div>
