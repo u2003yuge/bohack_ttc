@@ -6,7 +6,7 @@
 
 简阅是一个本地运行的招聘简历阅读与分析工作台。它可以导入 PDF、整理候选人、在应用内阅读原始简历，并通过可配置的 AI Agent 对照职位要求分析简历。PDF 和候选人数据默认保存在运行本项目的电脑上。
 
-默认入口现为 **材料评分 v1.3**：七类材料 → 固定规则材料分 → 个人行动映射 → 五维能力 → 岗位偏好排序。竞赛材料先计算赛事质量，再按候选人表现比例得到最终材料分。完整项目介绍见 [docs/PROJECT_INTRODUCTION.md](docs/PROJECT_INTRODUCTION.md)，具体权重及规则见 [docs/SCORING_V1.md](docs/SCORING_V1.md) 和 [docs/SCORING_V1_3.md](docs/SCORING_V1_3.md)。没有模型配置时也能使用保守规则抽取与计算。
+默认入口现为 **材料评分 v1.4**：七类材料 → 固定规则材料分 → 个人行动映射 → 五维能力 → 岗位偏好排序。竞赛材料先计算赛事质量，再按候选人表现比例得到最终材料分；缺少直接行动证据时使用最低归因系数并标记为暂定。完整项目介绍见 [docs/PROJECT_INTRODUCTION.md](docs/PROJECT_INTRODUCTION.md)，具体权重及规则见 [docs/SCORING_V1.md](docs/SCORING_V1.md)、[docs/SCORING_V1_3.md](docs/SCORING_V1_3.md) 和 [docs/SCORING_V1_4.md](docs/SCORING_V1_4.md)。没有模型配置时也能使用保守规则抽取与计算。
 
 ## 功能
 

@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   abilityDimensions,
   actionLevels,
+  actionFloor,
   awardEventWeights,
   awardSelectivityReference,
   awardTierMultipliers,
@@ -92,6 +93,7 @@ export function createAssessment(
       factorDefinitions,
       typeAdaptation,
       actionLevels,
+      actionFloor,
       awardEventWeights,
       awardTierMultipliers,
       awardSelectivityReference,

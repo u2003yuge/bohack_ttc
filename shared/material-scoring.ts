@@ -1,8 +1,8 @@
 /** Versioned, deterministic scoring. Models may extract facts; they never supply points. */
-export const scoringVersion = "material-derived-v1.3.0";
-export const calibrationStatus = "v1.3 赛事质量与候选人表现分离，待双人标注校准";
-export const decayRatio = 0.5;
-export const decayRatios: Record<MaterialType, number> = { award: 0.4, research: 0.55, project: 0.5, work: 0.65, patent: 0.5, opensource: 0.55, certificate: 0.4 };
+export const scoringVersion = "material-derived-v1.4.0";
+export const calibrationStatus = "v1.4 赛事质量与表现分离、行动系数设最低归因值，待双人标注校准";
+export const decayRatio = 0.55;
+export const decayRatios: Record<MaterialType, number> = { award: 0.45, research: 0.6, project: 0.55, work: 0.7, patent: 0.55, opensource: 0.6, certificate: 0.45 };
 export const awardEventWeights = { participants: 0.5, judging: 0.5 } as const;
 export const awardTierMultipliers = { top: 1, first: 0.85, second: 0.65, third: 0.45, finalist: 0.25 } as const;
 export const awardSelectivityReference = 0.001;
@@ -301,6 +301,7 @@ export const typeAdaptation: Record<MaterialType, Record<AbilityKey, number>> = 
   ]),
 ) as Record<MaterialType, Record<AbilityKey, number>>;
 export const actionLevels = { guided: 0.25, concrete: 0.5, owned: 0.75, validated: 1 } as const;
+export const actionFloor = 0.1;
 export const actionCoefficients: Record<AbilityKey, Record<keyof typeof actionLevels, number>> = { professional_execution: { guided: 0.2, concrete: 0.45, owned: 0.7, validated: 0.9 }, problem_solving: { guided: 0.2, concrete: 0.45, owned: 0.7, validated: 0.9 }, ownership_delivery: { guided: 0.25, concrete: 0.5, owned: 0.75, validated: 0.95 }, collaboration_organization: { guided: 0.25, concrete: 0.5, owned: 0.75, validated: 0.95 }, learning_research: { guided: 0.2, concrete: 0.45, owned: 0.7, validated: 0.9 } };
 export type MaterialInput = {
   material_id: string;
@@ -636,7 +637,11 @@ export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapp
     if (!selected || actionLevels[level] > actionLevels[selected.level]) selected = { level, evidence };
   }
   return {
-    mapping_coefficient: selected ? actionCoefficients[key][selected.level] : null,
+    mapping_coefficient: selected
+      ? actionCoefficients[key][selected.level]
+      : isCatalogBackground(material)
+        ? null
+        : actionFloor,
     rule: selected?.level ?? null,
     mapping_reason: selected
       ? {
@@ -645,7 +650,9 @@ export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapp
           owned: "明确承担该行动的责任",
           validated: "明确承担责任且有交付或验证结果",
         }[selected.level]
-      : "未找到支持该维度的个人行动证据。",
+      : isCatalogBackground(material)
+        ? "资料库背景条目不生成候选人个人能力贡献。"
+        : `未找到直接行动证据，使用最低归因系数 ${actionFloor}，结果标记为暂定。`,
     supporting_evidence: selected ? [selected.evidence] : [],
     type_coefficient: typeAdaptation[material.material_type][key],
     derived_contribution: null,
@@ -792,11 +799,17 @@ export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
         {
           score: terms.length ? roundPoints(terms.reduce((sum, term) => sum + term.contribution, 0)) : null,
           provisional: materials.some(
-            (m) => m.provisional || m.dimension_mapping[key].derived_contribution === null,
+            (m) =>
+              m.provisional ||
+              m.dimension_mapping[key].derived_contribution === null ||
+              (m.dimension_mapping[key].rule === null && !isCatalogBackground(m)),
           ),
           terms,
-          missing_materials: materials.filter((m) => m.dimension_mapping[key].derived_contribution === null)
-            .length,
+          missing_materials: materials.filter(
+            (m) =>
+              m.dimension_mapping[key].derived_contribution === null ||
+              (m.dimension_mapping[key].rule === null && !isCatalogBackground(m)),
+          ).length,
         },
       ];
     }),
