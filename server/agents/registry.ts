@@ -6,41 +6,23 @@ import {
   suggestProjectBreakdown,
 } from "../analysis.js";
 import type { CandidateFields } from "../analysis.js";
-import type { ResearchBatch } from "../../src/research-types.js";
 import type { Assessment, MaterialInput } from "../../shared/material-scoring.js";
-import { enrichResume } from "../research/runner.js";
 import { createAssessment } from "../scoring/pipeline.js";
-import { enrichMaterialFacts, extractMaterials, toResearchItems } from "../scoring/materials.js";
+import { extractMaterials } from "../scoring/materials.js";
 import { abilityDimensions, materialTypeLabels } from "../../shared/material-scoring.js";
 
 export const resumeAgentIds = [
   "candidate-profile",
   "material-extraction",
-  "competition-research",
-  "paper-research",
-  "project-research",
-  "achievement-research",
-  "evidence-annotations",
   "score-calculation",
   "analysis-report",
   "plain-language-breakdown",
 ] as const;
 export type ResumeAgentId = (typeof resumeAgentIds)[number];
-export const resumeAnalysisAgentIds = [
-  "candidate-profile",
-  "material-extraction",
-  "score-calculation",
-  "analysis-report",
-  "plain-language-breakdown",
-] as const satisfies readonly ResumeAgentId[];
+export const resumeAnalysisAgentIds = resumeAgentIds;
 const agentVersions: Record<ResumeAgentId, number> = {
   "candidate-profile": 1,
   "material-extraction": 1,
-  "competition-research": 1,
-  "paper-research": 1,
-  "project-research": 1,
-  "achievement-research": 1,
-  "evidence-annotations": 1,
   "score-calculation": 1,
   "analysis-report": 2,
   "plain-language-breakdown": 2,
@@ -53,10 +35,6 @@ export type ResumeAgentContext = {
   question?: string;
   reviewerFocus?: string;
   useModel?: boolean;
-  includeResearch?: boolean;
-  webResearchEnabled?: boolean;
-  externalSources?: Array<{ title: string; url: string; snippet: string }>;
-  externalSearchStatus?: "searched" | "not-configured" | "unavailable" | "not-requested";
 };
 export type AgentArtifact = { id: ResumeAgentId; inputHash: string; output: unknown };
 export type ResumeAgentRun = {
@@ -81,22 +59,6 @@ const objectOutput = <T>(outputs: Outputs, id: ResumeAgentId): T => {
   if (value === undefined) throw new Error(`Agent ${id} 的依赖结果缺失。`);
   return value as T;
 };
-
-async function researchMaterials(
-  resumeText: string,
-  materials: MaterialInput[],
-  signal?: AbortSignal,
-  includeResearch = true,
-): Promise<ResearchBatch> {
-  if (!includeResearch) return { items: [], notes: [] };
-  const items = toResearchItems(materials);
-  if (!items.length) return { items: [], notes: [] };
-  return enrichResume(resumeText, {
-    signal,
-    extract: async () => ({ items, notes: [] }),
-    canSearch: Boolean(process.env.TAVILY_API_KEY && process.env.OPENAI_API_KEY),
-  });
-}
 
 const definitions: Record<ResumeAgentId, Definition> = {
   "candidate-profile": {
@@ -123,102 +85,6 @@ const definitions: Record<ResumeAgentId, Definition> = {
     }),
     run: async ({ resumeText, useModel }, _outputs, signal) => extractMaterials(resumeText, { signal, useModel }),
   },
-  "competition-research": {
-    id: "competition-research",
-    label: "竞赛与奖项资料核查",
-    dependsOn: ["material-extraction"],
-    input: (context, outputs) => ({
-      materials: objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction").materials.filter((item) => item.material_type === "award"),
-      researchEnabled: context.includeResearch !== false,
-      searchEnabled: context.includeResearch !== false && Boolean(process.env.TAVILY_API_KEY && process.env.OPENAI_API_KEY),
-      researchModel: process.env.OPENAI_RESEARCH_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    }),
-    run: async ({ resumeText, includeResearch }, outputs, signal) => {
-      const materials = objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction").materials
-        .filter((item) => item.material_type === "award");
-      return researchMaterials(resumeText, materials, signal, includeResearch);
-    },
-  },
-  "paper-research": {
-    id: "paper-research",
-    label: "论文与发表渠道资料核查",
-    dependsOn: ["material-extraction"],
-    input: (context, outputs) => ({
-      materials: objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction").materials.filter((item) => item.material_type === "research"),
-      researchEnabled: context.includeResearch !== false,
-      searchEnabled: context.includeResearch !== false && Boolean(process.env.TAVILY_API_KEY && process.env.OPENAI_API_KEY),
-      researchModel: process.env.OPENAI_RESEARCH_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    }),
-    run: async ({ resumeText, includeResearch }, outputs, signal) => {
-      const materials = objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction").materials
-        .filter((item) => item.material_type === "research");
-      return researchMaterials(resumeText, materials, signal, includeResearch);
-    },
-  },
-  "project-research": {
-    id: "project-research",
-    label: "项目与公司背景资料核查",
-    dependsOn: ["material-extraction"],
-    input: (context, outputs) => ({
-      materials: objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction").materials.filter((item) => item.material_type === "project"),
-      researchEnabled: context.includeResearch !== false,
-      searchEnabled: context.includeResearch !== false && Boolean(process.env.TAVILY_API_KEY && process.env.OPENAI_API_KEY),
-      researchModel: process.env.OPENAI_RESEARCH_MODEL || process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    }),
-    run: async ({ resumeText, includeResearch }, outputs, signal) => {
-      const materials = objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction").materials
-        .filter((item) => item.material_type === "project");
-      return researchMaterials(resumeText, materials, signal, includeResearch);
-    },
-  },
-  "achievement-research": {
-    id: "achievement-research",
-    label: "成果核查结果汇总",
-    dependsOn: ["competition-research", "paper-research", "project-research"],
-    input: (_context, outputs) => ({
-      competition: objectOutput(outputs, "competition-research"),
-      papers: objectOutput(outputs, "paper-research"),
-      projects: objectOutput(outputs, "project-research"),
-    }),
-    run: async (_context, outputs) => {
-      const batches = ["competition-research", "paper-research", "project-research"]
-        .map((id) => objectOutput<ResearchBatch>(outputs, id as ResumeAgentId));
-      return {
-        items: batches.flatMap((batch) => batch.items),
-        notes: [...new Set(batches.flatMap((batch) => batch.notes))],
-        ...(batches.some((batch) => batch.catalog) ? { catalog: batches.flatMap((batch) => batch.catalog ?? []) } : {}),
-      } satisfies ResearchBatch;
-    },
-  },
-  "evidence-annotations": {
-    id: "evidence-annotations",
-    label: "证据标注与资料跳转链接",
-    dependsOn: ["material-extraction", "achievement-research"],
-    input: (_context, outputs) => ({
-      materials: objectOutput(outputs, "material-extraction"),
-      research: objectOutput(outputs, "achievement-research"),
-    }),
-    run: async ({ resumeText }, outputs) => {
-      const extracted = objectOutput<{ materials: MaterialInput[] }>(outputs, "material-extraction");
-      const research = objectOutput<ResearchBatch>(outputs, "achievement-research");
-      const materials = enrichMaterialFacts(extracted.materials, research);
-      return materials.map((material) => {
-        const start = resumeText.indexOf(material.resume_claim);
-        return {
-          id: material.material_id,
-          type: material.material_type,
-          title: material.title,
-          claim: material.resume_claim,
-          start,
-          end: start < 0 ? -1 : start + material.resume_claim.length,
-          researchStatus: material.external_facts.research_status ?? "not-checked",
-          sources: material.sources
-            .filter((source) => source.origin === "research")
-            .map((source) => ({ title: source.source, url: source.url ?? null, information: source.quote })),
-        };
-      });
-    },
-  },
   "score-calculation": {
     id: "score-calculation",
     label: "材料与能力规则评分",
@@ -228,12 +94,10 @@ const definitions: Record<ResumeAgentId, Definition> = {
     }),
     run: async ({ resumeText }, outputs) => {
       const extracted = objectOutput<{ materials: MaterialInput[]; mode: "model" | "rules"; notes: string[] }>(outputs, "material-extraction");
-      const research: ResearchBatch = { items: [], notes: [] };
       const materials = extracted.materials;
       return createAssessment(resumeText, materials, {
         extraction: extracted.mode,
-        notes: [...extracted.notes, ...research.notes],
-        research,
+        notes: extracted.notes,
       }) satisfies Assessment;
     },
   },
@@ -311,24 +175,6 @@ export function resumeAgentMarkdown(id: ResumeAgentId, output: unknown): string 
     const list = materials.map((item) => `- **${materialTypeLabels[item.material_type as keyof typeof materialTypeLabels] ?? "经历"}｜${String(item.title ?? "未命名")}：** ${String(item.resume_claim ?? "")}`).join("\n");
     return `### 简历材料提取\n\n${list || "暂未提取到项目、工作、奖项或论文材料。"}`;
   }
-  if (["competition-research", "paper-research", "project-research"].includes(id)) {
-    const batch = output && typeof output === "object" ? output as ResearchBatch : { items: [], notes: [] };
-    const list = batch.items.map(({ item, status, report, error }) => {
-      const title = String(item.input.competition_name ?? item.input.paper_title ?? item.input.project_name ?? item.input.company_name ?? "简历材料");
-      const sources = report?.sources?.filter((source) => source.url).map((source) => `[${source.title}](${source.url})`).join("、");
-      const result = status === "researched" || status === "cached" ? "资料已返回" : status === "pending" ? "暂无可用核查结果" : "核查失败";
-      return `- **${title}**：${result}${sources ? `；来源：${sources}` : ""}${error ? `；${error}` : ""}`;
-    }).join("\n");
-    const heading = id === "competition-research" ? "竞赛与奖项资料" : id === "paper-research" ? "论文与发表渠道" : "项目与公司资料";
-    return `### ${heading}\n\n${list || "简历中没有识别到该类材料。"}`;
-  }
-  if (id === "achievement-research") {
-    const batch = output && typeof output === "object" ? output as ResearchBatch : { items: [], notes: [] };
-    const researched = batch.items.filter((item) => item.status === "researched" || item.status === "cached").length;
-    const pending = batch.items.length - researched;
-    const notes = batch.notes.length ? `\n\n${batch.notes.map((note) => `- ${note}`).join("\n")}` : "";
-    return `### 成果资料汇总\n\n共整理 ${batch.items.length} 项成果资料，其中 ${researched} 项已有资料结果，${pending} 项待补充。${notes}`;
-  }
   if (id === "score-calculation") {
     const assessment = output as Assessment;
     return `### 五维能力评分\n\n| 能力维度 | 规则得分 |\n| --- | ---: |\n${abilityDimensions.map(({ key, label }) => `| ${label} | ${assessment.abilities[key].score === null ? "NA" : assessment.abilities[key].score} |`).join("\n")}\n\n得分按已提取材料和个人行动证据计算。`;
@@ -342,11 +188,6 @@ export function resumeAgentMarkdown(id: ResumeAgentId, output: unknown): string 
     const projects = Array.isArray(value.projects) ? value.projects as Array<Record<string, unknown>> : [];
     const list = projects.map((project) => `#### ${String(project.plainTitle ?? project.title ?? "项目经历")}\n\n- **要解决什么：** ${String(project.goal ?? "待核实")}\n- **具体做了什么：** ${String(project.actions ?? "待核实")}\n- **带来什么结果：** ${String(project.outcome ?? "待核实")}\n- **简历原文：** ${String(project.evidence ?? "")}`).join("\n\n");
     return `### 项目经历人话拆解\n\n${list || "没有可拆解的项目或工作经历。"}`;
-  }
-  if (id === "evidence-annotations") {
-    const annotations = Array.isArray(output) ? output as Array<Record<string, unknown>> : [];
-    const list = annotations.map((item) => `- **${String(item.title ?? "简历材料")}**：${String(item.researchStatus ?? "待核查")}`).join("\n");
-    return `### 简历证据定位\n\n${list || "没有需要添加资料跳转的成果条目。"}`;
   }
   return "";
 }

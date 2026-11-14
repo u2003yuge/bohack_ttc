@@ -13,12 +13,10 @@ import {
 } from "../../shared/material-scoring.js";
 import type { AnalysisEvent, ResearchBatch } from "../../src/research-types.js";
 import { deadline, interruptible, limit } from "../operations.js";
-import { enrichResume } from "../research/runner.js";
-import { enrichMaterialFacts, extractMaterials, toResearchItems } from "./materials.js";
+import { enrichMaterialFacts, extractMaterials } from "./materials.js";
 
 type EvaluationOptions = {
   signal?: AbortSignal;
-  includeResearch?: boolean;
   useModel?: boolean;
   emit?: (event: AnalysisEvent) => void;
   rho?: number;
@@ -39,18 +37,7 @@ export async function evaluateResume(text: string, options: EvaluationOptions = 
       extractMaterials(text, { signal: scope.signal, useModel: options.useModel }),
       scope.signal,
     );
-    let research = options.research ?? ({ items: [], notes: [] } as ResearchBatch);
-    if (!options.research && options.includeResearch !== false) {
-      const items = toResearchItems(extracted.materials);
-      if (items.length)
-        research = await enrichResume(text, {
-          signal: scope.signal,
-          extract: async () => ({ items, notes: [] }),
-          canSearch: !!process.env.TAVILY_API_KEY && !!process.env.OPENAI_API_KEY,
-          onProgress: (progress) => options.emit?.({ type: "progress", progress }),
-          onUpdate: (batch) => options.emit?.({ type: "research", research: batch }),
-        });
-    }
+    const research = options.research ?? ({ items: [], notes: [] } as ResearchBatch);
     scope.signal.throwIfAborted();
     options.emit?.({ type: "research", research });
     options.emit?.({

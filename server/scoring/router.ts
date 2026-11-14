@@ -87,12 +87,15 @@ router.post("/preferences/draft", async (request, response) => {
   }
 });
 router.post("/evaluate", async (request, response) => {
-  const { text, includeResearch = true, useModel = true, streamProgress = false } = request.body ?? {};
+  const { text, useModel = true, streamProgress = false } = request.body ?? {};
+  if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+    response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
+    return;
+  }
   if (
     typeof text !== "string" ||
     !text.trim() ||
     text.length > 100_000 ||
-    typeof includeResearch !== "boolean" ||
     typeof useModel !== "boolean" ||
     typeof streamProgress !== "boolean"
   ) {
@@ -100,7 +103,7 @@ router.post("/evaluate", async (request, response) => {
     return;
   }
   await respondWithAnalysis(request, response, async (options) => {
-    const result = await evaluateResume(text, { ...options, includeResearch, useModel });
+    const result = await evaluateResume(text, { ...options, useModel });
     return { ...result, answer: assessmentReport(result.assessment) };
   });
 });

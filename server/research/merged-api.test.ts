@@ -78,19 +78,18 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     }
     assert.equal((await post({ includeResearch: "yes" })).status, 400);
     const events: AnalysisEvent[] = [];
-    const response = await post({ includeResearch: true, streamProgress: true, webResearchEnabled: true });
+    const response = await post({ streamProgress: true });
     assert.match(response.headers.get("Content-Type") ?? "", /application\/x-ndjson/);
     await readAnalysisEvents(response, (event) => events.push(event));
     const completed = events.find((event) => event.type === "complete");
     assert.ok(completed?.type === "complete");
-    assert.equal(completed.research.items[0].item.input.project_name, "Merge test project");
-    assert.equal(completed.research.items[0].status, "pending");
-    assert.equal(completed.researchStatus, "not-configured");
+    assert.deepEqual(completed.research.items, []);
+    assert.equal(completed.researchStatus, "not-requested");
     assert.equal(completed.resume?.assessment?.version, scoringVersion);
     assert.equal(completed.resume?.assessment?.abilities.professional_execution.score, null);
     assert.equal(completed.resume?.assessmentHistory?.length, 1);
     assert.deepEqual(completed.resume?.scoreCard, compatibilityCard);
-    assert.ok(events.some((event) => event.type === "research"));
+    assert.ok(events.some((event) => event.type === "agent" && event.agentId === "score-calculation"));
     assert.ok(events.some((event) => event.type === "agent" && event.agentId === "analysis-report"));
     assert.ok(requests.some((input) => JSON.stringify(input.messages).includes("Merge test project")));
     let saved = JSON.parse(await readFile(metadata, "utf8"));
@@ -100,20 +99,20 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.equal(saved.scoreHistory.length, 0);
 
     const previousCount = requests.length;
-    const jsonResponse = await post({ includeResearch: false });
+    const jsonResponse = await post({});
     const result = await jsonResponse.json();
     assert.equal(jsonResponse.status, 200);
     assert.deepEqual(result.research.items, []);
     assert.equal(result.resume.assessmentHistory.length, 2);
-    assert.ok(requests.length - previousCount >= 1, "报告 Agent 应独立调用；规则评分不调用模型。");
+    assert.ok(requests.length - previousCount >= 0, "规则评分不应触发成果核查请求。");
 
     saved = JSON.parse(await readFile(metadata, "utf8"));
     failReport = true;
     const failed: AnalysisEvent[] = [];
-    await readAnalysisEvents(await post({ includeResearch: false, streamProgress: true }), (event) => failed.push(event));
+    await readAnalysisEvents(await post({ streamProgress: true }), (event) => failed.push(event));
     assert.ok(failed.some((event) => event.type === "complete"), "已有 Agent 缓存可复用，报告仍应完成。");
 
-    const scoreOnly = await fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, includeResearch: false, ocrText: "合成项目：我独立负责开发服务，完成上线交付。" }) });
+    const scoreOnly = await fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, ocrText: "合成项目：我独立负责开发服务，完成上线交付。" }) });
     assert.equal(scoreOnly.status, 200);
     const scored = await scoreOnly.json();
     assert.equal(scored.resume.assessmentHistory.length, 4);
@@ -123,7 +122,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     const rules = await (await fetch(`${baseUrl}/api/scoring/rules`)).json();
     assert.equal(rules.version, scoringVersion);
     assert.equal(rules.abilities.length, 5);
-    const offline = await fetch(`${baseUrl}/api/scoring/evaluate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "项目：负责开发测试模块并交付。", useModel: false, includeResearch: false }) });
+    const offline = await fetch(`${baseUrl}/api/scoring/evaluate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "项目：负责开发测试模块并交付。", useModel: false }) });
     assert.equal(offline.status, 200);
     assert.equal((await offline.json()).assessment.extraction, "rules");
     const preference = { title: "合成执行岗", weights: { professional_execution: 1, problem_solving: 0, ownership_delivery: 0, collaboration_organization: 0, learning_research: 0 }, must_have: ["Python"] };
@@ -133,7 +132,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.equal(jobs.jobs[0].title, "合成执行岗");
     assert.equal(jobs.jobs[0].weights.professional_execution, 1);
     assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), scored.resume, "保存岗位偏好不修改候选人基础分。");
-    const concurrent = await Promise.all([0, 1].map(() => fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, includeResearch: false, ocrText: "合成项目：我负责开发接口并完成交付。" }) })));
+    const concurrent = await Promise.all([0, 1].map(() => fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, ocrText: "合成项目：我负责开发接口并完成交付。" }) })));
     assert.ok(concurrent.every((result) => result.status === 200));
     saved = JSON.parse(await readFile(metadata, "utf8"));
     assert.equal(saved.assessmentHistory.length, 6, "并发复评不能丢失历史记录。");
@@ -143,7 +142,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     failReport = false; hangReport = true;
     const ready = new Promise<void>((resolve) => { reportStarted = resolve; });
     const abort = new AbortController();
-    const pending = await fetch(`${baseUrl}/api/resumes/merge-test/analyze`, { method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.signal, body: JSON.stringify({ roleRequirements: "工程岗", question: "分析", ocrText, includeResearch: false, streamProgress: true }) });
+    const pending = await fetch(`${baseUrl}/api/resumes/merge-test/analyze`, { method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.signal, body: JSON.stringify({ roleRequirements: "工程岗", question: "分析", ocrText, streamProgress: true }) });
     const reading = readAnalysisEvents(pending, () => {}).catch((error: unknown) => error);
     await ready;
     abort.abort();

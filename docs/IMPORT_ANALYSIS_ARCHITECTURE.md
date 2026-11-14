@@ -39,7 +39,7 @@ POST /api/resumes  (application/pdf)
         |
         +--> Agent 编排：material-extraction -> score-calculation
         |       - 固定规则计算材料和能力分
-        |       - 导入阶段关闭成果背景核查
+        |       - 只使用简历原文，不做成果真实性核查
         |
         +--> Agent 编排：analysis-report
         |       - 使用简历 Skill
@@ -113,13 +113,13 @@ POST /api/resumes  (application/pdf)
 
 ### `POST /api/resumes/:id/analyze`
 
-请求体包含 `roleRequirements` 和 `question`，可选 `includeResearch`（默认开启）、`webResearchEnabled`（默认关闭）、`ocrText` 和 `streamProgress`。使用缓存的 `text` 或本次 OCR 文本先评估材料，再让模型解释同一份计算结果，成功后保存报告及 v1 评估历史。仅需评分时调用 `POST /api/resumes/:id/assessment`，可以不用模型。
+请求体包含 `roleRequirements` 和 `question`，可选 `ocrText` 和 `streamProgress`。旧的 `includeResearch`、`webResearchEnabled` 参数会被拒绝。使用缓存的 `text` 或本次 OCR 文本先评估材料，再让模型解释同一份计算结果，成功后保存报告及 v1 评估历史。仅需评分时调用 `POST /api/resumes/:id/assessment`，可以不用模型。
 
-成果核查先提取竞赛、论文和项目，查询 `db/`，必要时调用对应 Skill 联网补全。核查结果随响应返回，且作为背景资料传入分析，不直接进入现有评分公式。开启流式响应时，以 NDJSON 推送阶段、核查结果和报告正文，最终 `complete` 事件包含更新后的 `resume`；普通请求继续返回 JSON。停止分析或断开连接会取消请求，已完成成果报告仍保存在资料库。
+竞赛、论文和项目仅从简历原文中提取并参与材料评分，不读取 `db/`，不调用搜索服务，也不判断候选人是否真实获奖、发表或参与。开启流式响应时，以 NDJSON 推送阶段、评分和报告正文，最终 `complete` 事件包含更新后的 `resume`；普通请求继续返回 JSON。停止分析或断开连接会取消请求。
 
 ### `POST /api/resumes/:id/agents/run`
 
-请求体用 `agents` 数组列出要运行的 Agent，可选提供 `roleRequirements`、`question`、`reviewerFocus`、`force`、`useModel`、`includeResearch` 或 OCR 文本。服务端读取并复用 `agentArtifacts`，只运行指定 Agent 及缺失或失效的依赖。响应返回 `executed`、`reused`、各 Agent 输出及更新后的简历。断开连接会取消尚未完成的任务，取消或失败时不保存部分结果。
+请求体用 `agents` 数组列出要运行的 Agent，可选提供 `roleRequirements`、`question`、`reviewerFocus`、`force`、`useModel` 或 OCR 文本。服务端读取并复用 `agentArtifacts`，只运行指定 Agent 及缺失或失效的依赖。响应返回 `executed`、`reused`、各 Agent 输出及更新后的简历。断开连接会取消尚未完成的任务，取消或失败时不保存部分结果。
 
 ### `GET /api/resumes/:id/file`
 

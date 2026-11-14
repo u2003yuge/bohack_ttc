@@ -262,6 +262,9 @@ router.post("/knowledge", async (request, response, next) => {
 });
 
 router.post("/knowledge/enrich", async (request, response, next) => {
+  response.status(410).json({ error: "资料联网整理功能已移除，请手动维护资料库。" });
+  return;
+  /*
   try {
     const input = request.body ?? {};
     const title = textInput(input.title, 160);
@@ -293,6 +296,7 @@ router.post("/knowledge/enrich", async (request, response, next) => {
     const suggestion = await enrichKnowledgeDraft({ title, kind, field, organizer, region, summary, signals, officialUrl, reviewerHints, sources });
     response.json({ suggestion, sources, searchStatus });
   } catch (error) { next(error); }
+  */
 });
 
 router.put("/knowledge/:id", async (request, response, next) => {
@@ -382,6 +386,9 @@ router.put("/knowledge/:id/review", async (request, response, next) => {
 });
 
 router.post("/knowledge/:id/suggest", async (request, response, next) => {
+  response.status(410).json({ error: "竞赛、论文和项目资料的联网核查功能已移除，请使用人工评估。" });
+  return;
+  /*
   try {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
     if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
@@ -402,6 +409,7 @@ router.post("/knowledge/:id/suggest", async (request, response, next) => {
     const suggestion = await suggestKnowledgeAssessment({ ...record, roleContext, reviewerFocus, sources, searchStatus });
     response.json({ suggestion, sources, searchStatus });
   } catch (error) { next(error); }
+  */
 });
 
 router.get("/scoring/weights", async (_request, response) => {
@@ -626,6 +634,10 @@ router.post("/:id/assessment", async (request, response, next) => {
     const record = await readRecord(request.params.id);
     if (!record) { response.status(404).json({ error: "找不到这份简历。" }); return; }
     const { ocrText = "", streamProgress = false } = request.body ?? {};
+    if (Object.hasOwn(request.body ?? {}, "includeResearch")) {
+      response.status(400).json({ error: "候选人成果真实性核查功能已移除。" });
+      return;
+    }
     if (typeof streamProgress !== "boolean" || typeof ocrText !== "string" || ocrText.length > 100_000) {
       response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本最多 100000 字符。" }); return;
     }
@@ -646,6 +658,10 @@ router.post("/:id/analyze", async (request, response, next) => {
       return;
     }
     const { roleRequirements, question, streamProgress = false, ocrText = "" } = request.body ?? {};
+    if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+      response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
+      return;
+    }
     if (typeof question !== "string" || typeof roleRequirements !== "string") {
       response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
       return;

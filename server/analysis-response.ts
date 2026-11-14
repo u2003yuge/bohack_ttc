@@ -22,7 +22,7 @@ export async function respondWithAnalysis(request: Request, response: Response, 
     response.flushHeaders();
     heartbeat = setInterval(() => emit({ type: "heartbeat" }), 10_000);
     heartbeat.unref();
-    emit({ type: "progress", progress: { stage: request.body?.includeResearch === false ? "analyzing" : "extracting", message: "分析请求已接收，正在处理。" } });
+    emit({ type: "progress", progress: { stage: "extracting", message: "分析请求已接收，正在处理。" } });
   }
   try {
     const result = await interruptible(operation({ signal: scope.signal, emit }), scope.signal);

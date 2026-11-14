@@ -47,7 +47,7 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
   child.stderr.on("data", (chunk) => { stderr += String(chunk); });
   const post = (streamProgress = true, signal?: AbortSignal) => fetch(`http://127.0.0.1:${appAddress.port}/api/agent`, {
     method: "POST", headers: { "Content-Type": "application/json" }, signal,
-    body: JSON.stringify({ resumeText: "示例简历", question: "分析经历", includeResearch: false, streamProgress }),
+    body: JSON.stringify({ resumeText: "示例简历", question: "分析经历", streamProgress }),
   });
   try {
     await new Promise<void>((resolve, reject) => {

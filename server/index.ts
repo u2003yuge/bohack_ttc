@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import resumes from "./resumes.js";
 import agents from "./agents/router.js";
-import research from "./research/router.js";
 import { deadline, errorMessage, limit } from "./operations.js";
 import { normalizeProjectBreakdownRequest, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
 import type { AnalysisEvent } from "../src/research-types.js";
@@ -14,7 +13,6 @@ const port = Number(process.env.PORT ?? 8787);
 app.use(express.json({ limit: "2mb" }));
 app.use("/api/resumes", express.raw({ type: "application/pdf", limit: "30mb" }), resumes);
 app.use("/api/agents", agents);
-app.use("/api/research", research);
 app.use("/api/scoring", scoring);
 
 app.get("/api/health", (_request, response) => response.json({
