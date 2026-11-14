@@ -18,7 +18,7 @@ test("100 venue profiles and all ranking/source metadata match papers.md exactly
   assert.equal(venueCatalog.filter((profile) => profile.type === "期刊").length, 45);
 });
 
-test("all seven overlapping venues keep legacy review IDs and other categories are untouched", () => {
+test("all seven overlapping venues keep historical review IDs and other categories are untouched", () => {
   const merged = mergeVenueCatalog(demoKnowledgeRecords);
   const seeds = demoKnowledgeRecords.filter((record) => record.kind === "journal");
   for (const seed of seeds) {

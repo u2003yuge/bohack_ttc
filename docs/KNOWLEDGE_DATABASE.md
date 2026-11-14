@@ -51,7 +51,7 @@
 - 每条资料都有官方来源链接、审核信号、人工含金量评分、评分理由和核验状态。
 - 可填写岗位背景和审核重点，请 Agent 给出带理由、置信度、核验问题及公开来源的建议。建议先以草稿显示，审核员点击“采用建议”后还要再次保存，才会写入历史。
 - 资料详情会反向列出命中该名称或别名的简历；简历分析报告也可以跳回对应资料。
-- 每次人工评分可以勾选本次引用的来源；保存后写入评分历史快照。点击历史评分点会展示当时的来源标题、类别、数据年份、核对状态和说明，并可打开原始链接；旧版仅存来源 ID 的记录仍会尝试从当前资料解析。
+- 每次人工评分可以勾选本次引用的来源；保存后写入评分历史快照。点击历史评分点会展示当时的来源标题、类别、数据年份、核对状态和说明，并可打开原始链接；仅存来源 ID 的历史记录仍会尝试从当前资料解析。
 - 评估历史按 `updatedAt` 时间正序展示，折线横坐标按实际经过时间线性映射，不按记录序号等距绘制；若记录时间相同则退回等距布局，避免数据点重叠。点击数据点继续查看该次评分快照。
 
 ## 评分边界
@@ -73,9 +73,9 @@ Tavily 返回的标题、链接和摘要只是检索线索。系统不会据此�
 .data/resumes/.metadata/knowledge-reviews.json  # 人工评分和审核历史
 ```
 
-`.data/` 被 Git 忽略，简历和审核数据不会提交到 GitHub。自建资料中的来源随 `knowledge-records.json` 保存；评分历史同时保存引用来源 ID 与来源快照。快照保证资料条目后续被修改或删除时，旧评分仍能显示当时的来源标题、链接、类别、数据年份、说明及核对状态；旧版仅有 ID 的历史仍会尝试从当前资料中解析。当前服务端接口为：
+`.data/` 被 Git 忽略，简历和审核数据不会提交到 GitHub。自建资料中的来源随 `knowledge-records.json` 保存；评分历史同时保存引用来源 ID 与来源快照。快照保证资料条目后续被修改或删除时，此前评分仍能显示当时的来源标题、链接、类别、数据年份、说明及核对状态；仅有 ID 的历史记录仍会尝试从当前资料中解析。当前服务端接口为：
 
-导出文件的格式标识为 `bohack-knowledge-library`、版本为 `1`，包含 `records` 数组和可选 `reviews` 对象。`records` 只包含自建资料及其评估历史；不包含随代码发布的 230 条内置资料正文。`reviews` 以已知内置资料 ID 为键，仅保存这些内置资料的人工评估历史，迁移时不会覆盖内置资料正文。导入流程先调用 `/knowledge/import/preview` 取得规范化文件和资料、评估历史的新增 / 更新计数，再把预览返回的 `bundle` 交给 `/knowledge/import`。同 ID 自建记录以导入版本更新，内置评估历史以导入版本恢复；文件未包含的本地记录和评估保持不变。旧版只含 `records` 的备份仍可导入。该功能用于备份和迁移；不要将不可信来源的 JSON 当作权威核验材料。
+导出文件的格式标识为 `bohack-knowledge-library`、版本为 `1`，包含 `records` 数组和可选 `reviews` 对象。`records` 只包含自建资料及其评估历史；不包含随代码发布的 230 条内置资料正文。`reviews` 以已知内置资料 ID 为键，仅保存这些内置资料的人工评估历史，迁移时不会覆盖内置资料正文。导入流程先调用 `/knowledge/import/preview` 取得规范化文件和资料、评估历史的新增 / 更新计数，再把预览返回的 `bundle` 交给 `/knowledge/import`。同 ID 自建记录以导入版本更新，内置评估历史以导入版本恢复；文件未包含的本地记录和评估保持不变。只含 `records` 的历史备份仍可导入。该功能用于备份和迁移；不要将不可信来源的 JSON 当作权威核验材料。
 
 内置资料正文为只读，避免本地修改在代码升级或跨设备迁移时产生隐式丢失；审核员仍可在详情页保存人工评分、核验状态、依据和来源引用。自建资料可以编辑或删除。备份会保留内置评估的最近评分和最多 30 条历史快照，包括评估时引用的来源 ID 与来源快照。
 
@@ -97,7 +97,7 @@ POST /api/resumes/knowledge/enrich
 
 ## 后续数据库升级建议
 
-正式部署时可把本地 JSON 替换为 SQLite、PostgreSQL 或组织内部数据库，但应保留现有 API 契约和以下字段：`id`、`kind`、`title`、`aliases`、`field`、`organizer`、`region`、`summary`、`signals`、`officialUrl`、`significanceScore`、`scoreRationale`、`verificationStatus`、`updatedAt`。指标和认定信息建议额外建成带 `sourceUrl`、`sourceType`、`dataYear`、`checkedAt`、`evidenceNote` 的证据表，避免新的核验结果覆盖旧版本。
+正式部署时可把本地 JSON 替换为 SQLite、PostgreSQL 或组织内部数据库，但应保留现有 API 契约和以下字段：`id`、`kind`、`title`、`aliases`、`field`、`organizer`、`region`、`summary`、`signals`、`officialUrl`、`significanceScore`、`scoreRationale`、`verificationStatus`、`updatedAt`。指标和认定信息建议额外建成带 `sourceUrl`、`sourceType`、`dataYear`、`checkedAt`、`evidenceNote` 的证据表，避免新的核验结果覆盖此前版本。
 
 简历与资料的当前关联是“简历原文出现名称或别名”的确定性匹配。若后续需要人工确认、纠错或一对多关联，应增加关系表，至少包含 `candidateId`、`knowledgeId`、`evidence`、`reviewerConfirmed` 和 `createdAt`，不要把字符串命中直接当作事实。
 

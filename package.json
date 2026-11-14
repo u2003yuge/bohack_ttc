@@ -12,7 +12,7 @@
     "dev:web": "vite --host 127.0.0.1",
     "dev:server": "tsx watch server/index.ts",
     "build": "tsc -b && vite build",
-    "test": "tsx --test server/web-search.test.ts shared/venues.test.ts shared/scoring.test.ts shared/knowledge.test.ts shared/history.test.ts shared/competitions.test.ts server/analysis.test.ts server/research/runtime.test.ts server/research/research.test.ts server/research/merged-api.test.ts server/research/competition-library.test.ts server/research/catalog.test.ts server/research/agent-api.test.ts server/scoring/material-scoring.test.ts",
+    "test": "tsx --test server/agents/registry.test.ts server/web-search.test.ts shared/venues.test.ts shared/scoring.test.ts shared/knowledge.test.ts shared/history.test.ts shared/competitions.test.ts server/analysis.test.ts server/research/runtime.test.ts server/research/research.test.ts server/research/merged-api.test.ts server/research/competition-library.test.ts server/research/catalog.test.ts server/research/agent-api.test.ts server/scoring/material-scoring.test.ts",
     "start": "tsx server/index.ts",
     "import:competitions": "node scripts/import-competitions.mjs",
     "import:papers": "tsx scripts/import-papers.ts"

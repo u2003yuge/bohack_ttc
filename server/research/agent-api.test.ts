@@ -16,9 +16,10 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
   const model = createServer(async (request, response) => {
     let body = "";
     for await (const chunk of request) body += String(chunk);
-    if (JSON.parse(body).response_format) {
+    const input = JSON.parse(body);
+    if (input.response_format) {
       response.setHeader("Content-Type", "application/json");
-      response.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ items: [], notes: [] }) } }] }));
+      response.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ items: [], notes: [], materials: [] }) } }] }));
       return;
     }
     response.once("close", () => { if (!response.writableEnded) aborted += 1; });
@@ -26,9 +27,8 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
     if (mode === "hang") return;
     if (mode === "delay") await gate;
     if (response.destroyed) return;
-    response.setHeader("Content-Type", "text/event-stream");
-    for (const content of ["分析", "已完成。"]) response.write(`data: ${JSON.stringify({ id: "local-test", object: "chat.completion.chunk", model: "test", created: 1, choices: [{ index: 0, finish_reason: null, delta: { content } }] })}\n\n`);
-    response.end("data: [DONE]\n\n");
+    response.setHeader("Content-Type", "application/json");
+    response.end(JSON.stringify({ choices: [{ message: { content: "分析已完成。" } }] }));
   });
   await new Promise<void>((resolve) => model.listen(0, "127.0.0.1", resolve));
   const modelAddress = model.address();
@@ -68,14 +68,14 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
     release();
     await reading;
     assert.equal(events.at(-1)?.type, "complete");
-    assert.ok(events.some((event) => event.type === "answer" && event.text === "分析"));
+    assert.ok(events.some((event) => event.type === "agent" && event.agentId === "analysis-report"));
 
     mode = "normal";
     const jsonResponse = await post(false);
-    assert.equal((await jsonResponse.json()).answer, "分析已完成。");
+    assert.match((await jsonResponse.json()).answer, /分析已完成/);
 
     mode = "hang";
-    await assert.rejects(readAnalysisEvents(await post(), () => {}), /模型分析超时/);
+    await assert.rejects(readAnalysisEvents(await post(), () => {}), /时限|超时/);
     assert.ok(aborted >= 1);
 
     modelReady = new Promise<void>((resolve) => { modelStarted = resolve; });

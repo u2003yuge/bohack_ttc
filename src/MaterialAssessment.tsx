@@ -117,6 +117,11 @@ function AbilityRadar({
     </svg>
   );
 }
+
+export function MaterialAssessmentRadar({ assessment }: { assessment: Assessment }) {
+  return <AbilityRadar assessment={assessment} onSelect={() => undefined} />;
+}
+
 export default function MaterialAssessment({
   assessment,
   history = [],

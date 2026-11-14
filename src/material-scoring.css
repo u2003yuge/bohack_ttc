@@ -4,8 +4,8 @@
   min-height: 0;
   overflow: auto;
   padding: 30px clamp(18px, 3vw, 46px) 60px;
-  background: #f5f8f5;
-  color: #334c40;
+  background: #f5f6f8;
+  color: #333d4c;
   font-size: 13px;
   line-height: 1.65;
 }
@@ -26,30 +26,30 @@
   margin: 5px 0;
   font-size: clamp(23px, 2.3vw, 32px);
   letter-spacing: -0.7px;
-  color: #1d4231;
+  color: #1d2c42;
 }
 .scoring-workspace h2,
 .material-assessment h2 {
   margin: 4px 0 7px;
   font-size: 21px;
-  color: #234d38;
+  color: #23354d;
 }
 .scoring-workspace h3,
 .material-assessment h3 {
   margin: 15px 0 8px;
   font-size: 15px;
-  color: #355844;
+  color: #354458;
 }
 .ms-workspace-heading p,
 .ms-section-heading p,
 .ms-candidate-heading p,
 .ms-contribution-section > p {
   margin: 0;
-  color: #7a8d81;
+  color: #7a828d;
   font-size: 12px;
 }
 .ms-eyebrow {
-  color: #6a927a;
+  color: #6a7b92;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.5px;
@@ -58,11 +58,11 @@
 .ms-badge {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #dce7de;
+  border: 1px solid #dce1e7;
   border-radius: 20px;
   background: #fff;
   padding: 4px 10px;
-  color: #5c7d66;
+  color: #5c6a7d;
   font-size: 10px;
   font-weight: 500;
   white-space: nowrap;
@@ -73,7 +73,7 @@
   gap: 8px;
   flex-wrap: wrap;
   padding: 16px 0;
-  border-bottom: 1px solid #dde7df;
+  border-bottom: 1px solid #dde1e7;
 }
 .ms-tabs button,
 .ms-ranking-filters button {
@@ -81,15 +81,15 @@
   border: 0;
   border-radius: 7px;
   background: transparent;
-  color: #6f8377;
+  color: #6f7783;
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 .ms-tabs button.active,
 .ms-ranking-filters button.active {
-  background: #dfeee4;
-  color: #265e3e;
+  background: #dfe5ee;
+  color: #263d5e;
   font-weight: 600;
 }
 .ms-controls {
@@ -107,10 +107,10 @@
   font-size: 11px;
 }
 .ms-controls input {
-  accent-color: #39754d;
+  accent-color: #395275;
 }
 .ms-controls > span {
-  color: #8a9a8e;
+  color: #8a919a;
   font-size: 10px;
   margin-right: auto;
 }
@@ -124,20 +124,21 @@
   line-height: 1.5;
 }
 .ms-primary {
-  border: 1px solid #2b6542;
-  background: #2b6542;
+  border: 1px solid #2b4365;
+  background: #2b4365;
   color: #fff;
 }
+.ms-auto-score-note { display: inline-flex; align-items: center; min-height: 32px; color: #71809a; font-size: 10px; }
 .ms-secondary {
-  border: 1px solid #d8e3da;
+  border: 1px solid #d8dde3;
   background: #fff;
-  color: #4a6c56;
+  color: #4a586c;
 }
 .ms-primary:hover {
-  background: #204e32;
+  background: #20334e;
 }
 .ms-secondary:hover {
-  background: #edf5ef;
+  background: #edf0f5;
 }
 .scoring-workspace button:disabled {
   opacity: 0.45;
@@ -145,7 +146,7 @@
 }
 .scoring-workspace button:focus-visible,
 .material-assessment button:focus-visible {
-  outline: 2px solid #78ac84;
+  outline: 2px solid #788eac;
   outline-offset: 3px;
 }
 .ms-progress {
@@ -154,21 +155,21 @@
   gap: 10px;
   padding: 12px 16px;
   margin-bottom: 16px;
-  background: #e4f0e7;
+  background: #e4e9f0;
   border-radius: 6px;
-  color: #426a4c;
+  color: #42536a;
   font-size: 12px;
 }
 .ms-progress progress {
-  accent-color: #3f7950;
+  accent-color: #3f5779;
   max-width: 140px;
   margin-left: auto;
 }
 .ms-loading {
   width: 12px;
   height: 12px;
-  border: 2px solid #bbd5c0;
-  border-top-color: #42794f;
+  border: 2px solid #bbc6d5;
+  border-top-color: #425979;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -194,7 +195,7 @@
 }
 .ms-ocr {
   margin: 0 auto 18px;
-  color: #7b8f80;
+  color: #7b838f;
   font-size: 11px;
 }
 .ms-ocr summary {
@@ -208,18 +209,18 @@
   resize: vertical;
   margin-top: 8px;
   padding: 12px;
-  border: 1px solid #dce6de;
+  border: 1px solid #dce0e6;
   border-radius: 6px;
-  color: #405849;
+  color: #404a58;
   background: #fff;
   font: inherit;
 }
 .material-assessment {
   padding: 23px;
-  border: 1px solid #e0e8e1;
+  border: 1px solid #e0e3e8;
   border-radius: 11px;
   background: #fff;
-  color: #405c49;
+  color: #404c5c;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -237,30 +238,30 @@
 }
 .ms-radar-grid {
   fill: none;
-  stroke: #e2eae3;
+  stroke: #e2e5ea;
   stroke-width: 1;
 }
 .ms-radar-area {
-  fill: #6eaa8233;
-  stroke: #4b8c5f;
+  fill: #6e87aa33;
+  stroke: #4b668c;
   stroke-width: 1.7;
 }
 .ms-radar-dot {
-  fill: #3d8052;
+  fill: #3d5980;
 }
 .ms-radar-label {
-  fill: #5f7767;
+  fill: #5f6977;
   font-size: 11px;
   cursor: pointer;
 }
 .ms-radar-value {
-  fill: #2e6240;
+  fill: #2e4462;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
 .ms-radar-tick {
-  fill: #a4b0a6;
+  fill: #a4a9b0;
   font-size: 8px;
 }
 .ms-abilities {
@@ -272,28 +273,28 @@
   grid-template-columns: 1fr auto;
   gap: 2px 12px;
   padding: 12px 15px;
-  border: 1px solid #e4ebe5;
+  border: 1px solid #e4e7eb;
   border-radius: 7px;
-  background: #fafcf9;
+  background: #f9fafc;
   text-align: left;
-  color: #536f5c;
+  color: #535f6f;
   font: inherit;
   cursor: pointer;
 }
 .ms-abilities button.active {
-  border-color: #92b59c;
-  background: #edf5ef;
+  border-color: #92a1b5;
+  background: #edf0f5;
 }
 .ms-abilities strong {
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: center;
-  color: #2d6540;
+  color: #2d4465;
   font-size: 23px;
   font-variant-numeric: tabular-nums;
 }
 .ms-abilities small {
-  color: #91a094;
+  color: #9197a0;
   font-size: 10px;
 }
 .ms-experience-summary,
@@ -308,8 +309,8 @@
 .ms-tags span {
   padding: 3px 9px;
   border-radius: 4px;
-  background: #f1f5ed;
-  color: #7c8e72;
+  background: #edf0f5;
+  color: #727e8e;
   font-size: 10px;
 }
 .ms-history-select {
@@ -318,14 +319,14 @@
   gap: 10px;
   margin-top: 12px;
   font-size: 10px;
-  color: #809185;
+  color: #808791;
 }
 .ms-history-select select {
   max-width: min(100%, 410px);
   padding: 6px 8px;
-  border: 1px solid #dee7df;
+  border: 1px solid #dee2e7;
   border-radius: 4px;
-  color: #5b7663;
+  color: #5b6676;
   font: inherit;
   background: #fff;
 }
@@ -336,8 +337,8 @@
 }
 .ms-terms article {
   padding: 12px 15px;
-  background: #f8faf7;
-  border: 1px solid #e7ede6;
+  background: #f7f8fa;
+  border: 1px solid #e6e9ed;
   border-radius: 7px;
 }
 .ms-terms article > div:first-child {
@@ -346,23 +347,23 @@
   gap: 2px;
 }
 .ms-terms article > div:first-child span {
-  color: #8b9b8e;
+  color: #8b929b;
   font-size: 10px;
 }
 .ms-term-formula {
   margin: 6px 0;
-  color: #6c836f;
+  color: #6c7683;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 .ms-term-formula b {
-  color: #2b6c42;
+  color: #2b466c;
 }
 .ms-evidence {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  color: #829087;
+  color: #828890;
   font-size: 11px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -374,14 +375,14 @@
   border: 0;
   padding: 0;
   background: transparent;
-  color: #64876d;
+  color: #647387;
   font: inherit;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .ms-evidence a {
-  color: #3c7c54;
+  color: #3c577c;
   text-decoration: none;
 }
 .ms-evidence a:hover,
@@ -393,7 +394,7 @@
 }
 .ms-material {
   margin: 12px 0;
-  border: 1px solid #dfe8df;
+  border: 1px solid #dfe3e8;
   border-radius: 7px;
   overflow: hidden;
 }
@@ -403,7 +404,7 @@
   gap: 15px;
   padding: 15px 16px;
   cursor: pointer;
-  background: #fafcf9;
+  background: #f9fafc;
 }
 .ms-material > summary > span {
   display: flex;
@@ -414,15 +415,15 @@
   text-align: right;
 }
 .ms-material small {
-  color: #8c9d8e;
+  color: #8c939d;
   font-size: 10px;
 }
 .ms-material strong {
-  color: #365d40;
+  color: #36465d;
   font-size: 13px;
 }
 .ms-material b {
-  color: #3a724b;
+  color: #3a5172;
   font-size: 21px;
   font-variant-numeric: tabular-nums;
 }
@@ -432,9 +433,9 @@
 .ms-material blockquote {
   margin: 0;
   padding: 10px 13px;
-  border-left: 3px solid #b9d3bf;
-  background: #f4f8f3;
-  color: #758c7a;
+  border-left: 3px solid #b9c4d3;
+  background: #f3f5f8;
+  color: #757f8c;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -442,20 +443,20 @@
 .ms-rules > details {
   margin-top: 13px;
   padding-top: 10px;
-  border-top: 1px solid #e7ede6;
+  border-top: 1px solid #e6e9ed;
 }
 .ms-material-body summary,
 .ms-rules summary,
 .ms-notes summary {
   cursor: pointer;
-  color: #618168;
+  color: #616e81;
 }
 .ms-material pre {
   max-height: 360px;
   overflow: auto;
   padding: 12px;
-  background: #f4f7f3;
-  color: #6b826f;
+  background: #f3f5f7;
+  color: #6b7582;
   font-size: 10px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -464,7 +465,7 @@
   border: 0;
   padding: 3px 0;
   background: transparent;
-  color: #367549;
+  color: #365075;
   font: inherit;
   font-size: 12px;
   cursor: pointer;
@@ -488,16 +489,16 @@
 .scoring-workspace th,
 .material-assessment th {
   padding: 10px 9px;
-  background: #f0f5ef;
-  color: #7d927f;
+  background: #eff2f5;
+  color: #7d8692;
   font-weight: 500;
   white-space: nowrap;
 }
 .scoring-workspace td,
 .material-assessment td {
   padding: 11px 9px;
-  border-bottom: 1px solid #e8ede7;
-  color: #58715e;
+  border-bottom: 1px solid #e7eaed;
+  color: #586271;
   overflow-wrap: anywhere;
 }
 .ms-missing {
@@ -517,12 +518,12 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  border-left: 2px solid #dfebdf;
+  border-left: 2px solid #dfe4eb;
   padding-left: 9px;
 }
 .ms-mappings span,
 .ms-mappings small {
-  color: #899b8a;
+  color: #89919b;
   font-size: 10px;
 }
 .ms-factor-evidence {
@@ -532,17 +533,17 @@
 }
 .ms-notes {
   margin-top: 18px;
-  color: #8b987f;
+  color: #7f8998;
 }
 .ms-timeline {
   margin-top: 18px;
   padding-top: 12px;
-  border-top: 1px solid #e7ede6;
-  color: #7e927a;
+  border-top: 1px solid #e6e9ed;
+  color: #7a8492;
 }
 .ms-timeline summary {
   cursor: pointer;
-  color: #618168;
+  color: #616e81;
 }
 .ms-timeline p {
   font-size: 11px;
@@ -554,21 +555,21 @@
   gap: 6px 14px;
   margin-top: 19px;
   padding-top: 13px;
-  border-top: 1px solid #e5ece3;
-  color: #97a391;
+  border-top: 1px solid #e3e7ec;
+  color: #9199a3;
   font-size: 10px;
 }
 .ms-assessment-footer small {
   width: 100%;
-  color: #adb6a8;
+  color: #a8aeb6;
 }
 .ms-empty {
   padding: 25px;
-  border: 1px dashed #d7e3d8;
+  border: 1px dashed #d7dce3;
   border-radius: 7px;
   margin-top: 14px;
-  background: #fafcf9;
-  color: #8a9a87;
+  background: #f9fafc;
+  color: #878f9a;
   text-align: center;
 }
 .ms-empty-large {
@@ -583,7 +584,7 @@
 .ms-rules {
   padding: 24px;
   margin-top: 18px;
-  border: 1px solid #e0e8df;
+  border: 1px solid #dfe3e8;
   border-radius: 10px;
   background: #fff;
 }
@@ -598,7 +599,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  color: #7e947f;
+  color: #7e8794;
   font-size: 11px;
 }
 .ms-job-fields input,
@@ -606,10 +607,10 @@
 .ms-preference-input > input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #dce6db;
+  border: 1px solid #dbe0e6;
   border-radius: 5px;
-  background: #fbfdfa;
-  color: #4d6b53;
+  background: #fafbfd;
+  color: #4d5a6b;
   font: inherit;
   font-size: 12px;
 }
@@ -624,17 +625,17 @@
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 5px;
-  color: #648167;
+  color: #647081;
   font-size: 11px;
 }
 .ms-weight-grid input {
   grid-column: 1;
   width: 100%;
   padding: 7px;
-  border: 1px solid #dfe7dd;
+  border: 1px solid #dde1e7;
   border-radius: 5px;
-  background: #f7faf5;
-  color: #416e4c;
+  background: #f5f7fa;
+  color: #41546e;
   font: inherit;
   font-size: 14px;
   font-variant-numeric: tabular-nums;
@@ -642,7 +643,7 @@
 .ms-weight-grid small {
   grid-column: 2;
   grid-row: 2;
-  color: #a0ad99;
+  color: #99a1ad;
 }
 .ms-required textarea {
   min-height: 65px;
@@ -661,15 +662,15 @@
   white-space: nowrap;
 }
 .ms-job-message {
-  color: #7b936e;
+  color: #6e7d93;
   font-size: 11px;
 }
 .ms-draft {
   margin-top: 16px;
   padding: 17px;
-  border: 1px solid #c8dcc8;
+  border: 1px solid #c8d0dc;
   border-radius: 7px;
-  background: #f2f8ed;
+  background: #edf2f8;
 }
 .ms-draft .ms-secondary {
   margin-left: 8px;
@@ -679,7 +680,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 6px 0;
-  border-bottom: 1px solid #e3ecd9;
+  border-bottom: 1px solid #d9e1ec;
   font-size: 11px;
 }
 .ms-draft-impact:last-of-type {
@@ -687,7 +688,7 @@
 }
 .ms-ranking-filters > span {
   margin-left: auto;
-  color: #9aa891;
+  color: #919ba8;
   font-size: 10px;
 }
 .ms-ranking-table {
@@ -695,7 +696,7 @@
 }
 .ms-ranking-table small {
   display: block;
-  color: #9aa994;
+  color: #949da9;
   font-size: 9px;
 }
 .ms-ranking-table td {
@@ -712,18 +713,18 @@
   min-width: 150px;
 }
 .ms-ranking-table tr.selected {
-  background: #f3f8ee;
+  background: #eef2f8;
 }
 .ms-rank-status {
   padding: 3px 7px;
   border-radius: 3px;
-  background: #eef3e7;
-  color: #819168;
+  background: #e7ecf3;
+  color: #687991;
   font-size: 10px;
 }
 .ms-rank-status.ready {
-  background: #e6f1e2;
-  color: #47773b;
+  background: #e2e8f1;
+  color: #3b5477;
 }
 .ms-rank-status.pending,
 .ms-rank-status.provisional {
@@ -754,7 +755,7 @@
   min-height: 36px;
   border: 0;
   background: transparent;
-  color: #6a8265;
+  color: #657182;
   font: inherit;
   font-size: 11px;
   cursor: pointer;
@@ -767,10 +768,10 @@
   display: block;
   height: 9px;
   border-radius: 5px;
-  background: #9ebd87;
+  background: #879dbd;
 }
 .ms-comparison-bars strong {
-  color: #4a6f3f;
+  color: #3f536f;
   font-variant-numeric: tabular-nums;
 }
 .ms-rule-formulas {
@@ -782,13 +783,13 @@
 .ms-rule-formulas code {
   padding: 14px;
   border-radius: 6px;
-  background: #f2f6ec;
-  color: #688551;
+  background: #ecf0f6;
+  color: #516785;
   font-size: 11px;
   overflow-wrap: anywhere;
 }
 .ms-rules > p {
-  color: #8b9c7f;
+  color: #7f8b9c;
   font-size: 12px;
 }
 .ms-compact {

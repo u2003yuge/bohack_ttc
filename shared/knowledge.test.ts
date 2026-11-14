@@ -108,7 +108,7 @@ test("knowledge filter drafts reject invented filter values", () => {
   assert.deepEqual(draft, { error: "筛选草案包含无效选项，请重新生成。" });
 });
 
-test("knowledge filter drafts treat a missing readiness field as an unrestricted legacy value", () => {
+test("knowledge filter drafts treat a missing readiness field as an unrestricted historical value", () => {
   const draft = normalizeKnowledgeFilterDraft({ kind: "all", verificationFilter: "all", evidenceFilter: "all", scoreBand: "all", reviewFilter: "all", linkedOnly: false, sort: "default" });
   assert.equal("error" in draft, false);
   if (!("error" in draft)) assert.equal(draft.readiness, "all");

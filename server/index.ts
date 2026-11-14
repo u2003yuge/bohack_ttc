@@ -3,10 +3,10 @@ import express from "express";
 import resumes from "./resumes.js";
 import agents from "./agents/router.js";
 import research from "./research/router.js";
-import { AnalysisFailure, analyzeResume } from "./agent.js";
 import { deadline, errorMessage, limit } from "./operations.js";
 import { normalizeProjectBreakdownRequest, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
 import type { AnalysisEvent } from "../src/research-types.js";
+import { resumeAnalysisAgentIds, runResumeAgents } from "./agents/registry.js";
 import scoring from "./scoring/router.js";
 
 const app = express();
@@ -24,7 +24,7 @@ app.get("/api/health", (_request, response) => response.json({
 }));
 
 app.post("/api/agent", async (request, response) => {
-  const { resumeName, resumeText, roleRequirements, question, includeResearch = true, streamProgress = false, webResearchEnabled = false } = request.body ?? {};
+  const { resumeName, resumeText, roleRequirements = "", question, streamProgress = false } = request.body ?? {};
   if (typeof resumeText !== "string" || typeof question !== "string") {
     response.status(400).json({ error: "请提供简历文本和分析问题。" });
     return;
@@ -33,8 +33,8 @@ app.post("/api/agent", async (request, response) => {
     response.status(503).json({ error: "尚未配置模型服务。请在 .env 中填写 OPENAI_API_KEY。" });
     return;
   }
-  if (resumeText.length > 100_000 || typeof includeResearch !== "boolean" || typeof streamProgress !== "boolean" || typeof webResearchEnabled !== "boolean") {
-    response.status(400).json({ error: "简历文本不得超过 100000 字符，核查和进度开关必须为布尔值。" });
+  if (resumeText.length > 100_000 || typeof streamProgress !== "boolean") {
+    response.status(400).json({ error: "简历文本不得超过 100000 字符，进度开关必须为布尔值。" });
     return;
   }
   const scope = deadline(undefined, limit("AGENT_TIMEOUT_MS", 300_000), "分析已达到总时限，请查看已完成资料或缩小问题范围后重试。");
@@ -49,26 +49,42 @@ app.post("/api/agent", async (request, response) => {
     response.flushHeaders();
     heartbeat = setInterval(() => emit({ type: "heartbeat" }), 10_000);
     heartbeat.unref();
-    emit({ type: "progress", progress: { stage: includeResearch ? "extracting" : "analyzing", message: "分析请求已接收，正在处理。" } });
+    emit({ type: "progress", progress: { stage: "extracting", message: "分析请求已接收，正在处理。" } });
   }
   const started = Date.now();
   const requestId = crypto.randomUUID().slice(0, 8);
-  console.log(`[agent ${requestId}] started (research=${includeResearch})`);
+  const markdown: string[] = [];
+  console.log(`[agent ${requestId}] started (candidate evidence only)`);
   try {
-    const result = await analyzeResume({ resumeName, resumeText, roleRequirements, question, includeResearch, webResearchEnabled }, {
+    const run = await runResumeAgents({
+      context: { resumeText, fileName: resumeName || "未命名简历", roleRequirements, question, includeResearch: false, webResearchEnabled: false },
+      requested: [...resumeAnalysisAgentIds],
       signal: scope.signal,
-      emit: (event) => {
-        emit(event);
-        if (event.type === "progress") console.log(`[agent ${requestId}] ${event.progress.stage} ${event.progress.completed ?? ""}/${event.progress.total ?? ""} +${Date.now() - started}ms`);
+      onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output }) => {
+        if (section) {
+          markdown.push(section);
+          emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total });
+        }
+        emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
+        console.log(`[agent ${requestId}] ${id} ${completed}/${total} +${Date.now() - started}ms`);
       },
     });
+    scope.signal.throwIfAborted();
+    const report = run.outputs["analysis-report"] as { researchSources?: AnalysisResult["researchSources"]; researchStatus?: AnalysisResult["researchStatus"] } | undefined;
+    const result: AnalysisResult = {
+      answer: markdown.join("\n\n"),
+      research: { items: [], notes: [] },
+      ...(run.outputs["score-calculation"] ? { assessment: run.outputs["score-calculation"] as AnalysisResult["assessment"] } : {}),
+      researchSources: report?.researchSources,
+      researchStatus: report?.researchStatus,
+    };
     if (!response.destroyed) {
       if (streamProgress) { emit({ type: "complete", ...result }); response.end(); }
       else response.json(result);
     }
   } catch (error) {
     const message = scope.signal.aborted ? errorMessage(scope.signal.reason) : errorMessage(error);
-    const event: AnalysisEvent = { type: "error", error: `分析未完成：${message}`, ...(error instanceof AnalysisFailure ? { research: error.research } : {}) };
+    const event: AnalysisEvent = { type: "error", error: `分析未完成：${message}` };
     if (!response.destroyed) {
       if (streamProgress) { emit(event); response.end(); }
       else response.status(502).json(event);

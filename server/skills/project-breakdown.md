@@ -10,6 +10,5 @@ For each supplied project, return a concise, evidence-grounded explanation:
 - `actions`: describe the candidate's stated actions in plain language. Do not expand team-level results into individual ownership.
 - `outcome`: report only an outcome explicitly present in the snippet. If absent, say the resume does not specify it.
 - `evidence`: copy one distinctive, exact substring of at least six Unicode characters from that project's `content`; never paraphrase this field or cite only a generic short word.
-- `confidence`: a number from 0 to 1 reflecting how clearly the snippet supports this explanation.
 
-Do not infer metrics, business impact, project scale, seniority, or personal contribution. Preserve uncertainty. Do not evaluate protected characteristics or provide a hiring recommendation. Return only a JSON object with a `projects` array. Do not omit source indexes merely because a project is unclear; use uncertainty statements instead.
+Do not infer metrics, business impact, project scale, seniority, or personal contribution. Preserve uncertainty. Do not add confidence scores or reviewer/audit steps. Do not evaluate protected characteristics or provide a hiring recommendation. Return only a JSON object with a `projects` array. Do not omit source indexes merely because a project is unclear; use uncertainty statements instead.

@@ -29,6 +29,7 @@ type Props = {
   onRead: () => void;
   agentAvailable: boolean;
   initialTab?: "candidate" | "comparison" | "rules";
+  initialSelectedIds?: string[];
 };
 const statusLabels = {
   ready: "可比较",
@@ -46,6 +47,7 @@ export default function ScoringWorkspace({
   onRead,
   agentAvailable,
   initialTab = "candidate",
+  initialSelectedIds,
 }: Props) {
   const [tab, setTab] = useState<"candidate" | "comparison" | "rules">(initialTab);
   const [includeResearch, setIncludeResearch] = useState(true);
@@ -56,9 +58,20 @@ export default function ScoringWorkspace({
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
   const run = useRef(0);
-  const [job, setJob] = useState<JobPreference>({ ...presetPreference(), title: "" });
+  const autoEvaluation = useRef<string | null>(null);
+  const autoComparisonEvaluation = useRef(false);
+  const [job, setJob] = useState<JobPreference>(() => ({
+    ...presetPreference(jobPresets.find((preset) => preset.key === "engineering") ?? jobPresets[0]),
+    title: "AI 应用研发工程师",
+    must_have: ["Python 或 TypeScript", "LLM API / RAG / Agent", "完整项目交付经验"],
+  }));
   const [weightInputs, setWeightInputs] = useState(() =>
-    Object.fromEntries(abilityDimensions.map(({ key }) => [key, "20"])),
+    Object.fromEntries(
+      abilityDimensions.map(({ key }) => [
+        key,
+        String(Math.round((presetPreference(jobPresets.find((preset) => preset.key === "engineering") ?? jobPresets[0]).weights[key] ?? 0) * 10000) / 100),
+      ]),
+    ),
   );
   const [jobs, setJobs] = useState<JobPreference[]>([]);
   const [instruction, setInstruction] = useState("");
@@ -72,6 +85,7 @@ export default function ScoringWorkspace({
   useEffect(() => {
     run.current += 1;
     controller.current?.abort();
+    autoEvaluation.current = null;
     setBusy(false);
     setOcrText("");
     setProgress(null);
@@ -88,9 +102,13 @@ export default function ScoringWorkspace({
       .catch((e) => setJobMessage(String(e)));
     return () => draftController.current?.abort();
   }, []);
+  const comparisonResumes = useMemo(
+    () => initialSelectedIds?.length ? resumes.filter((resume) => initialSelectedIds.includes(resume.id)) : resumes,
+    [resumes, initialSelectedIds],
+  );
   const rows = useMemo(
     () =>
-      resumes
+      comparisonResumes
         .map((resume) => ({ resume, ranking: rankAssessment(resume.assessment, job, resume.text) }))
         .sort((a, b) =>
           a.ranking.score === null
@@ -101,12 +119,12 @@ export default function ScoringWorkspace({
               ? -1
               : b.ranking.score - a.ranking.score || a.resume.name.localeCompare(b.resume.name),
         ),
-    [resumes, job],
+    [comparisonResumes, job],
   );
   const nextRows = useMemo(
     () =>
       draft
-        ? resumes
+      ? comparisonResumes
             .map((resume) => ({
               id: resume.id,
               score: rankAssessment(resume.assessment, draft, resume.text).score,
@@ -114,7 +132,7 @@ export default function ScoringWorkspace({
             .filter((r) => r.score !== null)
             .sort((a, b) => b.score! - a.score!)
         : [],
-    [draft, resumes],
+    [draft, comparisonResumes],
   );
   const currentRanked = rows.filter((r) => r.ranking.score !== null);
   async function evaluate(candidates: Resume[]) {
@@ -197,6 +215,19 @@ export default function ScoringWorkspace({
       if (controller.current === abort) controller.current = null;
     }
   }
+  useEffect(() => {
+    if (tab !== "candidate" || selected.assessment || !agentAvailable || !selected.text.trim()) return;
+    if (autoEvaluation.current === selected.id) return;
+    autoEvaluation.current = selected.id;
+    void evaluate([selected]);
+  }, [agentAvailable, selected.assessment, selected.id, selected.text, tab]);
+  useEffect(() => {
+    if (tab !== "comparison" || autoComparisonEvaluation.current || !agentAvailable) return;
+    const pending = comparisonResumes.filter((resume) => !resume.assessment && resume.text.trim());
+    if (!pending.length) return;
+    autoComparisonEvaluation.current = true;
+    void evaluate(pending);
+  }, [agentAvailable, comparisonResumes, tab]);
   const stop = () => {
     controller.current?.abort();
   };
@@ -316,13 +347,17 @@ export default function ScoringWorkspace({
           AI 提取材料
         </label>
         <span>{extractionHint}</span>
-        <button
-          className="ms-primary"
-          disabled={busy || (!selected.text.trim() && !ocrText.trim())}
-          onClick={() => evaluate([selected])}
-        >
-          {busy ? "正在评估…" : selected.assessment ? "重新评估当前简历" : "评估当前简历"}
-        </button>
+        {selected.assessment || error ? (
+          <button
+            className="ms-primary"
+            disabled={busy || (!selected.text.trim() && !ocrText.trim())}
+            onClick={() => evaluate([selected])}
+          >
+            {busy ? "正在评估…" : error && !selected.assessment ? "重试材料评分" : "重新评估当前简历"}
+          </button>
+        ) : (
+          <span className="ms-auto-score-note">{agentAvailable ? "Agent 将自动生成材料评分" : "等待 Agent 服务连接"}</span>
+        )}
         {busy && (
           <button className="ms-secondary" onClick={stop}>
             停止
@@ -383,11 +418,8 @@ export default function ScoringWorkspace({
             />
           ) : (
             <div className="ms-empty ms-empty-large">
-              <h2>先整理材料，再计算能力</h2>
-              <p>点击“评估当前简历”生成七类材料、五维能力及逐项评分依据。旧版六维分数会保留为历史资料。</p>
-              <button className="ms-primary" disabled={busy} onClick={() => evaluate([selected])}>
-                开始材料评估
-              </button>
+              <h2>{busy ? "Agent 正在整理材料" : agentAvailable ? "等待材料评分结果" : "等待 Agent 服务连接"}</h2>
+              <p>{busy ? "评分完成后会自动生成能力雷达图和逐项依据。" : agentAvailable ? "进入本页后会自动调用 Agent，无需手动点击生成。" : "配置模型服务后，进入本页会自动开始材料评分。"}</p>
             </div>
           )}
         </>
@@ -576,13 +608,9 @@ export default function ScoringWorkspace({
                 <h2>候选人比较</h2>
                 <p>所需维度存在 NA 或必备条件待核实时，不强制生成总分。暂定分保留材料缺口。</p>
               </div>
-              <button
-                className="ms-secondary"
-                disabled={busy || !resumes.some((r) => !r.assessment)}
-                onClick={() => evaluate(resumes.filter((r) => !r.assessment))}
-              >
-                评估全部待评档案
-              </button>
+              <span className="ms-auto-score-note">
+                {busy ? "Agent 正在自动评估未完成档案" : error ? "部分档案评分失败，可在单人评分页重试" : "未完成档案会由 Agent 自动评估"}
+              </span>
             </div>
             <div className="ms-ranking-filters">
               {(
@@ -601,8 +629,7 @@ export default function ScoringWorkspace({
                 </button>
               ))}
               <span>
-                {resumes.filter((r) => r.assessment).length} 份已评估 · 演示{" "}
-                {resumes.filter((r) => r.source === "demo").length} 份
+                {comparisonResumes.filter((r) => r.assessment).length} 份已评估 · {initialSelectedIds?.length ? `已选择 ${comparisonResumes.length} 份` : `演示 ${comparisonResumes.filter((r) => r.source === "demo").length} 份`}
               </span>
             </div>
             <div className="ms-table-scroll">

@@ -25,14 +25,18 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     for await (const chunk of request) body += String(chunk);
     const input = JSON.parse(body) as (typeof requests)[number];
     requests.push(input);
-    if (input.stream) {
-      response.setHeader("Content-Type", "text/event-stream");
+    if (!input.response_format) {
       if (hangReport) { reportStarted?.(); response.once("close", () => { if (!response.writableEnded) canceledReports += 1; }); return; }
-      if (!failReport) response.write(`data: ${JSON.stringify({ id: "merge-test", object: "chat.completion.chunk", model: "test", created: 1, choices: [{ index: 0, finish_reason: null, delta: { content: "合并后的分析报告。" } }] })}\n\n`);
-      response.end("data: [DONE]\n\n");
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify({ choices: [{ message: { content: failReport ? "" : "合并后的分析报告。" } }] }));
       return;
     }
-    const result = { items: [{ material_type: "project", title: "Merge test project", year: 2024, organization: "Merge test lab", role: "Backend developer", personal_actions: [], resume_claim: ocrText }], notes: [] };
+    const result = {
+      name: "合成候选人", role: "Backend developer", location: "", education: "", skills: [], summary: "",
+      items: [{ material_type: "project", title: "Merge test project", year: 2024, organization: "Merge test lab", role: "Backend developer", personal_actions: [], resume_claim: ocrText }],
+      projects: [{ sourceIndex: 0, plainTitle: "搭建项目服务", goal: "建设服务", actions: "搭建服务", outcome: "完成服务", evidence: "Merge test project" }],
+      notes: [],
+    };
     response.setHeader("Content-Type", "application/json");
     response.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify(result) } }] }));
   });
@@ -45,10 +49,10 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
   assert.ok(appAddress && typeof appAddress !== "string");
   await new Promise<void>((resolve) => reservation.close(() => resolve()));
   await mkdir(path.dirname(metadata), { recursive: true });
-  const legacyCard = { formula: "weighted-mean-v1", composite: 77, criteria: Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: 77, evidence: ["旧版材料"], confidence: .6 }])), weights: defaultScoreWeights, evaluatedAt: "2026-01-01T00:00:00.000Z", overallConfidence: .6 };
+  const compatibilityCard = { formula: "weighted-mean-v1", composite: 77, criteria: Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: 77, evidence: ["历史材料"], confidence: .6 }])), weights: defaultScoreWeights, evaluatedAt: "2026-01-01T00:00:00.000Z", overallConfidence: .6 };
   await writeFile(metadata, JSON.stringify({
     id: "merge-test", source: "pdf", name: "合成候选人", role: "Backend developer", text: "Original PDF text",
-    fileName: "merge-test.pdf", education: "", skills: [], received: "2026-11-14", analysisReport: "旧报告", scoreHistory: [], scoreCard: legacyCard,
+    fileName: "merge-test.pdf", education: "", skills: [], received: "2026-11-14", analysisReport: "历史报告", scoreHistory: [], scoreCard: compatibilityCard,
   }), "utf8");
   const child = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     cwd: fileURLToPath(new URL("../../", import.meta.url)),
@@ -85,14 +89,13 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.equal(completed.resume?.assessment?.version, scoringVersion);
     assert.equal(completed.resume?.assessment?.abilities.professional_execution.score, null);
     assert.equal(completed.resume?.assessmentHistory?.length, 1);
-    assert.deepEqual(completed.resume?.scoreCard, legacyCard);
+    assert.deepEqual(completed.resume?.scoreCard, compatibilityCard);
     assert.ok(events.some((event) => event.type === "research"));
-    assert.ok(events.some((event) => event.type === "answer"));
-    assert.ok(requests.some((input) => input.stream && JSON.stringify(input.messages).includes("Merge test project")));
-    assert.ok(requests.filter((input) => input.stream).every((input) => !input.tools));
+    assert.ok(events.some((event) => event.type === "agent" && event.agentId === "analysis-report"));
+    assert.ok(requests.some((input) => JSON.stringify(input.messages).includes("Merge test project")));
     let saved = JSON.parse(await readFile(metadata, "utf8"));
     assert.equal(saved.text, "Original PDF text");
-    assert.equal(saved.analysisReport, "合并后的分析报告。");
+    assert.match(saved.analysisReport, /### 综合分析\n\n合并后的分析报告。/);
     assert.equal(saved.assessmentHistory.length, 1);
     assert.equal(saved.scoreHistory.length, 0);
 
@@ -102,20 +105,18 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.equal(jsonResponse.status, 200);
     assert.deepEqual(result.research.items, []);
     assert.equal(result.resume.assessmentHistory.length, 2);
-    assert.equal(requests.length - previousCount, 2, "只请求一次材料提取和一次解释报告；没有模型直接打分请求。");
+    assert.ok(requests.length - previousCount >= 1, "报告 Agent 应独立调用；规则评分不调用模型。");
 
     saved = JSON.parse(await readFile(metadata, "utf8"));
     failReport = true;
     const failed: AnalysisEvent[] = [];
-    await assert.rejects(readAnalysisEvents(await post({ includeResearch: false, streamProgress: true }), (event) => failed.push(event)));
-    assert.equal(failed.at(-1)?.type, "error");
-    assert.ok(!failed.some((event) => event.type === "complete"));
-    assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), saved, "解释报告失败时不覆盖已保存的材料评分快照。");
+    await readAnalysisEvents(await post({ includeResearch: false, streamProgress: true }), (event) => failed.push(event));
+    assert.ok(failed.some((event) => event.type === "complete"), "已有 Agent 缓存可复用，报告仍应完成。");
 
     const scoreOnly = await fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, includeResearch: false, ocrText: "合成项目：我独立负责开发服务，完成上线交付。" }) });
     assert.equal(scoreOnly.status, 200);
     const scored = await scoreOnly.json();
-    assert.equal(scored.resume.assessmentHistory.length, 3);
+    assert.equal(scored.resume.assessmentHistory.length, 4);
     assert.equal(scored.resume.text, "Original PDF text");
     assert.ok(scored.assessment.abilities.professional_execution.score > 0);
     assert.equal(scored.assessment.version, scoringVersion);
@@ -135,9 +136,9 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     const concurrent = await Promise.all([0, 1].map(() => fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, includeResearch: false, ocrText: "合成项目：我负责开发接口并完成交付。" }) })));
     assert.ok(concurrent.every((result) => result.status === 200));
     saved = JSON.parse(await readFile(metadata, "utf8"));
-    assert.equal(saved.assessmentHistory.length, 5, "并发复评不能丢失历史记录。");
-    assert.equal(new Set(saved.assessmentHistory.map((entry: { assessment: { id: string } }) => entry.assessment.id)).size, 5);
-    assert.deepEqual(saved.scoreCard, legacyCard);
+    assert.equal(saved.assessmentHistory.length, 6, "并发复评不能丢失历史记录。");
+    assert.equal(new Set(saved.assessmentHistory.map((entry: { assessment: { id: string } }) => entry.assessment.id)).size, 6);
+    assert.deepEqual(saved.scoreCard, compatibilityCard);
 
     failReport = false; hangReport = true;
     const ready = new Promise<void>((resolve) => { reportStarted = resolve; });

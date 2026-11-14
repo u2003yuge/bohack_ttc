@@ -15,12 +15,12 @@ export type ComparisonMapQuadrant = { key: Exclude<ComparisonMapRegion, "all">; 
 export type ComparisonRatingFilter = "all" | "scored" | "demo";
 export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; mapX: ComparisonMapAxis; mapY: ComparisonMapAxis; mapRegion: ComparisonMapRegion; mapThreshold: number; rationale: string };
 export type ScoreWeights = Record<ScoreKey, number>;
-export type ScoreEvidence = { score: number; evidence: string[]; confidence: number };
+export type ScoreEvidence = { score: number; evidence: string[]; confidence?: number };
 export type ScoreCard = {
   criteria: Record<ScoreKey, ScoreEvidence>;
   weights: ScoreWeights;
   composite: number;
-  overallConfidence: number;
+  overallConfidence?: number;
   formula: "weighted-mean-v1";
   evaluatedAt: string;
 };

@@ -50,6 +50,7 @@ export type AnalysisProgress = {
 
 export type AnalysisEvent =
   | { type: "answer"; text: string; replace?: boolean }
+  | { type: "agent"; agentId: string; label: string; markdown: string; reused: boolean; completed: number; total: number }
   | { type: "progress"; progress: AnalysisProgress }
   | { type: "research"; research: ResearchBatch }
   | { type: "assessment"; assessment: Assessment }

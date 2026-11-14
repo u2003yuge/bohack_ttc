@@ -68,5 +68,5 @@ test("project breakdown drafts accept only unique in-range indexes with exact re
   assert.equal(normalized.projects.length, 1);
   assert.equal(normalized.projects[0].title, "项目 A");
   assert.equal(normalized.projects[0].evidence, "降低报表耗时 30%");
-  assert.equal(normalized.projects[0].confidence, 0.8);
+  assert.equal("confidence" in normalized.projects[0], false);
 });
