@@ -2,6 +2,24 @@ import type { Resume } from "./types";
 
 export const sampleResumes: Resume[] = [
   {
+    id: "sample-v1-lin", name: "林澈（合成）", role: "全栈工程师", location: "合成样例", received: "评分验收", initials: "LC", source: "demo",
+    education: "合成教育背景，不参与能力计分", skills: ["TypeScript", "Python", "分布式系统", "实验验证"],
+    text: "2024 年，项目：轻舟协作平台；我独立负责开发分布式系统核心模块，处理高并发与一致性约束，比较方案并验证瓶颈，协调跨团队拆解任务，学习新技术并开展对照实验，完成生产环境上线与验收交付，被多个部门实际使用，响应时间降低 40%。使用 TypeScript 和 Python 完成实现。",
+    summary: "完整个人行动与交付证据的合成演示，用于展示五维能力和贡献拆解。",
+  },
+  {
+    id: "sample-v1-zhou", name: "周宁（合成）", role: "后端工程师", location: "合成样例", received: "评分验收", initials: "ZN", source: "demo",
+    education: "合成教育背景，不参与能力计分", skills: ["Java", "SQL"],
+    text: "2024 年，项目：校内设备借还模块；我独立负责开发借还接口，在明确任务约束下完成原型并测试通过，开展试点，交付接口文档。使用 Java 和 SQL。",
+    summary: "普通项目有明确个人贡献；协作与研究维度保持证据不足。",
+  },
+  {
+    id: "sample-v1-xu", name: "许远（合成）", role: "算法工程师", location: "合成样例", received: "评分验收", initials: "XY", source: "demo",
+    education: "合成教育背景，不参与能力计分", skills: [],
+    text: "2024 年，合成大学生算法竞赛一等奖，团队共六人。参与合成大型平台项目，团队完成生产部署，未说明个人分工。",
+    summary: "团队成果较强但缺少个人行动证据，展示材料分与人物能力分的区别。",
+  },
+  {
     id: "sample-morgan",
     name: "Morgan Lee",
     role: "高级产品经理",

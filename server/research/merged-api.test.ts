@@ -6,16 +6,20 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { scoreCriteria } from "../../shared/scoring.js";
+import { scoringVersion } from "../../shared/material-scoring.js";
+import { defaultScoreWeights, scoreCriteria } from "../../shared/scoring.js";
 import { readAnalysisEvents } from "../../src/analysis-stream.js";
 import type { AnalysisEvent } from "../../src/research-types.js";
 
-test("合并后的 PDF 分析核查成果、保存原有评分历史，并兼容流式和 JSON 响应", async () => {
+test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流式和 JSON 响应", async () => {
   const directory = await mkdtemp(path.join(tmpdir(), "bohack-merge-"));
   const metadata = path.join(directory, ".metadata", "merge-test.json");
   const ocrText = "2024 Merge test lab Merge test project Backend developer";
   const requests: Array<{ stream?: boolean; response_format?: unknown; tools?: unknown; messages: Array<{ content: string }> }> = [];
-  let failScore = false;
+  let failReport = false;
+  let hangReport = false;
+  let reportStarted: (() => void) | undefined;
+  let canceledReports = 0;
   const model = createServer(async (request, response) => {
     let body = "";
     for await (const chunk of request) body += String(chunk);
@@ -23,15 +27,14 @@ test("合并后的 PDF 分析核查成果、保存原有评分历史，并兼容
     requests.push(input);
     if (input.stream) {
       response.setHeader("Content-Type", "text/event-stream");
-      response.write(`data: ${JSON.stringify({ id: "merge-test", object: "chat.completion.chunk", model: "test", created: 1, choices: [{ index: 0, finish_reason: null, delta: { content: "合并后的分析报告。" } }] })}\n\n`);
+      if (hangReport) { reportStarted?.(); response.once("close", () => { if (!response.writableEnded) canceledReports += 1; }); return; }
+      if (!failReport) response.write(`data: ${JSON.stringify({ id: "merge-test", object: "chat.completion.chunk", model: "test", created: 1, choices: [{ index: 0, finish_reason: null, delta: { content: "合并后的分析报告。" } }] })}\n\n`);
       response.end("data: [DONE]\n\n");
       return;
     }
-    const result = input.response_format
-      ? { criteria: Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: 80, evidence: ["Backend developer"], confidence: 0.8 }])) }
-      : { items: [{ kind: "project", input: { project_name: "Merge test project", project_year: 2024, organization: "Merge test lab", role: "Backend developer" }, context: {}, evidence: ocrText }], notes: [] };
+    const result = { items: [{ material_type: "project", title: "Merge test project", year: 2024, organization: "Merge test lab", role: "Backend developer", personal_actions: [], resume_claim: ocrText }], notes: [] };
     response.setHeader("Content-Type", "application/json");
-    response.end(JSON.stringify({ choices: [{ message: { content: failScore && input.response_format ? "invalid JSON" : JSON.stringify(result) } }] }));
+    response.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify(result) } }] }));
   });
   await new Promise<void>((resolve) => model.listen(0, "127.0.0.1", resolve));
   const modelAddress = model.address();
@@ -42,9 +45,10 @@ test("合并后的 PDF 分析核查成果、保存原有评分历史，并兼容
   assert.ok(appAddress && typeof appAddress !== "string");
   await new Promise<void>((resolve) => reservation.close(() => resolve()));
   await mkdir(path.dirname(metadata), { recursive: true });
+  const legacyCard = { formula: "weighted-mean-v1", composite: 77, criteria: Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: 77, evidence: ["旧版材料"], confidence: .6 }])), weights: defaultScoreWeights, evaluatedAt: "2026-01-01T00:00:00.000Z", overallConfidence: .6 };
   await writeFile(metadata, JSON.stringify({
     id: "merge-test", source: "pdf", name: "合成候选人", role: "Backend developer", text: "Original PDF text",
-    fileName: "merge-test.pdf", education: "", skills: [], received: "2026-11-14", analysisReport: "旧报告", scoreHistory: [],
+    fileName: "merge-test.pdf", education: "", skills: [], received: "2026-11-14", analysisReport: "旧报告", scoreHistory: [], scoreCard: legacyCard,
   }), "utf8");
   const child = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     cwd: fileURLToPath(new URL("../../", import.meta.url)),
@@ -78,9 +82,10 @@ test("合并后的 PDF 分析核查成果、保存原有评分历史，并兼容
     assert.equal(completed.research.items[0].item.input.project_name, "Merge test project");
     assert.equal(completed.research.items[0].status, "pending");
     assert.equal(completed.researchStatus, "not-configured");
-    assert.equal(completed.resume?.scoreCard?.formula, "weighted-mean-v1");
-    assert.equal(completed.resume?.scoreCard?.composite, 80);
-    assert.equal(completed.resume?.scoreHistory?.length, 1);
+    assert.equal(completed.resume?.assessment?.version, scoringVersion);
+    assert.equal(completed.resume?.assessment?.abilities.professional_execution.score, null);
+    assert.equal(completed.resume?.assessmentHistory?.length, 1);
+    assert.deepEqual(completed.resume?.scoreCard, legacyCard);
     assert.ok(events.some((event) => event.type === "research"));
     assert.ok(events.some((event) => event.type === "answer"));
     assert.ok(requests.some((input) => input.stream && JSON.stringify(input.messages).includes("Merge test project")));
@@ -88,23 +93,64 @@ test("合并后的 PDF 分析核查成果、保存原有评分历史，并兼容
     let saved = JSON.parse(await readFile(metadata, "utf8"));
     assert.equal(saved.text, "Original PDF text");
     assert.equal(saved.analysisReport, "合并后的分析报告。");
-    assert.equal(saved.scoreHistory.length, 1);
+    assert.equal(saved.assessmentHistory.length, 1);
+    assert.equal(saved.scoreHistory.length, 0);
 
     const previousCount = requests.length;
     const jsonResponse = await post({ includeResearch: false });
     const result = await jsonResponse.json();
     assert.equal(jsonResponse.status, 200);
     assert.deepEqual(result.research.items, []);
-    assert.equal(result.resume.scoreHistory.length, 2);
-    assert.equal(requests.length - previousCount, 2, "关闭成果核查后只请求报告和原有评分卡。");
+    assert.equal(result.resume.assessmentHistory.length, 2);
+    assert.equal(requests.length - previousCount, 2, "只请求一次材料提取和一次解释报告；没有模型直接打分请求。");
 
     saved = JSON.parse(await readFile(metadata, "utf8"));
-    failScore = true;
+    failReport = true;
     const failed: AnalysisEvent[] = [];
     await assert.rejects(readAnalysisEvents(await post({ includeResearch: false, streamProgress: true }), (event) => failed.push(event)));
     assert.equal(failed.at(-1)?.type, "error");
     assert.ok(!failed.some((event) => event.type === "complete"));
-    assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), saved, "任一生成失败时不保存半套新报告或评分。");
+    assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), saved, "解释报告失败时不覆盖已保存的材料评分快照。");
+
+    const scoreOnly = await fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, includeResearch: false, ocrText: "合成项目：我独立负责开发服务，完成上线交付。" }) });
+    assert.equal(scoreOnly.status, 200);
+    const scored = await scoreOnly.json();
+    assert.equal(scored.resume.assessmentHistory.length, 3);
+    assert.equal(scored.resume.text, "Original PDF text");
+    assert.ok(scored.assessment.abilities.professional_execution.score > 0);
+    assert.equal(scored.assessment.version, scoringVersion);
+    const rules = await (await fetch(`${baseUrl}/api/scoring/rules`)).json();
+    assert.equal(rules.version, scoringVersion);
+    assert.equal(rules.abilities.length, 5);
+    const offline = await fetch(`${baseUrl}/api/scoring/evaluate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "项目：负责开发测试模块并交付。", useModel: false, includeResearch: false }) });
+    assert.equal(offline.status, 200);
+    assert.equal((await offline.json()).assessment.extraction, "rules");
+    const preference = { title: "合成执行岗", weights: { professional_execution: 1, problem_solving: 0, ownership_delivery: 0, collaboration_organization: 0, learning_research: 0 }, must_have: ["Python"] };
+    const save = await fetch(`${baseUrl}/api/scoring/jobs`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(preference) });
+    assert.equal(save.status, 200);
+    const jobs = await (await fetch(`${baseUrl}/api/scoring/jobs`)).json();
+    assert.equal(jobs.jobs[0].title, "合成执行岗");
+    assert.equal(jobs.jobs[0].weights.professional_execution, 1);
+    assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), scored.resume, "保存岗位偏好不修改候选人基础分。");
+    const concurrent = await Promise.all([0, 1].map(() => fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, includeResearch: false, ocrText: "合成项目：我负责开发接口并完成交付。" }) })));
+    assert.ok(concurrent.every((result) => result.status === 200));
+    saved = JSON.parse(await readFile(metadata, "utf8"));
+    assert.equal(saved.assessmentHistory.length, 5, "并发复评不能丢失历史记录。");
+    assert.equal(new Set(saved.assessmentHistory.map((entry: { assessment: { id: string } }) => entry.assessment.id)).size, 5);
+    assert.deepEqual(saved.scoreCard, legacyCard);
+
+    failReport = false; hangReport = true;
+    const ready = new Promise<void>((resolve) => { reportStarted = resolve; });
+    const abort = new AbortController();
+    const pending = await fetch(`${baseUrl}/api/resumes/merge-test/analyze`, { method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.signal, body: JSON.stringify({ roleRequirements: "工程岗", question: "分析", ocrText, includeResearch: false, streamProgress: true }) });
+    const reading = readAnalysisEvents(pending, () => {}).catch((error: unknown) => error);
+    await ready;
+    abort.abort();
+    assert.ok(await reading instanceof Error);
+    const cancelDeadline = Date.now() + 2000;
+    while (!canceledReports && Date.now() < cancelDeadline) await new Promise<void>((resolve) => setTimeout(resolve, 10));
+    assert.ok(canceledReports > 0);
+    assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), saved, "保存前取消分析不能追加半套评估记录。");
   } finally {
     child.kill();
     await new Promise<void>((resolve) => child.exitCode !== null || child.signalCode !== null ? resolve() : child.once("exit", () => resolve()));
