@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { knowledgeRecords, normalizeKnowledgeImport, type KnowledgeRecord } from "../shared/knowledge.js";
+import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeImport, type KnowledgeRecord } from "../shared/knowledge.js";
 import type { CatalogCandidate } from "../src/research-types.js";
 
 const defaultDirectory = fileURLToPath(new URL("../db/library/", import.meta.url));
@@ -54,8 +54,8 @@ export class KnowledgeCatalogStore {
     try {
       signal?.throwIfAborted();
       const all = [...existing, ...await this.list()];
-      const found = all.find((entry) => entry.kind === record.kind && identityName(entry.title) === identityName(record.title))
-        ?? findCatalogRecord({ kind: record.kind as CatalogCandidate["kind"], name: record.title }, all);
+      const found = findKnowledgeDuplicate(record, all)?.record
+        ?? (record.kind !== "company" ? findCatalogRecord({ kind: record.kind as CatalogCandidate["kind"], name: record.title }, all) : undefined);
       if (found) return { record: found, created: false };
       const suffix = createHash("sha256").update(`${record.kind}:${identityName(record.title)}`).digest("hex").slice(0, 32);
       const id = `custom-auto-${record.kind}-${suffix}`;

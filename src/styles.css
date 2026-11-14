@@ -1528,14 +1528,24 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .research-results a { color: #395883; }
 .research-evidence { border: 0; background: transparent; color: #395883; font-size: 9px; cursor: pointer; }
 .analysis-progress { display: grid; gap: 5px; margin-top: 9px; color: #636971; font-size: 10px; line-height: 1.6; }
-.analysis-visuals-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr) minmax(0, 1.25fr); gap: 10px; margin: 0 0 14px; }
-.analysis-visual-card { min-width: 0; border: 1px solid #e1e8f0; border-radius: 9px; background: #fff; padding: 10px; box-shadow: 0 2px 8px rgba(47, 79, 117, .04); }
+.analysis-visuals-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 0 0 16px; }
+.analysis-visual-card { min-width: 0; min-height: 248px; border: 1px solid #e1e8f0; border-radius: 9px; background: #fff; padding: 13px 14px; box-shadow: 0 2px 8px rgba(47, 79, 117, .04); }
 .analysis-visual-card-head { display: grid; gap: 3px; margin-bottom: 5px; }
 .analysis-visual-card-head strong { color: #294a70; font-size: 13px; }
 .analysis-visual-card-head small { color: #8290a0; font-size: 10px; }
-.analysis-radar-top .ms-radar { width: 100%; max-height: 218px; }
-@media (max-width: 1080px) { .analysis-visuals-top { grid-template-columns: repeat(2, minmax(0, 1fr)); } .analysis-visuals-top .analysis-visual-card:last-child { grid-column: 1 / -1; } }
-@media (max-width: 680px) { .analysis-visuals-top { grid-template-columns: 1fr; } .analysis-visuals-top .analysis-visual-card:last-child { grid-column: auto; } }
+.analysis-radar-top { display: grid; align-content: start; }
+.analysis-radar-top .ms-radar { width: min(100%, 390px); max-height: 226px; margin: 0 auto; }
+.analysis-visual-card > .score-trend,
+.analysis-visual-card > .benchmark-card { min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.analysis-visual-card > .score-trend { min-height: 218px; }
+.analysis-visual-card > .benchmark-card { min-height: 218px; }
+@media (max-width: 680px) {
+  .analysis-visuals-top { gap: 10px; }
+  .analysis-visual-card { min-height: 228px; padding: 11px 10px; }
+  .analysis-radar-top .ms-radar { max-height: 210px; }
+  .analysis-visual-card > .score-trend,
+  .analysis-visual-card > .benchmark-card { min-height: 200px; }
+}
 .research-results pre { max-height: 360px; overflow: auto; white-space: pre-wrap; font-size: 9px; }
 .stop-agent-button { margin-top: 7px; padding: 7px; border: 1px solid #e2e4e8; border-radius: 6px; background: #fff; color: #636971; font-size: 10px; cursor: pointer; }
 .research-progress { width: 78%; height: 7px; margin-top: 12px; accent-color: var(--brand-blue); }

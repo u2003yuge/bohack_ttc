@@ -23,7 +23,8 @@ app.get("/api/health", (_request, response) => response.json({
 
 app.post("/api/agent", async (request, response) => {
   const { resumeName, resumeText, roleRequirements = "", question, streamProgress = false } = request.body ?? {};
-  if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+  if ((Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false)
+    || (Object.hasOwn(request.body ?? {}, "webResearchEnabled") && request.body.webResearchEnabled !== false)) {
     response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
     return;
   }

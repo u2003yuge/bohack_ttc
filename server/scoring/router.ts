@@ -88,7 +88,8 @@ router.post("/preferences/draft", async (request, response) => {
 });
 router.post("/evaluate", async (request, response) => {
   const { text, useModel = true, streamProgress = false } = request.body ?? {};
-  if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+  if ((Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false)
+    || (Object.hasOwn(request.body ?? {}, "webResearchEnabled") && request.body.webResearchEnabled !== false)) {
     response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
     return;
   }

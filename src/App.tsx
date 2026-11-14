@@ -1366,8 +1366,11 @@ export default function App() {
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
   const analysisController = useRef<AbortController | null>(null);
+  const batchAnalysisControllers = useRef(new Map<number, AbortController>());
   const analysisRequest = useRef(0);
   const batchRun = useRef(0);
+
+  type AnalyzeOptions = { batchRunId?: number; batchIndex?: number; batchTotal?: number };
 
   const selected = resumes.find((resume) => resume.id === selectedId) ?? resumes[0];
   const filtered = useMemo(() => resumes.filter((resume) => `${resume.name} ${resume.role}`.toLowerCase().includes(filter.toLowerCase())), [resumes, filter]);
@@ -1520,7 +1523,7 @@ export default function App() {
       const latest = imported[imported.length - 1];
       setSelectedId(latest.id);
       setAnswer(latest.analysisReport ?? "");
-      setAgentError(latest.analysisStatus === "failed" ? latest.analysisError ?? "自动分析未完成，可手动重试。" : "");
+      setAgentError(latest.analysisStatus === "failed" && !latest.assessment ? latest.analysisError ?? "自动分析未完成，可手动重试。" : "");
     }
     setImportError(errors.join("\n"));
     setImportProgress("");
@@ -1539,24 +1542,31 @@ export default function App() {
     }
   }
 
-  async function analyze(target: Resume = selected): Promise<void> {
-    if (!target) return;
-    const requestId = ++analysisRequest.current;
-    analysisController.current?.abort();
+  async function analyze(target: Resume = selected, options: AnalyzeOptions = {}): Promise<boolean> {
+    if (!target) return false;
+    const background = options.batchRunId !== undefined;
+    const requestId = background ? 0 : ++analysisRequest.current;
+    if (!background) analysisController.current?.abort();
     const controller = new AbortController();
-    analysisController.current = controller;
+    if (background && options.batchRunId !== undefined) batchAnalysisControllers.current.set(options.batchRunId * 1000 + (options.batchIndex ?? 0), controller);
+    if (!background) analysisController.current = controller;
     const timeout = setTimeout(() => controller.abort(new Error("分析响应超时，已完成资料仍可查看，请重试。")), 310_000);
-    setBusy(true);
-    setAgentError("");
-    setAnswer("");
-    setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });
-    setAnalysisElapsed(0);
-    setAnalysisDebug(null);
+    if (!background) {
+      setBusy(true);
+      setAgentError("");
+      setAnswer("");
+      setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });
+      setAnalysisElapsed(0);
+      setAnalysisDebug(null);
+    }
+    const isCurrent = () => background || requestId === analysisRequest.current;
     const applyResult = (result: AnalysisResult) => {
-      setAnswer(result.answer);
-      if (result.debug) setAnalysisDebug(result.debug);
+      if (!background) {
+        setAnswer(result.answer);
+        if (result.debug) setAnalysisDebug(result.debug);
+      }
       if (result.resume) {
-        setAnalysisDebug(result.debug ?? result.resume.analysisDebug ?? null);
+        if (!background) setAnalysisDebug(result.debug ?? result.resume.analysisDebug ?? null);
         setResumes((current) => current.map((resume) => resume.id === target.id ? result.resume! : resume));
       }
       else if (result.assessment) setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: result.assessment, assessmentHistory: [...(resume.assessmentHistory ?? []), { reason: "review", assessment: result.assessment! }], analysisReport: result.answer } : resume));
@@ -1573,17 +1583,17 @@ export default function App() {
       });
       if (!response.ok || !response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
         const payload = await response.json();
-        if (requestId !== analysisRequest.current) return;
+        if (!isCurrent()) return false;
         if (!response.ok) throw new Error(payload.error || "分析请求失败。");
         applyResult(payload);
       } else {
         await readAnalysisEvents(response, (event: AnalysisEvent) => {
-          if (requestId !== analysisRequest.current) return;
-          if (event.type === "progress") setAnalysisProgress(event.progress);
+          if (!isCurrent()) return;
+          if (event.type === "progress" && !background) setAnalysisProgress(event.progress);
           if (event.type === "assessment" && event.assessment) {
             setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: event.assessment } : resume));
           }
-          if (event.type === "agent") {
+          if (event.type === "agent" && !background) {
             setAnalysisSections((current) => {
               const next = current.filter((section) => section.agentId !== event.agentId);
               return [...next, { agentId: event.agentId, label: event.label, markdown: event.markdown, timing: event.timing }];
@@ -1591,19 +1601,22 @@ export default function App() {
             if (event.timing) setAnalysisDebug((current) => ({ totalDurationMs: current?.totalDurationMs ?? 0, maxParallel: Math.max(current?.maxParallel ?? 1, event.timing!.parallelWith.length + 1), timings: [...(current?.timings ?? []).filter((item) => item.id !== event.timing!.id), event.timing!] }));
             if (event.markdown) setAnswer((current) => `${current}${current ? "\n\n" : ""}${event.markdown}`);
           }
-          if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
+          if (event.type === "answer" && !background) setAnswer((current) => event.replace ? event.text : current + event.text);
           if (event.type === "complete") applyResult(event);
         });
       }
+      return true;
     } catch (error) {
-      if (requestId !== analysisRequest.current) return;
+      if (!isCurrent()) return false;
       const reason = controller.signal.aborted ? controller.signal.reason : error;
-      setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
+      if (!background) setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
+      return false;
     } finally {
       clearTimeout(timeout);
-      if (analysisController.current === controller) analysisController.current = null;
-      void refreshKnowledge();
-      if (requestId === analysisRequest.current) setBusy(false);
+      if (background && options.batchRunId !== undefined) batchAnalysisControllers.current.delete(options.batchRunId * 1000 + (options.batchIndex ?? 0));
+      if (!background && analysisController.current === controller) analysisController.current = null;
+      if (!background) void refreshKnowledge();
+      if (!background && requestId === analysisRequest.current) setBusy(false);
     }
   }
 
@@ -1625,16 +1638,25 @@ export default function App() {
     const targets = selectedResumeIds.map((id) => resumes.find((resume) => resume.id === id)).filter((resume): resume is Resume => Boolean(resume));
     setBatchBusy(true);
     setBatchProgress(`准备分析 ${targets.length} 份简历`);
-    for (const [index, target] of targets.entries()) {
-      if (batchRun.current !== runId) break;
-      setSelectedId(target.id);
-      setBatchProgress(`正在分析 ${index + 1} / ${targets.length} · ${target.name}`);
-      await analyze(target);
-      if (batchRun.current === runId) setBatchProgress(`已完成 ${index + 1} / ${targets.length} · ${target.name}`);
-    }
+    let nextIndex = 0;
+    let completed = 0;
+    let failed = 0;
+    const worker = async () => {
+      while (batchRun.current === runId) {
+        const index = nextIndex++;
+        if (index >= targets.length) return;
+        const target = targets[index];
+        setBatchProgress(`并行分析中 · ${completed} / ${targets.length} 已完成 · 当前 ${target.name}`);
+        const ok = await analyze(target, { batchRunId: runId, batchIndex: index, batchTotal: targets.length });
+        completed += 1;
+        if (!ok) failed += 1;
+        if (batchRun.current === runId) setBatchProgress(`并行分析中 · ${completed} / ${targets.length} 已完成${ok ? "" : ` · ${target.name}失败`}`);
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(3, targets.length) }, () => worker()));
     if (batchRun.current === runId) {
       setBatchBusy(false);
-      setBatchProgress(targets.length ? `批量分析完成 · ${targets.length} 份` : "");
+      setBatchProgress(targets.length ? `批量分析完成 · ${targets.length - failed} 份成功${failed ? ` · ${failed} 份失败` : ""}` : "");
     }
   }
 
@@ -1671,7 +1693,7 @@ export default function App() {
     setAnalysisProgress(null);
     setEvidenceTarget("");
     setEvidenceLocation(null);
-    setAgentError(resume?.analysisStatus === "failed" ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
+    setAgentError(resume?.analysisStatus === "failed" && !resume.assessment ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
   }
 
   function selectResumeEvidence(id: string, evidence: string) {
@@ -1687,6 +1709,8 @@ export default function App() {
     batchRun.current += 1;
     analysisRequest.current += 1;
     analysisController.current?.abort();
+    for (const controller of batchAnalysisControllers.current.values()) controller.abort();
+    batchAnalysisControllers.current.clear();
     setBusy(false);
     setBatchBusy(false);
     setBatchProgress("分析已停止，已完成的候选人结果已保留。");
