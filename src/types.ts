@@ -16,6 +16,8 @@ export type Resume = {
   text: string;
   experiences?: Experience[];
   education: string;
+  identity?: string;
+  keywords?: string[];
   skills: string[];
   summary?: string;
   analysisReport?: string;
@@ -24,7 +26,7 @@ export type Resume = {
   assessment?: Assessment;
   assessmentHistory?: AssessmentHistoryEntry[];
   benchmark?: Benchmark;
-  analysisStatus?: "complete" | "unavailable" | "failed";
+  analysisStatus?: "complete" | "processing" | "unavailable" | "failed";
   analysisError?: string;
   analyzedAt?: string;
   analysisDebug?: import("./research-types.js").AgentDebug;

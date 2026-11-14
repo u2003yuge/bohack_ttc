@@ -15,6 +15,7 @@ import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSou
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
+import { loadTrackedResumeReport, saveTrackedResumeReport } from "./tracked-resume-cache.js";
 import { scoringVersion, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
 import type { AgentDebug, AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
@@ -29,6 +30,8 @@ type ResumeRecord = {
   source: "pdf";
   text: string;
   education: string;
+  identity: string;
+  keywords: string[];
   skills: string[];
   summary: string;
   analysisReport: string;
@@ -38,7 +41,7 @@ type ResumeRecord = {
   assessmentHistory?: AssessmentHistoryEntry[];
   agentArtifacts?: AgentArtifact[];
   analysisDebug?: AgentDebug;
-  analysisStatus: "complete" | "unavailable" | "failed";
+  analysisStatus: "complete" | "processing" | "unavailable" | "failed";
   analysisError: string;
   analyzedAt: string;
   pages: number;
@@ -495,8 +498,8 @@ router.use(async (_request, _response, next) => {
 
 router.get("/", async (_request, response, next) => {
   try {
-    const records = await readDirectory();
-    response.json({ directory, resumes: records });
+    const result = await readDirectory();
+    response.json({ directory, resumes: result.records, skippedFiles: result.skippedFiles });
   } catch (error) {
     next(error);
   }
@@ -534,6 +537,44 @@ router.post("/open-folder", (_request, response) => {
   });
 });
 
+async function finishImportedAnalysis(id: string): Promise<void> {
+  const record = await readRecord(id);
+  if (!record || record.analysisStatus !== "processing") return;
+  try {
+    const run = await runResumeAgents({
+      context: { resumeText: record.text, fileName: record.fileName, useModel: true },
+      requested: [...resumeAnalysisAgentIds],
+      artifacts: record.agentArtifacts,
+    });
+    const assessment = run.outputs["score-calculation"] as Assessment | undefined;
+    const reportOutput = run.outputs["analysis-report"];
+    const reportText = reportOutput && typeof reportOutput === "object" && typeof (reportOutput as { answer?: unknown }).answer === "string"
+      ? (reportOutput as { answer: string }).answer
+      : typeof reportOutput === "string" ? reportOutput : "";
+    const current = await readRecord(id);
+    if (!current) return;
+    await writeRecord({
+      ...current,
+      assessment: assessment ?? current.assessment,
+      assessmentHistory: assessment ? [{ reason: "import", assessment }] : current.assessmentHistory,
+      analysisReport: reportText || (assessment ? assessmentReport(assessment) : current.analysisReport),
+      analysisStatus: "complete",
+      analysisError: "",
+      analyzedAt: new Date().toISOString(),
+      analysisDebug: run.debug,
+      agentArtifacts: run.artifacts,
+    });
+  } catch (error) {
+    const current = await readRecord(id);
+    if (!current) return;
+    await writeRecord({
+      ...current,
+      analysisStatus: "failed",
+      analysisError: error instanceof Error ? error.message : "后台分析失败，请重试。",
+    });
+  }
+}
+
 router.post("/", async (request, response, next) => {
   try {
     const buffer = request.body;
@@ -559,9 +600,36 @@ router.post("/", async (request, response, next) => {
     await writeFile(filePath, buffer, { flag: "wx" });
 
     try {
-      const record = await indexPdf(filePath, id, fileName);
+      let record = await indexPdf(filePath, id, fileName, { analyze: false });
+      if (record.text && process.env.OPENAI_API_KEY) {
+        const profileRun = await runResumeAgents({
+          context: { resumeText: record.text, fileName, useModel: true },
+          requested: ["candidate-profile"],
+        });
+        const profile = profileRun.outputs["candidate-profile"] as {
+          name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
+        } | null | undefined;
+        if (profile) {
+          record = {
+            ...record,
+            name: profile.name?.trim() || record.name,
+            identity: profile.identity?.trim() || "待提取身份",
+            keywords: stringList(profile.keywords, 5, 24),
+            role: profile.role?.trim() || record.role,
+            location: profile.location?.trim() || record.location,
+            education: profile.education?.trim() || record.education,
+            skills: stringList(profile.skills, 10, 60),
+            summary: profile.summary?.trim() || "",
+            initials: (profile.name?.trim() || record.name).split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+            analysisStatus: "processing",
+            analysisError: "候选人画像已完成，评分与分析报告正在后台生成。",
+            agentArtifacts: profileRun.artifacts,
+          };
+        }
+      }
       await writeRecord(record);
       response.status(201).json(record);
+      if (record.analysisStatus === "processing") void finishImportedAnalysis(id).catch(() => undefined);
     } catch (error) {
       await rm(filePath, { force: true });
       throw error;
@@ -640,8 +708,10 @@ router.post("/:id/agents/run", async (request, response, next) => {
       const candidate = run.outputs["candidate-profile"];
       const nextRecord: ResumeRecord = { ...record, agentArtifacts: run.artifacts };
       if (run.executed.includes("candidate-profile") && candidate && typeof candidate === "object") {
-        const fields = candidate as { name?: unknown; role?: unknown; location?: unknown; education?: unknown; skills?: unknown; summary?: unknown };
+        const fields = candidate as { name?: unknown; identity?: unknown; keywords?: unknown; role?: unknown; location?: unknown; education?: unknown; skills?: unknown; summary?: unknown };
         if (typeof fields.name === "string" && fields.name.trim()) nextRecord.name = fields.name.trim();
+        if (typeof fields.identity === "string") nextRecord.identity = fields.identity.trim();
+        if (Array.isArray(fields.keywords)) nextRecord.keywords = stringList(fields.keywords, 5, 24);
         if (typeof fields.role === "string" && fields.role.trim()) nextRecord.role = fields.role.trim();
         if (typeof fields.location === "string" && fields.location.trim()) nextRecord.location = fields.location.trim();
         if (typeof fields.education === "string" && fields.education.trim()) nextRecord.education = fields.education.trim();
@@ -708,12 +778,20 @@ router.post("/:id/analyze", async (request, response, next) => {
       response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
       return;
     }
-    if (typeof question !== "string" || typeof roleRequirements !== "string") {
+    if (typeof question !== "string" || typeof roleRequirements !== "string" || typeof request.body?.force !== "undefined" && typeof request.body.force !== "boolean") {
       response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
       return;
     }
     if (typeof streamProgress !== "boolean" || typeof ocrText !== "string" || ocrText.length > 100_000) {
       response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本不得超过 100000 字符。" });
+      return;
+    }
+    if (request.body.force !== true && record.analysisStatus === "complete" && record.analysisReport?.trim()) {
+      await respondWithAnalysis(request, response, async ({ emit }) => {
+        emit({ type: "progress", progress: { stage: "analyzing", message: "已加载保存的分析报告，无需重新调用 Agent。" } });
+        return { answer: record.analysisReport, assessment: record.assessment, resume: record,
+          research: { items: [], notes: [] }, researchStatus: "not-requested", cached: true };
+      });
       return;
     }
     if (!process.env.OPENAI_API_KEY) {
@@ -731,6 +809,7 @@ router.post("/:id/analyze", async (request, response, next) => {
         context: { resumeText, fileName: record.fileName, roleRequirements, question },
         requested: [...resumeAnalysisAgentIds],
         artifacts: record.agentArtifacts,
+        force: request.body.force === true,
         signal,
         onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {
           if (section) {
@@ -764,10 +843,11 @@ router.post("/:id/analyze", async (request, response, next) => {
   }
 });
 
-async function readDirectory(): Promise<ResumeRecord[]> {
+async function readDirectory(): Promise<{ records: ResumeRecord[]; skippedFiles: Array<{ fileName: string; reason: string }> }> {
   const names = await readdir(directory);
   const pdfNames = names.filter((name) => name.toLowerCase().endsWith(".pdf"));
   const records: ResumeRecord[] = [];
+  const skippedFiles: Array<{ fileName: string; reason: string }> = [];
   for (let offset = 0; offset < pdfNames.length; offset += 3) {
     const batch = await Promise.all(pdfNames.slice(offset, offset + 3).map(async (name) => {
       const id = path.basename(name, path.extname(name));
@@ -777,14 +857,22 @@ async function readDirectory(): Promise<ResumeRecord[]> {
       // Score migrations belong to explicit analysis, not a page-load GET.
       // Re-indexing here can block the list on hundreds of model calls and
       // replace existing reports/history. Newly discovered files are indexed offline.
-      if (existing) return existing;
-      const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
-      await writeRecord(record);
-      return record;
+      if (existing) return loadTrackedResumeReport(existing, path.join(directory, existing.fileName));
+      try {
+        const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
+        const restored = await loadTrackedResumeReport(record, path.join(directory, name));
+        await writeRecord(restored);
+        return restored;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!/invalid pdf|pdf structure|xref|endstream/i.test(message)) throw error;
+        skippedFiles.push({ fileName: name, reason: "PDF 文件结构损坏或不完整" });
+        return null;
+      }
     }));
-    records.push(...batch);
+    records.push(...batch.filter((record): record is ResumeRecord => record !== null));
   }
-  return records.sort(sortRecords);
+  return { records: records.sort(sortRecords), skippedFiles: skippedFiles.sort((left, right) => left.fileName.localeCompare(right.fileName, "zh-CN")) };
 }
 
 export async function indexPdf(filePath: string, id: string, fileName: string, options: { analyze?: boolean } = {}): Promise<ResumeRecord> {
@@ -811,7 +899,7 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
     ? await runResumeAgents({ context: initialContext, requested: [...resumeAnalysisAgentIds] })
     : null;
   const ai = initialAgents?.outputs["candidate-profile"] as {
-    name?: string; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
+    name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
   } | null | undefined;
   const fallbackName = path.basename(fileName, path.extname(fileName)).replace(/[-_]+/g, " ").trim();
   const name = ai?.name?.trim() || fallbackName || "未命名候选人";
@@ -827,6 +915,8 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
     source: "pdf",
     text,
     education: ai?.education?.trim() || "待确认",
+    identity: ai?.identity?.trim() || "待提取身份",
+    keywords: Array.isArray(ai?.keywords) ? ai.keywords.filter((value): value is string => typeof value === "string").slice(0, 5) : [],
     skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
     analysisReport: "",
@@ -936,6 +1026,8 @@ export async function writeRecord(record: ResumeRecord, signal?: AbortSignal): P
     await writeFile(temporary, JSON.stringify(record, null, 2), { encoding: "utf8", signal });
     signal?.throwIfAborted();
     await rename(temporary, destination);
+    try { await saveTrackedResumeReport(record, path.join(directory, record.fileName)); }
+    catch (error) { console.warn(`[resume-cache] Could not update tracked report cache for ${record.id}:`, error); }
   } catch (error) { await rm(temporary, { force: true }); throw error; }
 }
 
@@ -961,7 +1053,8 @@ async function saveAssessment(id: string, assessment: Assessment, report: string
 
 export async function readRecord(id: string): Promise<ResumeRecord | null> {
   try {
-    return JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
+    const record = JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
+    return await loadTrackedResumeReport(record, path.join(directory, record.fileName));
   } catch {
     return null;
   }

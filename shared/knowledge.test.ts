@@ -163,13 +163,15 @@ test("knowledge readiness separates source gaps, verification, human review, and
 test("knowledge import validates and preserves custom records and bounded review history", () => {
   const bundle = normalizeKnowledgeImport({
     format: "bohack-knowledge-library", version: 1, exportedAt: "2026-11-14T00:00:00.000Z",
-    records: [{ ...record, id: "custom-12345678", officialUrl: "javascript:alert(1)", significanceScore: 72,
+    records: [{ ...record, id: "custom-12345678", officialUrl: "javascript:alert(1)", logoPath: "/company_logos/example.svg", logoUrl: "javascript:alert(1)", significanceScore: 72,
       reviewHistory: [{ id: "review-1", significanceScore: 74, scoreRationale: "已核对", verificationStatus: "已核验", updatedAt: "2026-11-14T00:00:00.000Z", source: "manual" }],
     }],
   });
   assert.equal("error" in bundle, false);
   if ("error" in bundle) return;
   assert.equal(bundle.records[0].officialUrl, "");
+  assert.equal(bundle.records[0].logoPath, "/company_logos/example.svg");
+  assert.equal(bundle.records[0].logoUrl, undefined);
   assert.equal(bundle.records[0].reviewHistory?.[0].significanceScore, 74);
   assert.equal(bundle.records[0].reviewHistory?.[0].verificationStatus, "已核验");
 });
