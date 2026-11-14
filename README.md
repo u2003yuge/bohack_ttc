@@ -200,7 +200,7 @@ Content-Type: application/json
 {"text":"这里填写简历的 PDF 提取文本或 OCR 结果"}
 ```
 
-`/api/research/extract` 只提取，返回 `{items, notes}`；每条包含 `kind`、`input`、`context`、`evidence`、`missingFields` 和 `notes`。`POST /api/research/enrich` 使用相同输入，额外查询数据库并检索，返回 `{items, notes}`，每条包含 `item`、`status`、`report` 和 `error`。
+旧的 `/api/research/*` 成果核查接口已从应用路由移除；候选人分析不会调用这些接口。
 
 `POST /api/agent` 和已保存 PDF 的 `POST /api/resumes/:id/analyze` 只接受简历原文、岗位要求和分析问题；旧的 `includeResearch`、`webResearchEnabled` 参数会被拒绝。PDF 接口支持可选 `ocrText`，只替代本次分析输入，不改写原始 PDF 或保存的提取文本。
 
