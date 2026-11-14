@@ -48,6 +48,7 @@ type WeightImpact = { currentScore: number; proposedScore: number; currentRank: 
 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
 type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
+function boundedScore(value: number): number { return Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0)); }
 const awardPattern = /(奖|获奖|award|acm|icpc|ccf|竞赛|比赛|金牌|银牌|铜牌|一等奖|二等奖|三等奖|优胜奖|冠军|亚军|季军|csp)/i;
 const paperPattern = /(论文|发表|期刊|会议|SCI|EI|DOI|学术|publication|paper|conference|journal)/i;
 const educationPattern = /(教育背景|教育经历|学历|学士|硕士|博士|本科|研究生|大学|学院|毕业|GPA|专业排名)/i;
@@ -98,6 +99,17 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
   const [showAwardMask, setShowAwardMask] = useState(true);
   const [evidenceLineIds, setEvidenceLineIds] = useState<string[]>([]);
   const [openKnowledge, setOpenKnowledge] = useState<{ record: KnowledgeRecord; lineId: string; x: number; y: number; page: number } | null>(null);
+  const [viewerWidth, setViewerWidth] = useState(0);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    const updateWidth = () => setViewerWidth(viewer.clientWidth);
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(viewer);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -163,7 +175,15 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
           const canvas = pageElement?.querySelector("canvas");
           const context = canvas?.getContext("2d");
           if (!canvas || !context) throw new Error("浏览器无法创建 PDF 阅读画布。");
-          const viewport = page.getViewport({ scale: zoom });
+          const baseViewport = page.getViewport({ scale: 1 });
+          // clientWidth includes the reader's horizontal padding. Leave a tiny
+          // safety gap for the scrollbar and the page shadow so wide/landscape
+          // PDFs never get clipped by the page wrapper.
+          const containerWidth = viewerRef.current?.clientWidth || viewerWidth || 650;
+          const availableWidth = Math.max(220, containerWidth - 42);
+          const fitScale = Math.min(1, availableWidth / baseViewport.width);
+          const renderScale = zoom * fitScale;
+          const viewport = page.getViewport({ scale: renderScale });
           const outputScale = window.devicePixelRatio || 1;
           canvas.width = Math.floor(viewport.width * outputScale);
           canvas.height = Math.floor(viewport.height * outputScale);
@@ -182,7 +202,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
               text,
               x: transform[4],
               y: transform[5] - height,
-              width: Math.max(1, rawItem.width * zoom),
+              width: Math.max(1, rawItem.width * renderScale),
               height,
               angle: Math.atan2(transform[1], transform[0]),
             };
@@ -220,7 +240,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
       cancelled = true;
       renderTasks.forEach((task) => task.cancel());
     };
-  }, [document, zoom]);
+  }, [document, viewerWidth, zoom]);
 
   useEffect(() => {
     const query = normalizeEvidence(evidenceTarget);
@@ -282,27 +302,32 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
 
   return (
     <div className="pdf-viewer">
-      <div className="pdf-viewer-toolbar">
-        <div className="pdf-page-controls">
+      <div className="pdf-viewer-toolbar" aria-label="PDF 阅读操作栏">
+        <div className="pdf-toolbar-section pdf-page-controls" aria-label="页面导航">
           <button className="reader-button" onClick={() => goToPage(pageNumber - 1)} disabled={!document || pageNumber <= 1} title="向上翻页" aria-label="向上翻页"><ArrowUp size={15} /></button>
           <span className="page-indicator">{loading ? "读取中" : `${pageNumber} / ${document?.numPages ?? 0}`}</span>
           <button className="reader-button" onClick={() => goToPage(pageNumber + 1)} disabled={!document || pageNumber >= (document?.numPages ?? 1)} title="向下翻页" aria-label="向下翻页"><ArrowDown size={15} /></button>
         </div>
-        <div className="pdf-zoom-controls">
+        <span className="pdf-toolbar-divider" aria-hidden="true" />
+        <div className="pdf-toolbar-section pdf-zoom-controls" aria-label="缩放控制">
           <button className="reader-button" onClick={() => setZoom((current) => Math.max(0.6, Math.round((current - 0.1) * 10) / 10))} disabled={zoom <= 0.6} title="缩小" aria-label="缩小"><Minus size={15} /></button>
           <span className="zoom-indicator">{Math.round(zoom * 100)}%</span>
           <button className="reader-button" onClick={() => setZoom((current) => Math.min(2, Math.round((current + 0.1) * 10) / 10))} disabled={zoom >= 2} title="放大" aria-label="放大"><Plus size={15} /></button>
         </div>
-        <a className="reader-button download-link" href={url} download={title} title="下载 PDF" aria-label="下载 PDF"><ArrowDownToLine size={15} /></a>
+        <span className="pdf-toolbar-divider" aria-hidden="true" />
+        <div className="pdf-toolbar-heatmap" title="竞赛、项目 / 工作、论文 / 期刊和教育背景统一使用含金量热力图">
+          <span className="pdf-toolbar-label"><span className="award-swatch" />证据热力图</span>
+          <span className="award-count" aria-label={`${awardLines.length} 个已识别证据`}>{awardLines.length}</span>
+          <label className="pdf-toolbar-switch" title="显示或隐藏当前 PDF 中全部证据分类遮罩">
+            <input className="switch-input" type="checkbox" role="switch" aria-label="显示证据热力图遮罩" checked={showAwardMask} onChange={(event) => setShowAwardMask(event.target.checked)} />
+            <span className="switch-track" aria-hidden="true"><span className="switch-thumb" /></span>
+          </label>
+          <span className="pdf-toolbar-gradient" aria-label="含金量由低到高"><span>低</span><i className="mask-legend-gradient" /><span>高</span></span>
+        </div>
+        <div className="pdf-toolbar-actions" aria-label="文件操作">
+          <a className="reader-button" href={url} download={title} title="下载 PDF" aria-label="下载 PDF"><ArrowDownToLine size={15} /></a>
+        </div>
       </div>
-      <label className="award-mask-toggle" title="显示或隐藏当前 PDF 中全部证据分类遮罩">
-        <span className="award-swatch" />
-        <span>证据热力图</span>
-        <span className="award-count">{awardLines.length}</span>
-        <input className="switch-input" type="checkbox" role="switch" aria-label="显示证据热力图遮罩" checked={showAwardMask} onChange={(event) => setShowAwardMask(event.target.checked)} />
-        <span className="switch-track" aria-hidden="true"><span className="switch-thumb" /></span>
-      </label>
-      <div className="pdf-mask-legend" aria-label="统一含金量热力图图例"><span>统一含金量</span><i className="mask-legend-gradient" /><span>低</span><span>高</span><small>竞赛 · 项目 / 工作 · 论文 / 期刊 · 教育背景</small></div>
       <div ref={viewerRef} className="pdf-canvas-wrap" onScroll={handleScroll}>
         {loading && <div className="reader-message"><LoaderCircle className="spin" size={18} />正在打开 PDF</div>}
         {error && <div className="reader-error">{error}</div>}
@@ -356,21 +381,22 @@ function KnowledgeReferenceBar({ candidate, records, onOpen }: { candidate: Resu
 
 function radarPoint(index: number, value: number, radius: number, center: number): string {
   const angle = -Math.PI / 2 + (index * Math.PI * 2) / scoreCriteria.length;
-  return `${center + Math.cos(angle) * radius * value / 100},${center + Math.sin(angle) * radius * value / 100}`;
+  const safeValue = boundedScore(value);
+  return `${center + Math.cos(angle) * radius * safeValue / 100},${center + Math.sin(angle) * radius * safeValue / 100}`;
 }
 
 function ScoreRadar({ card, selectedKey, onSelect }: { card: ScoreCard; selectedKey: ScoreKey | null; onSelect: (key: ScoreKey) => void }) {
   const center = 96;
   const radius = 67;
   const outer = scoreCriteria.map((_, index) => radarPoint(index, 100, radius, center)).join(" ");
-  const values = scoreCriteria.map(({ key }) => card.criteria[key].score);
+  const values = scoreCriteria.map(({ key }) => boundedScore(card.criteria[key].score));
   const area = values.map((value, index) => radarPoint(index, value, radius, center)).join(" ");
-  return <div className="score-radar"><svg viewBox="0 0 192 192" role="group" aria-label="六项能力雷达图，选择维度查看评分依据"> <polygon points={outer} className="radar-grid" />{[25, 50, 75].map((level) => <polygon key={level} points={scoreCriteria.map((_, index) => radarPoint(index, level, radius, center)).join(" ")} className="radar-ring" />)}{scoreCriteria.map((_, index) => <line key={index} x1={center} y1={center} x2={radarPoint(index, 100, radius, center).split(",")[0]} y2={radarPoint(index, 100, radius, center).split(",")[1]} className="radar-axis" />)}<polygon points={area} className="radar-area" />{values.map((value, index) => { const [x, y] = radarPoint(index, value, radius, center).split(","); const criterion = scoreCriteria[index]; return <circle key={criterion.key} cx={x} cy={y} r="5" className={`radar-dot ${selectedKey === criterion.key ? "selected" : ""}`} role="button" tabIndex={0} aria-label={`${criterion.label} ${value.toFixed(0)} 分，查看评分依据`} aria-pressed={selectedKey === criterion.key} onClick={() => onSelect(criterion.key)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(criterion.key); } }}><title>{`${criterion.label} ${value.toFixed(0)} 分 · 查看评分依据`}</title></circle>; })}</svg><div className="radar-labels">{scoreCriteria.map(({ key, label }, index) => <button type="button" key={key} className={`radar-label radar-label-${index} ${selectedKey === key ? "selected" : ""}`} aria-pressed={selectedKey === key} onClick={() => onSelect(key)}>{label}<b>{card.criteria[key].score.toFixed(0)}</b></button>)}</div></div>;
+  return <div className="score-radar"><svg viewBox="0 0 192 192" role="group" aria-label="六项能力雷达图，选择维度查看评分依据"> <polygon points={outer} className="radar-grid" />{[25, 50, 75].map((level) => <polygon key={level} points={scoreCriteria.map((_, index) => radarPoint(index, level, radius, center)).join(" ")} className="radar-ring" />)}{scoreCriteria.map((_, index) => <line key={index} x1={center} y1={center} x2={radarPoint(index, 100, radius, center).split(",")[0]} y2={radarPoint(index, 100, radius, center).split(",")[1]} className="radar-axis" />)}<polygon points={area} className="radar-area" />{values.map((value, index) => { const [x, y] = radarPoint(index, value, radius, center).split(","); const criterion = scoreCriteria[index]; return <circle key={criterion.key} cx={x} cy={y} r="5" className={`radar-dot ${selectedKey === criterion.key ? "selected" : ""}`} role="button" tabIndex={0} aria-label={`${criterion.label} ${value.toFixed(0)} 分，查看评分依据`} aria-pressed={selectedKey === criterion.key} onClick={() => onSelect(criterion.key)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(criterion.key); } }}><title>{`${criterion.label} ${value.toFixed(0)} 分 · 查看评分依据`}</title></circle>; })}</svg><div className="radar-labels">{scoreCriteria.map(({ key, label }, index) => { const value = boundedScore(card.criteria[key].score); return <button type="button" key={key} className={`radar-label radar-label-${index} ${selectedKey === key ? "selected" : ""}`} aria-pressed={selectedKey === key} onClick={() => onSelect(key)}>{label}<b className={value >= 100 ? "score-at-limit" : ""}>{value.toFixed(0)}</b></button>; })}</div></div>;
 }
 
 function ScoreContribution({ card, selectedKey, onSelect }: { card: ScoreCard; selectedKey: ScoreKey | null; onSelect: (key: ScoreKey) => void }) {
   const totalWeight = scoreCriteria.reduce((sum, criterion) => sum + card.weights[criterion.key], 0) || 100;
-  return <section className="score-contribution"><div className="insight-section-head"><div><span className="eyebrow">SCORE DECOMPOSITION</span><h4>综合分贡献拆解</h4></div><span className="score-formula">按当前权重</span></div><div className="contribution-list">{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const contribution = criterion.score * card.weights[key] / totalWeight; return <button type="button" className={`contribution-row ${selectedKey === key ? "selected" : ""}`} key={key} aria-pressed={selectedKey === key} onClick={() => onSelect(key)} aria-label={`${label}，单项 ${criterion.score.toFixed(0)} 分，贡献 ${contribution.toFixed(1)} 分，点击查看评分依据`}><div className="contribution-row-head"><span>{label}</span><strong>{contribution.toFixed(1)} 分</strong><small>权重 {card.weights[key]}% · 置信度 {Math.round(criterion.confidence * 100)}%</small></div><div className="contribution-track"><i style={{ width: `${criterion.score}%` }} /><b style={{ left: `${criterion.score}%` }} /></div></button>; })}</div><p className="contribution-note">条形长度表示单项评分，右侧贡献值表示该项进入综合分后的实际影响；两者不要混为同一个分数。</p></section>;
+  return <section className="score-contribution"><div className="insight-section-head"><div><span className="eyebrow">SCORE DECOMPOSITION</span><h4>综合分贡献拆解</h4></div><span className="score-formula">按当前权重</span></div><div className="contribution-list">{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const score = boundedScore(criterion.score); const contribution = score * card.weights[key] / totalWeight; return <button type="button" className={`contribution-row ${selectedKey === key ? "selected" : ""}`} key={key} aria-pressed={selectedKey === key} onClick={() => onSelect(key)} aria-label={`${label}，单项 ${score.toFixed(0)} 分，贡献 ${contribution.toFixed(1)} 分，点击查看评分依据`}><div className="contribution-row-head"><span>{label}</span><strong>{contribution.toFixed(1)} 分</strong><small>权重 {card.weights[key]}% · 置信度 {Math.round(criterion.confidence * 100)}%</small></div><div className="contribution-track"><i className={score >= 100 ? "at-limit" : ""} style={{ width: `${score}%` }} /><b style={{ left: `${score}%` }} /></div></button>; })}</div><p className="contribution-note">条形长度表示单项评分，右侧贡献值表示该项进入综合分后的实际影响；两者不要混为同一个分数。</p></section>;
 }
 
 function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume }) {
@@ -380,10 +406,10 @@ function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume })
   useEffect(() => { setSelectedYear(timeline.at(-1)?.year ?? new Date().getFullYear()); }, [candidate.id, timeline]);
   const chartWidth = Math.max(260, timeline.length * 58 + 24);
   const x = (index: number) => timeline.length < 2 ? chartWidth / 2 : 34 + (index / (timeline.length - 1)) * (chartWidth - 52);
-  const y = (score: number) => 104 - (score / 100) * 72;
+  const y = (score: number) => 104 - (boundedScore(score) / 100) * 72;
   const points = timeline.map((entry, index) => `${x(index)},${y(entry.score)}`).join(" ");
   return <div className="score-trend">
-    <div className="trend-legend"><span>进步分年度累计曲线</span><small>当前进步分 {card.criteria.growth.score.toFixed(1)} · 每年年末回看前 3 年累计</small></div>
+    <div className="trend-legend"><span>进步分年度累计曲线</span><small>当前进步分 {boundedScore(card.criteria.growth.score).toFixed(1)} · 每年年末回看前 3 年累计</small></div>
     {timeline.length ? <>
       <div className="trend-chart-scroll"><svg viewBox={`0 0 ${chartWidth} 142`} style={{ width: `${chartWidth}px` }} role="img" aria-label="按年份累计计算的进步分增长曲线">
         {[0, 50, 100].map((tick) => <g key={tick}><line x1="28" y1={y(tick)} x2={chartWidth - 12} y2={y(tick)} className="trend-grid" /><text x="23" y={y(tick) + 3} textAnchor="end" className="trend-label">{tick}</text></g>)}
@@ -438,7 +464,8 @@ function ProjectBreakdownView({ candidate, agentAvailable, onEvidence }: { candi
 function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: string; score: number; candidates: HistoricalCandidate[]; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void }) {
   const [year, setYear] = useState<number | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const benchmark = calculateBenchmark(role, score, year, candidates);
+  const safeScore = boundedScore(score);
+  const benchmark = calculateBenchmark(role, safeScore, year, candidates);
   useEffect(() => { setYear(null); setSelectedHistoryId(null); }, [role]);
   const selectedHistory = benchmark.candidates.find((candidate) => candidate.id === selectedHistoryId);
   const lanes = [
@@ -460,7 +487,7 @@ function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: stri
   return <section className="benchmark-card">
     <div className="benchmark-head"><div><span className="eyebrow">HISTORICAL BENCHMARK</span><div className="benchmark-percentile"><strong>{benchmark.percentile === null ? "暂无可比较样本" : `超过历史样本 ${benchmark.percentile}%`}</strong><span>{cohortLabel} · {benchmark.sampleCount} 份</span></div></div><div className="benchmark-year-filter" role="group" aria-label="筛选历史样本年份"><button className={year === null ? "active" : ""} onClick={() => { setYear(null); setSelectedHistoryId(null); }}>全部</button>{benchmark.availableYears.map((value) => <button className={year === value ? "active" : ""} key={value} onClick={() => { setYear(value); setSelectedHistoryId(null); }}>{value}</button>)}</div></div>
     <div className="benchmark-distribution" role="group" aria-label="历史候选人综合分分布图">
-      {benchmark.sampleCount > 0 && <div className="benchmark-overlay" aria-hidden="true"><i className="benchmark-current-line" style={{ left: `${score}%` }}><b>当前 {score.toFixed(0)}</b></i>{benchmark.screenCutoff !== null && <i className="benchmark-screen-line" style={{ left: `${benchmark.screenCutoff}%` }} />}{benchmark.hireCutoff !== null && <i className="benchmark-hire-line" style={{ left: `${benchmark.hireCutoff}%` }} />}</div>}
+      {benchmark.sampleCount > 0 && <div className="benchmark-overlay" aria-hidden="true"><i className={`benchmark-current-line ${safeScore >= 100 ? "score-at-limit" : ""}`} style={{ left: `${safeScore}%` }}><b>当前 {safeScore.toFixed(0)}</b></i>{benchmark.screenCutoff !== null && <i className="benchmark-screen-line" style={{ left: `${boundedScore(benchmark.screenCutoff)}%` }} />}{benchmark.hireCutoff !== null && <i className="benchmark-hire-line" style={{ left: `${boundedScore(benchmark.hireCutoff)}%` }} />}</div>}
       {lanes.map((lane) => <div className="benchmark-lane" key={lane.key}><span className="benchmark-lane-label"><span>{lane.label}</span><small>n={lane.candidates.length}</small></span><div className={`benchmark-lane-track ${lane.key}`}>{lane.candidates.map((candidate) => <button key={candidate.id} className={`benchmark-dot ${selectedHistoryId === candidate.id ? "selected" : ""}`} style={{ left: `${candidate.composite}%` }} title={`${candidate.year} · ${candidate.name} · ${candidate.composite} 分`} aria-label={`${candidate.year} ${candidate.name}，综合分 ${candidate.composite}，${candidate.screened ? "通过首轮" : "未通过首轮"}${candidate.hired ? "，最终录取" : ""}`} aria-pressed={selectedHistoryId === candidate.id} onClick={() => selectCandidate(candidate)} />)}</div></div>)}
       {benchmark.sampleCount === 0 && <div className="benchmark-no-samples">暂无历史样本，无法计算百分位或结果参考线。</div>}
       <div className="benchmark-axis"><span /><div><i>0</i><i>25</i><i>50</i><i>75</i><i>100</i></div></div>
@@ -587,16 +614,17 @@ function ScoreInsights({ card, candidate, records, historyCandidates: historyRec
   const selected = selectedCriterion ? card.criteria[selectedCriterion] : null;
   const selectedLabel = scoreCriteria.find((criterion) => criterion.key === selectedCriterion)?.label;
   useEffect(() => { setSelectedCriterion(null); }, [candidate.id]);
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView key={candidate.id} candidate={candidate} agentAvailable={agentAvailable} onEvidence={onEvidence} /></div>;
+  const composite = boundedScore(card.composite);
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className={`score-formula ${composite >= 100 ? "score-at-limit" : ""}`}>综合分 {composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {boundedScore(selected.score).toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView key={candidate.id} candidate={candidate} agentAvailable={agentAvailable} onEvidence={onEvidence} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
   const keys: ScoreKey[] = ["leadership", "expertise", "experience", "roleFit", "growth"];
-  return Math.round(keys.reduce((total, key) => total + card.criteria[key].score, 0) / keys.length * 10) / 10;
+  return Math.round(keys.reduce((total, key) => total + boundedScore(card.criteria[key].score), 0) / keys.length * 10) / 10;
 }
 
 function comparisonAxisScore(card: ScoreCard, axis: ComparisonMapAxis): number {
-  return axis === "depth" ? depthScore(card) : card.criteria[axis].score;
+  return axis === "depth" ? depthScore(card) : boundedScore(card.criteria[axis].score);
 }
 
 function matchesMapRegion(card: ScoreCard, mapX: ComparisonMapAxis, mapY: ComparisonMapAxis, region: ComparisonMapRegion, threshold: number): boolean {
@@ -643,7 +671,7 @@ function RecruitmentQualityMap({ candidates, selectedId, onSelect, rankLabel, ra
       <line x1={thresholdX} y1={top} x2={thresholdX} y2={top + plotHeight} className="quality-midline" /><line x1={left} y1={thresholdY} x2={left + plotWidth} y2={thresholdY} className="quality-midline" /><line x1={left} y1={top + plotHeight} x2={left + plotWidth} y2={top + plotHeight} className="quality-axis" /><line x1={left} y1={top} x2={left} y2={top + plotHeight} className="quality-axis" />
       {quadrants.map(({ key, centerX, centerY }) => <text key={key} x={centerX} y={centerY + 3} textAnchor="middle" className="quality-quadrant-label">{mapRegionLabels[key]}</text>)}
       {[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={pointX(tick)} y1={top + plotHeight} x2={pointX(tick)} y2={top + plotHeight + 4} className="quality-axis" /><text x={pointX(tick)} y={height - 25} textAnchor="middle" className="quality-tick">{tick}</text><line x1={left - 4} y1={pointY(tick)} x2={left} y2={pointY(tick)} className="quality-axis" /><text x={left - 9} y={pointY(tick) + 3} textAnchor="end" className="quality-tick">{tick}</text></g>)}
-      {mapCandidates.map(({ resume, card }) => { const index = candidates.findIndex((candidate) => candidate.resume.id === resume.id); const xValue = axisValue(card, mapX); const yValue = axisValue(card, mapY); const radius = 5 + card.composite / 10; const x = pointX(xValue); const y = pointY(yValue); const active = resume.id === selectedId; const stableColor = [...resume.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 4 + 1; const label = resume.name.length > 8 ? `${resume.name.slice(0, 8)}…` : resume.name; return <g key={resume.id} className={`quality-point ${active ? "selected" : ""}`} role="button" tabIndex={0} aria-pressed={active} aria-label={`排名第 ${index + 1}：${resume.name}，${xName} ${xValue.toFixed(0)}，${yName} ${yValue.toFixed(0)}，${rankLabel}${rankDirection === "desc" ? "高分优先" : "低分优先"}，综合分 ${card.composite.toFixed(1)}`} onClick={() => onSelect(resume.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(resume.id); } }}><title>{`第 ${index + 1} 名 · ${resume.name} · ${xName} ${xValue.toFixed(0)} · ${yName} ${yValue.toFixed(0)} · 综合分 ${card.composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={active ? radius + 2 : radius} className={`quality-bubble quality-bubble-${stableColor}`} /><text x={x} y={y + 3} textAnchor="middle" className="quality-rank-mark">{index + 1}</text>{active && <text x={x} y={y - radius - 7} textAnchor="middle" className="quality-name">{label}</text>}</g>; })}
+      {mapCandidates.map(({ resume, card }) => { const index = candidates.findIndex((candidate) => candidate.resume.id === resume.id); const xValue = axisValue(card, mapX); const yValue = axisValue(card, mapY); const composite = boundedScore(card.composite); const radius = 5 + composite / 10; const x = pointX(xValue); const y = pointY(yValue); const active = resume.id === selectedId; const stableColor = [...resume.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 4 + 1; const label = resume.name.length > 8 ? `${resume.name.slice(0, 8)}…` : resume.name; return <g key={resume.id} className={`quality-point ${active ? "selected" : ""}`} role="button" tabIndex={0} aria-pressed={active} aria-label={`排名第 ${index + 1}：${resume.name}，${xName} ${xValue.toFixed(0)}，${yName} ${yValue.toFixed(0)}，${rankLabel}${rankDirection === "desc" ? "高分优先" : "低分优先"}，综合分 ${composite.toFixed(1)}`} onClick={() => onSelect(resume.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(resume.id); } }}><title>{`第 ${index + 1} 名 · ${resume.name} · ${xName} ${xValue.toFixed(0)} · ${yName} ${yValue.toFixed(0)} · 综合分 ${composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={active ? radius + 2 : radius} className={`quality-bubble quality-bubble-${stableColor}`} /><text x={x} y={y + 3} textAnchor="middle" className="quality-rank-mark">{index + 1}</text>{active && <text x={x} y={y - radius - 7} textAnchor="middle" className="quality-name">{label}</text>}</g>; })}
       <text x={left + plotWidth / 2} y={height - 7} textAnchor="middle" className="quality-axis-label">{xName}</text><text x="14" y={top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 14 ${top + plotHeight / 2})`} className="quality-axis-label">{yName}</text>
     </svg></div><div className="quality-map-note"><span>{mapRegion === "all" ? `点击象限联动筛选排名表；横纵轴阈值均为 ${mapThreshold}` : `象限筛选：${mapRegionLabels[mapRegion]} · ${regionCount} 位候选人 · 阈值 ${mapThreshold}`}</span><span>能力深度取领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>气泡半径映射综合分；重叠候选人可在下方排名表点选</span></div>
   </section>;
@@ -1148,7 +1176,7 @@ function paginateReport(answer: string): string[] {
 function demoScoreCard(resume: Resume, index: number, weights: ScoreWeights): ScoreCard {
   if (resume.scoreCard) return { ...resume.scoreCard, weights, composite: calculateComposite(resume.scoreCard.criteria, weights) };
   const values = [78 + index * 4, 84 - index * 3, 82 + index * 2, 72 + index * 5, 86 - index * 2, 76 + index * 3];
-  const criteria = Object.fromEntries(scoreCriteria.map(({ key }, criterionIndex) => [key, { score: values[criterionIndex], evidence: ["示例资料中的工作成果与职责描述"], confidence: 0.72 }])) as ScoreCard["criteria"];
+  const criteria = Object.fromEntries(scoreCriteria.map(({ key }, criterionIndex) => [key, { score: boundedScore(values[criterionIndex]), evidence: ["示例资料中的工作成果与职责描述"], confidence: 0.72 }])) as ScoreCard["criteria"];
   return { criteria, weights, composite: calculateComposite(criteria, weights), overallConfidence: 0.72, formula: "weighted-mean-v1", evaluatedAt: new Date().toISOString() };
 }
 
@@ -1170,7 +1198,8 @@ function ComparisonPreview({ candidate, card, view, knowledgeRecords }: { candid
     return <div className="comparison-preview-body">{candidate.source === "pdf" ? <PdfReader key={candidate.id} url={`/api/resumes/${encodeURIComponent(candidate.id)}/file`} title={candidate.fileName ?? `${candidate.name}.pdf`} evidenceTarget="" knowledgeRecords={knowledgeRecords} onEvidenceResult={() => undefined} /> : <article className="comparison-sample-page"><div className="sample-document-label"><span>BOHACK SAMPLE</span><span>候选人简历</span></div><h3>{candidate.name}</h3><p className="comparison-sample-role">{candidate.role} · {candidate.location}</p><section><h4>个人概览</h4><p>{candidate.summary || candidate.text.split("。")[0]}</p></section><section><h4>工作 / 项目经历</h4>{(candidate.experiences ?? []).map((experience) => <article key={`${experience.company}-${experience.period}`}><strong>{experience.role}</strong><span>{experience.company} · {experience.period}</span><p>{experience.detail}</p></article>)}</section><section><h4>教育与技能</h4><p>{candidate.education}</p><div className="comparison-sample-skills">{candidate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></section></article>}</div>;
   }
   const report = candidate.analysisReport?.trim() || "这份候选人还没有生成分析报告。返回工作台后可重新运行 Agent。";
-  return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>分析文档</span></div><h3>{candidate.name} · 分析报告</h3><p className="analysis-paper-subtitle">{candidate.role} · 综合分 {card.composite.toFixed(1)}</p><div className="comparison-preview-score-grid">{scoreCriteria.map(({ key, label }) => <div key={key}><span>{label}</span><strong>{card.criteria[key].score.toFixed(0)}</strong></div>)}</div><div className="comparison-analysis-text">{report}</div><small className="analysis-paper-foot">分析结果仅作招聘决策参考 · 需要招聘人员复核</small></article></div>;
+  const composite = boundedScore(card.composite);
+  return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>分析文档</span></div><h3>{candidate.name} · 分析报告</h3><p className={`analysis-paper-subtitle ${composite >= 100 ? "score-at-limit" : ""}`}>{candidate.role} · 综合分 {composite.toFixed(1)}</p><div className="comparison-preview-score-grid">{scoreCriteria.map(({ key, label }) => { const score = boundedScore(card.criteria[key].score); return <div key={key}><span>{label}</span><strong className={score >= 100 ? "score-at-limit" : ""}>{score.toFixed(0)}</strong></div>; })}</div><div className="comparison-analysis-text">{report}</div><small className="analysis-paper-foot">分析结果仅作招聘决策参考 · 需要招聘人员复核</small></article></div>;
 }
 
 function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEvidence, onClose, agentAvailable, knowledgeRecords }: { resumes: Resume[]; weights: ScoreWeights; selectedId: string; onSelectResume: (id: string) => void; onEvidence: (evidence: string) => void; onClose: () => void; agentAvailable: boolean; knowledgeRecords: KnowledgeRecord[] }) {
@@ -1187,6 +1216,7 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
   const [rankError, setRankError] = useState("");
   const [focusEvidenceKey, setFocusEvidenceKey] = useState<ScoreKey | null>(null);
   const [previewView, setPreviewView] = useState<"resume" | "analysis">("resume");
+  const [previewOpen, setPreviewOpen] = useState(true);
   const evidenceCardRefs = useRef(new Map<ScoreKey, HTMLElement>());
   const allRanked = useMemo(() => resumes.map((resume, index) => ({ resume, card: demoScoreCard(resume, index, weights) })).sort((left, right) => {
     const leftScore = rankCriterion === "composite" ? left.card.composite : left.card.criteria[rankCriterion].score;
@@ -1221,8 +1251,8 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
     finally { setRankBusy(false); }
   }
 
-  return <main className="comparison-main comparison-workspace-main"><div className="comparison-layout"><aside className="comparison-preview"><div className="comparison-preview-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h2>{selected?.resume.name ?? "未选择候选人"}</h2><p>{selected?.resume.role ?? "请从右侧排名选择候选人"}</p></div><div className="comparison-view-switch" role="tablist" aria-label="切换候选人简历或分析文档"><button type="button" className={previewView === "resume" ? "active" : ""} role="tab" aria-selected={previewView === "resume"} onClick={() => setPreviewView("resume")}><ArrowLeft size={12} />简历</button><button type="button" className={previewView === "analysis" ? "active" : ""} role="tab" aria-selected={previewView === "analysis"} onClick={() => setPreviewView("analysis")}>分析文档<ArrowRight size={12} /></button></div></div>{selected ? <ComparisonPreview candidate={selected.resume} card={selected.card} view={previewView} knowledgeRecords={knowledgeRecords} /> : <div className="comparison-preview-empty">请从右侧排名表选择候选人</div>}</aside><div className="comparison-panel">
-    <div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions"><span className="comparison-count">显示 {ranked.length} / {resumes.length} 位</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div>
+  return <main className="comparison-main comparison-workspace-main"><div className={`comparison-layout ${previewOpen ? "" : "preview-closed"}`}>{previewOpen && <aside className="comparison-preview"><div className="comparison-preview-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h2>{selected?.resume.name ?? "未选择候选人"}</h2><p>{selected?.resume.role ?? "请从右侧排名选择候选人"}</p></div><div className="comparison-preview-head-actions"><div className="comparison-view-switch" role="tablist" aria-label="切换候选人简历或分析文档"><button type="button" className={previewView === "resume" ? "active" : ""} role="tab" aria-selected={previewView === "resume"} onClick={() => setPreviewView("resume")}><ArrowLeft size={12} />简历</button><button type="button" className={previewView === "analysis" ? "active" : ""} role="tab" aria-selected={previewView === "analysis"} onClick={() => setPreviewView("analysis")}>分析文档<ArrowRight size={12} /></button></div><button type="button" className="comparison-preview-close" onClick={() => setPreviewOpen(false)} title="关闭候选人预览，恢复全图视野" aria-label="关闭候选人预览"><X size={14} /></button></div></div>{selected ? <ComparisonPreview candidate={selected.resume} card={selected.card} view={previewView} knowledgeRecords={knowledgeRecords} /> : <div className="comparison-preview-empty">请从右侧排名选择候选人</div>}</aside>}<div className="comparison-panel">
+    <div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions">{!previewOpen && <button className="comparison-show-preview" type="button" onClick={() => setPreviewOpen(true)}><FileText size={13} />显示候选人预览</button>}<span className="comparison-count">显示 {ranked.length} / {resumes.length} 位</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div>
     <p className="comparison-note">已生成评分卡 {resumes.filter((resume) => Boolean(resume.scoreCard)).length} 份 · 演示 / 待评分 {resumes.filter((resume) => !resume.scoreCard).length} 份。演示分不代表真实评估；评分来源与图表象限会联动筛选排名表。</p>
     <div className="comparison-source-filter" role="group" aria-label="按评分来源筛选候选人"><span>评分来源</span>{(["all", "scored", "demo"] as ComparisonRatingFilter[]).map((filterKey) => { const count = filterKey === "all" ? resumes.length : resumes.filter((resume) => filterKey === "scored" ? Boolean(resume.scoreCard) : !resume.scoreCard).length; return <button key={filterKey} type="button" className={ratingFilter === filterKey ? "active" : ""} aria-pressed={ratingFilter === filterKey} onClick={() => setRatingFilter(filterKey)}>{ratingFilterLabels[filterKey]}<b>{count}</b></button>; })}</div>
     <section className="comparison-rank-tools" aria-label="设置候选人排名依据">
@@ -1238,8 +1268,8 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
     </section>
     {mapRegion !== "all" && <div className="comparison-region-filter"><span>图表象限：{mapRegionLabels[mapRegion]} · {ranked.length} 位</span><button type="button" onClick={() => setMapRegion("all")}>显示全部</button></div>}
     {sourceFiltered.length ? <RecruitmentQualityMap candidates={sourceFiltered} selectedId={selected?.resume.id ?? ""} onSelect={onSelectResume} rankLabel={rankLabels[rankCriterion]} rankDirection={rankDirection} mapX={mapX} mapY={mapY} mapRegion={mapRegion} mapThreshold={mapThreshold} onRegionChange={setMapRegion} mapLabels={mapLabels} /> : <div className="comparison-empty">当前筛选下没有候选人。可切换评分来源查看其他档案。</div>}
-    <div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.length ? ranked.map(({ resume, card }, rank) => <tr key={resume.id} className={resume.id === selected?.resume.id ? "selected" : ""} aria-selected={resume.id === selected?.resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><button className="comparison-candidate-select" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(null); }} aria-pressed={resume.id === selected?.resume.id}><strong>{resume.name}</strong><small>{resume.role} · {resume.scoreCard ? "已生成评分卡" : "演示 / 待评分"}</small></button></td>{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; return <td className="score-cell" key={key}><button type="button" className="comparison-score-evidence" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(key); }} title={`查看 ${resume.name} · ${label} 的评分依据`} aria-label={`${resume.name}，${label} ${criterion.score.toFixed(0)} 分，置信度 ${Math.round(criterion.confidence * 100)}%，查看评分依据`}><span className="score-cell-score"><span className="score-cell-value">{criterion.score.toFixed(0)}</span><i><b style={{ width: `${criterion.score}%` }} /></i></span><small className={`score-cell-confidence ${criterion.confidence < 0.45 ? "low-confidence" : ""}`}>置信度 {Math.round(criterion.confidence * 100)}%</small></button></td>; })}<td className="composite-cell">{card.composite.toFixed(1)}</td></tr>) : <tr><td colSpan={9} className="comparison-empty-cell">当前筛选下没有候选人。</td></tr>}</tbody></table></div>
-    {selected && <section className="comparison-evidence"><div className="comparison-evidence-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{selected.resume.name} · {selected.resume.role}</h3><p>{rankLabels[rankCriterion]}排名 {ranked.findIndex(({ resume }) => resume.id === selected.resume.id) + 1} · 综合分 {selected.card.composite.toFixed(1)} · 深度 {depthScore(selected.card).toFixed(1)} · 广度 {selected.card.criteria.perspective.score.toFixed(0)}</p></div><button className="back-to-workspace" onClick={() => { onSelectResume(selected.resume.id); onClose(); }}>打开简历分析</button></div><div className="comparison-evidence-grid">{scoreCriteria.map(({ key, label }) => { const criterion = selected.card.criteria[key]; return <article key={key} className={focusEvidenceKey === key ? "focused" : ""} ref={(element) => { if (element) evidenceCardRefs.current.set(key, element); else evidenceCardRefs.current.delete(key); }} tabIndex={-1}><div className="comparison-evidence-metric"><span><strong>{label}</strong><small className={criterion.confidence < 0.45 ? "low-confidence" : ""} title="模型对该维度现有简历证据充分度的估计；不是录用概率">置信度 {Math.round(criterion.confidence * 100)}%</small></span><b>{criterion.score.toFixed(0)}</b></div>{criterion.evidence.length ? criterion.evidence.slice(0, 2).map((evidence, index) => <button className="comparison-evidence-link" key={`${index}-${evidence}`} onClick={() => { onSelectResume(selected.resume.id); onEvidence(evidence); onClose(); }} title="回到 PDF 定位依据">{evidence}<ExternalLink size={10} /></button>) : <p>暂无可展示的证据摘要</p>}</article>; })}</div></section>}
+    <div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.length ? ranked.map(({ resume, card }, rank) => <tr key={resume.id} className={resume.id === selected?.resume.id ? "selected" : ""} aria-selected={resume.id === selected?.resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><button className="comparison-candidate-select" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(null); }} aria-pressed={resume.id === selected?.resume.id}><strong>{resume.name}</strong><small>{resume.role} · {resume.scoreCard ? "已生成评分卡" : "演示 / 待评分"}</small></button></td>{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const score = boundedScore(criterion.score); return <td className="score-cell" key={key}><button type="button" className="comparison-score-evidence" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(key); }} title={`查看 ${resume.name} · ${label} 的评分依据`} aria-label={`${resume.name}，${label} ${score.toFixed(0)} 分，置信度 ${Math.round(criterion.confidence * 100)}%，查看评分依据`}><span className="score-cell-score"><span className={`score-cell-value ${score >= 100 ? "score-at-limit" : ""}`}>{score.toFixed(0)}</span><i><b style={{ width: `${score}%` }} /></i></span><small className={`score-cell-confidence ${criterion.confidence < 0.45 ? "low-confidence" : ""}`}>置信度 {Math.round(criterion.confidence * 100)}%</small></button></td>; })}<td className={`composite-cell ${card.composite >= 100 ? "score-at-limit" : ""}`}>{boundedScore(card.composite).toFixed(1)}</td></tr>) : <tr><td colSpan={9} className="comparison-empty-cell">当前筛选下没有候选人。</td></tr>}</tbody></table></div>
+    {selected && <section className="comparison-evidence"><div className="comparison-evidence-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{selected.resume.name} · {selected.resume.role}</h3><p>{rankLabels[rankCriterion]}排名 {ranked.findIndex(({ resume }) => resume.id === selected.resume.id) + 1} · 综合分 <strong className={boundedScore(selected.card.composite) >= 100 ? "score-at-limit" : ""}>{boundedScore(selected.card.composite).toFixed(1)}</strong> · 深度 {depthScore(selected.card).toFixed(1)} · 广度 {boundedScore(selected.card.criteria.perspective.score).toFixed(0)}</p></div><button className="back-to-workspace" onClick={() => { onSelectResume(selected.resume.id); onClose(); }}>打开简历分析</button></div><div className="comparison-evidence-grid">{scoreCriteria.map(({ key, label }) => { const criterion = selected.card.criteria[key]; const score = boundedScore(criterion.score); return <article key={key} className={focusEvidenceKey === key ? "focused" : ""} ref={(element) => { if (element) evidenceCardRefs.current.set(key, element); else evidenceCardRefs.current.delete(key); }} tabIndex={-1}><div className="comparison-evidence-metric"><span><strong>{label}</strong><small className={criterion.confidence < 0.45 ? "low-confidence" : ""} title="模型对该维度现有简历证据充分度的估计；不是录用概率">置信度 {Math.round(criterion.confidence * 100)}%</small></span><b className={score >= 100 ? "score-at-limit" : ""}>{score.toFixed(0)}</b></div>{criterion.evidence.length ? criterion.evidence.slice(0, 2).map((evidence, index) => <button className="comparison-evidence-link" key={`${index}-${evidence}`} onClick={() => { onSelectResume(selected.resume.id); onEvidence(evidence); onClose(); }} title="回到 PDF 定位依据">{evidence}<ExternalLink size={10} /></button>) : <p>暂无可展示的证据摘要</p>}</article>; })}</div></section>}
     <div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div>
   </div></div></main>;
 }

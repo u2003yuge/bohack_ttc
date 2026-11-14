@@ -181,7 +181,7 @@ export function calculateComposite(criteria: Record<ScoreKey, ScoreEvidence>, we
   const totalWeight = scoreCriteria.reduce((total, criterion) => total + weights[criterion.key], 0);
   if (totalWeight <= 0) return 0;
   const weightedScore = scoreCriteria.reduce((total, criterion) => total + criteria[criterion.key].score * weights[criterion.key], 0);
-  return Math.round((weightedScore / totalWeight) * 10) / 10;
+  return Math.round(Math.max(0, Math.min(100, weightedScore / totalWeight)) * 10) / 10;
 }
 
 export function normalizeWeights(weights: ScoreWeights): ScoreWeights {

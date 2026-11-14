@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { calculateGrowthTimeline, comparisonMapQuadrants, matchesComparisonMapRegion, normalizeComparisonRankDraft } from "./scoring.js";
+import { calculateComposite, calculateGrowthTimeline, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeComparisonRankDraft, scoreCriteria } from "./scoring.js";
+
+test("composite scores stay within the 0-100 document scale", () => {
+  const criteria = Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: 150, evidence: [], confidence: 1 }]));
+  assert.equal(calculateComposite(criteria, defaultScoreWeights), 100);
+  const negativeCriteria = Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: -20, evidence: [], confidence: 1 }]));
+  assert.equal(calculateComposite(negativeCriteria, defaultScoreWeights), 0);
+});
 
 test("growth timeline uses year-end rolling accumulation and scales latest point to growth score", () => {
   const timeline = calculateGrowthTimeline({
