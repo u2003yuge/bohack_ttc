@@ -1,0 +1,870 @@
+.scoring-workspace {
+  grid-column: 2 / -1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 30px clamp(18px, 3vw, 46px) 60px;
+  background: #f5f8f5;
+  color: #334c40;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.scoring-workspace > * {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.ms-workspace-heading,
+.ms-section-heading,
+.ms-candidate-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.ms-workspace-heading h1 {
+  margin: 5px 0;
+  font-size: clamp(23px, 2.3vw, 32px);
+  letter-spacing: -0.7px;
+  color: #1d4231;
+}
+.scoring-workspace h2,
+.material-assessment h2 {
+  margin: 4px 0 7px;
+  font-size: 21px;
+  color: #234d38;
+}
+.scoring-workspace h3,
+.material-assessment h3 {
+  margin: 15px 0 8px;
+  font-size: 15px;
+  color: #355844;
+}
+.ms-workspace-heading p,
+.ms-section-heading p,
+.ms-candidate-heading p,
+.ms-contribution-section > p {
+  margin: 0;
+  color: #7a8d81;
+  font-size: 12px;
+}
+.ms-eyebrow {
+  color: #6a927a;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+.ms-version,
+.ms-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #dce7de;
+  border-radius: 20px;
+  background: #fff;
+  padding: 4px 10px;
+  color: #5c7d66;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ms-tabs,
+.ms-ranking-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 16px 0;
+  border-bottom: 1px solid #dde7df;
+}
+.ms-tabs button,
+.ms-ranking-filters button {
+  padding: 9px 15px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #6f8377;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.ms-tabs button.active,
+.ms-ranking-filters button.active {
+  background: #dfeee4;
+  color: #265e3e;
+  font-weight: 600;
+}
+.ms-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 0;
+  margin-bottom: 10px;
+}
+.ms-controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.ms-controls input {
+  accent-color: #39754d;
+}
+.ms-controls > span {
+  color: #8a9a8e;
+  font-size: 10px;
+  margin-right: auto;
+}
+.ms-primary,
+.ms-secondary {
+  padding: 9px 13px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  line-height: 1.5;
+}
+.ms-primary {
+  border: 1px solid #2b6542;
+  background: #2b6542;
+  color: #fff;
+}
+.ms-secondary {
+  border: 1px solid #d8e3da;
+  background: #fff;
+  color: #4a6c56;
+}
+.ms-primary:hover {
+  background: #204e32;
+}
+.ms-secondary:hover {
+  background: #edf5ef;
+}
+.scoring-workspace button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.scoring-workspace button:focus-visible,
+.material-assessment button:focus-visible {
+  outline: 2px solid #78ac84;
+  outline-offset: 3px;
+}
+.ms-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #e4f0e7;
+  border-radius: 6px;
+  color: #426a4c;
+  font-size: 12px;
+}
+.ms-progress progress {
+  accent-color: #3f7950;
+  max-width: 140px;
+  margin-left: auto;
+}
+.ms-loading {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #bbd5c0;
+  border-top-color: #42794f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.ms-error {
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  border: 1px solid #e6d3bb;
+  border-radius: 6px;
+  background: #fff9ef;
+  color: #936d36;
+}
+.ms-candidate-heading {
+  padding: 18px 0 14px;
+}
+.ms-candidate-heading h2 .ms-badge {
+  vertical-align: middle;
+  margin-left: 7px;
+}
+.ms-candidate-heading > div:last-child {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.ms-ocr {
+  margin: 0 auto 18px;
+  color: #7b8f80;
+  font-size: 11px;
+}
+.ms-ocr summary {
+  cursor: pointer;
+}
+.ms-ocr textarea,
+.ms-required textarea {
+  display: block;
+  min-height: 90px;
+  width: 100%;
+  resize: vertical;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #dce6de;
+  border-radius: 6px;
+  color: #405849;
+  background: #fff;
+  font: inherit;
+}
+.material-assessment {
+  padding: 23px;
+  border: 1px solid #e0e8e1;
+  border-radius: 11px;
+  background: #fff;
+  color: #405c49;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.ms-profile-grid {
+  display: grid;
+  grid-template-columns: minmax(200px, 0.8fr) minmax(300px, 1.2fr);
+  align-items: center;
+  gap: 30px;
+  margin-top: 15px;
+}
+.ms-radar {
+  width: min(100%, 350px);
+  justify-self: center;
+  overflow: visible;
+}
+.ms-radar-grid {
+  fill: none;
+  stroke: #e2eae3;
+  stroke-width: 1;
+}
+.ms-radar-area {
+  fill: #6eaa8233;
+  stroke: #4b8c5f;
+  stroke-width: 1.7;
+}
+.ms-radar-dot {
+  fill: #3d8052;
+}
+.ms-radar-label {
+  fill: #5f7767;
+  font-size: 11px;
+  cursor: pointer;
+}
+.ms-radar-value {
+  fill: #2e6240;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ms-radar-tick {
+  fill: #a4b0a6;
+  font-size: 8px;
+}
+.ms-abilities {
+  display: grid;
+  gap: 8px;
+}
+.ms-abilities button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  padding: 12px 15px;
+  border: 1px solid #e4ebe5;
+  border-radius: 7px;
+  background: #fafcf9;
+  text-align: left;
+  color: #536f5c;
+  font: inherit;
+  cursor: pointer;
+}
+.ms-abilities button.active {
+  border-color: #92b59c;
+  background: #edf5ef;
+}
+.ms-abilities strong {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: #2d6540;
+  font-size: 23px;
+  font-variant-numeric: tabular-nums;
+}
+.ms-abilities small {
+  color: #91a094;
+  font-size: 10px;
+}
+.ms-experience-summary,
+.ms-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-bottom: 15px;
+}
+.ms-experience-summary span,
+.ms-tags span {
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: #f1f5ed;
+  color: #7c8e72;
+  font-size: 10px;
+}
+.ms-history-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 10px;
+  color: #809185;
+}
+.ms-history-select select {
+  max-width: min(100%, 410px);
+  padding: 6px 8px;
+  border: 1px solid #dee7df;
+  border-radius: 4px;
+  color: #5b7663;
+  font: inherit;
+  background: #fff;
+}
+.ms-terms {
+  margin-top: 12px;
+  display: grid;
+  gap: 9px;
+}
+.ms-terms article {
+  padding: 12px 15px;
+  background: #f8faf7;
+  border: 1px solid #e7ede6;
+  border-radius: 7px;
+}
+.ms-terms article > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ms-terms article > div:first-child span {
+  color: #8b9b8e;
+  font-size: 10px;
+}
+.ms-term-formula {
+  margin: 6px 0;
+  color: #6c836f;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ms-term-formula b {
+  color: #2b6c42;
+}
+.ms-evidence {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: #829087;
+  font-size: 11px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ms-evidence button {
+  display: block;
+  max-width: 100%;
+  text-align: left;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #64876d;
+  font: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ms-evidence a {
+  color: #3c7c54;
+  text-decoration: none;
+}
+.ms-evidence a:hover,
+.ms-evidence button:hover {
+  text-decoration: underline;
+}
+.ms-material-section {
+  padding-top: 13px;
+}
+.ms-material {
+  margin: 12px 0;
+  border: 1px solid #dfe8df;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.ms-material > summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px 16px;
+  cursor: pointer;
+  background: #fafcf9;
+}
+.ms-material > summary > span {
+  display: flex;
+  flex-direction: column;
+}
+.ms-material > summary > span:last-child {
+  min-width: 90px;
+  text-align: right;
+}
+.ms-material small {
+  color: #8c9d8e;
+  font-size: 10px;
+}
+.ms-material strong {
+  color: #365d40;
+  font-size: 13px;
+}
+.ms-material b {
+  color: #3a724b;
+  font-size: 21px;
+  font-variant-numeric: tabular-nums;
+}
+.ms-material-body {
+  padding: 16px;
+}
+.ms-material blockquote {
+  margin: 0;
+  padding: 10px 13px;
+  border-left: 3px solid #b9d3bf;
+  background: #f4f8f3;
+  color: #758c7a;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ms-material-body details,
+.ms-rules > details {
+  margin-top: 13px;
+  padding-top: 10px;
+  border-top: 1px solid #e7ede6;
+}
+.ms-material-body summary,
+.ms-rules summary,
+.ms-notes summary {
+  cursor: pointer;
+  color: #618168;
+}
+.ms-material pre {
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px;
+  background: #f4f7f3;
+  color: #6b826f;
+  font-size: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ms-text-button {
+  border: 0;
+  padding: 3px 0;
+  background: transparent;
+  color: #367549;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+.ms-text-button:hover {
+  text-decoration: underline;
+}
+.ms-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+.scoring-workspace table,
+.material-assessment table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 11px;
+  text-align: left;
+}
+.scoring-workspace th,
+.material-assessment th {
+  padding: 10px 9px;
+  background: #f0f5ef;
+  color: #7d927f;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.scoring-workspace td,
+.material-assessment td {
+  padding: 11px 9px;
+  border-bottom: 1px solid #e8ede7;
+  color: #58715e;
+  overflow-wrap: anywhere;
+}
+.ms-missing {
+  padding: 9px 11px;
+  border-radius: 4px;
+  background: #fbf7ed;
+  color: #9d8657;
+  font-size: 11px;
+}
+.ms-mappings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 9px;
+  margin-top: 13px;
+}
+.ms-mappings > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-left: 2px solid #dfebdf;
+  padding-left: 9px;
+}
+.ms-mappings span,
+.ms-mappings small {
+  color: #899b8a;
+  font-size: 10px;
+}
+.ms-factor-evidence {
+  display: grid;
+  gap: 5px;
+  margin: 10px 0;
+}
+.ms-notes {
+  margin-top: 18px;
+  color: #8b987f;
+}
+.ms-timeline {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #e7ede6;
+  color: #7e927a;
+}
+.ms-timeline summary {
+  cursor: pointer;
+  color: #618168;
+}
+.ms-timeline p {
+  font-size: 11px;
+}
+.ms-assessment-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 14px;
+  margin-top: 19px;
+  padding-top: 13px;
+  border-top: 1px solid #e5ece3;
+  color: #97a391;
+  font-size: 10px;
+}
+.ms-assessment-footer small {
+  width: 100%;
+  color: #adb6a8;
+}
+.ms-empty {
+  padding: 25px;
+  border: 1px dashed #d7e3d8;
+  border-radius: 7px;
+  margin-top: 14px;
+  background: #fafcf9;
+  color: #8a9a87;
+  text-align: center;
+}
+.ms-empty-large {
+  padding: 70px 30px;
+}
+.ms-empty-large p {
+  max-width: 470px;
+  margin: 15px auto 23px;
+}
+.ms-job,
+.ms-ranking,
+.ms-rules {
+  padding: 24px;
+  margin-top: 18px;
+  border: 1px solid #e0e8df;
+  border-radius: 10px;
+  background: #fff;
+}
+.ms-job-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+  margin-top: 18px;
+}
+.ms-job-fields label,
+.ms-required {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #7e947f;
+  font-size: 11px;
+}
+.ms-job-fields input,
+.ms-job-fields select,
+.ms-preference-input > input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dce6db;
+  border-radius: 5px;
+  background: #fbfdfa;
+  color: #4d6b53;
+  font: inherit;
+  font-size: 12px;
+}
+.ms-weight-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin: 17px 0;
+}
+.ms-weight-grid label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 5px;
+  color: #648167;
+  font-size: 11px;
+}
+.ms-weight-grid input {
+  grid-column: 1;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #dfe7dd;
+  border-radius: 5px;
+  background: #f7faf5;
+  color: #416e4c;
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.ms-weight-grid small {
+  grid-column: 2;
+  grid-row: 2;
+  color: #a0ad99;
+}
+.ms-required textarea {
+  min-height: 65px;
+  font-size: 11px;
+}
+.ms-preference-input {
+  display: flex;
+  gap: 9px;
+  margin-top: 16px;
+}
+.ms-preference-input > input {
+  flex: 1;
+  min-width: 0;
+}
+.ms-preference-input button {
+  white-space: nowrap;
+}
+.ms-job-message {
+  color: #7b936e;
+  font-size: 11px;
+}
+.ms-draft {
+  margin-top: 16px;
+  padding: 17px;
+  border: 1px solid #c8dcc8;
+  border-radius: 7px;
+  background: #f2f8ed;
+}
+.ms-draft .ms-secondary {
+  margin-left: 8px;
+}
+.ms-draft-impact {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #e3ecd9;
+  font-size: 11px;
+}
+.ms-draft-impact:last-of-type {
+  margin-bottom: 12px;
+}
+.ms-ranking-filters > span {
+  margin-left: auto;
+  color: #9aa891;
+  font-size: 10px;
+}
+.ms-ranking-table {
+  min-width: 750px;
+}
+.ms-ranking-table small {
+  display: block;
+  color: #9aa994;
+  font-size: 9px;
+}
+.ms-ranking-table td {
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+.ms-ranking-table td:first-child {
+  min-width: 120px;
+}
+.ms-ranking-table td:nth-child(2) {
+  min-width: 95px;
+}
+.ms-ranking-table td:last-child {
+  min-width: 150px;
+}
+.ms-ranking-table tr.selected {
+  background: #f3f8ee;
+}
+.ms-rank-status {
+  padding: 3px 7px;
+  border-radius: 3px;
+  background: #eef3e7;
+  color: #819168;
+  font-size: 10px;
+}
+.ms-rank-status.ready {
+  background: #e6f1e2;
+  color: #47773b;
+}
+.ms-rank-status.pending,
+.ms-rank-status.provisional {
+  background: #f7f1df;
+  color: #9f8d5c;
+}
+.ms-rank-status.conflict,
+.ms-rank-status.excluded {
+  background: #f5e9e1;
+  color: #a28067;
+}
+.ms-ranking-table details {
+  margin-top: 6px;
+  font-size: 10px;
+}
+.ms-ranking-table summary {
+  cursor: pointer;
+}
+.ms-comparison-bars {
+  display: grid;
+  gap: 7px;
+  margin-top: 20px;
+}
+.ms-comparison-bars button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  border: 0;
+  background: transparent;
+  color: #6a8265;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.ms-comparison-bars span {
+  flex: 0 0 110px;
+  text-align: left;
+}
+.ms-comparison-bars i {
+  display: block;
+  height: 9px;
+  border-radius: 5px;
+  background: #9ebd87;
+}
+.ms-comparison-bars strong {
+  color: #4a6f3f;
+  font-variant-numeric: tabular-nums;
+}
+.ms-rule-formulas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin: 19px 0;
+}
+.ms-rule-formulas code {
+  padding: 14px;
+  border-radius: 6px;
+  background: #f2f6ec;
+  color: #688551;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.ms-rules > p {
+  color: #8b9c7f;
+  font-size: 12px;
+}
+.ms-compact {
+  padding: 14px;
+  margin-top: 14px;
+}
+.ms-compact .ms-section-heading {
+  flex-direction: column;
+  gap: 5px;
+}
+.ms-compact .ms-profile-grid {
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+.ms-compact .ms-radar {
+  max-width: 270px;
+}
+.ms-compact .ms-abilities {
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.ms-compact .ms-abilities strong {
+  font-size: 18px;
+}
+.ms-compact .ms-abilities button {
+  padding: 8px;
+}
+@media (max-width: 1000px) {
+  .ms-profile-grid {
+    gap: 12px;
+  }
+  .scoring-workspace {
+    padding: 22px;
+  }
+  .ms-workspace-heading,
+  .ms-candidate-heading {
+    flex-wrap: wrap;
+  }
+  .ms-weight-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .scoring-workspace {
+    grid-column: 1 / -1;
+    padding: 17px;
+  }
+  .ms-profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .ms-abilities {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ms-job-fields,
+  .ms-rule-formulas {
+    grid-template-columns: 1fr;
+  }
+  .ms-weight-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .material-assessment,
+  .ms-job,
+  .ms-ranking,
+  .ms-rules {
+    padding: 15px;
+  }
+  .ms-section-heading {
+    flex-wrap: wrap;
+  }
+  .ms-tabs {
+    gap: 0;
+  }
+  .ms-tabs button {
+    padding: 8px 10px;
+  }
+  .ms-draft-impact {
+    flex-wrap: wrap;
+  }
+}

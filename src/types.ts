@@ -21,6 +21,8 @@ export type Resume = {
   analysisReport?: string;
   scoreCard?: ScoreCard;
   scoreHistory?: ScoreHistoryEntry[];
+  assessment?: Assessment;
+  assessmentHistory?: AssessmentHistoryEntry[];
   benchmark?: Benchmark;
   analysisStatus?: "complete" | "unavailable" | "failed";
   analysisError?: string;
@@ -29,5 +31,6 @@ export type Resume = {
   pages?: number;
   size?: number;
 };
-import type { ScoreCard, ScoreHistoryEntry } from "../shared/scoring";
-import type { Benchmark } from "../shared/history";
+import type { ScoreCard, ScoreHistoryEntry } from "../shared/scoring.js";
+import type { Benchmark } from "../shared/history.js";
+import type { Assessment, AssessmentHistoryEntry } from "../shared/material-scoring.js";

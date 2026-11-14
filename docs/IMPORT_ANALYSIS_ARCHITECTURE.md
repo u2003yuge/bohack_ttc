@@ -2,6 +2,8 @@
 
 本文说明 Bohack 当前的简历导入、PDF 阅读、候选人识别和分析报告生成架构。目标是让后续接入 OCR、任务队列、更多模型或数据库时，可以保持前端交互和数据契约稳定。
 
+材料评分 v1 已成为新评估入口，完整参数与新流程见 [SCORING_V1.md](SCORING_V1.md)。下文第 8.1 节六维评分描述保留为旧版兼容记录，不代表新评估还在调用模型直接打分。
+
 ## 1. 设计目标与边界
 
 导入一份 PDF 的结果不是单纯的文件复制，而是一个可追踪的候选人索引任务：
@@ -9,7 +11,7 @@
 1. 保留原始 PDF，保证阅读器可以随时打开原文件。
 2. 从 PDF 提取可检索文本，保留原始文本供分析和审计。
 3. 从文本中提取最小候选人字段，用于左侧候选人列表。
-4. 并行生成一份不依赖职位描述的初始分析报告和六项评分卡，评分综合分仍由服务端计算。
+4. 整理七类材料并按固定规则计算五维能力，保存材料及规则快照；可用模型生成初始文字报告。
 5. 后续输入职位要求时，在同一候选人记录上生成岗位匹配报告。
 6. 任何模型失败都不能破坏原文件，也不能伪造成功结果。
 
@@ -68,7 +70,9 @@ POST /api/resumes  (application/pdf)
 | `analysisStatus` | `complete`、`failed` 或 `unavailable` |
 | `analysisError` | 最近一次失败的可读原因 |
 | `analyzedAt` | 报告生成时间 |
-| `scoreHistory` | 按时间追加保存的真实评分卡快照、评估场景和岗位要求 |
+| `scoreHistory` | 旧版六维评分历史，原样保留 |
+| `assessment` | 当前材料、因素积分、行动映射、五维能力与输入 / 规则快照 |
+| `assessmentHistory` | 按时间追加保存的 v1 完整评估，独立于岗位权重 |
 | `extractionVersion` | 解析器升级后的缓存失效标记 |
 
 `extractionVersion` 变更时，服务会重新提取已有 PDF 并刷新元数据。这个机制用于部署 CMap、OCR 或提示词升级，不需要用户重新导入文件。
@@ -102,7 +106,9 @@ POST /api/resumes  (application/pdf)
 
 ### `POST /api/resumes/:id/analyze`
 
-请求体：`{ roleRequirements: string, question: string }`。使用已缓存的 `text` 生成岗位分析报告，成功后更新 `analysisReport`、`analysisStatus` 和 `analyzedAt`。
+请求体包含 `roleRequirements` 和 `question`，可选 `includeResearch`（默认开启）、`webResearchEnabled`（默认关闭）、`ocrText` 和 `streamProgress`。使用缓存的 `text` 或本次 OCR 文本先评估材料，再让模型解释同一份计算结果，成功后保存报告及 v1 评估历史。仅需评分时调用 `POST /api/resumes/:id/assessment`，可以不用模型。
+
+成果核查先提取竞赛、论文和项目，查询 `db/`，必要时调用对应 Skill 联网补全。核查结果随响应返回，且作为背景资料传入分析，不直接进入现有评分公式。开启流式响应时，以 NDJSON 推送阶段、核查结果和报告正文，最终 `complete` 事件包含更新后的 `resume`；普通请求继续返回 JSON。停止分析或断开连接会取消请求，已完成成果报告仍保存在资料库。
 
 ### `GET /api/resumes/:id/file`
 
@@ -133,13 +139,13 @@ PDF 阅读器在原始画布上方维护一个透明的文字层。文字层使�
 
 1. `extractCandidate`：低温度、JSON 输出、字段少、只读原文；用于列表展示。
 2. `generateInitialReport`：没有职位要求，输出候选人概览和证据；导入时自动运行。
-3. `generateRoleReport`：接收职位要求和用户问题，输出匹配分析；用户点击分析或重试时运行。
+3. `analyzeResume`（`server/agent.ts`）：先调用 `server/scoring/pipeline.ts`，复用一次材料抽取及同一批 Skill 资料，计算 v1 画像后输出解释报告。通过 `server/analysis-response.ts` 统一处理流式进度、超时和取消。模型不再独立给六项能力打分。
 
 三个阶段共享 `server/skills/resume-analysis.md` 的安全与证据规则，但输入和输出职责不同。任何阶段都将简历放在 `<resume>` 标记中，并把简历视为不可信数据，避免执行 PDF 中可能出现的提示注入内容。
 
 ## 8. 后续架构优化路线
 
-## 8.1 Agent 评分卡与多人比较
+## 8.1 旧版 Agent 评分卡与多人比较（历史实现）
 
 对比视图按 `resume.scoreCard` 是否存在区分真实评分与演示评分；没有评分卡的示例档案或未完成分析的 PDF 都使用演示分值。图表汇总和表格逐行使用同一判定，不能只根据 `source` 字段推断分数是否真实。
 

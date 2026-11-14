@@ -14,7 +14,13 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
   let modelReady = new Promise<void>((resolve) => { modelStarted = resolve; });
   let aborted = 0;
   const model = createServer(async (request, response) => {
-    for await (const _chunk of request) { /* drain request */ }
+    let body = "";
+    for await (const chunk of request) body += String(chunk);
+    if (JSON.parse(body).response_format) {
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ items: [], notes: [] }) } }] }));
+      return;
+    }
     response.once("close", () => { if (!response.writableEnded) aborted += 1; });
     modelStarted();
     if (mode === "hang") return;
