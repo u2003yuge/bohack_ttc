@@ -47,6 +47,18 @@ test("unknown catalog entry rejects a source that was only a search snippet", ()
   assert.throws(() => catalogRecord(profile, { kind: "journal", name: "Unknown Vision Conference", evidence: "UVC" }, new Set()), /未读来源/);
 });
 
+test("automatic catalog metrics require read sources and cannot invent local logo assets", () => {
+  const entry: CatalogCandidate = { kind: "journal", name: "Synthetic Journal", evidence: "" };
+  const extended = { ...profile, profile: { ...profile.profile, type: "期刊", impact_factor: {
+    metric: "JIF", years: { "2024": 2 }, status: "partial", source_scope: "test", checked_on: "2026-11-14",
+    notes: "synthetic", sources: [{ title: "metric", url: "https://example.org/unread-metric", information: "synthetic" }],
+  }, logo: { path: "papers_logo/conf-neurips.ico", format: "ico", status: "fallback_favicon", source_url: url, notes: "invented local path" } } };
+  assert.throws(() => catalogRecord(extended, entry, new Set([url])), /年度指标来源/);
+  const record = catalogRecord(extended, entry, new Set([url, "https://example.org/unread-metric"]));
+  assert.equal(record.venue?.impact_factor?.years["2024"], 2);
+  assert.equal(record.venue?.logo, undefined);
+});
+
 const competition = {
   confirmed: true, aliases: ["未知算法赛"], profile: {
     name: "未知算法挑战赛", category: "算法", official_website: url, organizer: "算法研究协会",

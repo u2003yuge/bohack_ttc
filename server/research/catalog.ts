@@ -18,7 +18,7 @@ const venueShape = { id: "由服务填写", name: "官方期刊或会议系列�
 export function catalogRecord(value: unknown, candidate: CatalogCandidate, readUrls: Set<string>): KnowledgeRecord {
   if (!isObject(value) || value.confirmed !== true || !isObject(value.profile)) throw new Error("公开来源不足以确认主体，暂不创建标准条目。");
   const date = new Date().toISOString().slice(0, 10);
-  const raw = { ...value.profile, ...(candidate.kind === "journal" ? { aliases: Array.isArray(value.profile.aliases) ? value.profile.aliases : [] } : {}), id: "auto-profile", ...(candidate.kind === "competition" ? { report_year: new Date().getUTCFullYear() } : { checked_on: date }) };
+  const raw = { ...value.profile, ...(candidate.kind === "journal" ? { aliases: Array.isArray(value.profile.aliases) ? value.profile.aliases : [], logo: undefined } : {}), id: "auto-profile", ...(candidate.kind === "competition" ? { report_year: new Date().getUTCFullYear() } : { checked_on: date }) };
   const competition = candidate.kind === "competition" ? normalizeCompetitionProfile(raw) : undefined;
   const venue = candidate.kind === "journal" ? normalizeVenueProfile(raw) : undefined;
   const profile = competition ?? venue;
@@ -28,6 +28,7 @@ export function catalogRecord(value: unknown, candidate: CatalogCandidate, readU
   if (website && (!publicUrl(website) || !readUrls.has(website))) throw new Error("官网尚未实际读取，未入库。");
   if (venue?.rankings.some((ranking) => !readUrls.has(ranking.source_url))) throw new Error("分级来源尚未实际读取，未入库。");
   if (venue?.sources.some((source) => source.access !== "全文读取")) throw new Error("本次自动整理必须保留实际读取的来源方式。");
+  if (venue?.impact_factor?.sources.some((source) => !readUrls.has(source.url))) throw new Error("年度指标来源尚未实际读取，未入库。");
   const aliases = Array.isArray(value.aliases) ? value.aliases.filter((alias): alias is string => typeof alias === "string" && alias.length <= 100) : [];
   // Only explicit, public aliases returned by research are used; OCR evidence never enters the catalog.
   return {

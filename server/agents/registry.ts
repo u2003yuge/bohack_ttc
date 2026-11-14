@@ -101,11 +101,7 @@ const definitions: Record<ResumeAgentId, Definition> = {
       // Extraction anchors claims; enrich factors from the candidate's own
       // evidence before scoring or every ability dimension remains NA.
       const materials = enrichMaterialFacts(extracted.materials, { items: [], notes: [] });
-      // The extraction agent only anchors resume evidence. Before scoring,
-      // derive rule observations from that evidence so action-backed ability
-      // scores are available even when external research is disabled.
-      const enrichedMaterials = enrichMaterialFacts(materials, { items: [], notes: [] });
-      return createAssessment(resumeText, enrichedMaterials, {
+      return createAssessment(resumeText, materials, {
         extraction: extracted.mode,
         notes: extracted.notes,
       }) satisfies Assessment;

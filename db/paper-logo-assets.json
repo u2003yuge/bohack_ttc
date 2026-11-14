@@ -1,0 +1,892 @@
+{
+  "format": "bohack-paper-logo-assets",
+  "version": 1,
+  "sourceFile": "papers.md",
+  "assets": {
+    "conf-neurips": {
+      "sourcePath": "papers_logo/conf-neurips.ico",
+      "displayPath": "/papers_logo/conf-neurips.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "00767cd241a542c932ec8ca861a5c11b4e59db002efb094a826d1674b54f2d61",
+      "detectedFormat": "ICO",
+      "width": 256,
+      "height": 256,
+      "displaySha256": "91c061faf4e67dfe7d625c869be92bbb3fc58d86340f3a8e73980b0c630f2904"
+    },
+    "conf-icml": {
+      "sourcePath": "papers_logo/conf-icml.ico",
+      "displayPath": "/papers_logo/conf-icml.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "0e4aecdc9ac5d469ea50ae50fe6749097cd4408064587076482bac3bd38babfd",
+      "detectedFormat": "ICO",
+      "width": 256,
+      "height": 256,
+      "displaySha256": "6378496c7b79ad6adec406420692cf2509e32d5919aba4d55cd4ce3002d889f9"
+    },
+    "conf-iclr": {
+      "sourcePath": "papers_logo/conf-iclr.ico",
+      "displayPath": "/papers_logo/conf-iclr.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "bf228fce5fa2a10a1f404785d18fd085d1431b3eab144cd7979b91d620ed8677",
+      "detectedFormat": "ICO",
+      "width": 128,
+      "height": 128,
+      "displaySha256": "70c71ca8f4f9649badd185a2ef0b2399aa1ef6ae12798629e2895c1fec390320"
+    },
+    "conf-aaai": {
+      "sourcePath": "papers_logo/conf-aaai.png",
+      "displayPath": "/papers_logo/conf-aaai.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "633710d85cdf269bd46442ae9cdab206151b313a15e6a22d76533e821a62c276",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "5bee12f1c7c620a2b0ec3a3ecc6118cecd67753e008b42d06b87613f14eb95b6"
+    },
+    "conf-ijcai": {
+      "sourcePath": "papers_logo/conf-ijcai.ico",
+      "displayPath": "/papers_logo/conf-ijcai.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "14192e966cf6f64c3529fdd71021951bc7b1ea2d71839c8e819f5b8589e46ca3",
+      "detectedFormat": "ICO",
+      "width": 256,
+      "height": 256,
+      "displaySha256": "78ba185bdd89019d9f4daf0fb98689df5cf4a10c85b110ddc086458e0a15e0bc"
+    },
+    "conf-cvpr": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-iccv": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-eccv": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-acl": {
+      "sourcePath": "papers_logo/conf-acl.png",
+      "displayPath": "/papers_logo/conf-acl.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "ba56c7c05b3658ba917cabfcbbc5fa6017f0a2ef2e47f811cfaa067882520870",
+      "detectedFormat": "PNG",
+      "width": 57,
+      "height": 57,
+      "displaySha256": "0b730e71b586c186c84021b8d16fbb03bb5522458b1fd4067cd1a741588d8b21"
+    },
+    "conf-emnlp": {
+      "sourcePath": "papers_logo/conf-emnlp.png",
+      "displayPath": "/papers_logo/conf-emnlp.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "ba56c7c05b3658ba917cabfcbbc5fa6017f0a2ef2e47f811cfaa067882520870",
+      "detectedFormat": "PNG",
+      "width": 57,
+      "height": 57,
+      "displaySha256": "0b730e71b586c186c84021b8d16fbb03bb5522458b1fd4067cd1a741588d8b21"
+    },
+    "conf-naacl": {
+      "sourcePath": "papers_logo/conf-naacl.png",
+      "displayPath": "/papers_logo/conf-naacl.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "ba56c7c05b3658ba917cabfcbbc5fa6017f0a2ef2e47f811cfaa067882520870",
+      "detectedFormat": "PNG",
+      "width": 57,
+      "height": 57,
+      "displaySha256": "0b730e71b586c186c84021b8d16fbb03bb5522458b1fd4067cd1a741588d8b21"
+    },
+    "conf-coling": {
+      "sourcePath": "papers_logo/conf-coling.png",
+      "displayPath": "/papers_logo/conf-coling.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "e58c1156bb734b0ce60f02fcd560ca5f23ca105cecbe7444a2ba08581139d14a",
+      "detectedFormat": "PNG",
+      "width": 96,
+      "height": 96,
+      "displaySha256": "5c786d720affdea08fa74a62767ca9a6b861e5d9e691f2544480280343fa84e9"
+    },
+    "conf-acmmm": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-sigir": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-kdd": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-wsdm": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-cikm": {
+      "sourcePath": "papers_logo/conf-cikm.png",
+      "displayPath": "/papers_logo/conf-cikm.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "95e04df82dd0e0b26ad33c9b6261722b6de4bc83a9762f343b04fbc5a1c5114e",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "0888e09979d9a84e8469b4a200432165e428ae1ef2d968744c5a0e47e67bc25c"
+    },
+    "conf-sigmod": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-vldb": {
+      "sourcePath": "papers_logo/conf-vldb.ico",
+      "displayPath": "/papers_logo/conf-vldb.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "55525f8663b797bfc5613f39854f2d06da468ab4ae0affb016500e98a413badd",
+      "detectedFormat": "ICO",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "052cc29cb6dee4d6b47d6e8b7c01db8e7c668e398100550d8944036f4b5b79ef"
+    },
+    "conf-icde": {
+      "sourcePath": "papers_logo/conf-icde.jpg",
+      "displayPath": "/papers_logo/conf-icde.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "a859fa2c4915d87190a62a5df1c31db89a0156854eaa737a04ca8a860818eace",
+      "detectedFormat": "JPEG",
+      "width": 256,
+      "height": 178,
+      "displaySha256": "cbab24298f854626f22bff4e5d4d5007235b4ac9b932edc5a9d811bafb77f1ce"
+    },
+    "conf-icdm": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-sosp": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-osdi": {
+      "sourcePath": "papers_logo/conf-osdi.ico",
+      "displayPath": "/papers_logo/conf-osdi.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "cfe6241270287fe8479959849932effff789ae7a5ed8e09dac8ba8330a731b89",
+      "detectedFormat": "ICO",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "9be1c70cb0ba8aed0940b65ba31d1fab5c0e25e033498835070b1ffbd01686d2"
+    },
+    "conf-nsdi": {
+      "sourcePath": "papers_logo/conf-nsdi.ico",
+      "displayPath": "/papers_logo/conf-nsdi.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "cfe6241270287fe8479959849932effff789ae7a5ed8e09dac8ba8330a731b89",
+      "detectedFormat": "ICO",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "9be1c70cb0ba8aed0940b65ba31d1fab5c0e25e033498835070b1ffbd01686d2"
+    },
+    "conf-eurosys": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-asplos": {
+      "sourcePath": "papers_logo/conf-asplos.png",
+      "displayPath": "/papers_logo/conf-asplos.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "126f0b8fe7253e45d6cab29a9511c214990af133fcb85f330c3634096f09623f",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "34eb9086c082d977a6709090479d4089cf0341ab74d177bc69f78ac2403fdf57"
+    },
+    "conf-isca": {
+      "sourcePath": "papers_logo/conf-isca.ico",
+      "displayPath": "/papers_logo/conf-isca.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "35ad56891a0c0de2659f7aa7c547a3ca01105c2f172e6de177100f018d75f222",
+      "detectedFormat": "ICO",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "cd0210326df4358c296e0b80678e54376122b7a0bafd0ea89147aa71cbc0b3eb"
+    },
+    "conf-micro": {
+      "sourcePath": "papers_logo/conf-micro.ico",
+      "displayPath": "/papers_logo/conf-micro.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "da96a43362ea38fd417a99e1f9c9acae4e0ad1e49a34f68967b4b761b62ed70e",
+      "detectedFormat": "ICO",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "b12af6291573658110838005865bcb87b059d26d6dbb0072b6feed762c2eba82"
+    },
+    "conf-hpca": {
+      "sourcePath": "papers_logo/conf-hpca.bin",
+      "displayPath": "/papers_logo/conf-hpca.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b5793368615bec10e60bd082ae47fd0c1d40b7fe4a212d715a3a05bdc25d517d",
+      "detectedFormat": "WEBP",
+      "width": 256,
+      "height": 128,
+      "displaySha256": "ff2e7f44caae2cbd934c56b1e5dd09c6f0a5b27123636e47c9008fb4e62b2a98"
+    },
+    "conf-sc": {
+      "sourcePath": "papers_logo/conf-sc.png",
+      "displayPath": "/papers_logo/conf-sc.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "3974eacbfe8eea91a073c8edb48273499928cb183913d168901a96cab4938cc1",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "0b92ba750c2c3567d22ad1364b1cc82b6bb8ce6a1442750924afbaadd1f138e0"
+    },
+    "conf-icse": {
+      "sourcePath": "papers_logo/conf-icse.ico",
+      "displayPath": "/papers_logo/conf-icse.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "ea606bd6eeb2ee17aa131943fb940dbe08d97d91dcb4cd34bcc80458d0b5691d",
+      "detectedFormat": "ICO",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "2fea3e879f62b948a33c96d5d24a76570ff181be88f6a92eb3d9fed205057589"
+    },
+    "conf-fse": {
+      "sourcePath": "papers_logo/conf-fse.bin",
+      "displayPath": "/papers_logo/conf-fse.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "88aa994d83209be3055cd27874e405ff0e5b45c031592eaa954171a07a861723",
+      "detectedFormat": "WEBP",
+      "width": 256,
+      "height": 171,
+      "displaySha256": "0238536e632d058c825045b8b5da60dd66e6c64031b87a8855d8df6fe377d770"
+    },
+    "conf-ase": {
+      "sourcePath": "papers_logo/conf-ase.bin",
+      "displayPath": "/papers_logo/conf-ase.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "2374334357f9764d490649d24c22f74c0573dec6900e4ffd5009b0276cb69d34",
+      "detectedFormat": "WEBP",
+      "width": 256,
+      "height": 87,
+      "displaySha256": "5a83e75b7e71bc42eaef506e4797b0011c0c641eef75c82399d59e975e568d4d"
+    },
+    "conf-ccs": {
+      "sourcePath": "papers_logo/conf-ccs.png",
+      "displayPath": "/papers_logo/conf-ccs.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "128745ad5b204a55b6a3b6ed5a30ae537f78f8ad2e4c59ecf06bb59bc8236b43",
+      "detectedFormat": "PNG",
+      "width": 60,
+      "height": 60,
+      "displaySha256": "fb8d1d1045290a9ce63b644ee6bb2278fa75068e62b9508722bd3fdf23eebf98"
+    },
+    "conf-sp": {
+      "sourcePath": "papers_logo/conf-sp.ico",
+      "displayPath": "/papers_logo/conf-sp.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "6ec53b8d79aba9573ede1a2aaa2573320d7ec54db6a829e981d6b7cd1389d364",
+      "detectedFormat": "ICO",
+      "width": 48,
+      "height": 48,
+      "displaySha256": "6b37a922837af86d89d663120f4ab83cc1642543269bbad77d102f072f8415cc"
+    },
+    "conf-usenixsecurity": {
+      "sourcePath": "papers_logo/conf-usenixsecurity.ico",
+      "displayPath": "/papers_logo/conf-usenixsecurity.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "cfe6241270287fe8479959849932effff789ae7a5ed8e09dac8ba8330a731b89",
+      "detectedFormat": "ICO",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "9be1c70cb0ba8aed0940b65ba31d1fab5c0e25e033498835070b1ffbd01686d2"
+    },
+    "conf-ndss": {
+      "sourcePath": "papers_logo/conf-ndss.png",
+      "displayPath": "/papers_logo/conf-ndss.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "97e961880ad55cb3cebaf82404c3cb9a2e62f090d7e2970f1a1ea1e20e3e26c4",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "65f9a86db7f0a99b6b8de22091e915f3bf0b09a731c6c4104ac6b23a1e5637c4"
+    },
+    "conf-sigcomm": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-infocom": {
+      "sourcePath": "papers_logo/conf-infocom.ico",
+      "displayPath": "/papers_logo/conf-infocom.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "6a94818518b6e8283e1ba8e98e177e2a02d3224b4206f525e305266a00e0fc09",
+      "detectedFormat": "ICO",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "807815dd528d8adf815d6c5732f9cedb6e5e890aac579744718ffb261704d00a"
+    },
+    "conf-mobicom": {
+      "sourcePath": "papers_logo/conf-mobicom.ico",
+      "displayPath": "/papers_logo/conf-mobicom.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "9436a719c5a661f79f1a0e6cfa99c62a271a6e5da99c52a4029f296d06b75344",
+      "detectedFormat": "ICO",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "3a50475bc65537fb812cd3f6e1451f650afbb4283d1cc8a9ae6b5d6a54b4ed8e"
+    },
+    "conf-stoc": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-focs": {
+      "sourcePath": "papers_logo/conf-focs.bin",
+      "displayPath": "/papers_logo/conf-focs.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "270d17b344b3a9ab4a35fbf8c27bfe861a24433c4d0367e2526853ae50103312",
+      "detectedFormat": "GIF",
+      "width": 150,
+      "height": 150,
+      "displaySha256": "89c0c1289431e472a4c006f9adb75484e2bd7a865af700d35dacca985c2e61c1"
+    },
+    "conf-soda": {
+      "sourcePath": "papers_logo/conf-soda.ico",
+      "displayPath": "/papers_logo/conf-soda.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "c3b44eeb555ea2f59f527d84a5ff243bfa4aa75da45c53e1ba1ed3a67278852a",
+      "detectedFormat": "ICO",
+      "width": 48,
+      "height": 48,
+      "displaySha256": "8bbad08c30218ad48727e00e21998b05b5c7ed67bd5230d24c7da9e3dca42aec"
+    },
+    "conf-chi": {
+      "sourcePath": "papers_logo/conf-chi.png",
+      "displayPath": "/papers_logo/conf-chi.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "1c5d976eec4657673bdf4fd310205e43034111927328635f68d28d7d23f740f2",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "2ceb25f396db05b001eddbaa77e2039a19915c432c1e103387b904ce6584dba0"
+    },
+    "conf-uist": {
+      "sourcePath": "papers_logo/conf-uist.ico",
+      "displayPath": "/papers_logo/conf-uist.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "3e5043ee28cae2b5a1dc893930fcdb413b3a29654b25e0c4105eb06408281aaf",
+      "detectedFormat": "ICO",
+      "width": 48,
+      "height": 48,
+      "displaySha256": "8801e0a41f250c0e9e94a021b57f98c97e73f125c80ad3c5fadd6958d4ca214c"
+    },
+    "conf-siggraph": {
+      "sourcePath": "papers_logo/conf-siggraph.png",
+      "displayPath": "/papers_logo/conf-siggraph.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "346d85d760789c87d885b6da9ee22b6c806028f01e1d8a145f29b228d6291ef8",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "df45f8125c5edba451e3997e424d1711709a931430f059aef21ef171a9dfec69"
+    },
+    "conf-icra": {
+      "sourcePath": "papers_logo/conf-icra.bin",
+      "displayPath": "/papers_logo/conf-icra.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "d11a641276199d0092c252475a777912198ba7435943331bd773f4387e500a80",
+      "detectedFormat": "WEBP",
+      "width": 150,
+      "height": 150,
+      "displaySha256": "1f147ecefadbbbc41d3b4d3e88a2a456b88ce7ca2b6ab9d767585e090ae15676"
+    },
+    "conf-iros": {
+      "sourcePath": "papers_logo/conf-iros.bin",
+      "displayPath": "/papers_logo/conf-iros.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "d11a641276199d0092c252475a777912198ba7435943331bd773f4387e500a80",
+      "detectedFormat": "WEBP",
+      "width": 150,
+      "height": 150,
+      "displaySha256": "1f147ecefadbbbc41d3b4d3e88a2a456b88ce7ca2b6ab9d767585e090ae15676"
+    },
+    "conf-rss": {
+      "sourcePath": "papers_logo/conf-rss.png",
+      "displayPath": "/papers_logo/conf-rss.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b1a44db247ac20c0f1900418ac7b2afc170075208517db18559b0258306efdeb",
+      "detectedFormat": "PNG",
+      "width": 256,
+      "height": 256,
+      "displaySha256": "d1bc3be8914d57970289f0ef06ac41c1b5eb6c57b7c15a3519a49fb9ed604b98"
+    },
+    "conf-acml": {
+      "sourcePath": "papers_logo/conf-acml.ico",
+      "displayPath": "/papers_logo/conf-acml.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "f3936ab01b08f558851387645dceb2717825b23cfeca59ba21f3f3b417eda01d",
+      "detectedFormat": "ICO",
+      "width": 15,
+      "height": 15,
+      "displaySha256": "55ea55d149cf550a764b840f10f08387b9bf47fc123eddf9ed6a90adef4f2feb"
+    },
+    "conf-pakdd": {
+      "sourcePath": "papers_logo/conf-pakdd.png",
+      "displayPath": "/papers_logo/conf-pakdd.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "2aaabd2aa1d3d0d30aa9896e1dd355ccb05d6386f01bd2a67bc0c1d1c318082f",
+      "detectedFormat": "PNG",
+      "width": 180,
+      "height": 180,
+      "displaySha256": "19655ec173254ea1ad357ec5f4e1999befdae27074627b939ccb0059147d2028"
+    },
+    "conf-pricai": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "conf-icpr": {
+      "sourcePath": "papers_logo/conf-icpr.ico",
+      "displayPath": "/papers_logo/conf-icpr.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "fa9bd695d9b8aee79740765d2e1d10393ac4c7523029b8fb34dfcd5eb8cd6b0a",
+      "detectedFormat": "BMP",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "6ea6339e894c2d15a5379f9779ec5a2766cabcd11e2bf6bb658781ef6d7fcd0b"
+    },
+    "conf-nlpcc": {
+      "sourcePath": "papers_logo/conf-nlpcc.png",
+      "displayPath": "/papers_logo/conf-nlpcc.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "8de9a680f009d33795652002c6b12aa54dc954c04b96daaf39e28eee359b9408",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "044102e1f199755454ba16bcd84e3483fb90857d197baab93eaaeec8ffe66955"
+    },
+    "conf-prcv": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-tpami": {
+      "sourcePath": "papers_logo/journal-tpami.png",
+      "displayPath": "/papers_logo/journal-tpami.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b45f4fade16623d5fa3cd22917f6652f8fc6bf1612d49316d1a626a6b5fa4e06",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "882eb52d121549448a75ccb56ebd1621d472262db17cff51939000341d48f10a"
+    },
+    "journal-ijcv": {
+      "sourcePath": "papers_logo/journal-ijcv.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-jmlr": {
+      "sourcePath": "papers_logo/journal-jmlr.ico",
+      "displayPath": "/papers_logo/journal-jmlr.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "aebd38591878d17c25247053d36a5d34e2029eac65fc63c5ad289d9b3aa89ab8",
+      "detectedFormat": "ICO",
+      "width": 48,
+      "height": 48,
+      "displaySha256": "30e1857ef9cef2df038571dea05ce076035e9115565de7f691756aac0f8ee490"
+    },
+    "journal-aij": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-jair": {
+      "sourcePath": "papers_logo/journal-jair.png",
+      "displayPath": "/papers_logo/journal-jair.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "403da625a43decf6f31471bcefcda190e862c3aa08ea13f30c83f0f1da0cfdce",
+      "detectedFormat": "PNG",
+      "width": 100,
+      "height": 100,
+      "displaySha256": "e9311d562670de7ee11c3779c5c5e7333d6738f4eaf5b4a217faf6a0230cf488"
+    },
+    "journal-tnnls": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-tmlr": {
+      "sourcePath": "papers_logo/journal-tmlr.ico",
+      "displayPath": "/papers_logo/journal-tmlr.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "aebd38591878d17c25247053d36a5d34e2029eac65fc63c5ad289d9b3aa89ab8",
+      "detectedFormat": "ICO",
+      "width": 48,
+      "height": 48,
+      "displaySha256": "30e1857ef9cef2df038571dea05ce076035e9115565de7f691756aac0f8ee490"
+    },
+    "journal-tacl": {
+      "sourcePath": "papers_logo/journal-tacl.ico",
+      "displayPath": "/papers_logo/journal-tacl.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "62ae6128ca87c961400dd580afff54cc51f467f9e89a1f5280b163c70b118a75",
+      "detectedFormat": "ICO",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "9f59ede8793ab48a0745614b63ba31aba7673f00fa258288a02fe4efaca2c90d"
+    },
+    "journal-cl": {
+      "sourcePath": "papers_logo/journal-cl.bin",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "ccad725977859f851ef09bbe0597a8a10a4de4b8a7ba036e63d50a3f8ac786c0"
+    },
+    "journal-pr": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-nn": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-eswa": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-kbs": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-ins": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-tkde": {
+      "sourcePath": "papers_logo/journal-tkde.png",
+      "displayPath": "/papers_logo/journal-tkde.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b45f4fade16623d5fa3cd22917f6652f8fc6bf1612d49316d1a626a6b5fa4e06",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "882eb52d121549448a75ccb56ebd1621d472262db17cff51939000341d48f10a"
+    },
+    "journal-tois": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-tse": {
+      "sourcePath": "papers_logo/journal-tse.png",
+      "displayPath": "/papers_logo/journal-tse.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b45f4fade16623d5fa3cd22917f6652f8fc6bf1612d49316d1a626a6b5fa4e06",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "882eb52d121549448a75ccb56ebd1621d472262db17cff51939000341d48f10a"
+    },
+    "journal-tosem": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-tdsc": {
+      "sourcePath": "papers_logo/journal-tdsc.png",
+      "displayPath": "/papers_logo/journal-tdsc.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b45f4fade16623d5fa3cd22917f6652f8fc6bf1612d49316d1a626a6b5fa4e06",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "882eb52d121549448a75ccb56ebd1621d472262db17cff51939000341d48f10a"
+    },
+    "journal-tifs": {
+      "sourcePath": "papers_logo/journal-tifs.ico",
+      "displayPath": "/papers_logo/journal-tifs.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "81214bed2c3679d1dd0359f454ab4940431a13da38a91b508d648b2055d3421e",
+      "detectedFormat": "ICO",
+      "width": 48,
+      "height": 48,
+      "displaySha256": "00fddbcae74757180d295581e42e0a026e3e638eadd610e3bddf6db3e4f491e0"
+    },
+    "journal-tmc": {
+      "sourcePath": "papers_logo/journal-tmc.png",
+      "displayPath": "/papers_logo/journal-tmc.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "b45f4fade16623d5fa3cd22917f6652f8fc6bf1612d49316d1a626a6b5fa4e06",
+      "detectedFormat": "PNG",
+      "width": 32,
+      "height": 32,
+      "displaySha256": "882eb52d121549448a75ccb56ebd1621d472262db17cff51939000341d48f10a"
+    },
+    "journal-tnet": {
+      "sourcePath": "papers_logo/journal-tnet.ico",
+      "displayPath": "/papers_logo/journal-tnet.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "6a94818518b6e8283e1ba8e98e177e2a02d3224b4206f525e305266a00e0fc09",
+      "detectedFormat": "ICO",
+      "width": 16,
+      "height": 16,
+      "displaySha256": "807815dd528d8adf815d6c5732f9cedb6e5e890aac579744718ffb261704d00a"
+    },
+    "journal-tog": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-access": {
+      "sourcePath": "papers_logo/journal-access.png",
+      "displayPath": "/papers_logo/journal-access.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "6c451bf093ba3171196615f5d0b4c63f464352c0f5118ce963a8202186ea83ce",
+      "detectedFormat": "PNG",
+      "width": 57,
+      "height": 57,
+      "displaySha256": "b9e619dea71d7d91944a9123e54887eb676840cf5b8a507888eaf77499c6beac"
+    },
+    "journal-cjc": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-jos": {
+      "sourcePath": "papers_logo/journal-jos.ico",
+      "displayPath": "/papers_logo/journal-jos.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "a94f8a8553caea8430dd4ca3cc01d4e318d19828f74cb65453ffb7f5d9e2f44d",
+      "detectedFormat": "ICO",
+      "width": 64,
+      "height": 64,
+      "displaySha256": "03e8999900e155e9dc666925c55c50eb9f5557d00fc24b1c214ece9f976f131c"
+    },
+    "journal-crad": {
+      "sourcePath": "papers_logo/journal-crad.ico",
+      "displayPath": "/papers_logo/journal-crad.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "27c5c09e58f8bf604aa7afa4b3c4aa05d715b088f3d10587c80b6af040f8a3c1",
+      "detectedFormat": "ICO",
+      "width": 256,
+      "height": 256,
+      "displaySha256": "a0ea12eafe97040a0cecc68972fd9e414db4f2f2d21056107a0228d3c0ef493b"
+    },
+    "journal-aas": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-ejournal": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-cs": {
+      "sourcePath": "papers_logo/journal-cs.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "9c47ea7957afef955da0248c47be6a49c274287abcbe061a7710d7bcbb9ca999"
+    },
+    "journal-ce": {
+      "sourcePath": "papers_logo/journal-ce.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "c2a6d2f7d4b5c7f5941b7f86977f636888266054e24b311fd87a224c75d38347"
+    },
+    "journal-cea": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-jcip": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-scis": {
+      "sourcePath": "papers_logo/journal-scis.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-tst": {
+      "sourcePath": "papers_logo/journal-tst.ico",
+      "displayPath": "/papers_logo/journal-tst.png",
+      "status": "ready",
+      "notes": "本地文件已解码并转为 PNG；图标身份与出处沿用原始资料，未进行本次联网核验。",
+      "sourceSha256": "ee3808e805f9d30924e7c2d177e67f0dddb0bbcfd9b1857378b00d7547d072be",
+      "detectedFormat": "PNG",
+      "width": 256,
+      "height": 255,
+      "displaySha256": "caa9120925dbb6a69f8b8f6758e706d8ec330c9e8334cb113ffa5d8d4c99965f"
+    },
+    "journal-fcs": {
+      "sourcePath": "papers_logo/journal-fcs.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-mir": {
+      "sourcePath": "papers_logo/journal-mir.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-nature": {
+      "sourcePath": "papers_logo/journal-nature.bin",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-science": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-pnas": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-ncomms": {
+      "sourcePath": "papers_logo/journal-ncomms.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-sciadv": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-srep": {
+      "sourcePath": "papers_logo/journal-srep.ico",
+      "displayPath": null,
+      "status": "invalid",
+      "notes": "本地文件不是可解码的图片（可能是网页或错误响应），显示默认图标。",
+      "sourceSha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea"
+    },
+    "journal-nsr": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    },
+    "journal-scibull": {
+      "sourcePath": null,
+      "displayPath": null,
+      "status": "not_found",
+      "notes": "原始资料未提供可用徽标；显示默认图标。"
+    }
+  }
+}

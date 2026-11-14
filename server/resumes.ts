@@ -734,6 +734,7 @@ async function readDirectory(): Promise<ResumeRecord[]> {
       // assessment agent can populate ability scores instead of leaving every
       // radar dimension as NA.
       const staleAssessment = !existing?.assessment || existing.assessment.version !== scoringVersion ||
+        !existing.agentArtifacts?.some((artifact) => artifact.id === "score-calculation" && artifact.inputHash) ||
         Object.values(existing.assessment.abilities).every((ability) => ability.score === null);
       if (existing && !staleAssessment) return existing;
       const record = await indexPdf(path.join(directory, name), id, name);

@@ -1,0 +1,2 @@
+# Keep reviewed SVG asset hashes stable across Windows and Unix checkouts.
+public/competitions_logo/*.svg text eol=lf

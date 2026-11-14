@@ -15,7 +15,8 @@
     "test": "tsx --test server/agents/registry.test.ts server/web-search.test.ts shared/venues.test.ts shared/scoring.test.ts shared/knowledge.test.ts shared/history.test.ts shared/competitions.test.ts server/analysis.test.ts server/research/runtime.test.ts server/research/research.test.ts server/research/merged-api.test.ts server/research/competition-library.test.ts server/research/catalog.test.ts server/research/agent-api.test.ts server/scoring/material-scoring.test.ts",
     "start": "tsx server/index.ts",
     "import:competitions": "node scripts/import-competitions.mjs",
-    "import:papers": "tsx scripts/import-papers.ts"
+    "import:papers": "tsx scripts/import-papers.ts",
+    "import:resumes": "tsx scripts/import-resumes.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
