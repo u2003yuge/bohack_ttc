@@ -24,6 +24,7 @@ Desktop.ini
 db/competition/
 db/paper/
 db/project/
+db/library/
 .npm-cache/
 
 # Build and dependency output

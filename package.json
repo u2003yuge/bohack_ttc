@@ -13,7 +13,9 @@
     "dev:server": "tsx watch server/index.ts",
     "build": "tsc -b && vite build",
     "test": "tsx --test server/research/*.test.ts server/web-search.test.ts server/analysis.test.ts shared/*.test.ts",
-    "start": "tsx server/index.ts"
+    "start": "tsx server/index.ts",
+    "import:competitions": "node scripts/import-competitions.mjs",
+    "import:papers": "tsx scripts/import-papers.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

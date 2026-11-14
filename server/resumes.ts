@@ -10,6 +10,7 @@ import { defaultScoreWeights, normalizeComparisonRankDraft, normalizeWeights, ty
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
 import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
+import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 
 type ResumeRecord = {
   id: string;
@@ -113,11 +114,15 @@ router.delete("/history/:id", async (request, response, next) => {
   } catch (error) { next(error); }
 });
 
-router.get("/knowledge", async (_request, response, next) => {
+router.get("/knowledge", async (request, response, next) => {
   try {
     const reviews = await readKnowledgeReviews();
     const records = await readKnowledgeRecords();
-    response.json({ records: records.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })), source: "local-json" });
+    const kind = request.query.kind;
+    if (kind !== undefined && !["competition", "journal", "company"].includes(String(kind))) {
+      response.status(400).json({ error: "请选择竞赛、期刊或企业类别。" }); return;
+    }
+    response.json({ records: records.filter((record) => kind === undefined || record.kind === kind).map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })), source: "local-json" });
   } catch (error) { next(error); }
 });
 
@@ -321,6 +326,7 @@ router.delete("/knowledge/:id", async (request, response, next) => {
     const nextRecords = custom.filter((record) => record.id !== request.params.id);
     if (nextRecords.length === custom.length) { response.status(404).json({ error: "只能删除本地新增的资料，或该资料已不存在。" }); return; }
     await mkdir(path.dirname(customKnowledgePath), { recursive: true });
+    await catalogStore.remove(request.params.id);
     await writeFile(customKnowledgePath, JSON.stringify(nextRecords, null, 2), "utf8");
     const reviews = await readKnowledgeReviews();
     if (reviews[request.params.id]) {
@@ -728,17 +734,6 @@ type StoredKnowledgeReview = { significanceScore?: number; scoreRationale?: stri
 async function readKnowledgeReviews(): Promise<Record<string, StoredKnowledgeReview>> {
   try { return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, StoredKnowledgeReview>; }
   catch { return {}; }
-}
-
-async function readCustomKnowledge(): Promise<KnowledgeRecord[]> {
-  try { return JSON.parse(await readFile(customKnowledgePath, "utf8")) as KnowledgeRecord[]; }
-  catch { return []; }
-}
-
-async function readKnowledgeRecords(): Promise<KnowledgeRecord[]> {
-  const custom = await readCustomKnowledge();
-  const customIds = new Set(custom.map((record) => record.id));
-  return [...custom, ...knowledgeRecords.filter((record) => !customIds.has(record.id))];
 }
 
 function stringList(value: unknown, maxItems: number, maxLength: number): string[] {

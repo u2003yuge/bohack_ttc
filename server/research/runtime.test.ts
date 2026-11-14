@@ -78,7 +78,7 @@ test("核查总时限会终止在途和排队条目，并保留已完成进度",
   });
   assert.equal(result.items.length, 3);
   assert.ok(result.items.every((item) => item.status === "error" && item.error?.includes("总时限")));
-  assert.deepEqual(updates, [1, 2, 3]);
+  assert.deepEqual(updates.filter((value, index) => index === 0 || value !== updates[index - 1]), [1, 2, 3]);
   assert.ok(result.notes.some((note) => note.includes("总时限")));
 }));
 

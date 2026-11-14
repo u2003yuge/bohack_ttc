@@ -25,7 +25,9 @@ export type ResearchResult = {
   error: string | null;
 };
 
-export type ResearchBatch = { items: ResearchResult[]; notes: string[] };
+export type CatalogCandidate = { kind: "competition" | "journal"; name: string; evidence: string };
+export type CatalogResult = { kind: CatalogCandidate["kind"]; name: string; status: "existing" | "created" | "pending" | "error"; knowledgeId?: string; message: string };
+export type ResearchBatch = { items: ResearchResult[]; notes: string[]; catalog?: CatalogResult[] };
 
 export type AnalysisProgress = {
   stage: "extracting" | "researching" | "analyzing";

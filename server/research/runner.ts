@@ -1,10 +1,14 @@
 import type OpenAI from "openai";
-import type { AnalysisProgress, ResearchBatch, ResearchItem, ResearchReport, ResearchResult } from "../../src/research-types.js";
+import type { AnalysisProgress, CatalogCandidate, CatalogResult, ResearchBatch, ResearchItem, ResearchReport, ResearchResult } from "../../src/research-types.js";
 import { definitions, isObject, loadSkill, modelClient, parseJson } from "./config.js";
 import { extractResearchItems } from "./extract.js";
 import { cacheKey, ResearchStore } from "./store.js";
 import { publicUrl, ResearchWeb } from "./web.js";
 import { deadline, errorMessage, interruptible, limit } from "../operations.js";
+import { enrichCatalog, researchCatalog } from "./catalog.js";
+import { KnowledgeCatalogStore } from "../knowledge-store.js";
+import { knowledgeRecords } from "../../shared/knowledge.js";
+import path from "node:path";
 
 export function skillInput(item: ResearchItem): Record<string, unknown> {
   return item.kind === "paper" ? {
@@ -132,6 +136,7 @@ type Dependencies = {
   timeoutMs?: number;
   itemTimeoutMs?: number;
   concurrency?: number;
+  catalogResearch?: typeof researchCatalog;
   onProgress?: (progress: AnalysisProgress) => void;
   onUpdate?: (batch: ResearchBatch) => void;
 };
@@ -177,8 +182,14 @@ export async function enrichResume(text: string, dependencies: Dependencies = {}
     const extracted = await interruptible((dependencies.extract ?? extractResearchItems)(text, { signal: scope.signal }), scope.signal);
     const store = dependencies.store ?? new ResearchStore();
     const canSearch = dependencies.canSearch ?? Boolean(process.env.TAVILY_API_KEY);
+    const catalogResults: CatalogResult[] = [];
+    const catalogStore = dependencies.store ? new KnowledgeCatalogStore(path.join(dependencies.store.directory, "library")) : undefined;
+    const existingRecords = catalogStore ? [...knowledgeRecords, ...await catalogStore.list()] : undefined;
+    const candidates: CatalogCandidate[] = [...(extracted.catalogCandidates ?? []), ...extracted.items.flatMap((item): CatalogCandidate[] =>
+      item.kind === "competition" && typeof item.input.competition_name === "string"
+        ? [{ kind: "competition", name: item.input.competition_name, evidence: item.evidence }] : [])];
     const results: Array<ResearchResult | undefined> = new Array(extracted.items.length);
-    const snapshot = (): ResearchBatch => ({ items: results.filter((result): result is ResearchResult => Boolean(result)), notes: [...extracted.notes] });
+    const snapshot = (): ResearchBatch => ({ items: results.filter((result): result is ResearchResult => Boolean(result)), notes: [...extracted.notes], ...(catalogResults.length ? { catalog: [...catalogResults] } : {}) });
     let completed = 0;
     const finish = (index: number, result: ResearchResult) => {
       results[index] = result;
@@ -222,6 +233,22 @@ export async function enrichResume(text: string, dependencies: Dependencies = {}
     dependencies.onProgress?.({ stage: "researching", message: `已提取 ${extracted.items.length} 项成果，正在查询数据库和核查公开资料。`, completed: 0, total: extracted.items.length });
     const concurrency = Math.min(4, Math.max(1, Math.floor(dependencies.concurrency ?? 2)));
     await Promise.all(Array.from({ length: Math.min(concurrency, extracted.items.length) }, worker));
+    for (const result of results) {
+      const publication = result?.report?.publication;
+      if (result?.item.kind === "paper" && isObject(publication) && typeof publication.venue_name === "string" && publication.venue_name.trim()) {
+        candidates.push({ kind: "journal", name: publication.venue_name.trim(), evidence: "" });
+      }
+    }
+    if (candidates.length) {
+      dependencies.onProgress?.({ stage: "researching", message: "正在将未知赛事及期刊会议整理为标准资料库条目。" });
+      try {
+        await enrichCatalog(candidates, {
+          ...(catalogStore ? { store: catalogStore, records: existingRecords } : {}),
+          research: dependencies.catalogResearch, canSearch, signal: scope.signal,
+          onResult: (result) => { catalogResults.push(result); dependencies.onUpdate?.(snapshot()); },
+        });
+      } catch (error) { extracted.notes.push(`标准资料整理未完成：${errorMessage(error)}。`); }
+    }
     dependencies.signal?.throwIfAborted();
     if (scope.signal.aborted) extracted.notes.push(errorMessage(scope.signal.reason));
     return snapshot();

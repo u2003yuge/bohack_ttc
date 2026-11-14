@@ -30,6 +30,8 @@ import {
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
+import { CompetitionLibrary } from "./CompetitionLibrary";
+import { VenueLibrary } from "./VenueLibrary";
 import type { AnalysisEvent, AnalysisProgress, ResearchBatch } from "./research-types";
 import { readAnalysisEvents } from "./analysis-stream";
 import { calculateComposite, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
@@ -58,10 +60,11 @@ function renderEvidenceText(value: string, query: string) {
 
 function ResearchResults({ batch }: { batch: ResearchBatch }) {
   const labels = { competition: "竞赛", paper: "论文", project: "项目" };
-  const statuses = { cached: "数据库命中", researched: "已检索并入库", pending: "待补充", error: "检索失败" };
+  const statuses = { cached: "核查缓存命中", researched: "核查报告已保存", pending: "待补充", error: "检索失败" };
   return <div className="research-results" aria-label="成果资料核查结果">
     <strong>成果资料 · {batch.items.length} 项</strong>
     {batch.notes.map((note, index) => <p key={index}>{note}</p>)}
+    {Boolean(batch.catalog?.length) && <section aria-label="标准资料入库结果"><strong>资料库条目整理</strong>{batch.catalog!.map((result, index) => <p key={index}>{result.kind === "competition" ? "竞赛" : "期刊会议"} · {result.name}：{result.message}</p>)}</section>}
     {!batch.items.length && !batch.notes.length && <p>未提取到竞赛、论文或具体项目。</p>}
     {batch.items.map((result, index) => <details key={index}>
       <summary><span>{labels[result.item.kind]} · {String(result.item.input.competition_name ?? result.item.input.title ?? result.item.input.project_name)}</span><small>{statuses[result.status]}</small></summary>
@@ -676,7 +679,32 @@ function KnowledgeReviewHistory({ history, sources }: { history: KnowledgeReview
   </section>;
 }
 
-function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, agentAvailable, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; agentAvailable: boolean; webSearchAvailable: boolean }) {
+type KnowledgeLibraryProps = { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; agentAvailable: boolean; webSearchAvailable: boolean };
+
+function KnowledgeLibraryView(props: KnowledgeLibraryProps) {
+  const [section, setSection] = useState<KnowledgeKind>(() => props.records.find((record) => record.id === props.initialId)?.kind ?? "competition");
+  const [reviewId, setReviewId] = useState<string | null>(null);
+  const [libraryId, setLibraryId] = useState(props.initialId);
+  const targetKind = props.records.find((record) => record.id === props.initialId)?.kind;
+  useEffect(() => {
+    if (props.initialId) {
+      const target = props.records.find((record) => record.id === props.initialId);
+      if (target) { setSection(target.kind); setReviewId(null); setLibraryId(target.id); }
+    }
+  }, [props.initialId, targetKind]);
+  const sectionRecords = props.records.filter((record) => record.kind === section);
+  return <section className="knowledge-library-section" aria-label="资料库">
+    <nav className="knowledge-section-tabs" aria-label="资料类别"><span>资料库</span>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((kind) => <button key={kind} aria-pressed={section === kind} onClick={() => { setSection(kind); setReviewId(null); }}>
+      {knowledgeKindLabels[kind]}<small>{props.records.filter((record) => record.kind === kind).length}</small>
+    </button>)}{reviewId && <button className="knowledge-review-back" onClick={() => { setLibraryId(reviewId); setReviewId(null); }}>{section === "journal" ? "返回期刊会议资料" : "返回竞赛资料"}</button>}</nav>
+    {section === "competition" && !reviewId ? <CompetitionLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
+      : section === "journal" && !reviewId ? <VenueLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
+      : <KnowledgeBaseView key={`${section}-${reviewId ?? "browse"}`} {...props} records={sectionRecords} initialId={reviewId ?? props.initialId}
+        onRecordsChange={(next) => props.onRecordsChange([...next, ...props.records.filter((record) => record.kind !== section && !next.some((item) => item.id === record.id))])} />}
+  </section>;
+}
+
+function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, agentAvailable, webSearchAvailable }: KnowledgeLibraryProps) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
@@ -746,7 +774,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     const reviewed = items.filter((record) => record.verificationStatus === "已核验");
     const average = reviewed.length ? Math.round(reviewed.reduce((sum, record) => sum + record.significanceScore, 0) / reviewed.length) : null;
     return { kind: value, count: items.length, reviewed: reviewed.length, average };
-  });
+  }).filter((item) => item.count > 0);
   const scoreBandCounts = summarizeKnowledgeScoreBands(records);
   const readinessCounts = summarizeKnowledgeReadiness(records);
   const evidenceCoverage = [
@@ -823,7 +851,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
   function beginCreate() {
     enrichmentRequestId.current += 1;
-    setEnrichmentBusy(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
+    setEnrichmentBusy(false); setEditingId(null); setDraft({ ...emptyKnowledgeDraft, kind: records[0]?.kind ?? "competition" }); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
   }
 
   function beginEdit() {
@@ -994,7 +1022,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     <main className="knowledge-main">
       <div className="knowledge-shell">
         <div className="knowledge-header">
-          <div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div>
+          <div><span className="eyebrow">RESEARCH LIBRARY</span><h2>{records[0] ? knowledgeKindLabels[records[0].kind] : "资料"}资料管理</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div>
           <div className="knowledge-header-actions">
             <input ref={knowledgeImportInput} className="visually-hidden" type="file" accept=".json,application/json" aria-label="选择资料库备份文件" onChange={(event) => { void previewKnowledgeImport(event.target.files?.[0]); event.target.value = ""; }} />
             <button type="button" className="knowledge-transfer-button" onClick={() => void exportKnowledgeBundle()} disabled={transferBusy} title="导出自建资料和人工评估历史"><Download size={14} />导出</button>
@@ -1294,9 +1322,17 @@ export default function App() {
     loadResumes();
     fetch("/api/health").then((response) => response.json()).then(setHealth).catch(() => setHealth(null));
     fetch("/api/resumes/scoring/weights").then((response) => response.json()).then((payload) => payload.weights && setWeights(payload.weights)).catch(() => undefined);
-    fetch("/api/resumes/knowledge").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.records)) setKnowledgeRecords(payload.records); }).catch(() => undefined);
+    void refreshKnowledge();
     fetch("/api/resumes/history").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.candidates)) setHistoryCandidates(payload.candidates); }).catch(() => undefined);
   }, []);
+
+  async function refreshKnowledge() {
+    try {
+      const response = await fetch("/api/resumes/knowledge");
+      const payload = await response.json();
+      if (response.ok && Array.isArray(payload.records)) setKnowledgeRecords(payload.records);
+    } catch { /* Existing records remain available while the local API is unreachable. */ }
+  }
 
   useEffect(() => {
     if (!busy) return;
@@ -1477,6 +1513,7 @@ export default function App() {
     } finally {
       clearTimeout(timeout);
       if (analysisController.current === controller) analysisController.current = null;
+      void refreshKnowledge();
       if (requestId === analysisRequest.current) setBusy(false);
     }
   }
@@ -1489,6 +1526,7 @@ export default function App() {
   }
 
   function openKnowledge(id?: string) {
+    void refreshKnowledge();
     setKnowledgeTargetId(id);
     setKnowledgeOpen(true);
     setComparisonOpen(false);
@@ -1584,7 +1622,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
+        {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeLibraryView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
