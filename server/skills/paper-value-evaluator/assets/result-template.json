@@ -1,0 +1,45 @@
+{
+  "input": {
+    "title": null,
+    "description": null,
+    "extra_context": null
+  },
+  "paper": {
+    "official_title": null,
+    "official_url": null,
+    "authors": null,
+    "identifiers": null,
+    "field": null,
+    "research_type": null,
+    "abstract_summary": null,
+    "research_content": null,
+    "other_details": null
+  },
+  "publication": {
+    "venue_name": null,
+    "venue_type": null,
+    "venue_url": null,
+    "publisher_or_organizer": null,
+    "year": null,
+    "status": null,
+    "track_and_format": null,
+    "peer_review": null,
+    "venue_rankings": null,
+    "indexing": null,
+    "metrics": null,
+    "other_details": null
+  },
+  "paper_evaluation": {
+    "paper_level": null,
+    "level_basis": null,
+    "research_quality": null,
+    "citations": null,
+    "recognitions": null,
+    "open_resources": null,
+    "authorship": null,
+    "corrections_and_retractions": null,
+    "other_details": null
+  },
+  "sources": [],
+  "notes": []
+}

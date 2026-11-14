@@ -33,6 +33,10 @@ import {
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
+import { CompetitionLibrary } from "./CompetitionLibrary";
+import { VenueLibrary } from "./VenueLibrary";
+import type { AnalysisEvent, AnalysisProgress, ResearchBatch } from "./research-types";
+import { readAnalysisEvents } from "./analysis-stream";
 import { calculateComposite, calculateGrowthTimeline, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
@@ -84,6 +88,27 @@ function renderEvidenceText(value: string, query: string) {
   const index = target ? value.toLocaleLowerCase().indexOf(target.toLocaleLowerCase()) : -1;
   if (index < 0) return value;
   return <>{value.slice(0, index)}<mark className="sample-evidence-hit">{value.slice(index, index + target.length)}</mark>{value.slice(index + target.length)}</>;
+}
+
+function ResearchResults({ batch }: { batch: ResearchBatch }) {
+  const labels = { competition: "竞赛", paper: "论文", project: "项目" };
+  const statuses = { cached: "核查缓存命中", researched: "核查报告已保存", pending: "待补充", error: "检索失败" };
+  return <div className="research-results" aria-label="成果资料核查结果">
+    <strong>成果资料 · {batch.items.length} 项</strong>
+    {batch.notes.map((note, index) => <p key={index}>{note}</p>)}
+    {Boolean(batch.catalog?.length) && <section aria-label="标准资料入库结果"><strong>资料库条目整理</strong>{batch.catalog!.map((result, index) => <p key={index}>{result.kind === "competition" ? "竞赛" : "期刊会议"} · {result.name}：{result.message}</p>)}</section>}
+    {!batch.items.length && !batch.notes.length && <p>未提取到竞赛、论文或具体项目。</p>}
+    {batch.items.map((result, index) => <details key={index}>
+      <summary><span>{labels[result.item.kind]} · {String(result.item.input.competition_name ?? result.item.input.title ?? result.item.input.project_name)}</span><small>{statuses[result.status]}</small></summary>
+      <blockquote>{result.item.evidence}</blockquote>
+      {result.error && <p>{result.error}</p>}
+      {result.item.notes.map((note, noteIndex) => <p key={noteIndex}>{note}</p>)}
+      {result.report && <>
+        <ul>{result.report.sources.filter((source) => source.url).map((source, sourceIndex) => <li key={sourceIndex}><a href={source.url!} target="_blank" rel="noreferrer">{source.title}</a><p>{source.information}</p></li>)}</ul>
+        <details><summary>查看完整资料</summary><pre>{JSON.stringify(result.report, null, 2)}</pre></details>
+      </>}
+    </details>)}
+  </div>;
 }
 
 function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
@@ -714,7 +739,32 @@ function KnowledgeReviewHistory({ history, sources }: { history: KnowledgeReview
   </section>;
 }
 
-function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, agentAvailable, webSearchAvailable }: { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; agentAvailable: boolean; webSearchAvailable: boolean }) {
+type KnowledgeLibraryProps = { onClose: () => void; initialId?: string; resumes: Resume[]; records: KnowledgeRecord[]; onRecordsChange: (records: KnowledgeRecord[]) => void; onSelectEvidence: (id: string, evidence: string) => void; agentAvailable: boolean; webSearchAvailable: boolean };
+
+function KnowledgeLibraryView(props: KnowledgeLibraryProps) {
+  const [section, setSection] = useState<KnowledgeKind>(() => props.records.find((record) => record.id === props.initialId)?.kind ?? "competition");
+  const [reviewId, setReviewId] = useState<string | null>(null);
+  const [libraryId, setLibraryId] = useState(props.initialId);
+  const targetKind = props.records.find((record) => record.id === props.initialId)?.kind;
+  useEffect(() => {
+    if (props.initialId) {
+      const target = props.records.find((record) => record.id === props.initialId);
+      if (target) { setSection(target.kind); setReviewId(null); setLibraryId(target.id); }
+    }
+  }, [props.initialId, targetKind]);
+  const sectionRecords = props.records.filter((record) => record.kind === section);
+  return <section className="knowledge-library-section" aria-label="资料库">
+    <nav className="knowledge-section-tabs" aria-label="资料类别"><span>资料库</span>{(Object.keys(knowledgeKindLabels) as KnowledgeKind[]).map((kind) => <button key={kind} aria-pressed={section === kind} onClick={() => { setSection(kind); setReviewId(null); }}>
+      {knowledgeKindLabels[kind]}<small>{props.records.filter((record) => record.kind === kind).length}</small>
+    </button>)}{reviewId && <button className="knowledge-review-back" onClick={() => { setLibraryId(reviewId); setReviewId(null); }}>{section === "journal" ? "返回期刊会议资料" : "返回竞赛资料"}</button>}</nav>
+    {section === "competition" && !reviewId ? <CompetitionLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
+      : section === "journal" && !reviewId ? <VenueLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
+      : <KnowledgeBaseView key={`${section}-${reviewId ?? "browse"}`} {...props} records={sectionRecords} initialId={reviewId ?? props.initialId}
+        onRecordsChange={(next) => props.onRecordsChange([...next, ...props.records.filter((record) => record.kind !== section && !next.some((item) => item.id === record.id))])} />}
+  </section>;
+}
+
+function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, agentAvailable, webSearchAvailable }: KnowledgeLibraryProps) {
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
@@ -784,7 +834,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     const reviewed = items.filter((record) => record.verificationStatus === "已核验");
     const average = reviewed.length ? Math.round(reviewed.reduce((sum, record) => sum + record.significanceScore, 0) / reviewed.length) : null;
     return { kind: value, count: items.length, reviewed: reviewed.length, average };
-  });
+  }).filter((item) => item.count > 0);
   const scoreBandCounts = summarizeKnowledgeScoreBands(records);
   const readinessCounts = summarizeKnowledgeReadiness(records);
   const evidenceCoverage = [
@@ -861,7 +911,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
 
   function beginCreate() {
     enrichmentRequestId.current += 1;
-    setEnrichmentBusy(false); setEditingId(null); setDraft(emptyKnowledgeDraft); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
+    setEnrichmentBusy(false); setEditingId(null); setDraft({ ...emptyKnowledgeDraft, kind: records[0]?.kind ?? "competition" }); setEditorError(""); setEnrichmentHints(""); setEnrichmentProposal(null); setEditorOpen(true);
   }
 
   function beginEdit() {
@@ -1032,7 +1082,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
     <main className="knowledge-main">
       <div className="knowledge-shell">
         <div className="knowledge-header">
-          <div><span className="eyebrow">RESEARCH LIBRARY</span><h2>竞赛、期刊与公司资料库</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div>
+          <div><span className="eyebrow">RESEARCH LIBRARY</span><h2>{records[0] ? knowledgeKindLabels[records[0].kind] : "资料"}资料管理</h2><p>查找背景资料、记录人工判断，并从简历分析报告双向跳转。</p></div>
           <div className="knowledge-header-actions">
             <input ref={knowledgeImportInput} className="visually-hidden" type="file" accept=".json,application/json" aria-label="选择资料库备份文件" onChange={(event) => { void previewKnowledgeImport(event.target.files?.[0]); event.target.value = ""; }} />
             <button type="button" className="knowledge-transfer-button" onClick={() => void exportKnowledgeBundle()} disabled={transferBusy} title="导出自建资料和人工评估历史"><Download size={14} />导出</button>
@@ -1280,6 +1330,8 @@ export default function App() {
   const [filter, setFilter] = useState("");
   const [roleRequirements, setRoleRequirements] = useState("");
   const [question, setQuestion] = useState("请根据职位要求分析这份简历，并给出有证据的匹配度评分。");
+  const [includeResearch, setIncludeResearch] = useState(true);
+  const [researchResults, setResearchResults] = useState<ResearchBatch | null>(null);
   const [webResearchEnabled, setWebResearchEnabled] = useState(false);
   const [researchSources, setResearchSources] = useState<KnowledgeSource[]>([]);
   const [researchStatus, setResearchStatus] = useState<"searched" | "not-configured" | "unavailable" | "not-requested" | null>(null);
@@ -1288,6 +1340,8 @@ export default function App() {
   const [answer, setAnswer] = useState("");
   const [agentError, setAgentError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
+  const [analysisElapsed, setAnalysisElapsed] = useState(0);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [importError, setImportError] = useState("");
@@ -1314,6 +1368,8 @@ export default function App() {
   const [taskDraftError, setTaskDraftError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
+  const analysisController = useRef<AbortController | null>(null);
+  const analysisRequest = useRef(0);
 
   const selected = resumes.find((resume) => resume.id === selectedId) ?? resumes[0];
   const filtered = useMemo(() => resumes.filter((resume) => `${resume.name} ${resume.role}`.toLowerCase().includes(filter.toLowerCase())), [resumes, filter]);
@@ -1337,9 +1393,24 @@ export default function App() {
     loadResumes();
     fetch("/api/health").then((response) => response.json()).then(setHealth).catch(() => setHealth(null));
     fetch("/api/resumes/scoring/weights").then((response) => response.json()).then((payload) => payload.weights && setWeights(payload.weights)).catch(() => undefined);
-    fetch("/api/resumes/knowledge").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.records)) setKnowledgeRecords(payload.records); }).catch(() => undefined);
+    void refreshKnowledge();
     fetch("/api/resumes/history").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.candidates)) setHistoryCandidates(payload.candidates); }).catch(() => undefined);
   }, []);
+
+  async function refreshKnowledge() {
+    try {
+      const response = await fetch("/api/resumes/knowledge");
+      const payload = await response.json();
+      if (response.ok && Array.isArray(payload.records)) setKnowledgeRecords(payload.records);
+    } catch { /* Existing records remain available while the local API is unreachable. */ }
+  }
+
+  useEffect(() => {
+    if (!busy) return;
+    const started = Date.now();
+    const timer = setInterval(() => setAnalysisElapsed(Math.floor((Date.now() - started) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, [busy]);
 
   async function updateWeights(next: ScoreWeights) {
     const normalized = normalizeWeights(next);
@@ -1414,6 +1485,8 @@ export default function App() {
     const pdfFiles = Array.from(files).filter((file) => file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"));
     setImportError("");
     setAnswer("");
+    setResearchResults(null);
+    setAnalysisProgress(null);
     setResearchSources([]);
     setResearchStatus(null);
     if (pdfFiles.length === 0) {
@@ -1464,32 +1537,67 @@ export default function App() {
 
   async function analyze() {
     if (!selected) return;
+    const requestId = ++analysisRequest.current;
+    analysisController.current?.abort();
+    const controller = new AbortController();
+    analysisController.current = controller;
+    const timeout = setTimeout(() => controller.abort(new Error("分析响应超时，已完成资料仍可查看，请重试。")), 310_000);
     setBusy(true);
     setAgentError("");
     setAnswer("");
+    setResearchResults(null);
+    setResearchSources([]);
+    setResearchStatus(null);
+    setAnalysisProgress({ stage: includeResearch ? "extracting" : "analyzing", message: "正在连接分析服务。" });
+    setAnalysisElapsed(0);
     try {
-      const endpoint = selected.source === "pdf" ? `/api/resumes/${encodeURIComponent(selected.id)}/analyze` : "/api/agent";
+      const useStoredReport = selected.source === "pdf" && !includeResearch;
+      const endpoint = useStoredReport ? `/api/resumes/${encodeURIComponent(selected.id)}/analyze` : "/api/agent";
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeName: selected.name, resumeText: selected.text, roleRequirements, question, webResearchEnabled }),
+        body: JSON.stringify({ resumeName: selected.name, resumeText: selected.text, roleRequirements, question, includeResearch, webResearchEnabled, streamProgress: !useStoredReport }),
+        signal: controller.signal,
       });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "分析请求失败。");
-      setAnswer(payload.answer);
-      setResearchSources(Array.isArray(payload.researchSources) ? payload.researchSources : []);
-      setResearchStatus(payload.researchStatus ?? (selected.source === "pdf" ? "not-requested" : null));
-      if (payload.resume) {
-        setResumes((current) => current.map((resume) => resume.id === selected.id ? payload.resume as Resume : resume));
+      if (!response.ok || !response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
+        const payload = await response.json();
+        if (requestId !== analysisRequest.current) return;
+        if (!response.ok) throw new Error(payload.error || "分析请求失败。");
+        setAnswer(payload.answer || "");
+        setResearchSources(Array.isArray(payload.researchSources) ? payload.researchSources : []);
+        setResearchStatus(payload.researchStatus ?? null);
+        if (payload.resume) setResumes((current) => current.map((resume) => resume.id === selected.id ? payload.resume as Resume : resume));
+      } else {
+        await readAnalysisEvents(response, (event: AnalysisEvent) => {
+          if (requestId !== analysisRequest.current) return;
+          if (event.type === "progress") setAnalysisProgress(event.progress);
+          if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
+          if (event.type === "research") setResearchResults(event.research);
+          if (event.type === "complete") { setAnswer(event.answer); setResearchResults(includeResearch ? event.research : null); }
+          if (event.type === "error" && event.research) setResearchResults(event.research);
+        });
       }
     } catch (error) {
-      setAgentError(error instanceof Error ? error.message : "无法连接 Agent 服务。");
+      if (requestId !== analysisRequest.current) return;
+      const reason = controller.signal.aborted ? controller.signal.reason : error;
+      setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
     } finally {
-      setBusy(false);
+      clearTimeout(timeout);
+      if (analysisController.current === controller) analysisController.current = null;
+      void refreshKnowledge();
+      if (requestId === analysisRequest.current) setBusy(false);
     }
   }
 
+  function stopAnalysis() {
+    analysisRequest.current += 1;
+    analysisController.current?.abort();
+    setBusy(false);
+    setAgentError("分析已停止，已完成的成果资料仍可查看。");
+  }
+
   function openKnowledge(id?: string) {
+    void refreshKnowledge();
     setKnowledgeTargetId(id);
     setKnowledgeOpen(true);
     setComparisonOpen(false);
@@ -1504,11 +1612,16 @@ export default function App() {
   }
 
   function selectResume(id: string) {
+    analysisRequest.current += 1;
+    analysisController.current?.abort();
+    setBusy(false);
     const resume = resumes.find((item) => item.id === id);
     setSelectedId(id);
     setAnswer(resume?.analysisReport ?? "");
     setResearchSources([]);
     setResearchStatus(null);
+    setResearchResults(null);
+    setAnalysisProgress(null);
     setEvidenceTarget("");
     setEvidenceLocation(null);
     setAgentError(resume?.analysisStatus === "failed" ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
@@ -1580,7 +1693,7 @@ export default function App() {
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-            {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeBaseView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} knowledgeRecords={knowledgeRecords} /> : <>
+            {historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeLibraryView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ComparisonView resumes={resumes} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} knowledgeRecords={knowledgeRecords} /> : <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -1622,6 +1735,8 @@ export default function App() {
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
           <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
+           {busy && answer && <div className="answer-content partial-answer" aria-label="正在生成的分析正文">{answer}</div>}
+           {!busy && agentError && answer && <div className="answer-content partial-answer">{answer}</div>}
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析仅作决策参考，需由招聘人员复核。</span></div>
         </aside>
@@ -1638,10 +1753,15 @@ export default function App() {
           {taskDraftError && <div className="inline-error">{taskDraftError}</div>}
           {taskProposal && <div className="role-profile-proposal"><strong>AI 任务草案</strong><p>{taskProposal.question}</p><small>{taskProposal.rationale} · 仅发送了当前任务文本，未发送简历或候选人信息。</small><div><button type="button" onClick={() => { setQuestion(taskProposal.question); setTaskProposal(null); }}>采用草案</button><button type="button" onClick={() => setTaskProposal(null)}>保留原文</button></div></div>}
           <div className="agent-presets" aria-label="常用分析任务"><span>快捷任务</span>{["提炼核心优势与风险", "按岗位要求逐项核对证据", "生成面试追问清单"].map((preset) => <button key={preset} onClick={() => { setQuestion(preset); setTaskProposal(null); setTaskDraftError(""); }}>{preset}</button>)}</div>
+           <label className="research-toggle"><span>核查竞赛、论文和项目资料</span><input type="checkbox" checked={includeResearch} onChange={(event) => setIncludeResearch(event.target.checked)} disabled={busy} /></label>
+           <p className="research-hint">优先查询本地资料库，缺失时联网补充；每项有时限，已完成资料会实时展示。</p>
           <label className="research-toggle"><span><Globe2 size={14} /><span>联网参考岗位背景</span><small>只搜索职位要求，不发送候选人简历</small></span><input className="switch-input" type="checkbox" checked={webResearchEnabled} onChange={(event) => setWebResearchEnabled(event.target.checked)} /><i className="switch-track"><b className="switch-thumb" /></i></label>
           <button className="run-agent-button" onClick={analyze} disabled={busy || !health?.agent || !question.trim()}>
             {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{busy ? "Agent 正在分析" : "开始分析"}
           </button>
+           {busy && <button className="stop-agent-button" onClick={stopAnalysis}>停止分析</button>}
+           {busy && <div className="analysis-progress-status" role="status"><strong>{analysisProgress?.stage === "extracting" ? "正在提取成果信息" : analysisProgress?.stage === "researching" ? "正在核查成果资料" : "正在生成分析"}</strong><span>{analysisProgress?.message || "正在处理分析请求。"} · 已用时 {analysisElapsed} 秒</span>{Boolean(analysisProgress?.total) && <progress max={analysisProgress!.total} value={analysisProgress!.completed ?? 0} aria-label="成果资料核查进度" />}</div>}
+           {researchResults && <ResearchResults batch={researchResults} />}
           {researchStatus && researchStatus !== "not-requested" && <div className={`agent-research-summary ${researchStatus}`}><strong>{researchStatus === "searched" ? `岗位背景参考 · ${researchSources.length} 个来源` : researchStatus === "not-configured" ? "联网参考未配置" : "联网参考暂不可用"}</strong><span>{researchStatus === "searched" ? "来源只用于解释岗位背景，报告中的候选人结论仍需回到简历证据。" : "本次分析仍可继续，报告未将网络资料当作候选人证据。"}</span>{researchSources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title}<ExternalLink size={11} /></a>)}</div>}
           <div className="scoring-settings">
             <div className="scoring-settings-head"><div><span className="eyebrow">SCORING WEIGHTS</span><strong>评分权重</strong></div><span>{weightSaving ? "保存中" : `${Object.values(weights).reduce((sum, value) => sum + value, 0)}%`}</span></div>

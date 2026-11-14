@@ -1,0 +1,4 @@
+interface:
+  display_name: "简历项目资料采集"
+  short_description: "按项目名称、年份、所属主体和角色检索资料，输出结构简单且附来源说明的 JSON 文件"
+  default_prompt: "使用 $resume-project-research，按我提供的项目名称、年份、所属公司或集体和可选角色联网收集详细原始资料，最终只交付一个结构简单、附来源说明的 JSON 文件，不评分。"

@@ -1,0 +1,23 @@
+.venue-tools { flex-wrap: wrap; }
+.venue-tools .competition-search { flex-basis: 100%; }
+.venue-tools select[aria-label="分级体系与版本"] { max-width: 270px; }
+.venue-detail h2 { font-size: 20px; overflow-wrap: anywhere; }
+.venue-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.venue-tags > span { padding: 4px 8px; border-radius: 4px; background: #f0f5ee; color: #78916f; font-size: 10px; }
+.venue-item .venue-full-name { margin-bottom: 7px; color: #6d806f; }
+.venue-rankings { margin: 25px 0; }
+.venue-ranking { margin: 12px 0; padding: 16px; border: 1px solid #dee7dc; border-radius: 6px; background: #fafcf8; }
+.venue-ranking > header { display: flex; align-items: center; gap: 12px; }
+.venue-ranking > header > strong { min-width: 38px; padding: 9px; border-radius: 5px; background: #eaf3e5; color: #518044; font-size: 21px; text-align: center; }
+.venue-ranking header b { display: block; color: #4c6b45; font-size: 12px; font-weight: 500; line-height: 1.8; }
+.venue-ranking header span { display: block; color: #91a087; font-size: 10px; line-height: 1.8; }
+.venue-ranking dl { display: grid; gap: 10px; margin: 16px 0; color: #7a8c72; font-size: 11px; line-height: 1.9; }
+.venue-ranking dl > div { display: grid; grid-template-columns: 76px 1fr; gap: 10px; }
+.venue-ranking dt { color: #96a58d; }.venue-ranking dd { margin: 0; }
+.venue-ranking > a { display: inline-flex; align-items: center; gap: 6px; color: #668b57; text-decoration: none; font-size: 10px; }
+.venue-rankings > p, .venue-metrics > p { color: #89967e; font-size: 11px; line-height: 1.9; }
+.venue-ranking-note { padding-left: 11px; border-left: 2px solid #c7d6bc; }
+.venue-metrics { padding: 16px; margin-bottom: 23px; border: 1px dashed #e2e5d9; border-radius: 6px; }
+.venue-metrics > p { margin: 0; }.venue-sources p { margin: 6px 0; color: #889780; font-size: 10px; line-height: 1.9; }
+.venue-library .competition-notes p + p { margin-top: 8px; }
+@media (max-width: 760px) { .venue-ranking dl > div { grid-template-columns: 1fr; gap: 2px; }.venue-tools select[aria-label="分级体系与版本"] { max-width: 260px; } }

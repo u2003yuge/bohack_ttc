@@ -1,3 +1,7 @@
+import { mergeCompetitionCatalog, normalizeCompetitionProfile, type CompetitionProfile } from "./competitions.js";
+import { findVenueMatch, mergeVenueCatalog } from "./venues.js";
+import { normalizeVenueProfile, type VenueProfile } from "./venue-profile.js";
+
 export type KnowledgeKind = "competition" | "journal" | "company";
 export type KnowledgeReviewEntry = {
   id: string;
@@ -120,6 +124,9 @@ export type KnowledgeRecord = {
   updatedAt: string;
   evidenceSources?: KnowledgeEvidenceSource[];
   reviewHistory?: KnowledgeReviewEntry[];
+  competition?: CompetitionProfile;
+  venue?: VenueProfile;
+  origin?: { type: "discovered"; collectedAt: string };
 };
 
 export type KnowledgeImportBundle = {
@@ -181,6 +188,7 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       if (url.protocol === "http:" || url.protocol === "https:") safeOfficialUrl = url.toString();
     } catch { /* Ignore malformed import URLs. */ }
     const verificationStatus = record.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验";
+    const venue = kind === "journal" ? normalizeVenueProfile(record.venue) : undefined;
     records.push({
       id, kind: kind as KnowledgeKind, title,
       aliases: Array.isArray(record.aliases) ? record.aliases.filter((alias): alias is string => typeof alias === "string").map((alias) => alias.trim().slice(0, 100)).filter(Boolean).slice(0, 8) : [],
@@ -195,6 +203,11 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       verificationStatus,
       updatedAt: typeof record.updatedAt === "string" && record.updatedAt.trim() ? record.updatedAt.slice(0, 40) : new Date().toISOString().slice(0, 10),
       evidenceSources: sources,
+      ...(kind === "competition" && normalizeCompetitionProfile(record.competition) ? { competition: normalizeCompetitionProfile(record.competition) } : {}),
+      ...(venue ? { venue } : {}),
+      ...(record.origin && typeof record.origin === "object" && (record.origin as Record<string, unknown>).type === "discovered"
+        && typeof (record.origin as Record<string, unknown>).collectedAt === "string"
+        ? { origin: { type: "discovered" as const, collectedAt: String((record.origin as Record<string, unknown>).collectedAt).slice(0, 40) } } : {}),
       ...(reviewHistory.length ? { reviewHistory } : {}),
     });
   }
@@ -283,6 +296,7 @@ export const knowledgeKindLabels: Record<KnowledgeKind, string> = {
 };
 
 export function findKnowledgeMatch(text: string, record: KnowledgeRecord): string | null {
+  if (record.venue) return findVenueMatch(text, record);
   const lowerText = text.toLocaleLowerCase();
   for (const term of [record.title, ...record.aliases].sort((left, right) => right.length - left.length)) {
     const candidate = term.trim();
@@ -309,8 +323,21 @@ export function findKnowledgeReferences(text: string, records: KnowledgeRecord[]
     .map(({ record }) => record);
 }
 
+export function findCompetitionBackground(text: string, records = knowledgeRecords) {
+  return findKnowledgeReferences(text, records.filter((record) => Boolean(record.competition))).map((record) => ({
+    knowledgeId: record.id, source: record.origin ? "自动整理的本地赛事资料（非个人获奖证明）" : "competitions.md（本地整理资料，未进行本次联网核验）", ...record.competition!,
+  }));
+}
+
+export function findVenueBackground(text: string, records = knowledgeRecords) {
+  return findKnowledgeReferences(text, records.filter((record) => Boolean(record.venue))).map((record) => ({
+    knowledgeId: record.id, source: record.origin ? "自动整理的本地期刊会议资料（非论文发表证明）" : "papers.md（本地整理资料，未进行本次联网核验）",
+    matchedText: findKnowledgeMatch(text, record), matchStatus: "渠道名称线索，论文、年份、文种及个人贡献仍需核验", ...record.venue!,
+  }));
+}
+
 // Local seed records. The score is an explainable human-review starting point, not an objective ranking.
-export const knowledgeRecords: KnowledgeRecord[] = [
+export const demoKnowledgeRecords: KnowledgeRecord[] = [
   { id: "competition-acm-icpc", kind: "competition", title: "ICPC 国际大学生程序设计竞赛", aliases: ["ACM-ICPC", "ICPC"], field: "计算机 / 算法", organizer: "ICPC Foundation", region: "国际", summary: "以团队协作和算法编程能力为核心的大学生程序设计竞赛。", signals: ["团队协作", "算法与数据结构", "限时解题", "国际赛制"], officialUrl: "https://icpc.global/", significanceScore: 92, scoreRationale: "专业相关性强，能够提供算法能力和高压协作的直接证据；仍需核对赛区、名次和年份。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
   { id: "competition-ccpc", kind: "competition", title: "中国大学生程序设计竞赛", aliases: ["CCPC"], field: "计算机 / 算法", organizer: "中国大学生程序设计竞赛组委会", region: "中国", summary: "面向高校学生的程序设计竞赛，常用于观察算法基础和团队解题能力。", signals: ["算法", "编程实现", "团队协作", "区域赛 / 总决赛"], officialUrl: "https://ccpc.io/", significanceScore: 86, scoreRationale: "与软件工程岗位直接相关；评估时要区分参赛、获奖和具体赛区层级。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
   { id: "competition-kaggle", kind: "competition", title: "Kaggle 竞赛", aliases: ["Kaggle", "Kaggle competitions"], field: "数据科学 / 机器学习", organizer: "Kaggle", region: "国际", summary: "通过公开数据集和排名机制评估建模、特征处理和实验能力的平台型竞赛。", signals: ["数据建模", "实验迭代", "公开排名", "复现与解释"], officialUrl: "https://www.kaggle.com/competitions", significanceScore: 82, scoreRationale: "能体现数据实践和竞争结果，但需要核对竞赛规模、名次、团队角色和提交方案。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
@@ -335,3 +362,5 @@ export const knowledgeRecords: KnowledgeRecord[] = [
   { id: "company-dji", kind: "company", title: "大疆创新", aliases: ["DJI", "DJI Technology"], field: "机器人 / 无人机 / 消费电子", organizer: "深圳市大疆创新科技有限公司", region: "中国", summary: "以无人机及相关影像、机器人和智能硬件产品闻名的科技公司。", signals: ["硬件与软件的协作内容", "产品交付和质量指标", "候选人负责的技术模块", "商业或用户影响"], officialUrl: "https://www.dji.com/", significanceScore: 77, scoreRationale: "示例参考分。应结合具体研发方向、项目交付及个人可验证成果评估，不按公司名气直接赋分。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
   { id: "company-catl", kind: "company", title: "宁德时代", aliases: ["CATL", "宁德时代新能源科技股份有限公司"], field: "新能源 / 电池 / 制造", organizer: "宁德时代新能源科技股份有限公司", region: "中国 / 国际", summary: "新能源科技企业，业务覆盖动力电池、储能和相关制造及研发活动。", signals: ["研发 / 制造 / 供应链等岗位类型", "负责产品或工艺范围", "质量、安全与效率结果", "数据和项目证据"], officialUrl: "https://www.catl.com/", significanceScore: 76, scoreRationale: "示例参考分。公司背景不等同于个人技术水平，应核实具体岗位、项目职责和量化成果。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
 ];
+
+export const knowledgeRecords: KnowledgeRecord[] = mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords));
