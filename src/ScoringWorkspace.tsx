@@ -706,9 +706,10 @@ export default function ScoringWorkspace({
         <section className="ms-rules">
           <div className="ms-section-heading">
             <div>
-              <h2>固定规则，逐分可复算</h2>
-              <p>{calibrationStatus}。当前参数是产品初始假设，未宣称完成两位人工评审校准。</p>
+              <h2>算法规则与参数</h2>
+              <p>{calibrationStatus}。材料因素和适配系数用于复算；岗位权重可以在岗位排序页单独调配。</p>
             </div>
+            <button className="ms-secondary" type="button" onClick={() => setTab("comparison")}>调配岗位权重</button>
           </div>
           <div className="ms-rule-formulas">
             <code>M = Σ(因素权重 × 因素积分)</code>
