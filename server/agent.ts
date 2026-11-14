@@ -45,7 +45,7 @@ export async function analyzeResume(input: AnalysisInput, options: Options = {})
   const { research, assessment } = await evaluateResume(input.resumeText, { ...options });
 
   options.signal?.throwIfAborted();
-  options.emit?.({ type: "progress", progress: { stage: "analyzing", message: "正在根据简历与已完成的核查资料生成分析。" } });
+  options.emit?.({ type: "progress", progress: { stage: "analyzing", message: "正在根据简历原文与评分结果生成分析。" } });
   const analysisTimeout = limit("ANALYSIS_TIMEOUT_MS", 120_000);
   const scope = deadline(options.signal, analysisTimeout, "模型分析超时；已完成的成果资料仍可查看，请稍后重试。");
   const researchSources: Array<{ title: string; url: string; snippet: string }> = [];
