@@ -1,8 +1,11 @@
 /** Versioned, deterministic scoring. Models may extract facts; they never supply points. */
-export const scoringVersion = "material-derived-v1.2.0";
-export const calibrationStatus = "v1.2 细化规则参数，待双人标注校准";
+export const scoringVersion = "material-derived-v1.3.0";
+export const calibrationStatus = "v1.3 赛事质量与候选人表现分离，待双人标注校准";
 export const decayRatio = 0.5;
 export const decayRatios: Record<MaterialType, number> = { award: 0.4, research: 0.55, project: 0.5, work: 0.65, patent: 0.5, opensource: 0.55, certificate: 0.4 };
+export const awardEventWeights = { participants: 0.5, judging: 0.5 } as const;
+export const awardTierMultipliers = { top: 1, first: 0.85, second: 0.65, third: 0.45, finalist: 0.25 } as const;
+export const awardSelectivityReference = 0.001;
 export const abilityDimensions = [
   { key: "professional_execution", label: "专业执行" },
   { key: "problem_solving", label: "问题解决" },
@@ -101,16 +104,16 @@ const adoption = [
 ];
 export const factorDefinitions: Record<MaterialType, FactorDefinition[]> = {
   award: [
-    { key: "participants", label: "有效参赛规模", weight: 0.15, kind: "size", choices: [] },
-    { key: "award_rate", label: "官方目标奖项比例", weight: 0.3, kind: "selectivity", choices: [] },
-    factor("tier", "本赛事奖项层级", 0.3, [
+    { key: "participants", label: "有效参赛规模", weight: awardEventWeights.participants, kind: "size", choices: [] },
+    { key: "award_rate", label: "官方目标奖项比例（表现比例）", weight: 0, kind: "selectivity", choices: [] },
+    factor("tier", "本赛事奖项层级（表现比例）", 0, [
       choice("top", "本赛事最高奖", 100, "特等奖|冠军|金奖|金牌|grand prize|champion|gold"),
       choice("first", "一等奖 / 一等层级", 75, "一等奖|first prize"),
       choice("second", "二等奖 / 银奖", 50, "二等奖|银奖|银牌|second prize|silver"),
       choice("third", "三等奖 / 铜奖", 30, "三等奖|铜奖|铜牌|third prize|bronze"),
       choice("finalist", "有明确结果的入围或优胜", 15, "入围|优胜|finalist|honorable mention"),
     ]),
-    factor("judging", "赛制与评审规则", 0.25, [
+    factor("judging", "赛制与评审规则", awardEventWeights.judging, [
       choice(
         "reproducible",
         "可复核测试 / 盲评和答辩",
@@ -336,6 +339,14 @@ export type AbilityMapping = {
 };
 export type ScoredMaterial = MaterialInput & {
   material_score: number | null;
+  event_score: number | null;
+  performance_ratio: number | null;
+  performance_breakdown: {
+    award_rate: number | null;
+    selectivity_multiplier: number | null;
+    tier_multiplier: number | null;
+    reason: string;
+  } | null;
   score_breakdown: FactorScore[];
   score_coverage: number;
   missing_factors: string[];
@@ -394,6 +405,9 @@ export type LibraryMaterialScore = {
   year: string | number | null;
   resumeClaim: string;
   materialScore: number | null;
+  eventScore: number | null;
+  performanceRatio: number | null;
+  performanceBreakdown: ScoredMaterial["performance_breakdown"];
   scoreCoverage: number;
   provisional: boolean;
   missingFactors: string[];
@@ -568,9 +582,9 @@ export function scoreFactor(def: FactorDefinition, observation?: FactorObservati
       points === null
         ? "没有符合规则的事实依据，保持 NA。"
         : def.kind === "size"
-          ? "12 × ln(1 + 有效参赛规模)"
+          ? "8 × ln(1 + 有效参赛规模)"
           : def.kind === "selectivity"
-            ? "30 × -ln(官方公布比例)"
+            ? "18 × -ln(官方公布比例)"
             : (def.choices.find((c) => c.key === observation?.value)?.label ?? ""),
   };
 }
@@ -637,6 +651,52 @@ export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapp
     derived_contribution: null,
   };
 }
+
+function isCatalogBackground(material: MaterialInput): boolean {
+  return typeof material.external_facts.catalog_id === "string";
+}
+
+function awardPerformance(
+  material: MaterialInput,
+): { ratio: number | null; breakdown: NonNullable<ScoredMaterial["performance_breakdown"]> } {
+  if (isCatalogBackground(material)) {
+    return {
+      ratio: 1,
+      breakdown: {
+        award_rate: null,
+        selectivity_multiplier: null,
+        tier_multiplier: null,
+        reason: "资料库背景条目只使用赛事质量分，不代表候选人获奖表现。",
+      },
+    };
+  }
+  const rate = material.factor_observations.award_rate;
+  const tier = material.factor_observations.tier;
+  const p = rate && rate.official && typeof rate.value === "number" && rate.value > 0 && rate.value <= 1
+    ? rate.value
+    : null;
+  const tierMultiplier = tier && typeof tier.value === "string" && Object.hasOwn(awardTierMultipliers, tier.value)
+    ? awardTierMultipliers[tier.value as keyof typeof awardTierMultipliers]
+    : null;
+  const selectivityMultiplier = p === null
+    ? null
+    : roundPoints(Math.min(1, Math.max(0, -Math.log(p) / -Math.log(awardSelectivityReference))));
+  const ratio = selectivityMultiplier !== null && tierMultiplier !== null
+    ? roundPoints(selectivityMultiplier * tierMultiplier)
+    : null;
+  return {
+    ratio,
+    breakdown: {
+      award_rate: p,
+      selectivity_multiplier: selectivityMultiplier,
+      tier_multiplier: tierMultiplier,
+      reason: ratio === null
+        ? "官方目标奖项比例或实际获奖层级不足，无法形成候选人表现比例。"
+        : "表现比例 = 官方选择性系数 × 实际获奖层级系数。",
+    },
+  };
+}
+
 export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
   const effectiveRho = rho ?? decayRatio;
   if (!Number.isFinite(effectiveRho) || effectiveRho <= 0 || effectiveRho >= 1)
@@ -646,9 +706,34 @@ export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
   const decayForType = (type: MaterialType) => rho === undefined ? decayRatios[type] : effectiveRho;
   const materials: ScoredMaterial[] = deduplicate(inputs).map((material) => {
     const definitions = factorDefinitions[material.material_type];
-    const breakdown = definitions.map((def) => scoreFactor(def, material.factor_observations[def.key]));
+    const rawBreakdown = definitions.map((def) => scoreFactor(def, material.factor_observations[def.key]));
+    const breakdown = material.material_type === "award"
+      ? rawBreakdown.map((factor) =>
+          factor.key === "award_rate" || factor.key === "tier"
+            ? { ...factor, contribution: null, reason: "该因素进入候选人表现比例，不直接进入赛事质量分。" }
+            : factor,
+        )
+      : rawBreakdown;
     const known = breakdown.filter((item) => item.contribution !== null);
-    const score = known.length ? roundPoints(known.reduce((sum, item) => sum + item.contribution!, 0)) : null;
+    const eventScore = material.material_type === "award"
+      ? known.length
+        ? roundPoints(known.reduce((sum, item) => sum + item.contribution!, 0))
+        : null
+      : null;
+    const performance = material.material_type === "award" ? awardPerformance(material) : { ratio: null, breakdown: null };
+    const score = material.material_type === "award"
+      ? eventScore !== null && performance.ratio !== null
+        ? roundPoints(eventScore * performance.ratio)
+        : null
+      : known.length
+        ? roundPoints(known.reduce((sum, item) => sum + item.contribution!, 0))
+        : null;
+    const positiveDefinitions = definitions.filter((definition) => definition.weight > 0);
+    const missingFactors = breakdown.filter((item) => item.points === null).map((item) => item.label);
+    if (material.material_type === "award" && performance.ratio === null) {
+      if (!material.factor_observations.award_rate) missingFactors.push("官方目标奖项比例（表现比例）");
+      if (!material.factor_observations.tier) missingFactors.push("本赛事奖项层级（表现比例）");
+    }
     const mapping = Object.fromEntries(
       abilityDimensions.map(({ key }) => {
         const value = mapAction(material, key);
@@ -662,13 +747,15 @@ export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
     return {
       ...material,
       material_score: score,
+      event_score: material.material_type === "award" ? eventScore : null,
+      performance_ratio: material.material_type === "award" ? performance.ratio : null,
+      performance_breakdown: material.material_type === "award" ? performance.breakdown : null,
       score_breakdown: breakdown,
-      score_coverage: roundPoints(
-        known.reduce((sum, item) => sum + item.weight, 0) /
-          definitions.reduce((sum, item) => sum + item.weight, 0),
-      ),
-      missing_factors: breakdown.filter((item) => item.points === null).map((item) => item.label),
-      provisional: known.length !== breakdown.length,
+      score_coverage: roundPoints(known.reduce((sum, item) => sum + item.weight, 0) / positiveDefinitions.reduce((sum, item) => sum + item.weight, 0)),
+      missing_factors: [...new Set(missingFactors)],
+      provisional: material.material_type === "award"
+        ? known.length !== positiveDefinitions.length || performance.ratio === null
+        : known.length !== breakdown.length,
       dimension_mapping: mapping,
     };
   });

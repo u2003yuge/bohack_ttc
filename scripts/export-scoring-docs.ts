@@ -2,6 +2,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import {
   abilityDimensions,
   actionLevels,
+  awardEventWeights,
+  awardSelectivityReference,
+  awardTierMultipliers,
   calibrationStatus,
   decayRatio,
   decayRatios,
@@ -50,7 +53,7 @@ for (const [type, factors] of Object.entries(factorDefinitions)) {
   );
   for (const f of factors)
     doc.push(
-      `| ${f.label} | ${Math.round(f.weight * 100)}% | ${f.kind === "size" ? "12 × ln(1 + 有效参赛规模)" : f.kind === "selectivity" ? "30 × -ln(官方目标奖项比例)" : f.choices.map((c) => `${c.label}：${c.points}`).join("；")} |`,
+      `| ${f.label} | ${Math.round(f.weight * 100)}% | ${type === "award" && f.key === "participants" ? "Q：8 × ln(1 + 有效参赛规模)" : type === "award" && f.key === "judging" ? "Q：赛制与评审档位" : type === "award" && f.key === "award_rate" ? `P 选择性系数：min(1, -ln(p) / -ln(${awardSelectivityReference}))` : type === "award" && f.key === "tier" ? `P 层级系数：${JSON.stringify(awardTierMultipliers)}` : f.kind === "size" ? "8 × ln(1 + 有效参赛规模)" : f.kind === "selectivity" ? "18 × -ln(官方目标奖项比例)" : f.choices.map((c) => `${c.label}：${c.points}`).join("；")} |`,
     );
   doc.push("");
 }

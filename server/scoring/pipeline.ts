@@ -2,6 +2,9 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   abilityDimensions,
   actionLevels,
+  awardEventWeights,
+  awardSelectivityReference,
+  awardTierMultipliers,
   calibrationStatus,
   decayRatio,
   decayRatios,
@@ -85,7 +88,16 @@ export function createAssessment(
     notes: options.notes ?? [],
     inputSnapshot: text,
     researchSnapshot: options.research ?? null,
-    rulesSnapshot: { factorDefinitions, typeAdaptation, actionLevels, rho, rhoByType: decayRatios },
+    rulesSnapshot: {
+      factorDefinitions,
+      typeAdaptation,
+      actionLevels,
+      awardEventWeights,
+      awardTierMultipliers,
+      awardSelectivityReference,
+      rho,
+      rhoByType: decayRatios,
+    },
   });
 }
 

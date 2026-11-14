@@ -60,20 +60,30 @@ test("奖项公式使用对数规模、官方比例和明确因素权重，并�
   assert.ok(result.material_score! >= 0);
   assert.equal(result.score_coverage, 1);
 });
+test("竞赛先算赛事质量，再用官方选择性和实际获奖层级形成表现比例", () => {
+  const result = scoreMaterials([byId("S01")]).materials[0];
+  close(result.event_score, 96.051742);
+  close(result.performance_ratio, 0.85);
+  close(result.material_score, 81.643981);
+  assert.equal(result.score_breakdown.find((factor) => factor.key === "tier")?.contribution, null);
+  assert.equal(result.score_breakdown.find((factor) => factor.key === "award_rate")?.contribution, null);
+  assert.ok(result.material_score! < result.event_score!);
+});
 test("未知保持 null，实际为零的因素仍是已知零", () => {
   const unknown = scoreMaterials([byId("S29")]);
   assert.equal(unknown.materials[0].material_score, null);
   assert.equal(unknown.materials[0].score_coverage, 0);
   assert.ok(abilityDimensions.every(({ key }) => unknown.abilities[key].score === null));
   const zero = sampleMaterial("award", "零规模合成", "零规模合成赛事明确为零。", { participants: 0 });
-  assert.equal(scoreMaterials([zero]).materials[0].material_score, 0);
-  assert.equal(scoreMaterials([zero]).materials[0].score_coverage, 0.15);
+  assert.equal(scoreMaterials([zero]).materials[0].material_score, null);
+  assert.equal(scoreMaterials([zero]).materials[0].score_coverage, 0.5);
 });
 test("部分因素只累计已知贡献，不按覆盖率放大", () => {
   const result = scoreMaterials([byId("S06")]).materials[0];
-  assert.equal(result.material_score, result.score_breakdown.reduce((sum, factor) => sum + (factor.contribution ?? 0), 0));
-  assert.equal(result.score_coverage, result.score_breakdown.filter((factor) => factor.points !== null).reduce((sum, factor) => sum + factor.weight, 0));
-  assert.ok(result.missing_factors.includes("官方目标奖项比例"));
+  assert.equal(result.material_score, null);
+  assert.equal(result.event_score, null);
+  assert.equal(result.performance_ratio, null);
+  assert.ok(result.missing_factors.includes("官方目标奖项比例（表现比例）"));
 });
 test("同材料多处展示不重复加分，同赛事不同年份独立保留", () => {
   const one = scoreMaterials([byId("S01")]);
@@ -147,11 +157,11 @@ test("不同材料父类型各自从权重 1 开始，跨类型贡献直接相�
   assert.ok(both.abilities.professional_execution.terms.every((term) => term.decay === 1));
 });
 test("高质量单项可以压过大量普通同类项，rho 对数量积累生效", () => {
-  const low = Array.from({ length: 30 }, (_, i) => ({ ...byId("S02"), title: `普通合成赛 ${i}` }));
-  const high = scoreMaterials([byId("S01")]).type_summaries.find((t) => t.type === "award")!.score!;
-  const repeated = scoreMaterials(low).type_summaries.find((t) => t.type === "award")!.score!;
+  const low = Array.from({ length: 30 }, (_, i) => ({ ...byId("S12"), title: `普通项目 ${i}` }));
+  const high = scoreMaterials([byId("S11")]).type_summaries.find((t) => t.type === "project")!.score!;
+  const repeated = scoreMaterials(low).type_summaries.find((t) => t.type === "project")!.score!;
   assert.ok(high > repeated);
-  const f = (rho: number) => scoreMaterials(low, rho).type_summaries.find((t) => t.type === "award")!.score!;
+  const f = (rho: number) => scoreMaterials(low, rho).type_summaries.find((t) => t.type === "project")!.score!;
   assert.ok(f(0.4) < f(0.5) && f(0.5) < f(0.65));
 });
 test("数值来源冲突后后续重复记录不能把争议因素重新补回", () => {

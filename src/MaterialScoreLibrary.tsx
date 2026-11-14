@@ -62,6 +62,11 @@ export default function MaterialScoreLibrary({
           </summary>
           <div className="catalog-material-score-body">
             <blockquote>{entry.resumeClaim}</blockquote>
+            {entry.materialType === "award" && (entry.eventScore !== null || entry.performanceRatio !== null) && (
+              <p className="catalog-award-score-method">
+                赛事质量分 Q：{formatPoints(entry.eventScore)}；候选人表现比例 P：{entry.performanceRatio === null ? "NA" : `${Math.round(entry.performanceRatio * 100)}%`}；最终材料分 M = Q × P。
+              </p>
+            )}
             {entry.candidateId === "__catalog__" ? (
               <small className="catalog-material-evidence">公开资料背景证据；不对应候选人简历。</small>
             ) : (
