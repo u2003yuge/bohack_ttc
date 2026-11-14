@@ -727,6 +727,7 @@ function KnowledgeLibraryView(props: KnowledgeLibraryProps) {
 }
 
 function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChange, onSelectEvidence, agentAvailable, webSearchAvailable }: KnowledgeLibraryProps) {
+  void webSearchAvailable;
   const [kind, setKind] = useState<KnowledgeKind | "all">("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<KnowledgeSort>("default");
@@ -774,6 +775,7 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   const enrichmentRequestId = useRef(0);
   const knowledgeImportInput = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState<KnowledgeDraft>(emptyKnowledgeDraft);
+  void suggesting; void suggestionSources; void suggestionConfidence; void suggestionSearchStatus; void enrichmentBusy; void enrichDraft; void suggestReview;
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const linkedResumeCounts = useMemo(() => new Map(records.map((record) => [record.id, resumes.filter((resume) => findKnowledgeMatch(resume.text, record) !== null).length])), [records, resumes]);
   const filtered = records.filter((record) => {
