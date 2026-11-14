@@ -4,6 +4,7 @@ import {
   abilityDimensions,
   abilityScoreBonus,
   abilityScoreMultiplier,
+  calculateOverallScore,
   actionLevels,
   decayRatio,
   evaluateCondition,
@@ -145,6 +146,16 @@ test("五个能力维度按 v1.4.2 放大五倍并在最终分数加 20", () => 
     );
     close(result.abilities[key].score, term.contribution + 20);
   }
+});
+test("五维总分取等权平均并稳定映射到 0-100，缺维度时不可比", () => {
+  const scores = Object.fromEntries(
+    abilityDimensions.map(({ key }, index) => [key, { score: 20 + index * 10, provisional: false, terms: [], missing_materials: 0 }]),
+  ) as ReturnType<typeof scoreMaterials>["abilities"];
+  assert.equal(calculateOverallScore(scores), 40);
+  assert.equal(calculateOverallScore(Object.fromEntries(
+    abilityDimensions.map(({ key }) => [key, { ...scores[key], score: 120 }]),
+  ) as typeof scores), 100);
+  assert.equal(calculateOverallScore({ ...scores, professional_execution: { ...scores.professional_execution, score: null } }), null);
 });
 test("几何递减按派生贡献排序，而不是原材料分排序", () => {
   const high = sampleMaterial(
@@ -308,6 +319,31 @@ test("材料提取验证原文、年份和动作，忽略模型自造分数", ()
       .materials.length,
     0,
   );
+});
+test("材料提取允许 OCR 插入空白并恢复 PDF 原文证据", () => {
+  const text =
+    "大模型推理网关与配额服务  企业实践项目 · 2025.03 - 2025.08  围绕文本分类与抽取完成数据接入、模型调用和异常处理，补充可复现的评测样例。整理64组样例，跟踪召回质量、答 案 一 致 性、响 应耗 时 和失败原因。";
+  const result = normalizeMaterialExtraction(
+    {
+      items: [
+        {
+          material_type: "project",
+          title: "大模型推理网关与配额服务",
+          year: "2025",
+          resume_claim:
+            "大模型推理网关与配额服务 企业实践项目 · 2025.03 - 2025.08 围绕文本分类与抽取完成数据接入、模型调用和异常处理，补充可复现的评测样例。整理64组样例，跟踪召回质量、答案一致性、响应耗时和失败原因。",
+          personal_actions: ["整理64组样例，跟踪召回质量、答案一致性、响应耗时和失败原因。"],
+        },
+      ],
+    },
+    text,
+  );
+  assert.equal(result.materials.length, 1);
+  assert.equal(result.materials[0].title, "大模型推理网关与配额服务");
+  assert.match(result.materials[0].resume_claim, /答 案 一 致 性/);
+  assert.equal(result.materials[0].personal_action_evidence[0].quote, "整理64组样例，跟踪召回质量、答 案 一 致 性、响 应耗 时 和失败原因。");
+  const assessment = scoreMaterials(enrichMaterialFacts(result.materials, { items: [], notes: [] }));
+  assert.ok(abilityDimensions.every(({ key }) => assessment.abilities[key].score !== null));
 });
 test("保守规则抽取可处理七类材料，外部岗位职责不进入个人行动", () => {
   const text =

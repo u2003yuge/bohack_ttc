@@ -24,9 +24,9 @@ export type LegacyResumeAgentId = "achievement-research";
 export const resumeAnalysisAgentIds = resumeAgentIds;
 const agentVersions: Record<ResumeAgentId, number> = {
   "candidate-profile": 2,
-  // Bump both stages so older artifacts without the current action evidence
-  // shape are recalculated instead of reusing all-NA ability scores.
-  "material-extraction": 2,
+  // Bump extraction when evidence anchoring changes so cached artifacts with
+  // OCR-filtered materials are recalculated instead of reusing all-NA scores.
+  "material-extraction": 3,
   "score-calculation": 6,
   "analysis-report": 2,
   "plain-language-breakdown": 2,

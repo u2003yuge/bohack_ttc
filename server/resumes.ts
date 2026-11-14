@@ -897,7 +897,11 @@ async function readDirectory(): Promise<{ records: ResumeRecord[]; skippedFiles:
       // Score migrations belong to explicit analysis, not a page-load GET.
       // Re-indexing here can block the list on hundreds of model calls and
       // replace existing reports/history. Newly discovered files are indexed offline.
-      if (existing) return existing;
+      if (existing) {
+        const repaired = repairResumeProfile(existing);
+        if (repaired !== existing) await writeRecord(repaired);
+        return repaired;
+      }
       try {
         const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
         await writeRecord(record);
@@ -940,21 +944,22 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
   const ai = initialAgents?.outputs["candidate-profile"] as {
     name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
   } | null | undefined;
+  const inferred = inferResumeProfile(text);
   const fallbackName = path.basename(fileName, path.extname(fileName)).replace(/[-_]+/g, " ").trim();
-  const name = ai?.name?.trim() || fallbackName || "未命名候选人";
+  const name = ai?.name?.trim() || inferred.name || fallbackName || "未命名候选人";
   const fileStats = await stat(filePath);
   const record: ResumeRecord = {
     id,
     fileName,
     name,
-    role: ai?.role?.trim() || "待提取岗位",
-    location: ai?.location?.trim() || "未识别地点",
+    role: ai?.role?.trim() || inferred.role || "待提取岗位",
+    location: ai?.location?.trim() || inferred.location || "未识别地点",
     received: new Intl.DateTimeFormat("zh-CN", { month: "numeric", day: "numeric" }).format(fileStats.mtime),
     initials: name.trim().split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
     source: "pdf",
     text,
     education: ai?.education?.trim() || "待确认",
-    identity: ai?.identity?.trim() || "待提取身份",
+    identity: ai?.identity?.trim() || inferred.identity || "待提取身份",
     keywords: Array.isArray(ai?.keywords) ? ai.keywords.filter((value): value is string => typeof value === "string").slice(0, 5) : [],
     skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
@@ -1029,6 +1034,56 @@ export async function writeHistoryCandidates(candidates: HistoricalCandidate[]):
     await writeFile(temporary, JSON.stringify(candidates, null, 2), "utf8");
     await rename(temporary, historyCandidatesPath);
   } catch (error) { await rm(temporary, { force: true }); throw error; }
+}
+
+function inferResumeProfile(text: string): { name?: string; identity?: string; role?: string; location?: string } {
+  const source = text.replace(/\u00a0/g, " ").trim();
+  if (!source) return {};
+  const firstPage = source.split(/\n\s*\n/)[0]?.trim() || source.slice(0, 1200);
+  const labelledName = source.match(/(?:姓名|name)\s*[:：]\s*([^\s|｜，,]{2,30})/i)?.[1];
+  const firstToken = firstPage.match(/^([^\s|｜]{1,30})(?=\s)/)?.[1];
+  const chineseName = firstPage.match(/^([\u4e00-\u9fff]{2,6})(?=\s)/)?.[1];
+  const latinName = firstPage.match(/^([A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*){0,2})(?=\s{2,}|$)/)?.[1];
+  const name = [labelledName, firstToken, chineseName, latinName].map((value) => value?.trim()).find((value) => value && isUsableResumeName(value));
+  const roleMatch = source.match(/(?:目标岗位|求职意向|意向岗位|应聘岗位|当前岗位)\s*[:：]\s*([^。\n|｜]{2,80})/);
+  const afterName = name ? firstPage.slice(firstPage.indexOf(name) + name.length).trim() : "";
+  const headerRole = afterName.split(/\s{2,}|\s+\d{1,2}\s*岁|基本信息|教育背景/)[0]?.trim();
+  const role = cleanInferredField(roleMatch?.[1] || headerRole);
+  const location = cleanInferredField(source.match(/\d{1,2}\s*岁\s*[|｜]\s*([^|｜\n]{2,30})/)?.[1]);
+  return {
+    ...(name ? { name } : {}),
+    ...(role ? { role, identity: role } : {}),
+    ...(location ? { location } : {}),
+  };
+}
+
+function isUsableResumeName(value: string): boolean {
+  const normalized = value.trim();
+  return normalized.length >= 1
+    && normalized.length <= 30
+    && !/^\d+$/.test(normalized)
+    && !/^(个人简历|简历|resume|curriculum vitae)$/i.test(normalized);
+}
+
+function cleanInferredField(value: string | undefined): string {
+  return value?.replace(/\s+/g, " ").replace(/[。；;]+$/, "").trim().slice(0, 80) || "";
+}
+
+function repairResumeProfile(record: ResumeRecord): ResumeRecord {
+  if (!record.text?.trim()) return record;
+  const inferred = inferResumeProfile(record.text);
+  const updates: Partial<ResumeRecord> = {};
+  if (inferred.name && (!record.name.trim() || /^\d+$/.test(record.name.trim()) || record.name === "未命名候选人")) updates.name = inferred.name;
+  if (inferred.identity && (!record.identity.trim() || record.identity === "待提取身份")) updates.identity = inferred.identity;
+  if (inferred.role && (!record.role.trim() || record.role === "待提取岗位")) updates.role = inferred.role;
+  if (inferred.location && (!record.location.trim() || record.location === "未识别地点")) updates.location = inferred.location;
+  if (!Object.keys(updates).length) return record;
+  const name = updates.name ?? record.name;
+  return {
+    ...record,
+    ...updates,
+    initials: name.trim().split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+  };
 }
 
 function normalizeWeightInput(input: unknown): ScoreWeights {

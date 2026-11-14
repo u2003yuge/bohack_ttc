@@ -1,6 +1,8 @@
 import { useState } from "react";
+import "./material-scoring.css";
 import {
   abilityDimensions,
+  calculateOverallScore,
   materialTypeLabels,
   scoringVersion,
   type AbilityKey,
@@ -138,6 +140,7 @@ export default function MaterialAssessment({
   const selectedHistory = history.find((entry) => entry.assessment.id === historyId)?.assessment;
   const current = selectedHistory ?? assessment;
   const ability = current.abilities[dimension];
+  const overallScore = current.overallScore ?? calculateOverallScore(current.abilities);
   const years = [
     ...new Set(current.materials.flatMap((m) => String(m.year ?? "").match(/(?:19|20)\d{2}/g) ?? [])),
   ].sort();
@@ -149,6 +152,11 @@ export default function MaterialAssessment({
           <h2>五维能力画像</h2>
         </div>
         <span className="ms-version">{current.version}</span>
+      </div>
+      <div className="ms-overall-score" aria-label={`五维总分 ${formatPoints(overallScore)}，满分 100`}>
+        <span>五维总分</span>
+        <strong>{formatPoints(overallScore)}</strong>
+        <small>/ 100 · 五维等权平均</small>
       </div>
       {history.length > 0 && (
         <label className="ms-history-select">

@@ -67,6 +67,22 @@
   font-weight: 500;
   white-space: nowrap;
 }
+.ms-overall-score {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 10px 13px;
+  margin: 8px 0 14px;
+  border-left: 3px solid #55795e;
+  background: #eef3ef;
+  color: #40564a;
+}
+.ms-overall-score strong {
+  color: #284c35;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.ms-overall-score small { color: #647469; }
 .ms-tabs,
 .ms-ranking-filters {
   display: flex;

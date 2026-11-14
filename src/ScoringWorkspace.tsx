@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   abilityDimensions,
+  calculateOverallScore,
   actionLevels,
   calibrationStatus,
   factorDefinitions,
@@ -634,6 +635,7 @@ export default function ScoringWorkspace({
                   <tr>
                     <th>候选人</th>
                     <th>岗位排序分</th>
+                    <th>五维总分 / 100</th>
                     {abilityDimensions.map(({ key, label }) => (
                       <th key={key}>{label}</th>
                     ))}
@@ -669,6 +671,7 @@ export default function ScoringWorkspace({
                             <small>已知贡献 {formatPoints(ranking.knownContribution)}，非可比总分</small>
                           )}
                         </td>
+                        <td>{formatPoints(resume.assessment ? resume.assessment.overallScore ?? calculateOverallScore(resume.assessment.abilities) : null)}</td>
                         {abilityDimensions.map(({ key }) => (
                           <td key={key}>{formatPoints(resume.assessment?.abilities[key].score)}</td>
                         ))}
@@ -736,8 +739,9 @@ export default function ScoringWorkspace({
           </div>
           <div className="ms-rule-formulas">
             <code>M = Σ(因素权重 × 因素积分)</code>
-            <code>D = M × 类型适配 R × 个人行动 A</code>
-            <code>P = Σ类型 Σ排名 0.5^(排名−1) × D</code>
+            <code>D = M × 类型适配 R × 个人行动 A × 5</code>
+            <code>P = Σ类型 Σ排名 ρ^(排名−1) × D + 20（有贡献时）</code>
+            <code>五维总分 = min(100, 五维等权平均)（缺少维度时 NA）</code>
             <code>岗位排序分 = Σ(岗位权重 × P)</code>
           </div>
           <h3>材料因素权重与积分档位</h3>

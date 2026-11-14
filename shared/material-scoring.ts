@@ -387,6 +387,7 @@ export type Assessment = {
   rhoByType?: Record<MaterialType, number>;
   materials: ScoredMaterial[];
   abilities: Record<AbilityKey, AbilityScore>;
+  overallScore: number | null;
   type_summaries: Array<{ type: MaterialType; score: number | null; count: number }>;
   notes: string[];
   inputSnapshot: string;
@@ -429,6 +430,12 @@ export type LibraryMaterialScore = {
   }>;
 };
 export const roundPoints = (value: number) => Math.round(value * 1e6) / 1e6;
+export function calculateOverallScore(abilities: Record<AbilityKey, AbilityScore>): number | null {
+  const scores = abilityDimensions.map(({ key }) => abilities[key].score);
+  if (scores.some((score) => score === null)) return null;
+  const average = scores.reduce<number>((sum, score) => sum + (score ?? 0), 0) / abilityDimensions.length;
+  return roundPoints(Math.max(0, Math.min(100, average)));
+}
 /** Every material's contribution after sorting and same-type decay. */
 export function withMaterialContributions(assessment: Assessment): Assessment {
   const materialContributions = Object.fromEntries(assessment.materials.map((material) => [
@@ -830,7 +837,7 @@ export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
         : null,
     };
   });
-  return { materials, abilities, type_summaries };
+  return { materials, abilities, overallScore: calculateOverallScore(abilities), type_summaries };
 }
 export type JobWeights = Record<AbilityKey, number>;
 export type JobPreference = {

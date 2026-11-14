@@ -34,6 +34,48 @@ const usable = (text: string) =>
     text,
   );
 
+type TextSpan = { text: string; start: number; end: number };
+
+/**
+ * PDF text extraction can insert whitespace inside words (for example, "接口设 计").
+ * Match the non-whitespace character sequence while retaining the original span so
+ * downstream evidence still points at text that was actually extracted from the PDF.
+ */
+function whitespaceTolerantSpan(source: string, needle: string): TextSpan | null {
+  if (!source || !needle) return null;
+  const exactStart = source.indexOf(needle);
+  if (exactStart >= 0) return { text: source.slice(exactStart, exactStart + needle.length), start: exactStart, end: exactStart + needle.length };
+  const compact = (value: string) => {
+    let text = "";
+    const spans: Array<{ start: number; end: number }> = [];
+    for (let offset = 0; offset < value.length; ) {
+      const codePoint = value.codePointAt(offset)!;
+      const character = String.fromCodePoint(codePoint);
+      const end = offset + character.length;
+      if (!/\s/.test(character)) {
+        text += character;
+        spans.push({ start: offset, end });
+      }
+      offset = end;
+    }
+    return { text, spans };
+  };
+  const compactSource = compact(source);
+  const compactNeedle = compact(needle).text;
+  if (!compactNeedle) return null;
+  const matchStart = compactSource.text.indexOf(compactNeedle);
+  if (matchStart < 0) return null;
+  const first = compactSource.spans[matchStart];
+  const last = compactSource.spans[matchStart + compactNeedle.length - 1];
+  if (!first || !last) return null;
+  return { text: source.slice(first.start, last.end), start: first.start, end: last.end };
+}
+
+const anchoredText = (source: string, value: unknown) => {
+  const candidate = stringValue(value);
+  return candidate ? whitespaceTolerantSpan(source, candidate)?.text ?? null : null;
+};
+
 export function normalizeMaterialExtraction(
   value: unknown,
   text: string,
@@ -54,24 +96,27 @@ export function normalizeMaterialExtraction(
       notes.push("跳过未知材料父类型。");
       continue;
     }
-    const claim = stringValue(raw.resume_claim ?? raw.evidence);
-    if (!claim || claim.length < 6 || !text.includes(claim)) {
+    const claimInput = stringValue(raw.resume_claim ?? raw.evidence);
+    const claimSpan = claimInput ? whitespaceTolerantSpan(text, claimInput) : null;
+    if (!claimInput || claimInput.length < 6 || !claimSpan) {
       notes.push("跳过无法在简历中定位连续原文的材料。");
       continue;
     }
-    const title = stringValue(raw.title ?? input.competition_name ?? input.title ?? input.project_name);
+    const claim = claimSpan.text;
+    const titleInput = stringValue(raw.title ?? input.competition_name ?? input.title ?? input.project_name);
+    const title = titleInput ? anchoredText(claim, titleInput) : null;
     if (!title || !normalizeIdentity(claim).includes(normalizeIdentity(title))) {
       notes.push("跳过原文无法支持的材料名称。");
       continue;
     }
     const anchored = (v: unknown) => {
-      const s = stringValue(v);
+      const s = anchoredText(claim, v);
       return s && normalizeIdentity(claim).includes(normalizeIdentity(s)) ? s : null;
     };
     const yearValue = input.year ?? input.award_year ?? input.project_year;
     const yearText = typeof yearValue === "number" ? String(yearValue) : stringValue(yearValue);
     const year =
-      yearText && claim.includes(yearText) && yearsIn(yearText).length
+      yearText && whitespaceTolerantSpan(claim, yearText) && yearsIn(yearText).length
         ? typeof yearValue === "number"
           ? yearValue
           : yearText
@@ -79,8 +124,8 @@ export function normalizeMaterialExtraction(
     const context = isObject(raw.context) ? raw.context : {};
     const actions = Array.isArray(raw.personal_actions)
       ? raw.personal_actions.filter(
-          (s): s is string => typeof s === "string" && s.length >= 6 && claim.includes(s),
-        )
+          (s): s is string => typeof s === "string" && s.length >= 6 && !!whitespaceTolerantSpan(claim, s),
+        ).map((s) => whitespaceTolerantSpan(claim, s)!.text)
       : [claim];
     const resumeEvidence: Evidence = { origin: "resume", quote: claim, source: "简历原文" };
     const material: MaterialInput = {
@@ -95,7 +140,7 @@ export function normalizeMaterialExtraction(
         ...new Set([
           ...(Array.isArray(input.identifiers)
             ? input.identifiers
-                .filter((s): s is string => typeof s === "string" && claim.includes(s) && validIdentifier(s))
+                .filter((s): s is string => typeof s === "string" && validIdentifier(s) && !!whitespaceTolerantSpan(claim, s))
                 .map(normalizeIdentifier)
             : []),
           ...[...claim.matchAll(/10\.\d{4,9}\/[\w.\-;()/]+|arxiv:\s*\d{4}\.\d{4,5}/gi)].map((m) =>
@@ -118,7 +163,7 @@ export function normalizeMaterialExtraction(
                   : []
               ).includes(key) &&
               typeof v === "string" &&
-              claim.includes(v),
+              !!whitespaceTolerantSpan(claim, v),
           ),
         ),
       },

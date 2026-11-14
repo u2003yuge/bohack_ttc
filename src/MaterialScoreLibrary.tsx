@@ -1,29 +1,14 @@
-import type { CSSProperties } from "react";
 import { abilityDimensions, materialTypeLabels, type LibraryMaterialScore } from "../shared/material-scoring";
-import { Star } from "lucide-react";
 import { formatPoints } from "./MaterialAssessment";
 
-function starValue(score: number) {
-  return Math.max(0, Math.min(5, score / 20));
-}
-
-export function MaterialStars({ score, size = 20 }: { score: number; size?: number }) {
-  const rating = starValue(score);
-  return <span className="material-stars" role="img" aria-label={`${rating.toFixed(1)} / 5 星`} style={{ "--star-size": `${size}px` } as CSSProperties}>
-    {Array.from({ length: 5 }, (_, index) => {
-      const fill = Math.max(0, Math.min(1, rating - index)) * 100;
-      return <span className="material-star" key={index}><Star className="material-star-empty" /><Star className="material-star-filled" style={{ clipPath: `inset(0 ${100 - fill}% 0 0)` }} /></span>;
-    })}
-  </span>;
-}
-
 export function MaterialScoreSummary({ scores }: { scores?: LibraryMaterialScore[] }) {
-  const values = scores?.flatMap((entry) => entry.materialScore === null ? [] : [entry.materialScore]) ?? [];
-  if (!values.length) return <small className="catalog-card-material-score">材料分待评</small>;
-  const average = values.reduce((sum, score) => sum + score, 0) / values.length;
-  return <span className="material-rating-summary" aria-label={`${values.length} 条材料平均 ${starValue(average).toFixed(1)} 星`}>
-    <MaterialStars score={average} size={14} /><b>{starValue(average).toFixed(1)}</b><small>{values.length} 条</small>
-  </span>;
+  if (!scores?.length) return <small className="catalog-card-material-score">材料分待评</small>;
+  const values = scores.flatMap((entry) => entry.materialScore === null ? [] : [entry.materialScore]);
+  if (!values.length) return <small className="catalog-card-material-score">材料分待补 · {scores.length} 条</small>;
+  const minimum = Math.min(...values);
+  const maximum = Math.max(...values);
+  const spread = minimum === maximum ? formatPoints(maximum) : `${formatPoints(minimum)}–${formatPoints(maximum)}`;
+  return <small className="catalog-card-material-score">材料分 {spread} / 100 · {scores.length} 条</small>;
 }
 
 export default function MaterialScoreLibrary({
@@ -64,7 +49,7 @@ export default function MaterialScoreLibrary({
               </small>
             </span>
             <span className="catalog-material-score-value">
-              {entry.materialScore === null ? "待评分" : <><MaterialStars score={entry.materialScore} size={22} /><b>{starValue(entry.materialScore).toFixed(1)} / 5</b></>}
+              {entry.materialScore === null ? "待评分" : <><b>{formatPoints(entry.materialScore)} / 100</b><small>{Math.round(entry.scoreCoverage * 100)}% 覆盖{entry.provisional ? " · 暂定" : ""}</small></>}
             </span>
           </summary>
           <div className="catalog-material-score-body">
