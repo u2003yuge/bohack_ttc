@@ -824,3 +824,199 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .loading-line i {
   background: var(--brand-gradient);
 }
+
+/* Cleaner Feishu / Zhihu inspired rhythm and colorful candidate identity. */
+body {
+  background: #f4f7fb;
+}
+::selection {
+  color: #fff;
+  background: #5275e8;
+}
+.topbar {
+  box-shadow: 0 1px 10px rgb(37 64 112 / 5%);
+}
+.sidebar-head {
+  padding: 20px 16px 14px;
+}
+.sidebar-title-row h1 {
+  letter-spacing: -.02em;
+}
+.candidate-row {
+  min-height: 58px;
+  border-radius: 9px;
+  transition: background .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+.candidate-row:hover {
+  transform: translateX(2px);
+}
+.candidate-copy strong,
+.person-title h2,
+.comparison-candidate-select strong {
+  color: #26334f;
+  background: transparent;
+  -webkit-text-fill-color: currentColor;
+  text-shadow: none;
+  transition: color .16s ease;
+}
+.candidate-row:hover .candidate-copy strong,
+.comparison-table tbody tr:hover .comparison-candidate-select strong {
+  color: #26334f;
+}
+.candidate-avatar {
+  border: 2px solid #fff;
+  box-shadow: 0 3px 10px rgb(41 72 145 / 14%);
+}
+.candidate-avatar.large {
+  box-shadow: 0 5px 16px rgb(41 72 145 / 18%);
+}
+.avatar-0 {
+  color: #2864bf;
+  background: linear-gradient(135deg, #dceaff, #d8f2ff);
+}
+.avatar-1 {
+  background: linear-gradient(135deg, #e4e6ff, #f0dcff);
+}
+.avatar-2 {
+  background: linear-gradient(135deg, #dcf0ff, #d7f5f0);
+}
+.avatar-3 {
+  background: linear-gradient(135deg, #eee4ff, #f9ddf0);
+}
+.document-header {
+  min-height: 72px;
+  padding-inline: 22px;
+}
+.document-toolbar {
+  height: 40px;
+  padding-inline: 22px;
+}
+.document-column,
+.report-column,
+.analysis-column {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 65%);
+}
+.pdf-viewer,
+.analysis-document-shell,
+.score-insights,
+.agent-capabilities,
+.result-panel {
+  border-radius: 9px;
+}
+.pdf-viewer,
+.analysis-document-shell {
+  box-shadow: 0 8px 24px rgb(45 74 129 / 5%);
+}
+.pdf-page,
+.sample-page,
+.analysis-paper {
+  border-radius: 7px;
+}
+.analysis-header {
+  padding-bottom: 11px;
+  border-bottom: 1px solid #e8edf6;
+}
+.analysis-header h2 {
+  letter-spacing: -.02em;
+}
+.analysis-document-toolbar {
+  border-radius: 9px 9px 0 0;
+}
+.analysis-paper {
+  border: 1px solid #edf0f6;
+}
+.knowledge-shell {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgb(45 74 129 / 6%);
+}
+.knowledge-header {
+  padding: 22px 26px 18px;
+  background: linear-gradient(110deg, #fff 0%, #fbfcff 62%, #f7f4ff 100%);
+}
+.knowledge-body {
+  background: #fff;
+}
+.knowledge-list {
+  background: #f8faff;
+}
+.knowledge-record-row {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: background .16s ease, border-color .16s ease;
+}
+.knowledge-record-row:hover,
+.knowledge-record-row.selected {
+  border-color: #d9e3fb;
+  background: linear-gradient(90deg, #edf4ff 0%, #f5f2ff 100%);
+}
+.knowledge-detail {
+  background: #fff;
+}
+.knowledge-detail-head h3,
+.knowledge-header h2 {
+  letter-spacing: -.025em;
+}
+.knowledge-detail-head h3 {
+  background-image: linear-gradient(110deg, #2f63d7, #7657f6 65%, #8d5edf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Scores remain on the 0–100 scale. A capped score gets a small visual glow
+   beyond the track so the upper bound is clear without changing the value. */
+.score-at-limit {
+  color: #6848bc !important;
+  text-shadow: 0 0 9px rgb(118 87 246 / 22%);
+}
+.score-formula.score-at-limit {
+  background: #f0ebff;
+  color: #6848bc !important;
+  box-shadow: inset 0 0 0 1px #dacdff, 0 0 9px rgb(118 87 246 / 12%);
+}
+.composite-cell.score-at-limit {
+  background: linear-gradient(100deg, #f1edff, #e8f1ff);
+  box-shadow: inset 0 0 0 1px #d6caff, 2px 0 0 #7657f6;
+}
+.contribution-track i.at-limit {
+  position: relative;
+  overflow: visible;
+  background: linear-gradient(90deg, #6681e8 0%, #7657f6 76%, #a561df 100%);
+  box-shadow: 0 0 7px rgb(118 87 246 / 28%);
+}
+.contribution-track i.at-limit::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 7px;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7657f6, #b66be3);
+  box-shadow: 2px 0 6px rgb(118 87 246 / 34%);
+}
+.contribution-track b.at-limit-marker {
+  background: #6848bc;
+  box-shadow: 0 0 6px rgb(118 87 246 / 38%);
+}
+.score-cell-score > i.at-limit {
+  overflow: visible;
+  background: #e9e3ff;
+}
+.score-cell-score > i.at-limit b {
+  position: relative;
+  overflow: visible;
+  background: linear-gradient(90deg, #6681e8, #7657f6);
+  box-shadow: 0 0 5px rgb(118 87 246 / 30%);
+}
+.score-cell-score > i.at-limit b::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 5px;
+  height: 100%;
+  border-radius: inherit;
+  background: #a561df;
+}
