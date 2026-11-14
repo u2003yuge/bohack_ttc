@@ -60,7 +60,7 @@ export function CompetitionLibrary({ records, resumes, initialId, onClose, onRev
 
   return <main className="competition-library">
     <header className="competition-heading">
-      <div><span className="eyebrow">COMPETITION LIBRARY</span><h1>看懂每一项竞赛经历<span>。</span></h1><p>从赛事背景，到能力要求，为简历中的成果找到可追溯的参考。</p></div>
+      <div><span className="eyebrow">COMPETITION LIBRARY</span><h1>看懂每一项竞赛经历<span>。</span></h1></div>
       <button className="competition-back" onClick={onClose}><ArrowLeft size={15} />返回简历分析</button>
     </header>
     <div className="competition-stats" aria-label="竞赛库概况">

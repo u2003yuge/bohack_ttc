@@ -58,7 +58,7 @@ export function CompanyLibrary({ records, resumes, initialId, onClose, onReview,
 
   return <main className="competition-library company-library">
     <header className="competition-heading">
-      <div><span className="eyebrow">COMPANY LIBRARY</span><h1>了解候选人经历背后的公司<span>。</span></h1><p>统一查看公司背景、业务领域和经历线索，把品牌信号还原为具体职责与结果。</p></div>
+      <div><span className="eyebrow">COMPANY LIBRARY</span><h1>了解候选人经历背后的公司<span>。</span></h1></div>
       <button className="competition-back" onClick={onClose}><ArrowLeft size={15} />返回简历分析</button>
     </header>
     <div className="competition-stats" aria-label="公司库概况">

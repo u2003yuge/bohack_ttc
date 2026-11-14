@@ -15,7 +15,7 @@ import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSou
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
-import { loadTrackedResumeReport, saveTrackedResumeReport } from "./tracked-resume-cache.js";
+import { saveResumeAnalysisReport } from "./report-store.js";
 import { scoringVersion, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
 import type { AgentDebug, AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
@@ -857,12 +857,11 @@ async function readDirectory(): Promise<{ records: ResumeRecord[]; skippedFiles:
       // Score migrations belong to explicit analysis, not a page-load GET.
       // Re-indexing here can block the list on hundreds of model calls and
       // replace existing reports/history. Newly discovered files are indexed offline.
-      if (existing) return loadTrackedResumeReport(existing, path.join(directory, existing.fileName));
+      if (existing) return existing;
       try {
         const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
-        const restored = await loadTrackedResumeReport(record, path.join(directory, name));
-        await writeRecord(restored);
-        return restored;
+        await writeRecord(record);
+        return record;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (!/invalid pdf|pdf structure|xref|endstream/i.test(message)) throw error;
@@ -1019,6 +1018,7 @@ function safeHttpUrl(value: unknown): string {
 }
 
 export async function writeRecord(record: ResumeRecord, signal?: AbortSignal): Promise<void> {
+  await saveResumeAnalysisReport(record, { signal });
   await mkdir(path.join(directory, ".metadata"), { recursive: true });
   const destination = metadataPath(record.id);
   const temporary = `${destination}.${randomUUID()}.tmp`;
@@ -1026,8 +1026,6 @@ export async function writeRecord(record: ResumeRecord, signal?: AbortSignal): P
     await writeFile(temporary, JSON.stringify(record, null, 2), { encoding: "utf8", signal });
     signal?.throwIfAborted();
     await rename(temporary, destination);
-    try { await saveTrackedResumeReport(record, path.join(directory, record.fileName)); }
-    catch (error) { console.warn(`[resume-cache] Could not update tracked report cache for ${record.id}:`, error); }
   } catch (error) { await rm(temporary, { force: true }); throw error; }
 }
 
@@ -1054,7 +1052,7 @@ async function saveAssessment(id: string, assessment: Assessment, report: string
 export async function readRecord(id: string): Promise<ResumeRecord | null> {
   try {
     const record = JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
-    return await loadTrackedResumeReport(record, path.join(directory, record.fileName));
+    return record;
   } catch {
     return null;
   }

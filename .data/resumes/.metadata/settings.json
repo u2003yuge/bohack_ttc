@@ -1,0 +1,10 @@
+{
+  "weights": {
+    "leadership": 18,
+    "expertise": 24,
+    "experience": 20,
+    "perspective": 10,
+    "roleFit": 23,
+    "growth": 5
+  }
+}

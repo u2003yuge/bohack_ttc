@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -56,7 +56,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
   }), "utf8");
   const child = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     cwd: fileURLToPath(new URL("../../", import.meta.url)),
-    env: { ...process.env, PORT: String(appAddress.port), RESUME_DIR: directory, OPENAI_API_KEY: "local-test", OPENAI_MODEL: "test", OPENAI_EXTRACTION_MODEL: "test", OPENAI_BASE_URL: `http://127.0.0.1:${modelAddress.port}/v1`, TAVILY_API_KEY: "", MODEL_REQUEST_TIMEOUT_MS: "3000", ANALYSIS_TIMEOUT_MS: "5000", AGENT_TIMEOUT_MS: "8000" },
+    env: { ...process.env, PORT: String(appAddress.port), RESUME_DIR: directory, REPORT_DIR: path.join(directory, "reports"), OPENAI_API_KEY: "local-test", OPENAI_MODEL: "test", OPENAI_EXTRACTION_MODEL: "test", OPENAI_BASE_URL: `http://127.0.0.1:${modelAddress.port}/v1`, TAVILY_API_KEY: "", MODEL_REQUEST_TIMEOUT_MS: "3000", ANALYSIS_TIMEOUT_MS: "5000", AGENT_TIMEOUT_MS: "8000" },
     stdio: ["ignore", "pipe", "pipe"], windowsHide: true,
   });
   let stderr = "";
@@ -97,6 +97,8 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.match(saved.analysisReport, /### 综合分析\n\n合并后的分析报告。/);
     assert.equal(saved.assessmentHistory.length, 1);
     assert.equal(saved.scoreHistory.length, 0);
+    const archives = () => readdir(path.join(directory, "reports", "merge-test"));
+    assert.equal((await archives()).length, 1);
 
     const previousCount = requests.length;
     const cachedCount = requests.length;
@@ -105,12 +107,14 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     const cachedComplete = cachedEvents.find((event) => event.type === "complete");
     assert.ok(cachedComplete?.type === "complete" && cachedComplete.cached);
     assert.equal(requests.length, cachedCount, "非强制请求应直接返回缓存，不调用模型。");
+    assert.equal((await archives()).length, 1, "读取已保存报告不能重复归档。");
 
     const jsonResponse = await post({ force: true });
     const result = await jsonResponse.json();
     assert.equal(jsonResponse.status, 200);
     assert.deepEqual(result.research.items, []);
     assert.equal(result.resume.assessmentHistory.length, 2);
+    assert.equal((await archives()).length, 2, "重新分析应保留两个报告版本。");
     assert.ok(requests.length - previousCount >= 0, "规则评分不应触发成果核查请求。");
 
     saved = JSON.parse(await readFile(metadata, "utf8"));
@@ -147,6 +151,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.deepEqual(saved.scoreCard, compatibilityCard);
 
     failReport = false; hangReport = true;
+    const archivesBeforeCancel = await archives();
     const ready = new Promise<void>((resolve) => { reportStarted = resolve; });
     const abort = new AbortController();
     const pending = await fetch(`${baseUrl}/api/resumes/merge-test/analyze`, { method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.signal, body: JSON.stringify({ roleRequirements: "工程岗", question: "分析", ocrText, streamProgress: true, force: true }) });
@@ -158,6 +163,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     while (!canceledReports && Date.now() < cancelDeadline) await new Promise<void>((resolve) => setTimeout(resolve, 10));
     assert.ok(canceledReports > 0);
     assert.deepEqual(JSON.parse(await readFile(metadata, "utf8")), saved, "保存前取消分析不能追加半套评估记录。");
+    assert.deepEqual(await archives(), archivesBeforeCancel, "取消不能归档半份报告。");
   } finally {
     child.kill();
     await new Promise<void>((resolve) => child.exitCode !== null || child.signalCode !== null ? resolve() : child.once("exit", () => resolve()));

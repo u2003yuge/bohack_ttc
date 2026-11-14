@@ -3,7 +3,7 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { saveAnalysisReport } from "../report-store.js";
+import { saveAnalysisReport, saveResumeAnalysisReport } from "../report-store.js";
 
 test("report archives preserve initial/role history, isolate unsafe IDs and never save cancelled or empty reports", async () => {
   const directory = await mkdtemp(path.join(tmpdir(), "bohack-reports-"));
@@ -22,5 +22,21 @@ test("report archives preserve initial/role history, isolate unsafe IDs and neve
     assert.equal((await readdir(path.join(directory, "160"))).length, 2);
     await saveAnalysisReport({ ...base, resumeId: "../../outside", kind: "agent" }, { directory });
     assert.ok((await readdir(directory)).every((folder) => folder === "160" || /^resume-[a-f0-9]{32}$/.test(folder)));
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test("completed resume versions archive once across metadata writes and retain reanalysis history", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "bohack-report-snapshots-"));
+  const record = { id: "candidate", fileName: "candidate.pdf", text: "resume", analysisStatus: "complete",
+    analysisReport: "first report", analyzedAt: "2026-11-15T00:00:00Z", assessment: { score: 12 } };
+  try {
+    await Promise.all([saveResumeAnalysisReport(record, { directory }), saveResumeAnalysisReport(record, { directory })]);
+    await saveResumeAnalysisReport(record, { directory });
+    assert.equal((await readdir(path.join(directory, record.id))).length, 1);
+    await saveResumeAnalysisReport({ ...record, analysisReport: "second report", analyzedAt: "2026-11-15T01:00:00Z" }, { directory });
+    assert.equal((await readdir(path.join(directory, record.id))).length, 2);
+    await saveResumeAnalysisReport({ ...record, analysisStatus: "processing" }, { directory });
+    await saveResumeAnalysisReport({ ...record, analysisReport: " " }, { directory });
+    assert.equal((await readdir(path.join(directory, record.id))).length, 2);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });

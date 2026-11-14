@@ -7,6 +7,7 @@ import { normalizeProjectBreakdownRequest, structureJobRequirements, suggestAnal
 import type { AnalysisEvent, AnalysisResult } from "../src/research-types.js";
 import { resumeAnalysisAgentIds, runResumeAgents } from "./agents/registry.js";
 import scoring from "./scoring/router.js";
+import { saveAnalysisReport } from "./report-store.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
@@ -83,6 +84,11 @@ app.post("/api/agent", async (request, response) => {
       researchStatus: report?.researchStatus,
       debug: run.debug,
     };
+    await saveAnalysisReport({
+      kind: "agent", resumeName: resumeName || "未命名简历", resumeText,
+      question, roleRequirements, answer: result.answer, assessment: result.assessment,
+      researchSources: result.researchSources, researchStatus: result.researchStatus,
+    }, { signal: scope.signal });
     if (!response.destroyed) {
       if (streamProgress) { emit({ type: "complete", ...result }); response.end(); }
       else response.json(result);

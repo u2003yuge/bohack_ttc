@@ -1982,3 +1982,109 @@ button:active { transform: translateY(1px); }
   .analysis-column { padding: 20px 15px 16px; }
   .analysis-header h2 { font-size: 18px; }
 }
+
+/* Shared reading hierarchy across workspace views. */
+.eyebrow.eyebrow,
+.ms-eyebrow { display: none; }
+.product-slogan,
+.comparison-note,
+.analysis-paper-subtitle,
+.analysis-footer,
+.sample-doc-footer { display: none; }
+.ms-workspace-heading > div > p,
+.ms-section-heading > div > p { display: none; }
+.analysis-header h2,
+.result-heading h3,
+.comparison-head h2,
+.history-database-header h2,
+.knowledge-header h2,
+.competition-heading h1,
+.scoring-workspace h2,
+.material-assessment h2 { font-size: 22px; }
+.history-database-section-head h3,
+.scoring-workspace h3,
+.material-assessment h3,
+.review-heading h4 { font-size: 17px; }
+.sidebar-title-row h1 { font-size: 21px; }
+.candidate-copy strong,
+.knowledge-record-row strong,
+.comparison-candidate-select strong,
+.competition-item-identity strong,
+.venue-item-identity strong,
+.company-item-identity strong { font-size: 14px; }
+.candidate-copy > span,
+.document-person p,
+.knowledge-summary,
+.competition-item > span:not(.competition-item-top),
+.venue-full-name { font-size: 13px; }
+.field-label,
+.comparison-source-filter > span,
+.history-database-filters label,
+.competition-tools > label,
+.competition-list-heading,
+.comparison-rank-tools > label { font-size: 12px; }
+.search-box input,
+.role-input,
+.question-input,
+.knowledge-search input,
+.competition-search input,
+.scoring-workspace input,
+.scoring-workspace select,
+.scoring-workspace textarea { font-size: 14px; }
+.history-database-summary strong,
+.competition-stats strong { font-size: 23px; }
+.comparison-table { font-size: 13px; }
+.comparison-table td strong { font-size: 14px; }
+.comparison-table th,
+.comparison-table td { padding-top: 13px; padding-bottom: 13px; }
+.knowledge-overview-top strong,
+.knowledge-score-distribution-head strong,
+.knowledge-readiness-heading strong,
+.knowledge-evidence-coverage span,
+.history-database-section-head h3 { font-size: 12px; }
+.report-column .analysis-paper-body,
+.answer-content { font-size: 14px; }
+.competition-heading { gap: 16px; }
+.report-status,
+.history-database-summary span,
+.history-score-bin-label,
+.history-score-bin-detail,
+.history-database-selected,
+.history-database-legend,
+.knowledge-record-row small,
+.competition-stats small,
+.competition-item-top small,
+.competition-item footer,
+.venue-item-impact span,
+.venue-item footer,
+.company-item footer,
+.scoring-workspace small,
+.material-assessment small { font-size: 11px; }
+.history-database-summary > small { color: #626b78; font-size: 11px; }
+.history-database-axis > div,
+.history-database-lane > span { font-size: 11px; }
+.comparison-candidate-select small { font-size: 11px; }
+.comparison-evidence-link { font-size: 12px; }
+.competition-detail .competition-intro,
+.competition-copy p,
+.competition-dimensions p,
+.competition-notes p { font-size: 13px; }
+.competition-facts { font-size: 12px; }
+.analysis-paper-foot { font-size: 10px; }
+
+@media (max-width: 640px) {
+  .app-shell > .workspace { width: 100% !important; min-width: 0 !important; flex: 1 1 0%; overflow-x: hidden; }
+  .app-shell > .workspace > .sidebar { width: 100% !important; min-width: 0 !important; max-width: 100%; }
+  .resume-startup-workspace { width: 100%; min-width: 0; }
+  .analysis-header h2,
+  .result-heading h3,
+  .comparison-head h2,
+  .history-database-header h2,
+  .knowledge-header h2,
+  .competition-heading h1,
+  .scoring-workspace h2,
+  .material-assessment h2 { font-size: 20px; }
+  .sidebar-title-row h1 { font-size: 19px; }
+  .comparison-table { font-size: 12px; }
+  .competition-heading { align-items: flex-start; }
+}

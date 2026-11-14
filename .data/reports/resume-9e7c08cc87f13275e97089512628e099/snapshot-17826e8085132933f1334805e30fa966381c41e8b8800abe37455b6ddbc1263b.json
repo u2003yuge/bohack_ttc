@@ -1,0 +1,2666 @@
+{
+  "format": "bohack-analysis-report",
+  "version": 1,
+  "id": "snapshot-17826e8085132933f1334805e30fa966381c41e8b8800abe37455b6ddbc1263b",
+  "createdAt": "2026-11-14T16:09:01.167Z",
+  "model": "gpt-6-astra",
+  "resumeSha256": "61426b03dd51d233b19586279bdc0e696d7064894ad4d3044ba8caac0096e5d1",
+  "kind": "initial",
+  "resumeId": "老黄_简历-mwgfw5jh-66be5008",
+  "resumeName": "老黄（LAO HUANG）",
+  "fileName": "老黄_简历-mwgfw5jh-66be5008.pdf",
+  "answer": "## 结论\n简历呈现出长期从事半导体与计算平台业务领导的职业叙述，覆盖微处理器设计、芯片业务、GPU 计算和 AI 平台。材料同时包含需要核对的时间与表述异常，因此目前适合作为初步信息，不宜仅凭此文本确认完整履历或个人项目贡献。\n\n## 证据匹配\n- **简历原文证据**：列出 AMD 微处理器设计师（1984–1985）、LSI Logic Coreware 总监（1985–1993），以及 NVIDIA 联合创始人、总裁兼 CEO（1993.04–2026.11.11）。原文还将 GeForce、CUDA、DGX-1、Blackwell 描述为其任 CEO 期间的公司项目，并明确称个人角色为“战略与组织领导”。\n- **模型提取字段**：姓名、意向或当前岗位、地点、教育和技能摘要来自用户提供的模型提取信息。其教育及技能内容大体可在简历原文找到对应表述，但应以原文为核对依据；简历没有说明当前求职意向，所列“意向或当前岗位”更像履历头衔。\n- **综合判断**：简历描述的职业路径连贯地围绕半导体、图形计算和 GPU/AI 平台发展，并强调公司经营与研发组织领导。对其具体职责范围、决策权限、经营结果及个人贡献缺少量化或可归属的证据。\n\n## 待核实信息\n- 简历称“63 岁 | 1963.02.17”，但列出的参考资料截止日期为 2026.11.14；按该日期计算，年龄与生日不一致。\n- NVIDIA 任职日期写至 2026.11.11，晚于材料参考日期 2026.11.14 的部分内容虽时间上可能成立，但离任这一重大履历信息仍需明确核实；“前总裁兼首席执行官”也应与任职时间口径一致。\n- 教育经历旁标注“在全职工作期间完成学业”，但未交代对应学位或就读时间。\n- LSI Logic 的岗位被概括为“历任芯片业务相关岗位”，缺少岗位名称、任期及“Coreware 总监”的具体时间。\n- 多项技能、项目领导和“逾 40 年半导体行业经历”属于简历中的概括性陈述，缺少职责边界、结果数据或个人贡献细节。\n\n## 建议追问\n1. 请按时间顺序说明各段任职、岗位变动和离任日期，并解释简历中 NVIDIA 任职截止日与材料日期的关系。\n2. 在 AMD、LSI Logic 和 NVIDIA 各阶段，您本人负责的产品、团队、预算或决策范围分别是什么？\n3. 对 GeForce、CUDA、DGX-1 和 Blackwell，请分别说明个人具体决策与执行职责，并区分个人贡献、团队成果和公司成果。\n4. 请提供能够说明业务影响的指标或实例，例如产品收入、市场采用、研发投入、组织规模或生态发展；注明统计口径和本人职责关联。\n5. 请补充 LSI Logic Coreware 岗位的准确任期、职责，以及“逾 40 年行业经历”的计算口径。\n6. 请核对教育经历中的就读时间、毕业年份及在职学习说明，并确认生日与年龄信息的正确版本。\n7. 请说明简历所列荣誉对应的颁发机构、年份和个人获奖身份。\n\n## 评分依据与覆盖情况\n未提供职位描述、规则计算结果或能力分数，因此不进行岗位匹配、评分或能力分数解释。以上判断仅依据提供的简历文本与模型提取字段；未进行网页搜索。简历中的项目背景描述不能单独证明候选人的个人贡献。",
+  "analyzedAt": "2026-11-14T13:27:41.095Z",
+  "assessment": {
+    "id": "2f86377a-1158-46a4-9942-1a23d658fabc",
+    "version": "material-derived-v1.1.0",
+    "evaluatedAt": "2026-11-14T13:27:11.355Z",
+    "inputHash": "f26709e15a8a5a8f22a277c2581c41f81f8ff122053a430ddf2f728036fd3ea8",
+    "extraction": "model",
+    "calibration": "初版规则参数，待双人标注校准",
+    "rho": 0.5,
+    "materials": [
+      {
+        "material_id": "m-8b73358b7f995b9d",
+        "material_type": "work",
+        "title": "NVIDIA",
+        "year": "1993.04 - 2026.11.11",
+        "organization": "NVIDIA",
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "1993.04 - 2026.11.11  NVIDIA | 联合创始人、前总裁兼 CEO [1,2,4]  联合创办公司并长期担任总裁、首席执行官及董事；领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台。2026 年 11 月 11 日离任上述职务。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "联合创办公司",
+            "source": "简历原文"
+          },
+          {
+            "origin": "resume",
+            "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "1993.04 - 2026.11.11  NVIDIA | 联合创始人、前总裁兼 CEO [1,2,4]  联合创办公司并长期担任总裁、首席执行官及董事；领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台。2026 年 11 月 11 日离任上述职务。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "联合创始人、前总裁兼 CEO",
+          "input_context": {}
+        },
+        "factor_observations": {
+          "complexity": {
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-8b73358b7f995b9d"
+        ],
+        "material_score": 25,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "任务复杂度",
+            "weight": 0.25,
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+              "source": "简历原文"
+            },
+            "points": 100,
+            "contribution": 25,
+            "reason": "明确的系统或方法复杂度"
+          },
+          {
+            "key": "scope",
+            "label": "具体责任范围",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "实际交付",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.25,
+        "missing_factors": [
+          "具体责任范围",
+          "实际交付",
+          "结果影响"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.85,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": 12.5
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.8,
+            "derived_contribution": 10
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.6,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-d4d0a1ba92900f94",
+        "material_type": "work",
+        "title": "LSI Logic",
+        "year": "1985 - 1993",
+        "organization": "LSI Logic",
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "1985 - 1993  LSI Logic | 曾任 Coreware 总监 [4,5]  历任芯片业务相关岗位，负责过 Coreware 业务，为后续半导体创业积累产品与业务管 理经验。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "负责过 Coreware 业务",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "1985 - 1993  LSI Logic | 曾任 Coreware 总监 [4,5]  历任芯片业务相关岗位，负责过 Coreware 业务，为后续半导体创业积累产品与业务管 理经验。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "曾任 Coreware 总监",
+          "input_context": {}
+        },
+        "factor_observations": {},
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-d4d0a1ba92900f94"
+        ],
+        "material_score": null,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "任务复杂度",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "scope",
+            "label": "具体责任范围",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "实际交付",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "任务复杂度",
+          "具体责任范围",
+          "实际交付",
+          "结果影响"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.85,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.75,
+            "rule": "owned",
+            "mapping_reason": "明确承担该行动的责任",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "负责过 Coreware 业务",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.8,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.6,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-2054fb046184c392",
+        "material_type": "work",
+        "title": "AMD",
+        "year": "1984 - 1985",
+        "organization": "AMD",
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "1984 - 1985  AMD | 微处理器设计师 [4,5]  从事微处理器设计，开启半导体行业职业生涯。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "从事微处理器设计",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "1984 - 1985  AMD | 微处理器设计师 [4,5]  从事微处理器设计，开启半导体行业职业生涯。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "微处理器设计师",
+          "input_context": {}
+        },
+        "factor_observations": {
+          "scope": {
+            "value": "specific",
+            "evidence": {
+              "origin": "resume",
+              "quote": "1984 - 1985  AMD | 微处理器设计师 [4,5]  从事微处理器设计，开启半导体行业职业生涯",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-2054fb046184c392"
+        ],
+        "material_score": 10,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "任务复杂度",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "scope",
+            "label": "具体责任范围",
+            "weight": 0.2,
+            "value": "specific",
+            "evidence": {
+              "origin": "resume",
+              "quote": "1984 - 1985  AMD | 微处理器设计师 [4,5]  从事微处理器设计，开启半导体行业职业生涯",
+              "source": "简历原文"
+            },
+            "points": 50,
+            "contribution": 10,
+            "reason": "明确执行任务"
+          },
+          {
+            "key": "delivery",
+            "label": "实际交付",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.2,
+        "missing_factors": [
+          "任务复杂度",
+          "实际交付",
+          "结果影响"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "从事微处理器设计",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": 5
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.85,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.8,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.6,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-613237db53500afb",
+        "material_type": "project",
+        "title": "GeForce 与 GPU 图形计算",
+        "year": 1999,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "1999 | GeForce 与 GPU 图形计算 [2]  领导公司推进 GPU 产品商业化，服务 PC 游戏和计算机图形市 场 。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "领导公司推进 GPU 产品商业化，服务 PC 游戏和计算机图形市 场",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "1999 | GeForce 与 GPU 图形计算 [2]  领导公司推进 GPU 产品商业化，服务 PC 游戏和计算机图形市 场 。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {},
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-613237db53500afb"
+        ],
+        "material_score": null,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.3,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "问题复杂度",
+          "技术 / 业务约束",
+          "交付阶段",
+          "部署 / 采用",
+          "结果质量"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推进 GPU 产品商业化，服务 PC 游戏和计算机图形市 场",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.95,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推进 GPU 产品商业化，服务 PC 游戏和计算机图形市 场",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.75,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-11da39ca504692f2",
+        "material_type": "project",
+        "title": "CUDA 并行计算平台",
+        "year": 2006,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2006 | CUDA 并行计算平台 [2,6]  支持   GPU   向通用 计算 拓展 的平台 方向 ，推 动 硬件能 力 与开发者生态形成协同。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "支持   GPU   向通用 计算 拓展 的平台 方向",
+            "source": "简历原文"
+          },
+          {
+            "origin": "resume",
+            "quote": "推 动 硬件能 力 与开发者生态形成协同",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2006 | CUDA 并行计算平台 [2,6]  支持   GPU   向通用 计算 拓展 的平台 方向 ，推 动 硬件能 力 与开发者生态形成协同。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {
+          "complexity": {
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2006 | CUDA 并行计算平台 [2,6]  支持   GPU   向通用 计算 拓展 的平台 方向 ，推 动 硬件能 力 与开发者生态形成协同",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-11da39ca504692f2"
+        ],
+        "material_score": 30,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.3,
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2006 | CUDA 并行计算平台 [2,6]  支持   GPU   向通用 计算 拓展 的平台 方向 ，推 动 硬件能 力 与开发者生态形成协同",
+              "source": "简历原文"
+            },
+            "points": 100,
+            "contribution": 30,
+            "reason": "明确的系统或方法复杂度"
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.3,
+        "missing_factors": [
+          "技术 / 业务约束",
+          "交付阶段",
+          "部署 / 采用",
+          "结果质量"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "推 动 硬件能 力 与开发者生态形成协同",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": 15
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.95,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.75,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-231aac3e8128c970",
+        "material_type": "project",
+        "title": "DGX-1 深度学习系统",
+        "year": 2016,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求 。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求 。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {
+          "complexity": {
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求",
+              "source": "简历原文"
+            }
+          },
+          "constraints": {
+            "value": "bounded",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-231aac3e8128c970"
+        ],
+        "material_score": 40,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.3,
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求",
+              "source": "简历原文"
+            },
+            "points": 100,
+            "contribution": 30,
+            "reason": "明确的系统或方法复杂度"
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "value": "bounded",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求",
+              "source": "简历原文"
+            },
+            "points": 50,
+            "contribution": 10,
+            "reason": "明确任务边界"
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.5,
+        "missing_factors": [
+          "交付阶段",
+          "部署 / 采用",
+          "结果质量"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": 20
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.95,
+            "derived_contribution": 19
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.75,
+            "derived_contribution": 15
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-d2d3ef10cae1b58e",
+        "material_type": "project",
+        "title": "Blackwell 计算平台",
+        "year": 2024,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2024 | Blackwell 计算平台 [8]  领导平台发 布 与产业推 广 ， 围绕   GPU、 互连 及系统能 力布局大规模 生成 式   AI。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "领导平台发 布 与产业推 广",
+            "source": "简历原文"
+          },
+          {
+            "origin": "resume",
+            "quote": "围绕   GPU、 互连 及系统能 力布局大规模 生成 式   AI",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2024 | Blackwell 计算平台 [8]  领导平台发 布 与产业推 广 ， 围绕   GPU、 互连 及系统能 力布局大规模 生成 式   AI。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {
+          "complexity": {
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2024 | Blackwell 计算平台 [8]  领导平台发 布 与产业推 广 ， 围绕   GPU、 互连 及系统能 力布局大规模 生成 式   AI",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-d2d3ef10cae1b58e"
+        ],
+        "material_score": 30,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.3,
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2024 | Blackwell 计算平台 [8]  领导平台发 布 与产业推 广 ， 围绕   GPU、 互连 及系统能 力布局大规模 生成 式   AI",
+              "source": "简历原文"
+            },
+            "points": 100,
+            "contribution": 30,
+            "reason": "明确的系统或方法复杂度"
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.3,
+        "missing_factors": [
+          "技术 / 业务约束",
+          "交付阶段",
+          "部署 / 采用",
+          "结果质量"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导平台发 布 与产业推 广",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.95,
+            "derived_contribution": 14.25
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导平台发 布 与产业推 广",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 0.75,
+            "derived_contribution": 11.25
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-b790e06a9617e0d4",
+        "material_type": "award",
+        "title": "IEEE   荣誉奖章 （Medal of Honor）",
+        "year": 2026,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2026 | IEEE   荣誉奖章 （Medal of Honor）[9]",
+        "personal_action_evidence": [],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2026 | IEEE   荣誉奖章 （Medal of Honor）[9]",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {},
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-b790e06a9617e0d4"
+        ],
+        "material_score": null,
+        "score_breakdown": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例",
+            "weight": 0.35,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "有效参赛规模",
+          "官方目标奖项比例",
+          "本赛事奖项层级",
+          "赛制与评审规则"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.45,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.35,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.55,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-8dafa855044df989",
+        "material_type": "award",
+        "title": "SIA Robert N. Noyce Award",
+        "year": 2021,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2021 | SIA Robert N. Noyce Award [10]",
+        "personal_action_evidence": [],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2021 | SIA Robert N. Noyce Award [10]",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {},
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-8dafa855044df989"
+        ],
+        "material_score": null,
+        "score_breakdown": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例",
+            "weight": 0.35,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "有效参赛规模",
+          "官方目标奖项比例",
+          "本赛事奖项层级",
+          "赛制与评审规则"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.45,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.35,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.55,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-da80d53100ab885f",
+        "material_type": "award",
+        "title": "《财富》 年 度 商 界 人 物",
+        "year": 2017,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2017 |   《财富》 年 度 商 界 人 物   [3]",
+        "personal_action_evidence": [],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2017 |   《财富》 年 度 商 界 人 物   [3]",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {}
+        },
+        "factor_observations": {},
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-da80d53100ab885f"
+        ],
+        "material_score": null,
+        "score_breakdown": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例",
+            "weight": 0.35,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "有效参赛规模",
+          "官方目标奖项比例",
+          "本赛事奖项层级",
+          "赛制与评审规则"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.45,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.35,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.55,
+            "derived_contribution": null
+          }
+        }
+      }
+    ],
+    "abilities": {
+      "professional_execution": {
+        "score": 32.5,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-231aac3e8128c970",
+            "title": "DGX-1 深度学习系统",
+            "material_type": "project",
+            "material_score": 40,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 20,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 20,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-11da39ca504692f2",
+            "title": "CUDA 并行计算平台",
+            "material_type": "project",
+            "material_score": 30,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 15,
+            "rank": 2,
+            "decay": 0.5,
+            "contribution": 7.5,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "推 动 硬件能 力 与开发者生态形成协同",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-2054fb046184c392",
+            "title": "AMD",
+            "material_type": "work",
+            "material_score": 10,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 5,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 5,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "从事微处理器设计",
+                "source": "简历原文"
+              }
+            ]
+          }
+        ],
+        "missing_materials": 7
+      },
+      "problem_solving": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 10
+      },
+      "ownership_delivery": {
+        "score": 38.625,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-231aac3e8128c970",
+            "title": "DGX-1 深度学习系统",
+            "material_type": "project",
+            "material_score": 40,
+            "type_coefficient": 0.95,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 19,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 19,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-d2d3ef10cae1b58e",
+            "title": "Blackwell 计算平台",
+            "material_type": "project",
+            "material_score": 30,
+            "type_coefficient": 0.95,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 14.25,
+            "rank": 2,
+            "decay": 0.5,
+            "contribution": 7.125,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导平台发 布 与产业推 广",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-8b73358b7f995b9d",
+            "title": "NVIDIA",
+            "material_type": "work",
+            "material_score": 25,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 12.5,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 12.5,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+                "source": "简历原文"
+              }
+            ]
+          }
+        ],
+        "missing_materials": 7
+      },
+      "collaboration_organization": {
+        "score": 30.625,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-231aac3e8128c970",
+            "title": "DGX-1 深度学习系统",
+            "material_type": "project",
+            "material_score": 40,
+            "type_coefficient": 0.75,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 15,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 15,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-d2d3ef10cae1b58e",
+            "title": "Blackwell 计算平台",
+            "material_type": "project",
+            "material_score": 30,
+            "type_coefficient": 0.75,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 11.25,
+            "rank": 2,
+            "decay": 0.5,
+            "contribution": 5.625,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导平台发 布 与产业推 广",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-8b73358b7f995b9d",
+            "title": "NVIDIA",
+            "material_type": "work",
+            "material_score": 25,
+            "type_coefficient": 0.8,
+            "mapping_coefficient": 0.5,
+            "derived_contribution": 10,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 10,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台",
+                "source": "简历原文"
+              }
+            ]
+          }
+        ],
+        "missing_materials": 7
+      },
+      "learning_research": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 10
+      }
+    },
+    "type_summaries": [
+      {
+        "type": "award",
+        "count": 3,
+        "score": null
+      },
+      {
+        "type": "research",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "project",
+        "count": 4,
+        "score": 62.5
+      },
+      {
+        "type": "work",
+        "count": 3,
+        "score": 30
+      },
+      {
+        "type": "patent",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "opensource",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "certificate",
+        "count": 0,
+        "score": null
+      }
+    ],
+    "notes": [],
+    "inputSnapshot": "老黄   LAO HUANG  NVIDIA 联合创始人 · 前总裁兼首席执行官  基本信息  63 岁 | 1963.02.17 [11]  所在地  深圳  教育背景  斯坦福大学  电气工程硕士（MSEE） 1992 年毕业 [3] 在全职工作期间完成学业  俄勒冈州立大学  电气工程学士（BSEE） 1984 年毕业 [3]  专业能力  根据公开职业经历归纳  半导体与处理器  微处理器设计背景；芯片产品与业务 管理。  计算平台战略  图形计算、GPU 加速计算与 AI 基础 设施。  产品与生态  硬件、系统软件及开发者生态协同。  企业经营  技术创业、研发组织与产业合作。  拥有逾 40 年半导体行业经历。联合创办并长期领导 NVIDIA，职业历程涵盖微处理 器设计、芯片业务管理、图形计算与人工智能基础设施。  工作经历  1993.04 - 2026.11.11  NVIDIA | 联合创始人、前总裁兼 CEO [1,2,4]  联合创办公司并长期担任总裁、首席执行官及董事；领导业务由图形芯片延伸至 GPU 加速计算和 AI 平台。2026 年 11 月 11 日离任上述职务。  1985 - 1993  LSI Logic | 曾任 Coreware 总监 [4,5]  历任芯片业务相关岗位，负责过 Coreware 业务，为后续半导体创业积累产品与业务管 理经验。  1984 - 1985  AMD | 微处理器设计师 [4,5]  从事微处理器设计，开启半导体行业职业生涯。  代表项目与平台  以下列示其担任 CEO 期间的公司项目，个人角色为战略与组织领导。  1999 | GeForce 与 GPU 图形计算 [2]  领导公司推进 GPU 产品商业化，服务 PC 游戏和计算机图形市 场 。  2006 | CUDA 并行计算平台 [2,6]  支持   GPU   向通用 计算 拓展 的平台 方向 ，推 动 硬件能 力 与开发者生态形成协同。  2016 | DGX-1 深度学习系统 [7]  领导公司推 出集 成 GPU、深 度 学 习 软件和开发工 具 的系统， 面向 研 究 与 AI 计算 需求 。  2024 | Blackwell 计算平台 [8]  领导平台发 布 与产业推 广 ， 围绕   GPU、 互连 及系统能 力布局大规模 生成 式   AI。  行业荣誉  2026 | IEEE   荣誉奖章 （Medal of Honor）[9]  2021 | SIA Robert N. Noyce Award [10]  2017 |   《财富》 年 度 商 界 人 物   [3]  简 历 样本   · 公开 履 历 参考资料截 至 2026.11.14 ·   参考来源见配套文本   1 / 1",
+    "researchSnapshot": null,
+    "rulesSnapshot": {
+      "factorDefinitions": {
+        "award": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.2,
+            "kind": "size",
+            "choices": []
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例",
+            "weight": 0.35,
+            "kind": "selectivity",
+            "choices": []
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "top",
+                "label": "本赛事最高奖",
+                "points": 160,
+                "pattern": "特等奖|冠军|金奖|金牌|grand prize|champion|gold"
+              },
+              {
+                "key": "first",
+                "label": "一等奖 / 一等层级",
+                "points": 120,
+                "pattern": "一等奖|first prize"
+              },
+              {
+                "key": "second",
+                "label": "二等奖 / 银奖",
+                "points": 80,
+                "pattern": "二等奖|银奖|银牌|second prize|silver"
+              },
+              {
+                "key": "third",
+                "label": "三等奖 / 铜奖",
+                "points": 50,
+                "pattern": "三等奖|铜奖|铜牌|third prize|bronze"
+              },
+              {
+                "key": "finalist",
+                "label": "有明确结果的入围或优胜",
+                "points": 25,
+                "pattern": "入围|优胜|finalist|honorable mention"
+              }
+            ]
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "reproducible",
+                "label": "可复核测试 / 盲评和答辩",
+                "points": 160,
+                "pattern": "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review"
+              },
+              {
+                "key": "rubric",
+                "label": "明确评分规则和专家评审",
+                "points": 100,
+                "pattern": "评分标准|评审标准|专家评审|scoring rubric|judging criteria"
+              },
+              {
+                "key": "specified",
+                "label": "有明确赛制或评审方式",
+                "points": 60,
+                "pattern": "限时|答辩|评审|比赛规则|timed|judged|defense"
+              }
+            ]
+          }
+        ],
+        "research": [
+          {
+            "key": "question",
+            "label": "研究问题",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "rigor",
+            "label": "方法严谨度",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "validated",
+                "label": "对照、消融及统计验证",
+                "points": 160,
+                "pattern": "消融|统计显著|置信区间|ablation|statistical significance|confidence interval"
+              },
+              {
+                "key": "controlled",
+                "label": "对照或基线实验",
+                "points": 100,
+                "pattern": "对照|基线|baseline|controlled experiment"
+              },
+              {
+                "key": "method",
+                "label": "明确研究方法",
+                "points": 60,
+                "pattern": "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"
+              }
+            ]
+          },
+          {
+            "key": "experiments",
+            "label": "实验质量",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "robust",
+                "label": "多数据集、误差或鲁棒性分析",
+                "points": 160,
+                "pattern": "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness"
+              },
+              {
+                "key": "comparison",
+                "label": "明确实验比较",
+                "points": 100,
+                "pattern": "对比实验|基线|baseline|comparative experiment"
+              },
+              {
+                "key": "specified",
+                "label": "有实验设置",
+                "points": 60,
+                "pattern": "实验设置|实验结果|experimental setup|experimental results"
+              }
+            ]
+          },
+          {
+            "key": "reproducibility",
+            "label": "可复现性",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "reproduced",
+                "label": "明确的独立复现记录",
+                "points": 160,
+                "pattern": "独立复现成功|第三方复现|independently reproduced"
+              },
+              {
+                "key": "complete",
+                "label": "代码、数据和运行说明齐全",
+                "points": 100,
+                "pattern": "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)"
+              },
+              {
+                "key": "available",
+                "label": "提供开放材料",
+                "points": 50,
+                "pattern": "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code"
+              }
+            ]
+          },
+          {
+            "key": "status",
+            "label": "成果状态",
+            "weight": 0.1,
+            "choices": [
+              {
+                "key": "published",
+                "label": "已正式发表",
+                "points": 120,
+                "pattern": "已发表|正式发表|已在线发表|published|online publication"
+              },
+              {
+                "key": "accepted",
+                "label": "已录用未发表",
+                "points": 80,
+                "pattern": "已录用|accepted"
+              },
+              {
+                "key": "preprint",
+                "label": "预印本",
+                "points": 30,
+                "pattern": "预印本|preprint|arxiv"
+              }
+            ]
+          },
+          {
+            "key": "content",
+            "label": "研究内容与验证结果",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 160,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 100,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 60,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 25,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "project": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.3,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "multiple",
+                "label": "多重约束与权衡",
+                "points": 160,
+                "pattern": "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency"
+              },
+              {
+                "key": "explicit",
+                "label": "明确性能或业务约束",
+                "points": 100,
+                "pattern": "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility"
+              },
+              {
+                "key": "bounded",
+                "label": "明确任务边界",
+                "points": 50,
+                "pattern": "需求|约束|任务|requirement|constraint|task"
+              }
+            ]
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 160,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 100,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 60,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 25,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 160,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 100,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 60,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 25,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "work": [
+          {
+            "key": "complexity",
+            "label": "任务复杂度",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "scope",
+            "label": "具体责任范围",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "end_to_end",
+                "label": "明确的端到端责任",
+                "points": 160,
+                "pattern": "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"
+              },
+              {
+                "key": "owned",
+                "label": "独立负责具体范围",
+                "points": 100,
+                "pattern": "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for"
+              },
+              {
+                "key": "specific",
+                "label": "明确执行任务",
+                "points": 50,
+                "pattern": "开发|设计|测试|分析|implemented|developed|tested|analyzed"
+              }
+            ]
+          },
+          {
+            "key": "delivery",
+            "label": "实际交付",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 160,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 100,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 60,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 25,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "patent": [
+          {
+            "key": "status",
+            "label": "公开 / 授权状态",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "granted",
+                "label": "已授权",
+                "points": 120,
+                "pattern": "已授权|授权公告|granted"
+              },
+              {
+                "key": "published",
+                "label": "已公开",
+                "points": 60,
+                "pattern": "已公开|公开公告|published application"
+              },
+              {
+                "key": "filed",
+                "label": "有申请记录",
+                "points": 25,
+                "pattern": "申请号|已申请|application number|filed"
+              }
+            ]
+          },
+          {
+            "key": "technical",
+            "label": "技术问题与方法",
+            "weight": 0.35,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "claims",
+            "label": "权利要求",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "validated",
+                "label": "明确权利要求及实现验证",
+                "points": 160,
+                "pattern": "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)"
+              },
+              {
+                "key": "specific",
+                "label": "有具体权利要求",
+                "points": 90,
+                "pattern": "权利要求|patent claims"
+              },
+              {
+                "key": "description",
+                "label": "有技术方案说明",
+                "points": 40,
+                "pattern": "技术方案|technical solution"
+              }
+            ]
+          },
+          {
+            "key": "application",
+            "label": "应用情况",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 160,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 100,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 60,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 25,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          }
+        ],
+        "opensource": [
+          {
+            "key": "runnable",
+            "label": "可运行性",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "quality",
+            "label": "代码质量",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "engineering",
+                "label": "测试、CI 与接口文档",
+                "points": 160,
+                "pattern": "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试"
+              },
+              {
+                "key": "tested",
+                "label": "自动测试或持续集成",
+                "points": 100,
+                "pattern": "单元测试|集成测试|持续集成|unit test|integration test|CI/CD"
+              },
+              {
+                "key": "documented",
+                "label": "有使用说明",
+                "points": 50,
+                "pattern": "README|使用说明|接口文档|documentation"
+              }
+            ]
+          },
+          {
+            "key": "maintenance",
+            "label": "维护持续性",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "sustained",
+                "label": "持续发布并处理问题",
+                "points": 160,
+                "pattern": "持续维护|定期发布|持续发布|sustained maintenance|regular releases"
+              },
+              {
+                "key": "responded",
+                "label": "有问题处理或版本维护",
+                "points": 90,
+                "pattern": "修复|版本发布|issue|bug fix|release"
+              },
+              {
+                "key": "changes",
+                "label": "有可定位提交",
+                "points": 40,
+                "pattern": "提交|pull request|commit"
+              }
+            ]
+          },
+          {
+            "key": "contribution",
+            "label": "具体贡献",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "core",
+                "label": "核心功能与维护责任",
+                "points": 160,
+                "pattern": "维护者|核心模块|核心功能|maintainer|core module"
+              },
+              {
+                "key": "implemented",
+                "label": "明确的代码或文档贡献",
+                "points": 90,
+                "pattern": "实现|开发|修复|编写|implemented|developed|fixed|authored"
+              },
+              {
+                "key": "reviewed",
+                "label": "明确评审或测试贡献",
+                "points": 40,
+                "pattern": "代码评审|测试|code review|tested"
+              }
+            ]
+          },
+          {
+            "key": "adoption",
+            "label": "使用 / 采用",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 160,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 100,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 60,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 25,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          }
+        ],
+        "certificate": [
+          {
+            "key": "assessment",
+            "label": "考核方式",
+            "weight": 0.45,
+            "choices": [
+              {
+                "key": "practical",
+                "label": "实操考核",
+                "points": 140,
+                "pattern": "实操考核|实验考核|practical exam|hands.on assessment"
+              },
+              {
+                "key": "exam",
+                "label": "明确考试",
+                "points": 90,
+                "pattern": "通过考试|认证考试|passed.{0,20}exam|certification exam"
+              },
+              {
+                "key": "coursework",
+                "label": "课程考核",
+                "points": 40,
+                "pattern": "课程作业|结课考核|coursework|course assessment"
+              }
+            ]
+          },
+          {
+            "key": "practice",
+            "label": "实际练习与作品",
+            "weight": 0.35,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "curriculum",
+            "label": "课程内容深度",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "有明确高级专题",
+                "points": 140,
+                "pattern": "高级|进阶|专题|advanced|specialized"
+              },
+              {
+                "key": "specific",
+                "label": "有明确方法与实践内容",
+                "points": 80,
+                "pattern": "实验|项目|算法|系统|experiment|project|algorithm|system"
+              },
+              {
+                "key": "foundation",
+                "label": "基础课程内容",
+                "points": 30,
+                "pattern": "基础|入门|foundation|introductory"
+              }
+            ]
+          }
+        ]
+      },
+      "typeAdaptation": {
+        "award": {
+          "professional_execution": 0.65,
+          "problem_solving": 0.7,
+          "ownership_delivery": 0.45,
+          "collaboration_organization": 0.35,
+          "learning_research": 0.55
+        },
+        "research": {
+          "professional_execution": 0.7,
+          "problem_solving": 0.9,
+          "ownership_delivery": 0.6,
+          "collaboration_organization": 0.35,
+          "learning_research": 1
+        },
+        "project": {
+          "professional_execution": 1,
+          "problem_solving": 1,
+          "ownership_delivery": 0.95,
+          "collaboration_organization": 0.75,
+          "learning_research": 0.65
+        },
+        "work": {
+          "professional_execution": 1,
+          "problem_solving": 0.85,
+          "ownership_delivery": 1,
+          "collaboration_organization": 0.8,
+          "learning_research": 0.6
+        },
+        "patent": {
+          "professional_execution": 0.6,
+          "problem_solving": 0.85,
+          "ownership_delivery": 0.5,
+          "collaboration_organization": 0.3,
+          "learning_research": 0.8
+        },
+        "opensource": {
+          "professional_execution": 1,
+          "problem_solving": 0.85,
+          "ownership_delivery": 0.85,
+          "collaboration_organization": 0.6,
+          "learning_research": 0.7
+        },
+        "certificate": {
+          "professional_execution": 0.45,
+          "problem_solving": 0.4,
+          "ownership_delivery": 0.25,
+          "collaboration_organization": 0.15,
+          "learning_research": 0.7
+        }
+      },
+      "actionLevels": {
+        "guided": 0.25,
+        "concrete": 0.5,
+        "owned": 0.75,
+        "validated": 1
+      },
+      "rho": 0.5
+    }
+  }
+}

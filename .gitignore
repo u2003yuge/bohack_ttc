@@ -19,8 +19,7 @@ Desktop.ini
 .env.*
 .env.example
 
-# Local application data
-.data/
+# Generated research databases
 db/competition/
 db/paper/
 db/project/

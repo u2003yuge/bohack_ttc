@@ -147,7 +147,6 @@ export default function MaterialAssessment({
         <div>
           <span className="ms-eyebrow">EVIDENCE → ABILITY</span>
           <h2>五维能力画像</h2>
-          <p>分数由材料和个人行动派生 · 积分可超过 100 · NA 表示证据不足</p>
         </div>
         <span className="ms-version">{current.version}</span>
       </div>

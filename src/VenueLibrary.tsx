@@ -84,7 +84,7 @@ export function VenueLibrary({ records, resumes, initialId, onClose, onReview, o
 
   return <main className="competition-library venue-library">
     <header className="competition-heading">
-      <div><span className="eyebrow">JOURNALS & CONFERENCES</span><h1>读懂论文背后的发表渠道<span>。</span></h1><p>查阅期刊与会议背景，结合分级版本、发表形式和来源理解研究经历。</p></div>
+      <div><span className="eyebrow">JOURNALS & CONFERENCES</span><h1>读懂论文背后的发表渠道<span>。</span></h1></div>
       <button className="competition-back" onClick={onClose}><ArrowLeft size={15} />返回简历分析</button>
     </header>
     <div className="competition-stats" aria-label="期刊会议库概况">
