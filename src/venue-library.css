@@ -5,6 +5,7 @@
 .venue-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .venue-tags > span { padding: 4px 8px; border-radius: 4px; background: #eef1f5; color: #6f7d91; font-size: 10px; }
 .venue-item .venue-full-name { margin-bottom: 7px; color: #6d7580; }
+.venue-item .catalog-card-material-meta { display: grid; gap: 3px; }.venue-item .catalog-card-material-score { color: #527b55; font-weight: 600; }
 .venue-rankings { margin: 25px 0; }
 .venue-ranking { margin: 12px 0; padding: 16px; border: 1px solid #dce1e7; border-radius: 6px; background: #f8fafc; }
 .venue-ranking > header { display: flex; align-items: center; gap: 12px; }

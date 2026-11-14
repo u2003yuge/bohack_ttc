@@ -375,9 +375,51 @@ export type Assessment = {
   inputSnapshot: string;
   researchSnapshot: unknown;
   rulesSnapshot: unknown;
+  materialContributions?: Record<string, Record<AbilityKey, number | null>>;
 };
 export type AssessmentHistoryEntry = { reason: "import" | "review"; assessment: Assessment };
+export type LibraryMaterialScore = {
+  knowledgeIds: string[];
+  candidateId: string;
+  candidateName: string;
+  assessmentId: string;
+  evaluatedAt: string;
+  scoringVersion: string;
+  materialId: string;
+  materialType: MaterialType;
+  materialTitle: string;
+  year: string | number | null;
+  resumeClaim: string;
+  materialScore: number | null;
+  scoreCoverage: number;
+  provisional: boolean;
+  missingFactors: string[];
+  scoreBreakdown: FactorScore[];
+  sources: Evidence[];
+  abilityContributions: Record<AbilityKey, {
+    score: number | null;
+    typeCoefficient: number;
+    actionCoefficient: number | null;
+    derivedContribution: number | null;
+    typeRank: number | null;
+    decay: number | null;
+    contribution: number | null;
+    reason: string;
+    evidence: Evidence[];
+  }>;
+};
 export const roundPoints = (value: number) => Math.round(value * 1e6) / 1e6;
+/** Every material's contribution after sorting and same-type decay. */
+export function withMaterialContributions(assessment: Assessment): Assessment {
+  const materialContributions = Object.fromEntries(assessment.materials.map((material) => [
+    material.material_id,
+    Object.fromEntries(abilityDimensions.map(({ key }) => [
+      key,
+      assessment.abilities[key].terms.find((term) => term.material_id === material.material_id)?.contribution ?? null,
+    ])) as Record<AbilityKey, number | null>,
+  ]));
+  return { ...assessment, materialContributions };
+}
 export const normalizeIdentity = (value: string) =>
   value
     .normalize("NFKC")

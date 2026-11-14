@@ -41,6 +41,7 @@ import { calculateBenchmark, historicalCandidates, historicalScoreBands, matches
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 import ScoringWorkspace from "./ScoringWorkspace";
 import MaterialAssessment, { MaterialAssessmentRadar } from "./MaterialAssessment";
+import EmptyResumeWorkspace from "./EmptyResumeWorkspace";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -113,6 +114,7 @@ function renderEvidenceText(value: string, query: string) {
 function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const renderPassRef = useRef<Promise<void>>(Promise.resolve());
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [zoom, setZoom] = useState(1);
@@ -155,6 +157,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
           import("pdfjs-dist"),
           import("pdfjs-dist/build/pdf.worker.min.mjs?url"),
         ]);
+        if (cancelled) return;
         pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
         loadingTask = pdfjs.getDocument({
           url,
@@ -179,7 +182,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
     })();
     return () => {
       cancelled = true;
-      void loadingTask?.destroy();
+      void loadingTask?.destroy().catch(() => undefined);
     };
   }, [url]);
 
@@ -187,9 +190,15 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
     if (!document) return;
     let cancelled = false;
     const renderTasks: RenderTask[] = [];
-    void (async () => {
+    const previousRenderPass = renderPassRef.current;
+    const renderPass = (async () => {
       try {
+        // cancel() requests cancellation; its promise must settle before the
+        // next pass resizes or reuses any of the same page canvases.
+        await previousRenderPass.catch(() => undefined);
+        if (cancelled) return;
         const pdfjs = await import("pdfjs-dist");
+        if (cancelled) return;
         setLoading(true);
         setPageErrors({});
         const detected: PdfTextLine[] = [];
@@ -198,7 +207,9 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
           if (cancelled) return;
           try {
           const page = await document.getPage(currentPage);
+          if (cancelled) return;
           const textContent = await page.getTextContent();
+          if (cancelled) return;
           const pageElement = pageRefs.current[currentPage - 1];
           const canvas = pageElement?.querySelector("canvas");
           const context = canvas?.getContext("2d");
@@ -258,6 +269,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
           });
           renderTasks.push(renderTask);
           await renderTask.promise;
+          if (cancelled) return;
           page.cleanup();
           } catch (cause) {
             if (cancelled || (cause instanceof Error && cause.name === "RenderingCancelledException")) return;
@@ -282,6 +294,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
         }
       }
     })();
+    renderPassRef.current = renderPass;
     return () => {
       cancelled = true;
       renderTasks.forEach((task) => task.cancel());
@@ -1319,6 +1332,8 @@ function WeightProposalPreview({ proposal, currentWeights, impact, selectedHasSc
 
 export default function App() {
   const [resumes, setResumes] = useState<Resume[]>([]);
+  const [loadingResumes, setLoadingResumes] = useState(true);
+  const [resumeLoadError, setResumeLoadError] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selectedResumeIds, setSelectedResumeIds] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
@@ -1470,10 +1485,13 @@ export default function App() {
   }, [selected]);
 
   async function loadResumes(selectFirst = false) {
+    setLoadingResumes(true);
+    setResumeLoadError("");
     try {
       const response = await fetch("/api/resumes");
       if (!response.ok) throw new Error("无法读取简历文件夹。");
       const payload = await response.json() as ResumeListResponse;
+      if (!Array.isArray(payload.resumes)) throw new Error("简历列表格式无效。");
       // The sidebar reflects the local resume folder. Built-in demo candidates
       // remain available only in the historical sample database, not alongside
       // imported resumes in the active workspace.
@@ -1482,7 +1500,9 @@ export default function App() {
         setSelectedId(payload.resumes[0].id);
       }
     } catch {
-      setImportError("无法连接本地简历文件夹，请确认服务正在运行。");
+      setResumeLoadError("无法连接本地简历文件夹，请确认服务正在运行。");
+    } finally {
+      setLoadingResumes(false);
     }
   }
 
@@ -1692,7 +1712,7 @@ export default function App() {
     setBatchProgress("分析已停止，已完成的候选人结果已保留。");
     setAgentError("分析已停止，已完成的材料结果仍可查看。");
   }
-  if (!selected) return null;
+  if (!selected) return <EmptyResumeWorkspace loading={loadingResumes} loadError={Boolean(resumeLoadError)} importing={extracting} progress={importProgress} error={importError || resumeLoadError} onImport={importPdfs} onRefresh={() => { void loadResumes(); }} onOpenFolder={() => { void openResumeFolder(); }} />;
 
   return (
     <div className="app-shell">
@@ -1734,7 +1754,7 @@ export default function App() {
               <button className="secondary-action" onClick={() => folderInput.current?.click()} disabled={extracting}><FolderOpen size={14} />导入文件夹</button>
               <button className="secondary-action" onClick={openResumeFolder} title="打开本地简历存储文件夹"><FolderOpen size={14} />打开存储位置</button>
             </div>
-            {importError && <div className="inline-error" role="status">{importError}</div>}
+            {(importError || resumeLoadError) && <div className="inline-error" role="status">{importError || resumeLoadError}</div>}
           </div>
 
           <div className="list-label"><span>候选人</span><div className="list-label-actions"><span>最近更新</span><button type="button" className="selection-mode-toggle" onClick={() => setSelectionMode((current) => !current)} disabled={batchBusy}>{selectionMode ? "完成" : "多选"}</button></div></div>

@@ -8,6 +8,7 @@ import {
   scoreMaterials,
   scoringVersion,
   typeAdaptation,
+  withMaterialContributions,
   type Assessment,
   type MaterialInput,
 } from "../../shared/material-scoring.js";
@@ -17,6 +18,7 @@ import { enrichMaterialFacts, extractMaterials } from "./materials.js";
 
 type EvaluationOptions = {
   signal?: AbortSignal;
+  includeResearch?: boolean;
   useModel?: boolean;
   emit?: (event: AnalysisEvent) => void;
   rho?: number;
@@ -39,7 +41,6 @@ export async function evaluateResume(text: string, options: EvaluationOptions = 
     );
     const research = options.research ?? ({ items: [], notes: [] } as ResearchBatch);
     scope.signal.throwIfAborted();
-    options.emit?.({ type: "research", research });
     options.emit?.({
       type: "progress",
       progress: { stage: "scoring", message: "正在按固定规则计算材料分、个人贡献和五维能力。" },
@@ -64,7 +65,7 @@ export function createAssessment(
   options: { extraction?: "model" | "rules"; notes?: string[]; research?: unknown; rho?: number } = {},
 ): Assessment {
   const rho = options.rho ?? decayRatio;
-  return {
+  return withMaterialContributions({
     id: randomUUID(),
     version: scoringVersion,
     evaluatedAt: new Date().toISOString(),
@@ -79,7 +80,7 @@ export function createAssessment(
     inputSnapshot: text,
     researchSnapshot: options.research ?? null,
     rulesSnapshot: { factorDefinitions, typeAdaptation, actionLevels, rho },
-  };
+  });
 }
 
 export function assessmentReport(assessment: Assessment): string {

@@ -4,6 +4,8 @@ Bohack 是一个本地运行的招聘简历阅读与分析工作台。它可以�
 
 默认入口现为 **材料评分 v1**：七类材料 → 固定规则材料分 → 个人行动映射 → 五维能力 → 岗位偏好排序。完整项目介绍见 [docs/PROJECT_INTRODUCTION.md](docs/PROJECT_INTRODUCTION.md)，具体权重及规则见 [docs/SCORING_V1.md](docs/SCORING_V1.md)。没有模型配置时也能使用保守规则抽取与计算。
 
+材料评估还会写入本地资料库侧车 `.data/resumes/.metadata/material-library.json`。资料库中的竞赛、期刊 / 会议卡片在年份附近显示已关联的材料分；展开详情可查看候选人、原文、因素拆解和五个能力维度的实际贡献。原始目录资料保持只读。
+
 ## 功能
 
 - 在左侧简历库搜索并切换候选人。

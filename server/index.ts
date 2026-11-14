@@ -4,7 +4,7 @@ import resumes from "./resumes.js";
 import agents from "./agents/router.js";
 import { deadline, errorMessage, limit } from "./operations.js";
 import { normalizeProjectBreakdownRequest, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
-import type { AnalysisEvent } from "../src/research-types.js";
+import type { AnalysisEvent, AnalysisResult } from "../src/research-types.js";
 import { resumeAnalysisAgentIds, runResumeAgents } from "./agents/registry.js";
 import scoring from "./scoring/router.js";
 
