@@ -25,6 +25,10 @@ app.get("/api/health", (_request, response) => response.json({
 
 app.post("/api/agent", async (request, response) => {
   const { resumeName, resumeText, roleRequirements = "", question, streamProgress = false } = request.body ?? {};
+  if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+    response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
+    return;
+  }
   if (typeof resumeText !== "string" || typeof question !== "string") {
     response.status(400).json({ error: "请提供简历文本和分析问题。" });
     return;

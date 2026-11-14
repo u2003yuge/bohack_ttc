@@ -294,7 +294,7 @@ const definitions: Record<ResumeAgentId, Definition> = {
   },
 };
 
-export const resumeAgentCatalog = resumeAgentIds.map((id) => {
+export const resumeAgentCatalog = resumeAnalysisAgentIds.map((id) => {
   const { label, dependsOn } = definitions[id];
   return { id, label, dependsOn };
 });
@@ -376,7 +376,7 @@ export async function runResumeAgents(input: {
   const order: ResumeAgentId[] = [];
   const visited = new Set<ResumeAgentId>();
   for (const id of input.requested) {
-    if (!resumeAgentIds.includes(id)) throw new Error(`不支持的 Agent 功能：${id}`);
+    if (!resumeAnalysisAgentIds.includes(id as typeof resumeAnalysisAgentIds[number])) throw new Error(`该核查 Agent 已移除：${id}`);
     visit(id, visited, new Set(), order);
   }
 
