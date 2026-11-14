@@ -9,7 +9,7 @@ import type { CandidateFields } from "../analysis.js";
 import type { AgentDebug, AgentTiming } from "../../src/research-types.js";
 import type { Assessment, MaterialInput } from "../../shared/material-scoring.js";
 import { createAssessment } from "../scoring/pipeline.js";
-import { extractMaterials } from "../scoring/materials.js";
+import { enrichMaterialFacts, extractMaterials } from "../scoring/materials.js";
 import { abilityDimensions, materialTypeLabels } from "../../shared/material-scoring.js";
 
 export const resumeAgentIds = [
@@ -26,7 +26,7 @@ const agentVersions: Record<ResumeAgentId, number> = {
   // Bump both stages so older artifacts without the current action evidence
   // shape are recalculated instead of reusing all-NA ability scores.
   "material-extraction": 2,
-  "score-calculation": 2,
+  "score-calculation": 3,
   "analysis-report": 2,
   "plain-language-breakdown": 2,
 };
@@ -98,8 +98,14 @@ const definitions: Record<ResumeAgentId, Definition> = {
     }),
     run: async ({ resumeText }, outputs) => {
       const extracted = objectOutput<{ materials: MaterialInput[]; mode: "model" | "rules"; notes: string[] }>(outputs, "material-extraction");
-      const materials = extracted.materials;
-      return createAssessment(resumeText, materials, {
+      // Extraction anchors claims; enrich factors from the candidate's own
+      // evidence before scoring or every ability dimension remains NA.
+      const materials = enrichMaterialFacts(extracted.materials, { items: [], notes: [] });
+      // The extraction agent only anchors resume evidence. Before scoring,
+      // derive rule observations from that evidence so action-backed ability
+      // scores are available even when external research is disabled.
+      const enrichedMaterials = enrichMaterialFacts(materials, { items: [], notes: [] });
+      return createAssessment(resumeText, enrichedMaterials, {
         extraction: extracted.mode,
         notes: extracted.notes,
       }) satisfies Assessment;

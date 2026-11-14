@@ -1,5 +1,5 @@
 /** Versioned, deterministic scoring. Models may extract facts; they never supply points. */
-export const scoringVersion = "material-derived-v1.0.0";
+export const scoringVersion = "material-derived-v1.1.0";
 export const calibrationStatus = "初版规则参数，待双人标注校准";
 export const decayRatio = 0.5;
 export const abilityDimensions = [
@@ -531,14 +531,14 @@ export function scoreFactor(def: FactorDefinition, observation?: FactorObservati
 }
 const actionPatterns: Record<AbilityKey, RegExp> = {
   professional_execution:
-    /(?:开发(?!工程师|人员|岗)|实现|搭建|设计(?!师)|测试(?!工程师|岗位)|训练|部署|编写|构建|优化|重构|implement(?:ed|ing|s)?\b|develop(?:ed|ing|s)?\b|built\b|build(?:ing|s)?\b|design(?:ed|ing|s)?\b|test(?:ed|ing|s)?\b|deploy(?:ed|ing|s)?\b|cod(?:ed|ing)\b)\s*[^，。；;\n]{2,}/i,
+    /(?:从事|开发(?!工程师|人员|岗)|实现|搭建|设计(?!师)|测试(?!工程师|岗位)|训练|部署|编写|构建|优化|重构|implement(?:ed|ing|s)?\b|develop(?:ed|ing|s)?\b|built\b|build(?:ing|s)?\b|design(?:ed|ing|s)?\b|test(?:ed|ing|s)?\b|deploy(?:ed|ing|s)?\b|cod(?:ed|ing)\b)\s*[^，。；;\n]{1,}/i,
   problem_solving:
-    /(?:定位|排查|拆解|比较|权衡|解决|验证|复盘|分析|diagnos\w*|debug\w*|compar\w*|solv\w*|validat\w*|analy[sz]\w*)\s*[^，。；;\n]{2,}/i,
-  ownership_delivery: /(?:负责|主导|承担|推进|交付|owned|responsible for|deliver\w*)\s*[^，。；;\n]{2,}/i,
+    /(?:定位|排查|拆解|比较|权衡|解决|验证|复盘|分析|diagnos\w*|debug\w*|compar\w*|solv\w*|validat\w*|analy[sz]\w*)\s*[^，。；;\n]{1,}/i,
+  ownership_delivery: /(?:负责|主导|承担|推进|交付|领导|owned|responsible for|deliver\w*)\s*[^，。；;\n]{1,}/i,
   collaboration_organization:
-    /(?:协调|组织|带领|沟通|分工|跨团队推进|协同|coordinat\w*|organiz\w*|led|collaborat\w*)\s*[^，。；;\n]{2,}/i,
+    /(?:协调|组织|带领|沟通|分工|跨团队推进|协同|领导|coordinat\w*|organiz\w*|led|collaborat\w*)\s*[^，。；;\n]{1,}/i,
   learning_research:
-    /(?:研究(?!生|所|院|员)|学习|实验|复现|假设|消融|文献调研|learn(?:ed|ing|s)?\b|research(?:ed|ing)?\b|experiment(?:ed|ing|s)?\b|reproduc\w*|ablation)\s*[^，。；;\n]{2,}/i,
+    /(?:研究(?!生|所|院|员)|学习|实验|复现|假设|消融|文献调研|learn(?:ed|ing|s)?\b|research(?:ed|ing)?\b|experiment(?:ed|ing|s)?\b|reproduc\w*|ablation)\s*[^，。；;\n]{1,}/i,
 };
 export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapping {
   // External project responsibilities and team outcomes never enter this list automatically.

@@ -15,7 +15,7 @@ import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledge
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
-import type { Assessment, AssessmentHistoryEntry } from "../shared/material-scoring.js";
+import { scoringVersion, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
 import type { AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
 type ResumeRecord = {
@@ -465,7 +465,7 @@ router.post("/scan", async (_request, response, next) => {
       const filePath = path.join(directory, name);
       const id = path.basename(name, path.extname(name));
       const existing = await readRecord(id);
-      if (existing?.extractionVersion === extractionVersion) {
+      if (existing?.extractionVersion === extractionVersion && existing.assessment?.version === scoringVersion) {
         records.push(existing);
         continue;
       }
@@ -729,7 +729,13 @@ async function readDirectory(): Promise<ResumeRecord[]> {
       const existing = await readRecord(id);
       // Startup listing must stay responsive. Existing metadata is returned as-is;
       // explicit scan/retry endpoints can rebuild stale records in the background.
-      if (existing) return existing;
+      // Older records may have been created before the scoring stage derived
+      // action observations. Re-index those records once so the current
+      // assessment agent can populate ability scores instead of leaving every
+      // radar dimension as NA.
+      const staleAssessment = !existing?.assessment || existing.assessment.version !== scoringVersion ||
+        Object.values(existing.assessment.abilities).every((ability) => ability.score === null);
+      if (existing && !staleAssessment) return existing;
       const record = await indexPdf(path.join(directory, name), id, name);
       await writeRecord(record);
       return record;
