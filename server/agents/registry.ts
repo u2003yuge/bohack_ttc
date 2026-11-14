@@ -127,7 +127,7 @@ const definitions: Record<ResumeAgentId, Definition> = {
           name: candidate?.name || context.fileName,
           resumeText: context.resumeText,
           roleRequirements: context.roleRequirements,
-          question: context.question || "请根据职位要求分析候选人。",
+          question: `${context.question || "请根据职位要求分析候选人。"}\n\n职责边界：本 Agent 只输出岗位匹配判断、主要风险和面试追问；不要重复候选人基本信息、材料清单、能力分数或项目人话拆解，这些由其它 Agent 独立输出。`,
           analysisContext: JSON.stringify({ assessment: objectOutput<Assessment>(outputs, "score-calculation").abilities }),
         }, signal);
         return { answer, researchSources: [], researchStatus: "not-requested" as const };

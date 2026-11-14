@@ -11,7 +11,7 @@ import { respondWithAnalysis } from "./analysis-response.js";
 import { interruptible } from "./operations.js";
 import { defaultScoreWeights, normalizeComparisonRankDraft, normalizeWeights, type ComparisonRankDraft, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
 import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
-import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
+import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
@@ -159,6 +159,12 @@ router.post("/knowledge/import/preview", async (request, response, next) => {
     if (bundle.records.some((record) => existingBuiltInIds.has(record.id))) {
       response.status(400).json({ error: "导入文件包含内置资料 ID；请先导出自建资料，再导入该备份。" }); return;
     }
+    const existingRecords = await readKnowledgeRecords();
+    const existingRecordIds = new Set(existingRecords.map((record) => record.id));
+    const duplicate = bundle.records.map((record) => existingRecordIds.has(record.id) ? undefined : findKnowledgeDuplicate(record, existingRecords)).find(Boolean);
+    if (duplicate) {
+      response.status(409).json({ error: `导入中包含已有同一场比赛资料“${duplicate!.record.title}”；请合并后再导入，避免重复记录。`, duplicate: duplicate!.record }); return;
+    }
     const updateCount = bundle.records.filter((record) => existingIds.has(record.id)).length;
     const existingReviews = await readKnowledgeReviews();
     const reviewIds = Object.keys(bundle.reviews ?? {});
@@ -174,6 +180,12 @@ router.post("/knowledge/import", async (request, response, next) => {
     const builtInIds = new Set(knowledgeRecords.map((record) => record.id));
     if (bundle.records.some((record) => builtInIds.has(record.id))) {
       response.status(400).json({ error: "导入文件包含内置资料 ID，已取消写入。" }); return;
+    }
+    const existingRecords = await readKnowledgeRecords();
+    const existingRecordIds = new Set(existingRecords.map((record) => record.id));
+    const duplicate = bundle.records.map((record) => existingRecordIds.has(record.id) ? undefined : findKnowledgeDuplicate(record, existingRecords)).find(Boolean);
+    if (duplicate) {
+      response.status(409).json({ error: `导入中包含已有同一场比赛资料“${duplicate!.record.title}”；已取消写入，请合并后再导入。`, duplicate: duplicate!.record }); return;
     }
     const custom = await readCustomKnowledge();
     const existingIds = new Set(custom.map((record) => record.id));
@@ -242,11 +254,19 @@ router.post("/knowledge", async (request, response, next) => {
     if (!title || !["competition", "journal", "company"].includes(kind)) {
       response.status(400).json({ error: "请填写资料名称并选择有效类别。" }); return;
     }
+    const custom = await readCustomKnowledge();
+    const allRecords = [...knowledgeRecords, ...custom];
+    const aliases = Array.isArray(input.aliases) ? input.aliases.filter((item: unknown): item is string => typeof item === "string").map((item: string) => item.trim()).filter(Boolean).slice(0, 8) : [];
+    const duplicate = findKnowledgeDuplicate({ kind, title, aliases, organizer: textInput(input.organizer, 120), region: textInput(input.region, 80), field: textInput(input.field, 120), officialUrl: safeHttpUrl(input.officialUrl) }, allRecords);
+    if (duplicate) {
+      const reason = duplicate.reason === "competition-series" ? "赛事系列、年份或分赛站" : duplicate.reason === "official-url" ? "官方来源地址" : "名称或别名";
+      response.status(409).json({ error: `检测到已有同一场比赛资料“${duplicate.record.title}”（匹配依据：${reason}），本次未重复加入。请直接打开已有条目补充信息。`, duplicate: duplicate.record }); return;
+    }
     const record: KnowledgeRecord = {
       id: `custom-${crypto.randomUUID()}`,
       kind,
       title,
-      aliases: Array.isArray(input.aliases) ? input.aliases.filter((item: unknown): item is string => typeof item === "string").map((item: string) => item.trim()).filter(Boolean).slice(0, 8) : [],
+      aliases,
       field: textInput(input.field, 120), organizer: textInput(input.organizer, 120), region: textInput(input.region, 80),
       summary: textInput(input.summary, 1200), signals: Array.isArray(input.signals) ? input.signals.filter((item: unknown): item is string => typeof item === "string").slice(0, 10) : [],
       officialUrl: safeHttpUrl(input.officialUrl), significanceScore: 50,
@@ -254,10 +274,10 @@ router.post("/knowledge", async (request, response, next) => {
       scoreRationale: "新建资料尚未评估。请核验可靠来源和岗位相关证据。",
       verificationStatus: "示例资料，待核验", updatedAt: new Date().toISOString().slice(0, 10),
     };
-    const custom = await readCustomKnowledge();
-    custom.unshift(record);
+    const customRecords = custom;
+    customRecords.unshift(record);
     await mkdir(path.dirname(customKnowledgePath), { recursive: true });
-    await writeFile(customKnowledgePath, JSON.stringify(custom, null, 2), "utf8");
+    await writeFile(customKnowledgePath, JSON.stringify(customRecords, null, 2), "utf8");
     response.status(201).json({ record });
   } catch (error) { next(error); }
 });
@@ -311,6 +331,11 @@ router.put("/knowledge/:id", async (request, response, next) => {
     const kind = input.kind as KnowledgeRecord["kind"];
     if (!title || !["competition", "journal", "company"].includes(kind)) {
       response.status(400).json({ error: "请填写资料名称并选择有效类别。" }); return;
+    }
+    const duplicate = findKnowledgeDuplicate({ kind, title, aliases: stringList(input.aliases, 8, 100), organizer: textInput(input.organizer, 120), region: textInput(input.region, 80), field: textInput(input.field, 120), officialUrl: safeHttpUrl(input.officialUrl) }, records, existing.id);
+    if (duplicate) {
+      const reason = duplicate.reason === "competition-series" ? "赛事系列、年份或分赛站" : duplicate.reason === "official-url" ? "官方来源地址" : "名称或别名";
+      response.status(409).json({ error: `保存失败：已有同一场比赛资料“${duplicate.record.title}”（匹配依据：${reason}），请合并到已有条目。`, duplicate: duplicate.record }); return;
     }
     const updated: KnowledgeRecord = {
       ...existing,
@@ -635,7 +660,7 @@ router.post("/:id/assessment", async (request, response, next) => {
     const record = await readRecord(request.params.id);
     if (!record) { response.status(404).json({ error: "找不到这份简历。" }); return; }
     const { ocrText = "", streamProgress = false } = request.body ?? {};
-    if (Object.hasOwn(request.body ?? {}, "includeResearch")) {
+    if (Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false) {
       response.status(400).json({ error: "候选人成果真实性核查功能已移除。" });
       return;
     }
@@ -659,7 +684,8 @@ router.post("/:id/analyze", async (request, response, next) => {
       return;
     }
     const { roleRequirements, question, streamProgress = false, ocrText = "" } = request.body ?? {};
-    if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+    if ((Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false)
+      || (Object.hasOwn(request.body ?? {}, "webResearchEnabled") && request.body.webResearchEnabled !== false)) {
       response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
       return;
     }

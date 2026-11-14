@@ -143,13 +143,17 @@ export default function ScoringWorkspace({
     setError("");
     const failures: string[] = [];
     try {
-      for (let index = 0; index < candidates.length; index += 1) {
-        abort.signal.throwIfAborted();
-        const candidate = candidates[index];
+      let nextIndex = 0;
+      let completed = 0;
+      const evaluateOne = async () => {
+        while (!abort.signal.aborted) {
+          const index = nextIndex++;
+          if (index >= candidates.length) return;
+          const candidate = candidates[index];
         try {
           setProgress({
             stage: "extracting",
-            message: `正在评估 ${candidate.name} · ${index + 1}/${candidates.length}`,
+            message: `并行评估中 · ${completed}/${candidates.length} 已完成 · ${candidate.name}`,
           });
           const text = candidates.length === 1 && ocrText.trim() ? ocrText : candidate.text;
           const endpoint =
@@ -163,7 +167,6 @@ export default function ScoringWorkspace({
             body: JSON.stringify({
               text,
               ocrText: candidates.length === 1 ? ocrText : "",
-              includeResearch: false,
               useModel: useModel && agentAvailable,
               streamProgress: true,
             }),
@@ -195,7 +198,11 @@ export default function ScoringWorkspace({
           if (abort.signal.aborted) throw cause;
           failures.push(`${candidate.name}: ${cause instanceof Error ? cause.message : String(cause)}`);
         }
-      }
+          completed += 1;
+          if (!abort.signal.aborted) setProgress({ stage: "scoring", message: `并行评估中 · ${completed}/${candidates.length} 已完成` });
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(3, candidates.length) }, () => evaluateOne()));
       if (failures.length && id === run.current) setError(failures.join("\n"));
     } catch (e) {
       if (id === run.current)

@@ -23,7 +23,7 @@ router.post("/run", async (request, response) => {
     response.status(400).json({ error: "useModel 必须为布尔值。" });
     return;
   }
-  if (Object.hasOwn(body, "includeResearch")) {
+  if (Object.hasOwn(body, "includeResearch") && body.includeResearch !== false) {
     response.status(400).json({ error: "候选人成果真实性核查功能已移除。" });
     return;
   }

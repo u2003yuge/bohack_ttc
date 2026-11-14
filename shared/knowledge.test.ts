@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { demoKnowledgeRecords, findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, knowledgeReviewTimelineX, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
+import { demoKnowledgeRecords, findKnowledgeDuplicate, findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, knowledgeReviewTimelineX, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -41,6 +41,28 @@ test("matches Latin abbreviations on word boundaries but allows adjacent Chinese
 
 test("returns only records that match the supplied resume body", () => {
   assert.deepEqual(findKnowledgeReferences("获得 ICPC 区域赛奖项。", [record]), [record]);
+});
+
+test("deduplicates competition editions and regional stations as one series", () => {
+  const existing: KnowledgeRecord = {
+    ...record,
+    title: "全国大学生数学建模竞赛",
+    aliases: ["数学建模竞赛"],
+    officialUrl: "https://example.org/math-contest/",
+  };
+  const duplicate = findKnowledgeDuplicate({
+    kind: "competition",
+    title: "2024 年全国大学生数学建模竞赛华东赛区",
+    aliases: ["数学建模竞赛·华东分赛站"],
+    officialUrl: "",
+  }, [existing]);
+  assert.equal(duplicate?.record.id, existing.id);
+  assert.equal(duplicate?.reason, "competition-series");
+});
+
+test("keeps distinct competition series separate", () => {
+  const existing: KnowledgeRecord = { ...record, title: "全国大学生数学建模竞赛", aliases: ["数学建模竞赛"] };
+  assert.equal(findKnowledgeDuplicate({ kind: "competition", title: "全国大学生程序设计竞赛", aliases: ["程序设计竞赛"] }, [existing]), undefined);
 });
 
 test("cross references prioritize the most specific matching name", () => {

@@ -314,6 +314,42 @@ export function findKnowledgeMatch(text: string, record: KnowledgeRecord): strin
   return null;
 }
 
+export type KnowledgeDuplicateMatch = {
+  record: KnowledgeRecord;
+  reason: "exact-name" | "competition-series" | "official-url";
+};
+
+const competitionEditionWords = /(?:19|20)\d{2}年?|第[一二三四五六七八九十百千万0-9]+届|总决赛|决赛|复赛|初赛|省赛|市赛|校赛|区域赛|分赛站|赛站|赛区|全国赛|国际赛|华东赛区|华南赛区|华北赛区|西南赛区|东北赛区|华中赛区|东部赛区|西部赛区/g;
+
+function competitionIdentityText(value: string): string {
+  return value.normalize("NFKC").toLocaleLowerCase().replace(competitionEditionWords, "").replace(/[\s\p{P}\p{S}]+/gu, "");
+}
+
+function httpIdentity(value: string): string {
+  try {
+    const url = new URL(value);
+    return `${url.hostname.toLocaleLowerCase()}${url.pathname.replace(/\/$/, "")}`;
+  } catch { return ""; }
+}
+
+export function findKnowledgeDuplicate(candidate: Pick<KnowledgeRecord, "kind" | "title"> & Partial<Pick<KnowledgeRecord, "aliases" | "organizer" | "officialUrl" | "field" | "region" | "competition">>, records: KnowledgeRecord[], ignoreId?: string): KnowledgeDuplicateMatch | undefined {
+  if (candidate.kind !== "competition") return undefined;
+  const candidateNames = [candidate.title, ...(candidate.aliases ?? []), candidate.competition?.name ?? ""].map((value) => value.trim()).filter(Boolean);
+  const exactNames = new Set(candidateNames.map((value) => value.normalize("NFKC").toLocaleLowerCase().replace(/[\s\p{P}\p{S}]+/gu, "")));
+  const candidateSeries = new Set(candidateNames.map(competitionIdentityText).filter((value) => value.length >= 4));
+  const candidateUrl = httpIdentity(candidate.officialUrl ?? "");
+  for (const record of records) {
+    if (record.id === ignoreId || record.kind !== "competition") continue;
+    const recordNames = [record.title, ...record.aliases, record.competition?.name ?? ""].map((value) => value.trim()).filter(Boolean);
+    const recordExactNames = recordNames.map((value) => value.normalize("NFKC").toLocaleLowerCase().replace(/[\s\p{P}\p{S}]+/gu, ""));
+    if (recordExactNames.some((name) => exactNames.has(name))) return { record, reason: "exact-name" };
+    const recordSeries = recordNames.map(competitionIdentityText).filter((value) => value.length >= 4);
+    if (recordSeries.some((recordName) => [...candidateSeries].some((candidateName) => candidateName === recordName || candidateName.includes(recordName) || recordName.includes(candidateName)))) return { record, reason: "competition-series" };
+    if (candidateUrl && [record.officialUrl, record.competition?.official_website ?? ""].map(httpIdentity).includes(candidateUrl)) return { record, reason: "official-url" };
+  }
+  return undefined;
+}
+
 export function findKnowledgeReferences(text: string, records: KnowledgeRecord[]): KnowledgeRecord[] {
   return records
     .map((record, index) => ({ record, index, match: findKnowledgeMatch(text, record) }))
