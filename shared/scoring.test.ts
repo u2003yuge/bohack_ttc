@@ -21,6 +21,11 @@ test("growth timeline uses year-end rolling accumulation and scales latest point
   assert.ok((timeline.find((point) => point.year === 2021)?.evidence.join(" ") ?? "").includes("一等奖"));
 });
 
+test("growth timeline keeps its real value above the chart scale", () => {
+  const timeline = calculateGrowthTimeline({ text: "2021 获得一等奖。", evaluatedAt: "2021-12-31T00:00:00.000Z" }, 112.5);
+  assert.equal(timeline.at(-1)?.score, 112.5);
+});
+
 test("comparison rank drafts accept supported dimensions and source filters", () => {
   const draft = normalizeComparisonRankDraft({ criterion: "expertise", direction: "desc", ratingFilter: "scored", rationale: "x".repeat(300) });
   assert.equal("error" in draft, false);

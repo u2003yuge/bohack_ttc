@@ -104,11 +104,11 @@ export function calculateGrowthTimeline(input: GrowthTimelineInput, targetScore:
     return sortedYears.slice(from, index + 1).reduce((sum, item) => sum + (contributions.get(item)?.points ?? 0), 0);
   });
   const latestRaw = rawPoints.at(-1) ?? 0;
-  const finalScore = Math.max(0, Math.min(100, Number(targetScore) || 0));
+  const finalScore = Math.max(0, Number(targetScore) || 0);
   return sortedYears.map((year, index) => {
     const annual = contributions.get(year)?.points ?? 0;
     const rolling = rawPoints[index];
-    const score = latestRaw > 0 ? Math.round(Math.min(100, rolling / latestRaw * finalScore) * 10) / 10 : finalScore;
+    const score = latestRaw > 0 ? Math.round(rolling / latestRaw * finalScore * 10) / 10 : finalScore;
     const evidence = [...(contributions.get(year)?.evidence ?? [])].slice(0, 4);
     return { year, score, annualContribution: annual, rollingContribution: rolling, windowYears: safeWindow, evidence };
   });
