@@ -41,7 +41,6 @@ import { calculateBenchmark, historicalCandidates, historicalScoreBands, matches
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 import ScoringWorkspace from "./ScoringWorkspace";
 import MaterialAssessment, { MaterialAssessmentRadar } from "./MaterialAssessment";
-import type { Assessment } from "../shared/material-scoring";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
 type KnowledgeSource = { title: string; url: string; snippet: string };
@@ -480,20 +479,19 @@ function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume })
   </div>;
 }
 
-function scoreCardFromAssessment(assessment: Assessment, fallback: ScoreCard): ScoreCard {
-  const ability = (key: keyof Assessment["abilities"]) => assessment.abilities[key].score ?? 0;
+function scoreCardFromAssessment(assessment: NonNullable<Resume["assessment"]>, fallback: ScoreCard): ScoreCard {
+  const ability = (key: keyof NonNullable<Resume["assessment"]>["abilities"]) => assessment.abilities[key].score ?? 0;
   const values: Record<ScoreKey, number> = {
     leadership: ability("ownership_delivery"),
     expertise: ability("professional_execution"),
     experience: ability("problem_solving"),
     perspective: ability("collaboration_organization"),
-    roleFit: ability("professional_execution"),
+    roleFit: Math.round((ability("professional_execution") + ability("problem_solving")) / 2),
     growth: ability("learning_research"),
   };
-  const criteria = Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: values[key], evidence: [] }])) as ScoreCard["criteria"];
-  const weights = fallback.weights;
-  const totalWeight = scoreCriteria.reduce((sum, item) => sum + weights[item.key], 0) || 100;
-  const composite = Math.round(scoreCriteria.reduce((sum, item) => sum + values[item.key] * weights[item.key], 0) / totalWeight * 10) / 10;
+  const criteria = Object.fromEntries(scoreCriteria.map(({ key }) => [key, { score: values[key], evidence: [] }])) as unknown as ScoreCard["criteria"];
+  const totalWeight = scoreCriteria.reduce((sum, item) => sum + fallback.weights[item.key], 0) || 100;
+  const composite = Math.round(scoreCriteria.reduce((sum, item) => sum + values[item.key] * fallback.weights[item.key], 0) / totalWeight * 10) / 10;
   return { ...fallback, criteria, composite, evaluatedAt: assessment.evaluatedAt };
 }
 
@@ -1156,17 +1154,17 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
-function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onOpenScoring, agentAvailable, onEvidence }: { answer: string; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onOpenScoring: () => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
-  const pages = paginateReport(answer);
+function AnalysisDocument({ answer, sections, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onOpenScoring, agentAvailable, onEvidence }: { answer: string; sections: AnalysisSection[]; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onOpenScoring: () => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
+  const pages = sections.length ? sections.map((section) => section.markdown) : paginateReport(answer);
   // Keep every chart on the same score source. Once the material Agent has
   // returned an assessment, the trend and peer comparison must not fall back
   // to the demo score card while the radar uses live data.
-  const visualScoreCard = candidate.assessment ? scoreCardFromAssessment(candidate.assessment, scoreCard.weights) : scoreCard;
+  const visualScoreCard = candidate.assessment ? scoreCardFromAssessment(candidate.assessment, scoreCard) : scoreCard;
   return (
     <div className="analysis-document-shell">
       <div className="analysis-document-toolbar">
         <div className="document-tab"><FileText size={15} /><span>分析报告.pdf</span></div>
-        <span className="analysis-document-meta">{answer ? `${pages.length} 页` : "待生成"}</span>
+        <span className="analysis-document-meta">{answer || sections.length ? `${pages.length} 页` : "待生成"}</span>
       </div>
       <div className="analysis-document-pages">
         {error && answer && <div className="inline-error" role="alert">{error}</div>}
@@ -1178,7 +1176,7 @@ function AnalysisDocument({ answer, busy, error, candidate, roleRequirements, sc
           <div className="analysis-visual-card"><ScoreTrend card={visualScoreCard} candidate={candidate} /></div>
           <div className="analysis-visual-card"><BenchmarkBadge role={candidate.role} score={actualScore(visualScoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} /></div>
         </section>
-        {busy && !answer ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : answer ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · 简历分析</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
+        {busy && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : (answer || sections.length) ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · {sections[index]?.label || "简历分析"}</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
         {candidate.assessment ? <>
           <details className="analysis-score-detail-card">
             <summary><span><strong>详细计分分析</strong><small>{candidate.assessment.materials.length} 项材料 · 能力贡献、因素分解与原文依据</small></span><ChevronDown size={16} /></summary>
@@ -1226,19 +1224,6 @@ function paginateReport(answer: string): string[] {
 
   if (pageBlocks.length) pages.push(pageBlocks.join("\n\n"));
   return pages.length ? pages : [answer];
-}
-
-function scoreCardFromAssessment(assessment: NonNullable<Resume["assessment"]>, weights: ScoreWeights): ScoreCard {
-  const value = (key: keyof typeof assessment.abilities) => assessment.abilities[key].score ?? 0;
-  const criteria = {
-    leadership: { score: value("ownership_delivery"), evidence: assessment.abilities.ownership_delivery.terms.slice(0, 3).flatMap((term) => term.evidence.map((item) => item.quote)) },
-    expertise: { score: value("professional_execution"), evidence: assessment.abilities.professional_execution.terms.slice(0, 3).flatMap((term) => term.evidence.map((item) => item.quote)) },
-    experience: { score: Math.round((value("ownership_delivery") + value("problem_solving")) / 2), evidence: assessment.abilities.ownership_delivery.terms.slice(0, 2).flatMap((term) => term.evidence.map((item) => item.quote)) },
-    perspective: { score: Math.round((value("collaboration_organization") + value("learning_research")) / 2), evidence: assessment.abilities.learning_research.terms.slice(0, 2).flatMap((term) => term.evidence.map((item) => item.quote)) },
-    roleFit: { score: Math.round((value("professional_execution") + value("problem_solving")) / 2), evidence: assessment.abilities.professional_execution.terms.slice(0, 2).flatMap((term) => term.evidence.map((item) => item.quote)) },
-    growth: { score: value("learning_research"), evidence: assessment.abilities.learning_research.terms.slice(0, 3).flatMap((term) => term.evidence.map((item) => item.quote)) },
-  } satisfies ScoreCard["criteria"];
-  return { criteria, weights, composite: calculateComposite(criteria, weights), formula: "weighted-mean-v1", evaluatedAt: assessment.evaluatedAt };
 }
 
 function renderMarkdownInline(value: string) {
@@ -1344,6 +1329,7 @@ export default function App() {
   const [evidenceTarget, setEvidenceTarget] = useState("");
   const [evidenceLocation, setEvidenceLocation] = useState<{ query: string; page: number | null } | null>(null);
   const [answer, setAnswer] = useState("");
+  const [analysisSections, setAnalysisSections] = useState<AnalysisSection[]>([]);
   const [agentError, setAgentError] = useState("");
   const [busy, setBusy] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
@@ -1505,6 +1491,7 @@ export default function App() {
     const pdfFiles = Array.from(files).filter((file) => file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"));
     setImportError("");
     setAnswer("");
+    setAnalysisSections([]);
     setAnalysisProgress(null);
     if (pdfFiles.length === 0) {
       setImportError("所选内容中没有 PDF 文件。");
@@ -1597,6 +1584,10 @@ export default function App() {
             setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: event.assessment } : resume));
           }
           if (event.type === "agent") {
+            setAnalysisSections((current) => {
+              const next = current.filter((section) => section.agentId !== event.agentId);
+              return [...next, { agentId: event.agentId, label: event.label, markdown: event.markdown, timing: event.timing }];
+            });
             if (event.timing) setAnalysisDebug((current) => ({ totalDurationMs: current?.totalDurationMs ?? 0, maxParallel: Math.max(current?.maxParallel ?? 1, event.timing!.parallelWith.length + 1), timings: [...(current?.timings ?? []).filter((item) => item.id !== event.timing!.id), event.timing!] }));
             if (event.markdown) setAnswer((current) => `${current}${current ? "\n\n" : ""}${event.markdown}`);
           }
@@ -1675,6 +1666,7 @@ export default function App() {
     const resume = resumes.find((item) => item.id === id);
     setSelectedId(id);
     setAnswer(resume?.analysisReport ?? "");
+    setAnalysisSections([]);
     setAnalysisDebug(resume?.analysisDebug ?? null);
     setAnalysisProgress(null);
     setEvidenceTarget("");
@@ -1818,7 +1810,7 @@ export default function App() {
         <aside className="report-column">
           <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onOpenScoring={() => { setScoringRulesOpen(false); setScoringOpen(true); }} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onOpenScoring={() => { setScoringRulesOpen(false); setScoringOpen(true); }} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析基于当前简历文本和已生成的规则评分。</span></div>
         </aside>
