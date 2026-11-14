@@ -95,6 +95,12 @@ POST /api/resumes/knowledge/enrich
 
 `POST /api/resumes/knowledge/filter-draft` 使用 `server/skills/knowledge-filter-assistant.md` 将自然语言映射为受限列表条件。只发送指令、不发送资料或简历；模型输出经服务端枚举白名单校验，客户端显示拟应用的条件和匹配条数，只有审核员点击应用才会更改当前视图。`POST /api/resumes/knowledge/enrich` 使用 `server/skills/knowledge-enrichment.md` 生成未持久化字段草案，可选 Tavily 搜索最多 5 条公开线索；建议中的官方 URL 必须与返回线索中的 URL 完全一致，且需明确属于资料主体的官网，否则清空。草案绑定请求时的表单内容；若名称、类别、字段或整理重点在等待期间发生变化，界面会阻止套用并要求重新生成。来源摘要与待核验项会一并展示。AI 不输出含金量评分或核验状态。新增和编辑写入接口会限制文本长度、列表数量和来源链接协议；证据来源最多保留 12 条，拒绝非 HTTP(S) 和重复链接。评分范围为 0 到 100。每次显式保存审核结果追加一条历史快照，最多保留最近 30 条，记录评分、理由、核验状态、时间、来源类型、引用的证据来源 ID 及完整来源快照。AI 生成阶段不写历史。来源状态是审核员维护的记录，不会因搜索结果被 AI 引用而自动设为已核对。
 
+## 期刊会议图标与年度指标
+
+`papers.md` 的 100 条期刊会议资料保留 `logo` 和 `impact_factor`，不改变稳定主键及原有人工评估历史。列表与详情页使用 `public/papers_logo/` 中经过解码、缩小和 PNG 转换的本地图标，`db/paper-logo-assets.json` 将原始资料路径映射到可显示资源。缺失、无法解码或浏览器加载失败时显示默认图标；详情可查看原来源及导入说明，官网 favicon 明确标注。
+
+影响因子按原资料年份表格展示，保留数值、`null`、原资料状态、指标口径、来源说明与日期。会议显示“不适用”，国内期刊平台指标与 Clarivate JIF 不换算。`verified` 表示原资料整理者的标注，不是本次联网核验或人工复核。指标已随本地渠道背景传入 AI 分析，提示保留年份口径、不可外推个人成果质量；自建资料导出/导入同样保留这些嵌套字段并校验网址和图片相对路径。`annual_metrics/indexing=null` 仍指其它未整理字段，不否定独立的 `impact_factor`。
+
 ## 后续数据库升级建议
 
 正式部署时可把本地 JSON 替换为 SQLite、PostgreSQL 或组织内部数据库，但应保留现有 API 契约和以下字段：`id`、`kind`、`title`、`aliases`、`field`、`organizer`、`region`、`summary`、`signals`、`officialUrl`、`significanceScore`、`scoreRationale`、`verificationStatus`、`updatedAt`。指标和认定信息建议额外建成带 `sourceUrl`、`sourceType`、`dataYear`、`checkedAt`、`evidenceNote` 的证据表，避免新的核验结果覆盖旧版本。

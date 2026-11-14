@@ -12,7 +12,9 @@
 | `info`、`short_info` | 中文介绍和一句话定位。 |
 | `influence`、`difficulty` | 基于领域定位、正式目录和发表要求的定性整理，不是官方评分，也不是实测录用率。 |
 | `rankings`、`ranking_note` | 原始体系、发布者、版次、年份、类别、等级、适用范围及证据；未查到适用条目用空数组并说明。 |
-| `annual_metrics`、`indexing` | 本批不采集年度指标和完整收录清单，统一为 null，表示未核验而非没有。 |
+| `annual_metrics`、`indexing` | 原始批次字段；本批不采集完整年度指标和收录清单，统一为 null，表示未核验而非没有。 |
+| `impact_factor` | 期刊记录含 2023、2024、2025 年 JIF（或国内期刊平台指标）及状态、来源、核验日期；会议为 `not_applicable`，不填 0。 |
+| `logo` | 官方站点 logo 或官方域名 favicon 的相对路径、格式、来源和下载状态；未找到时为 `not_found`。 |
 | `sources`、`checked_on`、`notes` | 来源、读取方式、核验日期及匹配与使用注意点；来源信息可用于后续更新。 |
 
 **分级口径。** 国际分级使用 [CCF 第七版（2026）官方发布说明](https://www.ccf.org.cn/Academic_Evaluation/By_category/)和[高校转载的正式 PDF](https://cce.ncepu.edu.cn/docs/2026-08/75b5af5644e64b519884bf7383f1bde9.pdf)。官方发布说明已直接读取，附件直链返回验证码，等级逐项以转载 PDF 核对，并保留页码。部分 CCF 分领域网页仍为旧内容，不能代替本版附件。国内期刊另使用 [CCF 2025 计算领域高质量科技期刊目录](https://www.ccf.org.cn/ccftjgjxskwml/)，T1/T2/T3 与国际 A/B/C 是两个独立体系，不进行换算。等级是时间快照，不能把当前目录倒用于历史论文；综合科学期刊未套用计算机分级。年度 JCR 分区、历史中科院分区、影响因子、收录状态、录用率、费用与审稿周期应另设带年份和来源的表。
@@ -82,7 +84,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "旧称 NIPS 是同一会议系列；Poster、Oral、Spotlight 是展示安排，应另查官方记录。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-neurips.ico",
+      "format": "ico",
+      "source_url": "https://neurips.cc/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-icml",
@@ -142,7 +164,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "应核验正式论文集及具体轨道；现场是否报告与是否正式发表并非同一事实。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-icml.ico",
+      "format": "ico",
+      "source_url": "https://icml.cc/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-iclr",
@@ -202,7 +244,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不能把 2026 年等级倒推到往年；OpenReview 投稿页本身不证明录用。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-iclr.ico",
+      "format": "ico",
+      "source_url": "https://iclr.cc/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-aaai",
@@ -263,7 +325,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "AAAI 是学会及会议常用缩写，必须匹配具体会议年份、轨道和论文条目。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-aaai.png",
+      "format": "png",
+      "source_url": "https://aaai.org/wp-content/uploads/2022/12/cropped-white-logo-32x32.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-ijcai",
@@ -323,7 +405,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "当前 B 类仅适用于本次所核对目录；历史论文须另查发表时版本。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-ijcai.ico",
+      "format": "ico",
+      "source_url": "https://ijcai.org/wp-content/themes/ijcai/assets/img/favicon.ico?v=2",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-cvpr",
@@ -383,7 +485,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "CVPR Workshops 不能自动继承主会等级；挑战赛获奖应单独记录。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://cvpr.thecvf.com/Conferences/2026/CallForPapers",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-iccv",
@@ -444,7 +566,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "ICCV 主会与 ICCV Workshops 分开；报告方式不能独立决定论文质量。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://iccv.thecvf.com/Conferences/2025/CallForPapers",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-eccv",
@@ -504,7 +646,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "与 CVPR、ICCV 的目录等级不同，不据此机械换算具体论文质量。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://eccv.ecva.net/Conferences/2026/CallForPapers",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-acl",
@@ -564,7 +726,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Findings of ACL、短文、Demo、Workshop 不自动属于 CCF 主会长文口径。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-acl.png",
+      "format": "png",
+      "source_url": "https://2026.aclweb.org/assets/images/apple-touch-icon-57x57.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-emnlp",
@@ -624,7 +806,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "通过 ACL Anthology 核验准确集合；ARR 评审或承诺提交不等于最终录用。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-emnlp.png",
+      "format": "png",
+      "source_url": "https://2026.emnlp.org/assets/images/apple-touch-icon-57x57.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-naacl",
@@ -685,7 +887,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "NAACL 是分会及会议缩写；Findings 与短文不自动继承主会长文分级。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-naacl.png",
+      "format": "png",
+      "source_url": "https://2025.naacl.org/assets/images/favicon/apple-touch-icon-57x57.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-coling",
@@ -745,7 +967,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "COLING 会议与 Computational Linguistics 期刊是不同渠道，不能按缩写合并。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-coling.png",
+      "format": "png",
+      "source_url": "https://coling2025.org/assets/favicon/favicon-96x96.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-acmmm",
@@ -807,7 +1049,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不能把挑战赛报告、演示或 MMAsia 等其他会议自动并入 ACM MM 主会。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://acmmm.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-sigir",
@@ -868,7 +1130,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "SIGIR 同时是专业兴趣组名称；仅参加其活动不能等同发表主会研究论文。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://sigir.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-kdd",
@@ -930,7 +1212,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "应用轨道不能仅凭主会名自动认定同一评价口径，应对照当届轨道及机构规则。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://kdd2026.kdd.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-wsdm",
@@ -990,7 +1292,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "正式 full paper 与演示、Workshop 等内容分开核验，不将官网自述转成录用概率。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.wsdm-conference.org/2026/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-cikm",
@@ -1051,7 +1373,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "有 Full、Short、Demo 等不同出版形式，CCF 会议口径优先核对正式长文。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-cikm.png",
+      "format": "png",
+      "source_url": "https://cikm2026.diag.uniroma1.it/wp-content/uploads/2026/02/cropped-CIMK26-32x32.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-sigmod",
@@ -1112,7 +1454,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "研究稿需核对 PACMMOD 卷期与 SIGMOD 展示关系；Demo、Industry 等另查适用范围。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://2026.sigmod.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-vldb",
@@ -1173,7 +1535,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "PVLDB 与 The VLDB Journal 是不同出版物；会议演示或 Workshop 不能自动算主会长文。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-vldb.ico",
+      "format": "ico",
+      "source_url": "https://vldb.org/pvldb/wp-content/uploads/2020/10/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-icde",
@@ -1233,7 +1615,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "ICDE 正式长文与短文、演示和附属活动分别匹配，不能只按 IEEE 品牌判断等级。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-icde.jpg",
+      "format": "jpg",
+      "source_url": "https://icde2026.github.io/img/icde2026_logo.jpg",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-icdm",
@@ -1294,7 +1696,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "存在使用 ICDM 缩写的其他会议，必须核对全称、主办方、年份和论文集。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://icdm2026.neu.edu.cn/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-sosp",
@@ -1354,7 +1776,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "主会研究论文、经验论文和附属 Workshop 应读取具体记录，不能只按系统名称推断贡献。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://sigops.org/s/conferences/sosp/2025/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-osdi",
@@ -1414,7 +1856,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "USENIX 官网可核对正式论文及材料；开源附件存在不等于已完成独立复现。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-osdi.ico",
+      "format": "ico",
+      "source_url": "https://www.usenix.org/themes/motherboard/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-nsdi",
@@ -1474,7 +1936,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "网络系统论文与纯网络理论稿侧重点不同；不能按实验集群规模直接评价个人能力。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-nsdi.ico",
+      "format": "ico",
+      "source_url": "https://www.usenix.org/themes/motherboard/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-eurosys",
@@ -1535,7 +2017,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "会议主页与正式论文记录分别核查；附属 Workshop 不继承主会分级。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://2026.eurosys.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-asplos",
@@ -1595,7 +2097,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "并非任何使用加速器或编译工具的论文都体现同等跨层创新，仍需阅读具体方法。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-asplos.png",
+      "format": "png",
+      "source_url": "https://www.asplos-conference.org/wp-content/uploads/2019/12/cropped-256px-Association_for_Computing_Machinery_ACM_logo.svg_-2-32x32.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-isca",
@@ -1655,7 +2177,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "模拟结果不等同芯片流片或产品部署，简历中相关表述应分别核验。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-isca.ico",
+      "format": "ico",
+      "source_url": "https://iscaconf.org/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-micro",
@@ -1715,7 +2257,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "MICRO 是会议系列；硬件仿真、FPGA 原型与实际芯片实现应分别记录。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-micro.ico",
+      "format": "ico",
+      "source_url": "https://microarch.org/images/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-hpca",
@@ -1775,7 +2337,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "以当届 Main Conference 正式研究论文为准，Workshop 和海报项目单独核验。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-hpca.bin",
+      "format": "bin",
+      "source_url": "https://2026.hpca-conf.org/getImage/carousel/Sydney_Opera_House_and_Harbour_Bridge_Dusk_%282%29_2019-06-21.jpg?1783984958000",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-sc",
@@ -1836,7 +2418,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "SC 论文、Student Cluster Competition、Gordon Bell 奖等属于不同成果类型，应分开记录。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-sc.png",
+      "format": "png",
+      "source_url": "https://sc26.supercomputing.org/wp-content/uploads/2025/07/cropped-sc26_favicon_512-32x32.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-icse",
@@ -1896,7 +2498,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Research Track、SEIP、NIER、Demo 等应保留准确名称，不按大会名称一并评级。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-icse.ico",
+      "format": "ico",
+      "source_url": "https://conf.researchr.org/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-fse",
@@ -1958,7 +2580,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不是密码学领域 Fast Software Encryption；PACMSE 关联需按具体论文核对。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-fse.bin",
+      "format": "bin",
+      "source_url": "https://conf.researchr.org/getImage/fse-2026/carousel/concordiaSGWBuilding.jpg?1783982948000",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-ase",
@@ -2018,7 +2660,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "ASE 会议与 Automated Software Engineering 期刊不同；Tool Demo 不能默认按长文处理。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-ase.bin",
+      "format": "bin",
+      "source_url": "https://conf.researchr.org/getImage/ase-2026/carousel/ASE+2026+Munich+Conference+Banner.png?1791048898000",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-ccs",
@@ -2079,7 +2741,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不能仅根据攻击成功率判断价值；CCS 与 AsiaCCS 是不同会议系列。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-ccs.png",
+      "format": "png",
+      "source_url": "https://www.sigsac.org/ccs/CCS2026/img/favicon.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-sp",
@@ -2142,7 +2824,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Oakland 是历史常用别称；会议、附属 Workshop 与 IEEE Security & Privacy 杂志分别匹配。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-sp.ico",
+      "format": "ico",
+      "source_url": "https://www.ieee-security.org/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-usenixsecurity",
@@ -2202,7 +2904,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "USENIX 旗下有多个独立会议，必须保留 Security 全称及届次，避免按主办方泛化等级。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-usenixsecurity.ico",
+      "format": "ico",
+      "source_url": "https://www.usenix.org/themes/motherboard/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-ndss",
@@ -2262,7 +2984,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "会议举办城市会变化，不把旧的固定举办地作为身份匹配或质量判断依据。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-ndss.png",
+      "format": "png",
+      "source_url": "https://www.ndss-symposium.org/wp-content/uploads/cropped-NDSS_512x512-32x32.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-sigcomm",
@@ -2323,7 +3065,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "SIGCOMM 是 ACM 专业兴趣组及会议名称，须确认具体会议长文记录。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://conferences.sigcomm.org/sigcomm/2026/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-infocom",
@@ -2384,7 +3146,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "INFOCOM Workshops、Demo 和 Poster 与主会正式长文区分；仿真不等同已部署网络。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-infocom.ico",
+      "format": "ico",
+      "source_url": "https://infocom2026.ieee-infocom.org/themes/custom/comsoc/images/favicons/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-mobicom",
@@ -2445,7 +3227,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "主会论文与 Demo、Poster、Workshop 分开；移动应用开发本身不等于研究创新。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-mobicom.ico",
+      "format": "ico",
+      "source_url": "https://sigmobile.org/mobicom/2021/images/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-stoc",
@@ -2505,7 +3307,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "没有实验不表示理论稿质量低；简历中的突破性表述须以定理条件和学界证据核查。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://acm-stoc.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-focs",
@@ -2565,7 +3387,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不能将理论上界、下界或条件性结论直接写成普遍可用的工程性能。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-focs.bin",
+      "format": "bin",
+      "source_url": "https://focs.computer.org/2026/wp-content/uploads/sites/5/2026/03/focs-150x150.gif",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-soda",
@@ -2625,7 +3467,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "SODA 是 ACM-SIAM 联合会议；不把理论复杂度结论和实测性能混为一谈。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-soda.ico",
+      "format": "ico",
+      "source_url": "https://www.siam.org/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-chi",
@@ -2686,7 +3548,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "CHI Papers、Posters、Extended Abstracts、Demo 和 Workshop 需按实际出版记录区分。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-chi.png",
+      "format": "png",
+      "source_url": "https://chi2026.acm.org/wordpress/wp-content/uploads/2025/04/cropped-site_icon-1-1-32x32.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-uist",
@@ -2746,7 +3628,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Demo、Poster、学生创新竞赛与主会论文分别核验；原型视频不能单独证明研究质量。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-uist.ico",
+      "format": "ico",
+      "source_url": "https://uist.acm.org/2026/favicon.ico?v=6b68685b",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-siggraph",
@@ -2808,7 +3710,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "SIGGRAPH 与 SIGGRAPH Asia 分别记录；TOG 发表与会议展示不能重复计算同一论文。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-siggraph.png",
+      "format": "png",
+      "source_url": "https://s2026.siggraph.org/wp-content/uploads/2026/06/cropped-s2026-fav-full-color-32x32.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-icra",
@@ -2868,7 +3790,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "RA-L 等期刊论文可与会议展示关联，应核查正式出版渠道，避免同一成果双算。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-icra.bin",
+      "format": "bin",
+      "source_url": "https://www.ieee-ras.org/wp-content/smush-webp/2025/05/IEEE-RAS-square-150x150.jpg.webp",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-iros",
@@ -2928,7 +3870,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "IROS 与 ICRA 是不同会议；期刊展示、主会论文和附属活动需区分。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-iros.bin",
+      "format": "bin",
+      "source_url": "https://www.ieee-ras.org/wp-content/smush-webp/2025/05/IEEE-RAS-square-150x150.jpg.webp",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-rss",
@@ -2967,7 +3929,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "未列入本次 CCF 目录不等于低质量；RSS 同时是通用技术缩写，匹配须保留会议全称。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-rss.png",
+      "format": "png",
+      "source_url": "https://roboticsconference.org/public/rss2027-favicon.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-acml",
@@ -3027,7 +4009,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "期刊轨道与会议论文分别记录正式出版物；CCF C 类不是固定录用概率。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-acml.ico",
+      "format": "ico",
+      "source_url": "https://www.acml-conf.org/_media/wiki:favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-pakdd",
@@ -3087,7 +4089,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不是 KDD 的附属 Workshop；2026 年目录已调整为 C 类，旧年份等级需另查，不能直接沿用旧表。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-pakdd.png",
+      "format": "png",
+      "source_url": "https://pakdd.org/assets/images/icons/favicons/apple-touch-icon.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-pricai",
@@ -3147,7 +4169,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "以正式论文集确认长文及轨道；当届地点、规模和录用率不作为长期固定属性。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://2026.pricai.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "conf-icpr",
@@ -3207,7 +4249,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "ICPR 与 PRCV 等名称相近会议分别匹配；论文集中的文种和轨道需保留。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-icpr.ico",
+      "format": "ico",
+      "source_url": "https://iapr.org/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-nlpcc",
@@ -3267,7 +4329,27 @@
     "checked_on": "2026-11-14",
     "notes": [
       "共享评测论文、获奖和主会长文分别记录；NLPCC 不等同 ACL 或其 Findings。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": "papers_logo/conf-nlpcc.png",
+      "format": "png",
+      "source_url": "http://tcci.ccf.org.cn/conference/2026/icon.png?icon.320aaefe.png",
+      "status": "downloaded",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "conf-prcv",
@@ -3328,7 +4410,27 @@
     "notes": [
       "中国主办背景不影响其被列入国际推荐目录；旧目录是否收录需另查历史版本。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_applicable",
+      "source_scope": "JIF 仅适用于期刊",
+      "sources": [],
+      "checked_on": "2026-11-14",
+      "notes": "会议不是期刊，Journal Impact Factor 不适用；会议应使用 CCF/CORE、录用率、主会轨道等独立字段。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.prcv.cn/web/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-tpami",
@@ -3390,7 +4492,33 @@
     "notes": [
       "PAMI 是常见简称；期刊级别不证明单篇论文创新性，会议扩展稿也不宜重复计算贡献。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 20.8,
+        "2024": 18.6,
+        "2025": 20.4
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; third-party cross-check",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Pattern Analysis and Machine Intelligence 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/IEEE-T-PATTERN-ANAL",
+          "information": "2023=20.8 is reported in the IEEE title list; 2024=18.6 and 2025=20.4 are cross-checked against public JIF tables and the IEEE page."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2023=20.8 is reported in the IEEE title list; 2024=18.6 and 2025=20.4 are cross-checked against public JIF tables and the IEEE page."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tpami.png",
+      "format": "png",
+      "source_url": "https://ieeecs-media.computer.org/wp-media/2018/04/27230619/cropped-cs-favicon-512x512-32x32.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-ijcv",
@@ -3450,7 +4578,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "与 ICCV 会议不同；IJCV 特刊仍需核对具体文种和同行评审记录。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 9.3,
+        "2025": 10.3
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; publisher and third-party cross-check",
+      "sources": [
+        {
+          "title": "International Journal of Computer Vision 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/INT-J-COMPUT-VISION",
+          "information": "2024=9.3 and 2025=10.3 were publicly reported; 2023 was not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=9.3 and 2025=10.3 were publicly reported; 2023 was not found in an accessible source."
+    },
+    "logo": {
+      "path": "papers_logo/journal-ijcv.ico",
+      "format": "ico",
+      "source_url": "https://link.springer.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-jmlr",
@@ -3510,7 +4664,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不要把 PMLR 收录的会议论文统一写成 JMLR 期刊论文，也不能按旧出版方推断当前出版机制。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 4.3,
+        "2024": 5.2,
+        "2025": null
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; third-party historical table",
+      "sources": [
+        {
+          "title": "Journal of Machine Learning Research 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/J-MACH-LEARN-RES",
+          "information": "2023=4.3 and 2024=5.2; 2025 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2023=4.3 and 2024=5.2; 2025 not found in an accessible source."
+    },
+    "logo": {
+      "path": "papers_logo/journal-jmlr.ico",
+      "format": "ico",
+      "source_url": "https://jmlr.org/img/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-aij",
@@ -3573,7 +4753,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "AI 是高度歧义的缩写，匹配时必须使用完整刊名和出版社；不要与同名学科词直接匹配。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 5.1,
+        "2024": null,
+        "2025": 4.7
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; publisher and third-party cross-check",
+      "sources": [
+        {
+          "title": "Artificial Intelligence 年度影响因子公开资料",
+          "url": "https://shop.elsevier.com/journals/artificial-intelligence/0004-3702",
+          "information": "2023=5.1 and 2025=4.7; 2024 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2023=5.1 and 2025=4.7; 2024 not found in an accessible source."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/artificial-intelligence/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-jair",
@@ -3634,7 +4840,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "ACM 数字图书馆收录或合作不自动等同所有历史卷期均由 ACM 主办；按年份核查。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 4.5,
+        "2024": 4.0,
+        "2025": 4.0
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; third-party cross-check",
+      "sources": [
+        {
+          "title": "Journal of Artificial Intelligence Research 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/J-ARTIF-INTELL-RES",
+          "information": "Public JIF tables report 2023=4.5, 2024=4.0 and 2025=4.0; Clarivate access was not direct."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public JIF tables report 2023=4.5, 2024=4.0 and 2025=4.0; Clarivate access was not direct."
+    },
+    "logo": {
+      "path": "papers_logo/journal-jair.png",
+      "format": "png",
+      "source_url": "https://jair.org/public/journals/1/favicon_en_US.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tnnls",
@@ -3695,7 +4927,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "曾用名可辅助检索，但旧文应保留当时正式刊名；JCR 分区不与 CCF B 类互换。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 10.4,
+        "2024": 8.9,
+        "2025": 9.7
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; IEEE title list and public cross-check",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Neural Networks and Learning Systems 年度影响因子公开资料",
+          "url": "https://open.ieee.org/wp-content/uploads/IEEE-Title-List-August-2024.pdf",
+          "information": "IEEE/public tables report 2023=10.4, 2024=8.9 and 2025=9.7; release-year conventions are recorded as data years."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "IEEE/public tables report 2023=10.4, 2024=8.9 and 2025=9.7; release-year conventions are recorded as data years."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://cis.ieee.org/publications/t-neural-networks-and-learning-systems",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-tmlr",
@@ -3733,7 +4991,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "OpenReview 页面不是录用凭证；TMLR、JMLR 与 PMLR 为不同系列，须分别匹配。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JIF not assigned",
+      "sources": [
+        {
+          "title": "Transactions on Machine Learning Research 年度影响因子公开资料",
+          "url": "https://casrai.org/guides/transactions-on-machine-learning-research",
+          "information": "TMLR is not in Web of Science Core Collection and has no formal Clarivate JIF."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "TMLR is not in Web of Science Core Collection and has no formal Clarivate JIF."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tmlr.ico",
+      "format": "ico",
+      "source_url": "https://jmlr.org/img/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tacl",
@@ -3793,7 +5077,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "TACL 论文在 ACL 或 EMNLP 展示，不自动转成该会议主会论文，也不应重复计数。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 4.2,
+        "2024": 6.9,
+        "2025": 11.7
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; public historical table",
+      "sources": [
+        {
+          "title": "Transactions of the Association for Computational Linguistics 年度影响因子公开资料",
+          "url": "https://dizin.docent.com.tr/en/dergiler/2307387X",
+          "information": "Public JIF table reports 2023=4.2, 2024=6.9 and 2025=11.7."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public JIF table reports 2023=4.2, 2024=6.9 and 2025=11.7."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tacl.ico",
+      "format": "ico",
+      "source_url": "https://transacl.org/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-cl",
@@ -3853,7 +5163,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "CL 缩写易歧义；不要与 COLING 会议混淆，投稿系统可用状态也不代表期刊是否继续出版。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 3.7,
+        "2024": 5.3,
+        "2025": 13.4
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; publisher/association announcement",
+      "sources": [
+        {
+          "title": "Computational Linguistics 年度影响因子公开资料",
+          "url": "https://submissions.cljournal.org/index.php/cljournal",
+          "information": "Association and publisher pages report the sequence 2023=3.7, 2024=5.3 and 2025=13.4."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Association and publisher pages report the sequence 2023=3.7, 2024=5.3 and 2025=13.4."
+    },
+    "logo": {
+      "path": "papers_logo/journal-cl.bin",
+      "format": "bin",
+      "source_url": "https://submissions.cljournal.org/favicon.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-pr",
@@ -3913,7 +5249,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "PR 是通用缩写，须用完整刊名匹配；Pattern Recognition Letters 是另一刊物。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 7.5,
+        "2024": null,
+        "2025": 9.1
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; public historical table",
+      "sources": [
+        {
+          "title": "Pattern Recognition 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/PATTERN-RECOGN",
+          "information": "2023=7.5 and 2025=9.1; 2024 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2023=7.5 and 2025=9.1; 2024 not found in an accessible source."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/pattern-recognition/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-nn",
@@ -3973,7 +5335,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不要与 TNNLS 或 Neural Computation 混淆；学会关联不代表单篇成果获得学会认可或奖励。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 6.3,
+        "2025": 7.2
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; publisher and public cross-check",
+      "sources": [
+        {
+          "title": "Neural Networks 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/NEURAL-NETWORKS",
+          "information": "2024=6.3 and 2025=7.2; 2023 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=6.3 and 2025=7.2; 2023 not found in an accessible source."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/neural-networks/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-eswa",
@@ -4034,7 +5422,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Expert Systems、Intelligent Systems with Applications 与本刊不是同一刊物，避免近名误配。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 7.5,
+        "2024": null,
+        "2025": 9.4
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; public historical table",
+      "sources": [
+        {
+          "title": "Expert Systems with Applications 年度影响因子公开资料",
+          "url": "https://www.bioxbio.com/journal/EXPERT-SYST-APPL",
+          "information": "2023=7.5 and 2025=9.4; 2024 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2023=7.5 and 2025=9.4; 2024 not found in an accessible source."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/expert-systems-with-applications/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-kbs",
@@ -4094,7 +5508,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "KBS 的 CCF 标签不是 JCR 分区；没有直接核验的分区、影响因子应保持空值。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 7.2,
+        "2024": 7.6,
+        "2025": 8.0
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; publisher and public cross-check",
+      "sources": [
+        {
+          "title": "Knowledge-Based Systems 年度影响因子公开资料",
+          "url": "https://www.iit.comillas.edu/publicacion/info_revista/en/783/Knowledge-Based_Systems",
+          "information": "Public JIF tables report 2023=7.2, 2024=7.6 and 2025=8.0."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public JIF tables report 2023=7.2, 2024=7.6 and 2025=8.0."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/knowledge-based-systems/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-ins",
@@ -4155,7 +5595,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不是 SAGE 的 Journal of Information Science；INS 缩写与 Information Systems 也须消歧。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 6.8,
+        "2025": 6.0
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; publisher and public cross-check",
+      "sources": [
+        {
+          "title": "Information Sciences 年度影响因子公开资料",
+          "url": "https://www.iit.comillas.edu/publicacion/info_revista/en/661/Information_Sciences",
+          "information": "2024=6.8 and 2025=6.0; 2023 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=6.8 and 2025=6.0; 2023 not found in an accessible source."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/information-sciences/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-tkde",
@@ -4217,7 +5683,33 @@
     "notes": [
       "不要把任何使用数据的 AI 稿都视为符合 TKDE 范围；会议扩展稿需核查新增内容。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 10.4,
+        "2025": 11.6
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; IEEE/public cross-check",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Knowledge and Data Engineering 年度影响因子公开资料",
+          "url": "https://www.computer.org/csdl/journal/tk",
+          "information": "2024=10.4 and 2025=11.6; 2023 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=10.4 and 2025=11.6; 2023 not found in an accessible source."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tkde.png",
+      "format": "png",
+      "source_url": "https://ieeecs-media.computer.org/wp-media/2018/04/27230619/cropped-cs-favicon-512x512-32x32.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tois",
@@ -4279,7 +5771,33 @@
     "notes": [
       "不等同 Information Systems 或管理学信息系统期刊；本次介绍部分采用出版说明的可靠转引。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 5.4,
+        "2024": 9.1,
+        "2025": 11.2
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; public historical table",
+      "sources": [
+        {
+          "title": "ACM Transactions on Information Systems 年度影响因子公开资料",
+          "url": "https://www.sci365.cn/journals/acm-transactions-on-information-systems-10468188/",
+          "information": "Public JIF table reports 2023=5.4, 2024=9.1 and 2025=11.2."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public JIF table reports 2023=5.4, 2024=9.1 and 2025=11.2."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://tois.acm.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-tse",
@@ -4341,7 +5859,33 @@
     "notes": [
       "期刊发表不能直接证明作者独立开发全部系统；个人贡献需结合署名和贡献声明核验。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 6.5,
+        "2024": 5.6,
+        "2025": 6.0
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; IEEE/public cross-check",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Software Engineering 年度影响因子公开资料",
+          "url": "https://open.ieee.org/wp-content/uploads/IEEE-Title-List-August-2024.pdf",
+          "information": "Public tables report 2023=6.5, 2024=5.6 and 2025=6.0."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public tables report 2023=6.5, 2024=5.6 and 2025=6.0."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tse.png",
+      "format": "png",
+      "source_url": "https://ieeecs-media.computer.org/wp-media/2018/04/27230619/cropped-cs-favicon-512x512-32x32.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tosem",
@@ -4402,7 +5946,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "TOSEM 与 FSE/PACMSE 并非同一出版物；本次范围介绍部分依据高校保存的出版说明转引。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 6.6,
+        "2024": 6.2,
+        "2025": 6.9
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; ACM/public cross-check",
+      "sources": [
+        {
+          "title": "ACM Transactions on Software Engineering and Methodology 年度影响因子公开资料",
+          "url": "https://www.acm.org/binaries/content/assets/press-releases/2024/july/news-release_impact_factors_2024_final.pdf",
+          "information": "ACM/public tables report 2023=6.6, 2024=6.2 and 2025=6.9."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "ACM/public tables report 2023=6.6, 2024=6.2 and 2025=6.9."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://tosem.acm.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-tdsc",
@@ -4464,7 +6034,33 @@
     "notes": [
       "与 IEEE Security & Privacy 杂志、IEEE S&P 会议不同；相近主题不能替代刊物身份核验。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 7.0,
+        "2024": 7.5,
+        "2025": 6.8
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; public historical table",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Dependable and Secure Computing 年度影响因子公开资料",
+          "url": "https://panorama.upv.es/es/ipublic/source/14404",
+          "information": "Public table reports 2023=7.0, 2024=7.5 and 2025=6.8."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public table reports 2023=7.0, 2024=7.5 and 2025=6.8."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tdsc.png",
+      "format": "png",
+      "source_url": "https://ieeecs-media.computer.org/wp-media/2018/04/27230619/cropped-cs-favicon-512x512-32x32.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tifs",
@@ -4525,7 +6121,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "高检测准确率不自动意味着真实环境可靠；生物识别与隐私相关实验需结合具体研究条件解释。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 8.0,
+        "2025": 8.7
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; IEEE/public cross-check",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Information Forensics and Security 年度影响因子公开资料",
+          "url": "https://signalprocessingsociety.org/publications-resources/ieee-transactions-information-forensics-and-security/about-transactions",
+          "information": "2024=8.0 and 2025=8.7; 2023 not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=8.0 and 2025=8.7; 2023 not found in an accessible source."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tifs.ico",
+      "format": "ico",
+      "source_url": "https://signalprocessingsociety.org/themes/custom/sps_bootstrap/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tmc",
@@ -4587,7 +6209,33 @@
     "notes": [
       "不要把手机上运行的普通算法直接等同移动计算研究；纯仿真、原型和部署分别记录。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 6.5,
+        "2025": null
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; IEEE title list",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Mobile Computing 年度影响因子公开资料",
+          "url": "https://open.ieee.org/wp-content/uploads/IEEE-Title-List-August-2024.pdf",
+          "information": "2024=6.5 is present in the IEEE title list; adjacent years were not found in an accessible source."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=6.5 is present in the IEEE title list; adjacent years were not found in an accessible source."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tmc.png",
+      "format": "png",
+      "source_url": "https://ieeecs-media.computer.org/wp-media/2018/04/27230619/cropped-cs-favicon-512x512-32x32.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tnet",
@@ -4649,7 +6297,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "旧刊名作为历史别名；当前官网明确不收以文献分类总结为主要贡献的综述或教程稿。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JIF not verified",
+      "sources": [
+        {
+          "title": "IEEE Transactions on Networking 年度影响因子公开资料",
+          "url": "https://www.comsoc.org/publications/journals/ieee-tnet",
+          "information": "No accessible year-specific JIF values found."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "No accessible year-specific JIF values found."
+    },
+    "logo": {
+      "path": "papers_logo/journal-tnet.ico",
+      "format": "ico",
+      "source_url": "https://www.comsoc.org/themes/custom/betterment/images/favicons/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tog",
@@ -4712,7 +6386,33 @@
     "notes": [
       "TOG 与 SIGGRAPH 关系需以具体论文记录核验；本次部分范围信息来自学术机构转引。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JIF not verified",
+      "sources": [
+        {
+          "title": "ACM Transactions on Graphics 年度影响因子公开资料",
+          "url": "https://dl.acm.org/journal/tog",
+          "information": "No accessible year-specific JIF values found."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "No accessible year-specific JIF values found."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://tog.acm.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-access",
@@ -4750,7 +6450,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "APC、审稿速度、发文量与质量分别记录；不将收费或开放获取自动解释为低门槛。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 3.4,
+        "2025": 4.2
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; IEEE title list and publisher",
+      "sources": [
+        {
+          "title": "IEEE Access 年度影响因子公开资料",
+          "url": "https://ieeeaccess.ieee.org/about/bibliometrics/",
+          "information": "2024=3.4 from IEEE title list and 2025=4.2 from the publisher page; 2023 not found."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=3.4 from IEEE title list and 2025=4.2 from the publisher page; 2023 not found."
+    },
+    "logo": {
+      "path": "papers_logo/journal-access.png",
+      "format": "png",
+      "source_url": "https://ieeeaccess.ieee.org/wp-content/uploads/2025/08/ieee_apple_favicon_57x57.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-cjc",
@@ -4808,7 +6534,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "T1 属于国内高质量期刊目录，不等同国际 CCF A；正刊、增刊和网络首发按记录核验。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "国内期刊影响因子未核验",
+      "sources": [
+        {
+          "title": "计算机学报 年度影响因子公开资料",
+          "url": "https://cjc.ict.ac.cn/",
+          "information": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "http://cjc.ict.ac.cn/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-jos",
@@ -4866,7 +6618,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Journal of Software 同名或近名刊物较多，须核对 jos.org.cn、主办方和中文刊名。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "国内期刊影响因子未核验",
+      "sources": [
+        {
+          "title": "软件学报 年度影响因子公开资料",
+          "url": "https://www.jos.org.cn/",
+          "information": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-jos.ico",
+      "format": "ico",
+      "source_url": "https://www.jos.org.cn/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-crad",
@@ -4924,7 +6702,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "与计算机学报是不同刊物；预出版可引用 DOI，但应保留未定卷期的状态信息。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "国内期刊影响因子未核验",
+      "sources": [
+        {
+          "title": "计算机研究与发展 年度影响因子公开资料",
+          "url": "https://crad.ict.ac.cn/",
+          "information": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-crad.ico",
+      "format": "ico",
+      "source_url": "https://crad.ict.ac.cn/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-aas",
@@ -4983,7 +6787,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "自动化学报与 IEEE/CAA Journal of Automatica Sinica 是不同期刊，不互相继承等级。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "国内期刊影响因子未核验",
+      "sources": [
+        {
+          "title": "自动化学报 年度影响因子公开资料",
+          "url": "https://www.aas.net.cn/",
+          "information": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.aas.net.cn/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-ejournal",
@@ -5041,7 +6871,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "中文《电子学报》与 Chinese Journal of Electronics 英文刊分别匹配，不能按译名直接合并。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "国内期刊影响因子未核验",
+      "sources": [
+        {
+          "title": "电子学报 年度影响因子公开资料",
+          "url": "https://www.ejournal.org.cn/",
+          "information": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.ejournal.org.cn/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-cs",
@@ -5099,7 +6955,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "T2 与旧中文 A/B/C 推荐表及国际 CCF A/B/C 是不同体系；正刊与增刊需区分。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": 1.475
+      },
+      "status": "partial",
+      "source_scope": "国内期刊影响因子（平台版）",
+      "sources": [
+        {
+          "title": "计算机科学 年度影响因子公开资料",
+          "url": "https://www.cqvip.com/journal/92817X/92817X",
+          "information": "维普页面公开 2025 版影响因子 1.475；其口径不是 Clarivate JIF，历史值未核验。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "维普页面公开 2025 版影响因子 1.475；其口径不是 Clarivate JIF，历史值未核验。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-cs.ico",
+      "format": "ico",
+      "source_url": "https://www.jsjkx.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-ce",
@@ -5157,7 +7039,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不是《计算机工程与应用》或《计算机工程与科学》；近名刊物必须分别保存。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": 1.913
+      },
+      "status": "partial",
+      "source_scope": "国内期刊影响因子（平台版）",
+      "sources": [
+        {
+          "title": "计算机工程 年度影响因子公开资料",
+          "url": "https://www.cqvip.com/journal/95200X/95200X",
+          "information": "维普页面公开 2025 版影响因子 1.913；其口径不是 Clarivate JIF，历史值未核验。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "维普页面公开 2025 版影响因子 1.913；其口径不是 Clarivate JIF，历史值未核验。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-ce.ico",
+      "format": "ico",
+      "source_url": "https://www.ecice06.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-cea",
@@ -5215,7 +7123,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "与其他含“计算机工程”的刊物不同；本次部分简介由国家科技期刊平台提供。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": 2.6269,
+        "2025": null
+      },
+      "status": "partial",
+      "source_scope": "国内期刊影响因子（平台版）",
+      "sources": [
+        {
+          "title": "计算机工程与应用 年度影响因子公开资料",
+          "url": "https://www.cqvip.com/journal/search?code=s_122105%26s_122186",
+          "information": "维普页面公开 2024 版影响因子 2.6269；其口径不是 Clarivate JIF。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "维普页面公开 2024 版影响因子 2.6269；其口径不是 Clarivate JIF。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://cea.ceaj.org/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-jcip",
@@ -5273,7 +7207,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "中文信息学报与 NLPCC 会议不同；简介的补充信息使用期刊书目平台转引，分级来自 CCF。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "国内期刊影响因子（非 Clarivate JIF）",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "国内期刊影响因子未核验",
+      "sources": [
+        {
+          "title": "中文信息学报 年度影响因子公开资料",
+          "url": "https://jcip.cipsc.org.cn/",
+          "information": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的逐年公开指标；不要与 JCR JIF 混用。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://jcip.cipsc.org.cn/",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-scis",
@@ -5335,7 +7295,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "本条使用英文刊的 CCF 国际等级；中文刊分级不自动套用，也不按当前等级倒推历史。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JCR/JIF not verified",
+      "sources": [
+        {
+          "title": "Science China Information Sciences 年度影响因子公开资料",
+          "url": "https://link.springer.com/journal/11432/aims-and-scope",
+          "information": "未找到可直接核验的三年 JIF 数值。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的三年 JIF 数值。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-scis.ico",
+      "format": "ico",
+      "source_url": "https://link.springer.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-tst",
@@ -5373,7 +7359,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "TST 是常见缩写但不充分消歧；官网的年度指标与审稿时长应另按年份更新。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JCR/JIF not verified",
+      "sources": [
+        {
+          "title": "Tsinghua Science and Technology 年度影响因子公开资料",
+          "url": "https://www.sciopen.com/journal/1007-0214",
+          "information": "未找到可直接核验的三年 JIF 数值。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的三年 JIF 数值。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-tst.ico",
+      "format": "ico",
+      "source_url": "https://www.sciopen.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-fcs",
@@ -5451,7 +7463,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "B 与 T1 来自独立目录，不具有等效关系；勿与名称含 Frontiers 的其他刊物混淆。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JCR/JIF not verified",
+      "sources": [
+        {
+          "title": "Frontiers of Computer Science 年度影响因子公开资料",
+          "url": "https://link.springer.com/journal/11704/aims-and-scope",
+          "information": "未找到可直接核验的三年 JIF 数值。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的三年 JIF 数值。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-fcs.ico",
+      "format": "ico",
+      "source_url": "https://link.springer.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-mir",
@@ -5492,7 +7530,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "刊名变更不证明历史指标可沿用；MIR 也可指其他期刊或技术，须结合全称消歧。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JCR/JIF not verified",
+      "sources": [
+        {
+          "title": "Machine Intelligence Research 年度影响因子公开资料",
+          "url": "https://link.springer.com/journal/11633/aims-and-scope",
+          "information": "未找到可直接核验的三年 JIF 数值。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的三年 JIF 数值。"
+    },
+    "logo": {
+      "path": "papers_logo/journal-mir.ico",
+      "format": "ico",
+      "source_url": "https://link.springer.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-nature",
@@ -5538,7 +7602,33 @@
     "notes": [
       "本次未直接核验年度 JCR 或历史中科院分区，相关字段留空；不是所有 Nature 系列期刊的统称。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 50.5,
+        "2025": null
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; public historical cross-check",
+      "sources": [
+        {
+          "title": "Nature 年度影响因子公开资料",
+          "url": "https://www.nature.com/nature/journal-information",
+          "information": "2024=50.5 reported in public JCR tables; 2023 and 2025 were not accessible in this run."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=50.5 reported in public JCR tables; 2023 and 2025 were not accessible in this run."
+    },
+    "logo": {
+      "path": "papers_logo/journal-nature.bin",
+      "format": "bin",
+      "source_url": "https://www.nature.com/favicon.png",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-science",
@@ -5583,7 +7673,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "Science Advances、Science Robotics 等为独立期刊；本次未直接核验年度 JCR 分区或影响因子。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 45.8,
+        "2025": null
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; AAAS/public cross-check",
+      "sources": [
+        {
+          "title": "Science 年度影响因子公开资料",
+          "url": "https://www.science.org/content/page/science-journals-editorial-policies",
+          "information": "2024=45.8 reported in public tables; 2023 and 2025 were not accessible in this run."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=45.8 reported in public tables; 2023 and 2025 were not accessible in this run."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.science.org/content/page/science-journals-editorial-policies",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-pnas",
@@ -5622,7 +7738,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "PNAS 与 PNAS Nexus 不同；发表本刊不表示作者为美国国家科学院成员或获其个人认证。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": null,
+        "2025": null
+      },
+      "status": "not_found",
+      "source_scope": "JCR/JIF not verified",
+      "sources": [
+        {
+          "title": "Proceedings of the National Academy of Sciences of the United States of America 年度影响因子公开资料",
+          "url": "https://www.pnas.org/about",
+          "information": "未找到可直接核验的三年 JIF 数值。"
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "未找到可直接核验的三年 JIF 数值。"
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.pnas.org/about",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-ncomms",
@@ -5662,7 +7804,33 @@
     "notes": [
       "与 Nature 本刊及 Communications 系列其他刊物分别匹配；年度分区与指标本次留空。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 15.7,
+        "2025": 18.1
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; Nature publisher",
+      "sources": [
+        {
+          "title": "Nature Communications 年度影响因子公开资料",
+          "url": "https://www.nature.com/ncomms/",
+          "information": "Nature publisher/public JCR tables report 2024=15.7 and 2025=18.1; 2023 not found."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Nature publisher/public JCR tables report 2024=15.7 and 2025=18.1; 2023 not found."
+    },
+    "logo": {
+      "path": "papers_logo/journal-ncomms.ico",
+      "format": "ico",
+      "source_url": "https://www.nature.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-sciadv",
@@ -5708,7 +7876,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "不是 Science 本刊；本次补充简介采用发行平台转引，JCR 分区和年度影响因子未直接核验。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 12.5,
+        "2025": null
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; AAAS/public cross-check",
+      "sources": [
+        {
+          "title": "Science Advances 年度影响因子公开资料",
+          "url": "https://www.science.org/journal/sciadv",
+          "information": "2024=12.5 reported in public tables; adjacent years were not accessible."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "2024=12.5 reported in public tables; adjacent years were not accessible."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.science.org/journal/sciadv",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-srep",
@@ -5756,7 +7950,33 @@
     "notes": [
       "不能等同 Nature 本刊，也不能称为无需创新或必然容易录用；年度指标需另查来源与年份。",
       "部分范围或背景信息来自检索缓存，已在 sources 标明；需作最终投稿决策时复核官网。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 3.8,
+        "2024": 3.9,
+        "2025": 4.9
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; Nature publisher/public cross-check",
+      "sources": [
+        {
+          "title": "Scientific Reports 年度影响因子公开资料",
+          "url": "https://www.nature.com/srep/",
+          "information": "Public JIF tables report 2023=3.8, 2024=3.9 and 2025=4.9."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public JIF tables report 2023=3.8, 2024=3.9 and 2025=4.9."
+    },
+    "logo": {
+      "path": "papers_logo/journal-srep.ico",
+      "format": "ico",
+      "source_url": "https://www.nature.com/favicon.ico",
+      "status": "fallback_favicon",
+      "notes": "从官方站点页面图标或官方域名 favicon 获取。"
+    }
   },
   {
     "id": "journal-nsr",
@@ -5794,7 +8014,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "NSR 缩写可能歧义；完整刊名、出版社及文种需同时核验，年度 JCR 等数据本次留空。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": null,
+        "2024": 17.1,
+        "2025": 18.1
+      },
+      "status": "partial",
+      "source_scope": "JCR/JIF; Oxford Academic",
+      "sources": [
+        {
+          "title": "National Science Review 年度影响因子公开资料",
+          "url": "https://academic.oup.com/nsr/pages/About",
+          "information": "Oxford page reports 2025=18.1; public JCR table reports 2024=17.1; 2023 not found."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Oxford page reports 2025=18.1; public JCR table reports 2024=17.1; 2023 not found."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://academic.oup.com/nsr/pages/About",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   },
   {
     "id": "journal-scibull",
@@ -5834,7 +8080,33 @@
     "checked_on": "2026-11-14",
     "notes": [
       "中文《科学通报》与本英文刊分别记录；旧名用于历史检索，不自动继承不同年代的分区。"
-    ]
+    ],
+    "impact_factor": {
+      "metric": "Journal Impact Factor (JIF)",
+      "years": {
+        "2023": 18.8,
+        "2024": 21.1,
+        "2025": 20.7
+      },
+      "status": "verified",
+      "source_scope": "JCR/JIF; public cross-check",
+      "sources": [
+        {
+          "title": "Science Bulletin 年度影响因子公开资料",
+          "url": "https://shop.elsevier.com/journals/science-bulletin/2095-9273",
+          "information": "Public JCR tables report 2023=18.8, 2024=21.1 and 2025=20.7."
+        }
+      ],
+      "checked_on": "2026-11-14",
+      "notes": "Public JCR tables report 2023=18.8, 2024=21.1 and 2025=20.7."
+    },
+    "logo": {
+      "path": null,
+      "format": null,
+      "source_url": "https://www.sciencedirect.com/journal/science-bulletin/about/aims-and-scope",
+      "status": "not_found",
+      "notes": "本次抓取未找到可下载的官方图标。"
+    }
   }
 ]
 ```

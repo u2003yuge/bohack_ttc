@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowUpRight, BookOpen, Check, Search, Trophy, X } from "lucide-react";
 import { competitionSearchText } from "../shared/competitions";
+import { competitionLogoAsset, competitionLogoLabels } from "../shared/competition-assets";
+import type { CompetitionProfile } from "../shared/competitions";
 import { findKnowledgeMatch, type KnowledgeRecord } from "../shared/knowledge";
 import type { Resume } from "./types";
 import "./competition-library.css";
@@ -13,6 +15,18 @@ type Props = {
   onReview: (id: string) => void;
   onSelectEvidence: (resumeId: string, evidence: string) => void;
 };
+
+function CompetitionLogo({ profile, large = false }: { profile?: CompetitionProfile; large?: boolean }) {
+  const asset = competitionLogoAsset(profile);
+  const src = asset?.status === "ready" ? asset.displayPath : null;
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [src]);
+  const label = asset?.displayKind ? competitionLogoLabels[asset.displayKind] : "竞赛图标";
+  return <span className={`competition-logo ${large ? "competition-logo-large" : ""}`}>
+    {src && !failed ? <img src={src} alt={`${profile?.name} · ${label}`} loading={large ? "eager" : "lazy"} onError={() => setFailed(true)} />
+      : <Trophy aria-label="默认竞赛图标" size={large ? 28 : 19} />}
+  </span>;
+}
 
 export function CompetitionLibrary({ records, resumes, initialId, onClose, onReview, onSelectEvidence }: Props) {
   const [query, setQuery] = useState("");
@@ -35,6 +49,7 @@ export function CompetitionLibrary({ records, resumes, initialId, onClose, onRev
   }, [records, query, field, year, linkedOnly, references]);
   const selected = filtered.find((record) => record.id === selectedId) ?? filtered[0];
   const profile = selected?.competition;
+  const selectedLogo = competitionLogoAsset(profile);
   const catalogCount = records.filter((record) => record.competition).length;
   const clearFilters = () => { setQuery(""); setField(""); setYear(""); setLinkedOnly(false); };
 
@@ -62,14 +77,15 @@ export function CompetitionLibrary({ records, resumes, initialId, onClose, onRev
       <aside className="competition-list" aria-label="竞赛列表">
         <div className="competition-list-heading"><span>全部竞赛 <b>{filtered.length}</b><small> / {records.length}</small></span>{(query || field || year || linkedOnly) && <button onClick={clearFilters}>清除筛选</button>}</div>
         <div className="competition-items">{filtered.map((record) => <button key={record.id} className={`competition-item ${record.id === selected?.id ? "selected" : ""}`} onClick={() => setSelectedId(record.id)} aria-pressed={record.id === selected?.id}>
-          <span className="competition-item-top"><small>{record.field || "领域待补充"}</small><ArrowUpRight size={14} /></span><strong>{record.title}</strong><span>{record.summary || "暂无简介"}</span>
+          <span className="competition-item-top"><small>{record.field || "领域待补充"}</small><ArrowUpRight size={14} /></span><div className="competition-card-title"><CompetitionLogo profile={record.competition} /><strong>{record.title}</strong></div><span>{record.summary || "暂无简介"}</span>
           <footer><small>{record.origin ? "自动整理" : record.competition ? `${record.competition.report_year} 目录` : "原有资料"}</small><small>{record.evidenceSources?.length ?? 0} 个来源{references.get(record.id)?.length ? ` · ${references.get(record.id)!.length} 份简历引用` : ""}</small></footer>
         </button>)}{!filtered.length && <div className="competition-empty"><Search size={24} /><strong>没有找到相关竞赛</strong><p>试试其他关键词或清除筛选条件。</p><button onClick={clearFilters}>清除筛选</button></div>}</div>
       </aside>
       <article className="competition-detail" aria-label="竞赛详细资料" key={selected?.id ?? "empty"}>
         {selected ? <>
           <div className="competition-detail-top"><span><Trophy size={14} />{selected.field || "竞赛资料"}</span><small>{selected.reviewHistory?.length ? `人工评估 ${selected.significanceScore} 分` : "待人工评估"}</small></div>
-          <h2>{selected.title}</h2><p className="competition-intro">{selected.summary}</p>
+          <div className="competition-identity"><CompetitionLogo profile={profile} large /><div><h2>{selected.title}</h2><span>{selectedLogo?.status === "ready" && selectedLogo.displayKind ? competitionLogoLabels[selectedLogo.displayKind] : "默认竞赛图标"}</span></div></div><p className="competition-intro">{selected.summary}</p>
+          {selectedLogo && <details className="competition-logo-provenance"><summary>图标来源与对应说明</summary><p>{selectedLogo.notes}</p>{selectedLogo.sourceUrl && <a href={selectedLogo.sourceUrl} target="_blank" rel="noreferrer">查看原图片来源<ArrowUpRight size={12} /></a>}<p>按原始赛事 ID {profile?.id}、名称及目录官网对应；网站、机构和平台图标不等同于赛事专属赛徽，也不改变人工核验状态。</p></details>}
           <dl className="competition-facts"><div><dt>主办方</dt><dd>{selected.organizer || "待补充"}</dd></div><div><dt>赛事官网</dt><dd>{selected.officialUrl ? <a href={selected.officialUrl} target="_blank" rel="noreferrer">访问官方网站<ArrowUpRight size={13} /></a> : "暂无可确认的官网"}</dd></div>{profile && <div><dt>资料出处</dt><dd>{selected.origin ? "自动整理赛事资料" : "已整理赛事目录"} · {selected.origin ? selected.origin.collectedAt.slice(0, 10) : profile.report_year}</dd></div>}</dl>
           <section className="competition-copy"><h3>赛事介绍</h3><p>{profile?.info || selected.summary || "详细介绍待补充。"}</p></section>
           <div className="competition-dimensions"><section><span>INFLUENCE</span><h3>赛事影响力</h3><p>{profile?.influence || "暂无专项资料，需结合来源核实。"}</p></section><section><span>DIFFICULTY</span><h3>参赛难度</h3><p>{profile?.difficulty || "暂无专项资料，需结合具体届次与赛项判断。"}</p></section></div>

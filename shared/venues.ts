@@ -26,10 +26,13 @@ export function mergeVenueCatalog(seeds: KnowledgeRecord[]): KnowledgeRecord[] {
       significanceScore: existing?.significanceScore ?? 50,
       scoreRationale: existing?.scoreRationale ?? "已整理发表渠道背景，尚无人工评分。应结合论文、年份、轨道及个人贡献评估。",
       verificationStatus: existing?.verificationStatus ?? "示例资料，待核验", updatedAt: existing?.updatedAt ?? "",
-      evidenceSources: venue.sources.map((source, index) => ({
-        id: `${id}-source-${index + 1}`, title: source.title, url: source.url, sourceType: "other", dataYear: "",
+      evidenceSources: [...venue.sources.map((source, index) => ({
+        id: `${id}-source-${index + 1}`, title: source.title, url: source.url, sourceType: "other" as const, dataYear: "",
         verified: false, checkedAt: "", note: `${source.source_type} · ${source.access}；整理日期 ${venue.checked_on}。${source.information}`,
-      })), venue,
+      })), ...(venue.impact_factor?.sources ?? []).filter((source) => !venue.sources.some((entry) => entry.url === source.url)).map((source, index) => ({
+        id: `${id}-metric-source-${index + 1}`, title: source.title, url: source.url, sourceType: "other" as const, dataYear: "",
+        verified: false, checkedAt: "", note: `年度指标资料 · ${venue.impact_factor!.metric} · 整理日期 ${venue.impact_factor!.checked_on}。${source.information}`,
+      }))], venue,
     };
   });
   return [...records, ...seeds.filter((record) => !mergedIds.has(record.id))];
@@ -41,6 +44,8 @@ export function venueSearchText(record: KnowledgeRecord): string {
     venue?.influence, venue?.difficulty, venue?.ranking_note, ...(venue?.notes ?? []),
     ...(venue?.rankings ?? []).flatMap((ranking) => [ranking.system, ranking.edition, ranking.category, ranking.rank, ranking.applies_to]),
     ...(venue?.sources ?? []).flatMap((source) => [source.title, source.information]),
+    venue?.impact_factor?.metric, venue?.impact_factor?.source_scope, venue?.impact_factor?.notes,
+    ...(venue?.impact_factor?.sources ?? []).flatMap((source) => [source.title, source.information]),
   ].filter(Boolean).join(" ").normalize("NFKC").toLocaleLowerCase();
 }
 
