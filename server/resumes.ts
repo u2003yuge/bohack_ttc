@@ -614,6 +614,7 @@ router.post("/:id/agents/run", async (request, response, next) => {
         nextRecord.analysisError = "";
         nextRecord.analyzedAt = new Date().toISOString();
       }
+      nextRecord.analysisDebug = run.debug;
       if (run.executed.includes("score-calculation")) {
         const assessment = run.outputs["score-calculation"] as Assessment;
         nextRecord.assessment = assessment;
@@ -686,10 +687,10 @@ router.post("/:id/analyze", async (request, response, next) => {
         requested: [...resumeAnalysisAgentIds],
         artifacts: record.agentArtifacts,
         signal,
-        onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output }) => {
+        onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {
           if (section) {
             markdown.push(section);
-            emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total });
+            emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total, timing });
           }
           emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
         },
@@ -700,6 +701,7 @@ router.post("/:id/analyze", async (request, response, next) => {
       const assessment = run.outputs["score-calculation"] as Assessment;
       const updated = await saveAssessment(record.id, assessment, answer, signal);
       const saved = { ...updated, agentArtifacts: run.artifacts };
+      saved.analysisDebug = run.debug;
       await writeRecord(saved, signal);
       return {
         answer,
@@ -708,6 +710,7 @@ router.post("/:id/analyze", async (request, response, next) => {
         resume: saved,
         researchSources: report?.researchSources,
         researchStatus: report?.researchStatus,
+        debug: run.debug,
       };
     });
   } catch (error) {

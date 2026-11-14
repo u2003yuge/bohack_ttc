@@ -1312,6 +1312,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
   const [analysisElapsed, setAnalysisElapsed] = useState(0);
+  const [analysisDebug, setAnalysisDebug] = useState<AnalysisResult["debug"]>(null);
   const [health, setHealth] = useState<AgentHealth | null>(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [importError, setImportError] = useState("");
@@ -1527,8 +1528,10 @@ export default function App() {
     setAnswer("");
     setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });
     setAnalysisElapsed(0);
+    setAnalysisDebug(null);
     const applyResult = (result: AnalysisResult) => {
       setAnswer(result.answer);
+      if (result.debug) setAnalysisDebug(result.debug);
       if (result.resume) setResumes((current) => current.map((resume) => resume.id === target.id ? result.resume! : resume));
       else if (result.assessment) setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: result.assessment, assessmentHistory: [...(resume.assessmentHistory ?? []), { reason: "review", assessment: result.assessment! }], analysisReport: result.answer } : resume));
     };
@@ -1551,7 +1554,10 @@ export default function App() {
         await readAnalysisEvents(response, (event: AnalysisEvent) => {
           if (requestId !== analysisRequest.current) return;
           if (event.type === "progress") setAnalysisProgress(event.progress);
-          if (event.type === "agent" && event.markdown) setAnswer((current) => `${current}${current ? "\n\n" : ""}${event.markdown}`);
+          if (event.type === "agent") {
+            if (event.timing) setAnalysisDebug((current) => ({ totalDurationMs: current?.totalDurationMs ?? 0, maxParallel: Math.max(current?.maxParallel ?? 1, event.timing!.parallelWith.length + 1), timings: [...(current?.timings ?? []).filter((item) => item.id !== event.timing!.id), event.timing!] }));
+            if (event.markdown) setAnswer((current) => `${current}${current ? "\n\n" : ""}${event.markdown}`);
+          }
           if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
           if (event.type === "complete") applyResult(event);
         });

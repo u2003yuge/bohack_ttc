@@ -62,10 +62,10 @@ app.post("/api/agent", async (request, response) => {
       context: { resumeText, fileName: resumeName || "未命名简历", roleRequirements, question, includeResearch: false, webResearchEnabled: false },
       requested: [...resumeAnalysisAgentIds],
       signal: scope.signal,
-      onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output }) => {
+      onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {
         if (section) {
           markdown.push(section);
-          emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total });
+          emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total, timing });
         }
         emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
         console.log(`[agent ${requestId}] ${id} ${completed}/${total} +${Date.now() - started}ms`);
@@ -79,6 +79,7 @@ app.post("/api/agent", async (request, response) => {
       ...(run.outputs["score-calculation"] ? { assessment: run.outputs["score-calculation"] as AnalysisResult["assessment"] } : {}),
       researchSources: report?.researchSources,
       researchStatus: report?.researchStatus,
+      debug: run.debug,
     };
     if (!response.destroyed) {
       if (streamProgress) { emit({ type: "complete", ...result }); response.end(); }

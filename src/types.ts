@@ -27,6 +27,7 @@ export type Resume = {
   analysisStatus?: "complete" | "unavailable" | "failed";
   analysisError?: string;
   analyzedAt?: string;
+  analysisDebug?: import("./research-types.js").AgentDebug;
   fileName?: string;
   pages?: number;
   size?: number;

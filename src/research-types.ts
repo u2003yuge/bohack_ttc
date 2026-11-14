@@ -1,6 +1,9 @@
 import type { Resume } from "./types.js";
 import type { Assessment } from "../shared/material-scoring.js";
 
+export type AgentTiming = { id: string; label: string; stage: number; startedAtMs: number; durationMs: number; reused: boolean; parallelWith: string[] };
+export type AgentDebug = { totalDurationMs: number; maxParallel: number; timings: AgentTiming[] };
+
 export type ResearchKind = "competition" | "paper" | "project";
 
 export type ResearchInput = Record<string, string | number | null>;
@@ -39,6 +42,7 @@ export type AnalysisResult = {
   resume?: Resume;
   researchSources?: never;
   researchStatus?: "not-requested";
+  debug?: AgentDebug;
 };
 
 export type AnalysisProgress = {
@@ -50,7 +54,7 @@ export type AnalysisProgress = {
 
 export type AnalysisEvent =
   | { type: "answer"; text: string; replace?: boolean }
-  | { type: "agent"; agentId: string; label: string; markdown: string; reused: boolean; completed: number; total: number }
+  | { type: "agent"; agentId: string; label: string; markdown: string; reused: boolean; completed: number; total: number; timing?: AgentTiming }
   | { type: "progress"; progress: AnalysisProgress }
   | { type: "assessment"; assessment: Assessment }
   | ({ type: "complete" } & AnalysisResult)

@@ -6,6 +6,7 @@ import {
   suggestProjectBreakdown,
 } from "../analysis.js";
 import type { CandidateFields } from "../analysis.js";
+import type { AgentDebug, AgentTiming } from "../../src/research-types.js";
 import type { Assessment, MaterialInput } from "../../shared/material-scoring.js";
 import { createAssessment } from "../scoring/pipeline.js";
 import { extractMaterials } from "../scoring/materials.js";
@@ -43,6 +44,7 @@ export type ResumeAgentRun = {
   reused: ResumeAgentId[];
   outputs: Partial<Record<ResumeAgentId, unknown>>;
   artifacts: AgentArtifact[];
+  debug: AgentDebug;
 };
 
 type Outputs = Partial<Record<ResumeAgentId, unknown>>;
@@ -208,7 +210,7 @@ export async function runResumeAgents(input: {
   artifacts?: AgentArtifact[];
   force?: boolean;
   signal?: AbortSignal;
-  onAgentComplete?: (agent: { id: ResumeAgentId; label: string; output: unknown; markdown: string; reused: boolean; completed: number; total: number }) => void | Promise<void>;
+  onAgentComplete?: (agent: { id: ResumeAgentId; label: string; output: unknown; markdown: string; reused: boolean; completed: number; total: number; timing: AgentTiming }) => void | Promise<void>;
 }): Promise<ResumeAgentRun> {
   if (!input.context.resumeText.trim() || input.context.resumeText.length > 100_000) {
     throw new Error("请提供 1 到 100000 字符的简历文本。");
@@ -227,6 +229,9 @@ export async function runResumeAgents(input: {
   const reused: ResumeAgentId[] = [];
   const completedIds = new Set<ResumeAgentId>();
   let completed = 0;
+  const pipelineStarted = performance.now();
+  const timings: AgentTiming[] = [];
+  let stageNumber = 0;
 
   // Run each dependency layer concurrently. Independent extraction, research,
   // annotation and scoring agents must not make one another wait.
@@ -234,8 +239,10 @@ export async function runResumeAgents(input: {
     input.signal?.throwIfAborted();
     const ready = order.filter((id) => !completedIds.has(id) && definitions[id].dependsOn.every((dependency) => completedIds.has(dependency)));
     if (!ready.length) throw new Error("Agent 依赖无法形成可执行顺序。");
-    const stage = await Promise.all(ready.map(async (id) => {
+    const stage = stageNumber++;
+    await Promise.all(ready.map(async (id) => {
       input.signal?.throwIfAborted();
+      const startedAtMs = Math.round(performance.now() - pipelineStarted);
       const definition = definitions[id];
       const inputHash = createHash("sha256")
         .update(JSON.stringify({ agentVersion: agentVersions[id], input: definition.input(input.context, outputs) }))
@@ -243,6 +250,7 @@ export async function runResumeAgents(input: {
       const previous = artifacts.get(id);
       const canReuse = !(input.force && input.requested.includes(id)) && previous?.inputHash === inputHash;
       const output = canReuse ? previous!.output : await definition.run(input.context, outputs, input.signal);
+      const durationMs = Math.max(0, Math.round(performance.now() - pipelineStarted) - startedAtMs);
       input.signal?.throwIfAborted();
       if (!canReuse) artifacts.set(id, { id, inputHash, output });
       outputs[id] = output;
@@ -250,6 +258,8 @@ export async function runResumeAgents(input: {
       if (canReuse) reused.push(id);
       else executed.push(id);
       completed += 1;
+      const timing: AgentTiming = { id, label: definition.label, stage, startedAtMs, durationMs, reused: canReuse, parallelWith: ready.filter((other) => other !== id) };
+      timings.push(timing);
       // Emit as soon as this independent Agent finishes; dependants still wait
       // for the complete layer below before starting.
       await input.onAgentComplete?.({
@@ -260,6 +270,7 @@ export async function runResumeAgents(input: {
         reused: canReuse,
         completed,
         total: order.length,
+        timing,
       });
       return { id };
     }));
@@ -270,5 +281,6 @@ export async function runResumeAgents(input: {
     reused,
     outputs,
     artifacts: [...artifacts.values()],
+    debug: { totalDurationMs: Math.round(performance.now() - pipelineStarted), maxParallel: Math.max(1, ...[...new Set(timings.map((timing) => timing.stage))].map((currentStage) => timings.filter((timing) => timing.stage === currentStage).length)), timings: timings.sort((left, right) => left.startedAtMs - right.startedAtMs) },
   };
 }
