@@ -32,7 +32,7 @@ router.post("/run", async (request, response) => {
         if (!item || typeof item !== "object") return false;
         const artifact = item as Record<string, unknown>;
         return typeof artifact.id === "string"
-          && resumeAgentIds.includes(artifact.id as ResumeAgentId)
+          && resumeAnalysisAgentIds.includes(artifact.id as typeof resumeAnalysisAgentIds[number])
           && typeof artifact.inputHash === "string"
           && Object.hasOwn(artifact, "output");
       })
