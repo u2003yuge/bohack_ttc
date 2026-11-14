@@ -2,12 +2,18 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   abilityDimensions,
   actionLevels,
+  actionFloor,
+  awardEventWeights,
+  awardSelectivityReference,
+  awardTierMultipliers,
   calibrationStatus,
   decayRatio,
+  decayRatios,
   factorDefinitions,
   scoreMaterials,
   scoringVersion,
   typeAdaptation,
+  withMaterialContributions,
   type Assessment,
   type MaterialInput,
 } from "../../shared/material-scoring.js";
@@ -17,6 +23,7 @@ import { enrichMaterialFacts, extractMaterials } from "./materials.js";
 
 type EvaluationOptions = {
   signal?: AbortSignal;
+  includeResearch?: boolean;
   useModel?: boolean;
   emit?: (event: AnalysisEvent) => void;
   rho?: number;
@@ -63,7 +70,7 @@ export function createAssessment(
   options: { extraction?: "model" | "rules"; notes?: string[]; research?: unknown; rho?: number } = {},
 ): Assessment {
   const rho = options.rho ?? decayRatio;
-  return {
+  return withMaterialContributions({
     id: randomUUID(),
     version: scoringVersion,
     evaluatedAt: new Date().toISOString(),
@@ -73,12 +80,27 @@ export function createAssessment(
     extraction: options.extraction ?? "rules",
     calibration: calibrationStatus,
     rho,
-    ...scoreMaterials(inputs, rho),
+    rhoByType: decayRatios,
+    ...(
+      options.rho === undefined
+        ? scoreMaterials(inputs)
+        : scoreMaterials(inputs, rho)
+    ),
     notes: options.notes ?? [],
     inputSnapshot: text,
     researchSnapshot: options.research ?? null,
-    rulesSnapshot: { factorDefinitions, typeAdaptation, actionLevels, rho },
-  };
+    rulesSnapshot: {
+      factorDefinitions,
+      typeAdaptation,
+      actionLevels,
+      actionFloor,
+      awardEventWeights,
+      awardTierMultipliers,
+      awardSelectivityReference,
+      rho,
+      rhoByType: decayRatios,
+    },
+  });
 }
 
 export function assessmentReport(assessment: Assessment): string {

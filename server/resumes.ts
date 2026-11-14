@@ -14,9 +14,11 @@ import { historicalYears, normalizeHistoricalCandidate, roleGroup, type Historic
 import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
+import { materialLibraryStore } from "./material-library-store.js";
+import { buildCatalogAssessment } from "./scoring/catalog.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
 import { saveResumeAnalysisReport } from "./report-store.js";
-import { scoringVersion, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
+import { scoringVersion, withMaterialContributions, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
 import type { AgentDebug, AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
 type ResumeRecord = {
@@ -170,6 +172,7 @@ router.put("/:id/decision", async (request, response, next) => {
 
 router.get("/knowledge", async (request, response, next) => {
   try {
+    await synchronizeMaterialLibrary();
     const reviews = await readKnowledgeReviews();
     const records = await readKnowledgeRecords();
     const kind = request.query.kind;
@@ -515,6 +518,22 @@ router.use(async (_request, _response, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.get("/knowledge/materials", async (_request, response, next) => {
+  try {
+    await synchronizeMaterialLibrary();
+    const records = await readKnowledgeRecords();
+    response.json({ materials: await materialLibraryStore.list(records), source: "local-material-library" });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/materials/sync", async (_request, response, next) => {
+  try {
+    await synchronizeMaterialLibrary();
+    const records = await readKnowledgeRecords();
+    response.json({ materials: await materialLibraryStore.list(records), synced: true });
+  } catch (error) { next(error); }
 });
 
 router.get("/", async (_request, response, next) => {
@@ -951,7 +970,7 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
 
   if (text && analyze) {
   try {
-      const assessment = initialAgents?.outputs["score-calculation"] as Assessment;
+      const assessment = withMaterialContributions(initialAgents?.outputs["score-calculation"] as Assessment);
       record.assessment = assessment;
       record.assessmentHistory = [{ reason: "import", assessment }];
       let analysisReport = assessmentReport(assessment);
@@ -968,6 +987,7 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
       record.analysisError = "";
       record.analyzedAt = new Date().toISOString();
       record.analysisDebug = initialAgents?.debug;
+      await persistMaterialLibrary(record, assessment);
     } catch (error) {
       record.analysisStatus = "failed";
       record.analysisError = error instanceof Error ? error.message : "初始分析报告生成失败";
@@ -1061,10 +1081,13 @@ async function saveAssessment(id: string, assessment: Assessment, report: string
     const latest = await readRecord(id);
     if (!latest) throw new Error("候选人档案已删除，未重新创建评分记录。");
     const duplicate = latest.assessmentHistory?.some((entry) => entry.assessment.id === assessment.id);
-    const savedAssessment = duplicate ? { ...assessment, id: randomUUID(), evaluatedAt: new Date().toISOString() } : assessment;
+    const savedAssessment = withMaterialContributions(
+      duplicate ? { ...assessment, id: randomUUID(), evaluatedAt: new Date().toISOString() } : assessment,
+    );
     const updated: ResumeRecord = { ...latest, assessment: savedAssessment, assessmentHistory: [...(latest.assessmentHistory ?? []), { reason: "review", assessment: savedAssessment }], analysisReport: report, analysisStatus: "complete", analysisError: "", analyzedAt: savedAssessment.evaluatedAt };
     signal?.throwIfAborted();
     await writeRecord(updated, signal);
+    await persistMaterialLibrary(updated, savedAssessment, signal);
     return updated;
   });
   assessmentSaves.set(id, pending);
@@ -1077,6 +1100,23 @@ async function saveAssessment(id: string, assessment: Assessment, report: string
 export async function readRecord(id: string): Promise<ResumeRecord | null> {
   try {
     const record = JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
+    if (
+      record.source === "pdf" &&
+      record.assessment &&
+      Array.isArray(record.assessment.materials) &&
+      record.assessment.abilities &&
+      !record.assessment.materialContributions
+    ) {
+      record.assessment = withMaterialContributions(record.assessment);
+      record.assessmentHistory = record.assessmentHistory?.map((entry) => ({
+        ...entry,
+        assessment:
+          Array.isArray(entry.assessment.materials) && entry.assessment.abilities
+            ? withMaterialContributions(entry.assessment)
+            : entry.assessment,
+      }));
+      await writeRecord(record);
+    }
     return record;
   } catch {
     return null;
@@ -1085,6 +1125,52 @@ export async function readRecord(id: string): Promise<ResumeRecord | null> {
 
 function metadataPath(id: string): string {
   return path.join(directory, ".metadata", `${path.basename(id)}.json`);
+}
+
+async function persistMaterialLibrary(
+  record: ResumeRecord,
+  assessment: Assessment,
+  signal?: AbortSignal,
+): Promise<void> {
+  const records = await readKnowledgeRecords();
+  await materialLibraryStore.save(
+    {
+      id: record.id,
+      name: record.name,
+      source: record.source,
+      assessment,
+      assessmentHistory: record.assessmentHistory,
+    },
+    records,
+    signal,
+  );
+}
+
+let materialLibrarySync: Promise<void> | undefined;
+async function synchronizeMaterialLibrary(): Promise<void> {
+  if (materialLibrarySync) return materialLibrarySync;
+  const operation = (async () => {
+    const metadataDirectory = path.join(directory, ".metadata");
+    let files: string[];
+    try {
+      files = await readdir(metadataDirectory);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") return;
+      throw error;
+    }
+    const records = await readKnowledgeRecords();
+    for (const file of files.filter((value) => value.endsWith(".json") && value !== "material-library.json")) {
+      const record = await readRecord(file.slice(0, -5));
+      if (record?.source === "pdf" && record.assessment) await materialLibraryStore.save(record, records);
+    }
+    await materialLibraryStore.saveCatalog(buildCatalogAssessment(records), records);
+  })();
+  materialLibrarySync = operation;
+  try {
+    await operation;
+  } finally {
+    if (materialLibrarySync === operation) materialLibrarySync = undefined;
+  }
 }
 
 function sortRecords(a: ResumeRecord, b: ResumeRecord): number {

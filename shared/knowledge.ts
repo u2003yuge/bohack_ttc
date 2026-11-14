@@ -2,6 +2,7 @@ import { mergeCompetitionCatalog, normalizeCompetitionProfile, type CompetitionP
 import { mergeCompanyCatalog } from "./companies.js";
 import { findVenueMatch, mergeVenueCatalog } from "./venues.js";
 import { normalizeVenueProfile, type VenueProfile } from "./venue-profile.js";
+import type { LibraryMaterialScore } from "./material-scoring.js";
 
 export type KnowledgeKind = "competition" | "journal" | "company";
 export type CompanyProfile = {
@@ -170,6 +171,7 @@ export type KnowledgeRecord = {
   venue?: VenueProfile;
   company?: CompanyProfile;
   origin?: { type: "discovered"; collectedAt: string };
+  materialScores?: LibraryMaterialScore[];
 };
 
 export type KnowledgeImportBundle = {

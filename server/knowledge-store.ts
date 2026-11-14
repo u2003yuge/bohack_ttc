@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeImport, type KnowledgeRecord } from "../shared/knowledge.js";
 import type { CatalogCandidate } from "../src/research-types.js";
+import { materialLibraryStore } from "./material-library-store.js";
 
 const defaultDirectory = fileURLToPath(new URL("../db/library/", import.meta.url));
 export const identityName = (value: string) => value.normalize("NFKC").toLocaleLowerCase().replace(/[\s“”「」『』"'《》]/g, "");
@@ -96,5 +97,9 @@ export async function readCustomKnowledge(): Promise<KnowledgeRecord[]> {
 export async function readKnowledgeRecords(): Promise<KnowledgeRecord[]> {
   const custom = await readCustomKnowledge();
   const ids = new Set(custom.map((record) => record.id));
-  return [...custom, ...knowledgeRecords.filter((record) => !ids.has(record.id))];
+  const records = [...custom, ...knowledgeRecords.filter((record) => !ids.has(record.id))];
+  const materialScores = await materialLibraryStore.list(records);
+  const grouped = new Map<string, typeof materialScores>();
+  for (const score of materialScores) for (const id of score.knowledgeIds) grouped.set(id, [...(grouped.get(id) ?? []), score]);
+  return records.map((record) => grouped.has(record.id) ? { ...record, materialScores: grouped.get(record.id) } : record);
 }

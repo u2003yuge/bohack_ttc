@@ -259,6 +259,10 @@ export function toResearchItems(materials: MaterialInput[]): ResearchItem[] {
 }
 
 function choose(def: FactorDefinition, evidence: Evidence): FactorObservation | undefined {
+  if (def.key === "complexity" && /课程|助教|讲解|协会|社团|举办|赛事组织|course|teaching|student association|organizing/i.test(evidence.quote)) {
+    const bounded = def.choices.find((choice) => choice.key === "bounded");
+    if (bounded) return { value: bounded.key, evidence: { ...evidence, quote: evidence.quote } };
+  }
   const clauses = evidence.quote
     .split(/[。；;\n]|但是|但|however\b/i)
     .map((v) => v.trim())

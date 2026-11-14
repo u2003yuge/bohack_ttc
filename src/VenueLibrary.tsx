@@ -5,6 +5,7 @@ import { venueSearchText } from "../shared/venues";
 import { venueLogoAsset } from "../shared/venue-assets";
 import type { VenueProfile } from "../shared/venue-profile";
 import type { Resume } from "./types";
+import MaterialScoreLibrary, { materialScoreLabel } from "./MaterialScoreLibrary";
 import "./venue-library.css";
 
 type Props = {
@@ -107,7 +108,7 @@ export function VenueLibrary({ records, resumes, initialId, onClose, onReview, o
           <span className="competition-item-top"><small>{record.venue?.type ?? "类型待补充"} · {record.venue?.scope ?? record.region}</small><ArrowUpRight size={14} /></span>
           <div className="venue-item-identity"><VenueLogo venue={record.venue} /><div><strong>{record.venue?.abbreviation || record.title}</strong>{record.venue?.abbreviation && record.venue.abbreviation !== record.title && <span className="venue-full-name">{record.title}</span>}</div></div><span>{record.summary || "暂无简介"}</span>
           <div className="venue-item-impact" aria-label={`2025 年影响因子：${impactFactor2025(record.venue)}`}><span>2025 影响因子</span><b>{impactFactor2025(record.venue)}</b></div>
-          <footer><small>{record.venue?.rankings.map((item) => `${item.year} ${item.rank}`).join(" · ") || "未登记分级"}</small><small>{references.get(record.id)?.length ? `${references.get(record.id)!.length} 份简历引用` : `${record.evidenceSources?.length ?? 0} 个来源`}</small></footer>
+          <footer><span className="catalog-card-material-meta"><small>{record.venue?.rankings.map((item) => `${item.year} ${item.rank}`).join(" · ") || "未登记分级"}</small><small className="catalog-card-material-score">{materialScoreLabel(record.materialScores) ?? "材料分待评"}</small></span><small>{references.get(record.id)?.length ? `${references.get(record.id)!.length} 份简历引用` : `${record.evidenceSources?.length ?? 0} 个来源`}</small></footer>
         </button>)}{!filtered.length && <div className="competition-empty"><Search size={24} /><strong>没有找到相关期刊或会议</strong><p>试试其他关键词或清除筛选条件。</p><button onClick={clearFilters}>清除筛选</button></div>}</div>
       </aside>
       <article className="competition-detail venue-detail" aria-label="期刊会议详细资料" key={selected?.id ?? "empty"}>
@@ -127,6 +128,7 @@ export function VenueLibrary({ records, resumes, initialId, onClose, onReview, o
           <VenueMetrics venue={venue} />
           {Boolean(venue?.notes.length) && <section className="competition-notes"><h3>匹配与使用提示</h3>{venue!.notes.map((note, index) => <p key={index}>{note}</p>)}</section>}
           <section className="competition-sources venue-sources"><header><h3>信息来源</h3><small>{venue?.sources.length ?? selected.evidenceSources?.length ?? 0} 条资料</small></header>{venue ? venue.sources.map((source, index) => <a href={source.url} key={`${source.url}-${index}`} target="_blank" rel="noreferrer"><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{source.title}</strong><small>{source.source_type} · {source.access} · 整理于 {venue.checked_on}</small><p>{source.information}</p><small>{source.url}</small></div><ArrowUpRight size={15} /></a>) : selected.evidenceSources?.map((source) => <a href={source.url} key={source.id} target="_blank" rel="noreferrer"><div><strong>{source.title}</strong><small>{source.url}</small></div><ArrowUpRight size={15} /></a>)}</section>
+          <MaterialScoreLibrary scores={selected.materialScores} onSelectEvidence={onSelectEvidence} />
           <p className="competition-footnote">目录等级是指定版本的渠道背景，不代表单篇论文质量或个人贡献。A/B/C 与 T1/T2/T3 分属不同体系；历史论文、主会、Findings、Workshop 及文种需分别核验。</p>
           <div className="competition-review-link"><button onClick={() => onReview(selected.id)}>人工评估与资料管理<ArrowUpRight size={14} /></button></div>
           {Boolean(references.get(selected.id)?.length) && <section className="competition-references"><h3>包含此渠道线索的简历</h3>{references.get(selected.id)!.map(({ resume, evidence }) => <button key={resume.id} onClick={() => onSelectEvidence(resume.id, evidence)}><span>{resume.name}</span><small>原文：{evidence}</small><ArrowUpRight size={14} /></button>)}</section>}

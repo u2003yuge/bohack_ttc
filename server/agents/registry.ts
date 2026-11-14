@@ -20,13 +20,14 @@ export const resumeAgentIds = [
   "plain-language-breakdown",
 ] as const;
 export type ResumeAgentId = (typeof resumeAgentIds)[number];
+export type LegacyResumeAgentId = "achievement-research";
 export const resumeAnalysisAgentIds = resumeAgentIds;
 const agentVersions: Record<ResumeAgentId, number> = {
   "candidate-profile": 2,
   // Bump both stages so older artifacts without the current action evidence
   // shape are recalculated instead of reusing all-NA ability scores.
   "material-extraction": 2,
-  "score-calculation": 3,
+  "score-calculation": 6,
   "analysis-report": 2,
   "plain-language-breakdown": 2,
 };
@@ -38,10 +39,12 @@ export type ResumeAgentContext = {
   question?: string;
   reviewerFocus?: string;
   useModel?: boolean;
+  includeResearch?: boolean;
+  webResearchEnabled?: boolean;
 };
 export type AgentArtifact = { id: ResumeAgentId; inputHash: string; output: unknown };
 export type ResumeAgentRun = {
-  requested: ResumeAgentId[];
+  requested: Array<ResumeAgentId | LegacyResumeAgentId>;
   executed: ResumeAgentId[];
   reused: ResumeAgentId[];
   outputs: Partial<Record<ResumeAgentId, unknown>>;
@@ -210,7 +213,7 @@ function visit(id: ResumeAgentId, visited: Set<ResumeAgentId>, visiting: Set<Res
 
 export async function runResumeAgents(input: {
   context: ResumeAgentContext;
-  requested: ResumeAgentId[];
+    requested: Array<ResumeAgentId | LegacyResumeAgentId>;
   artifacts?: AgentArtifact[];
   force?: boolean;
   signal?: AbortSignal;
@@ -224,7 +227,7 @@ export async function runResumeAgents(input: {
   const visited = new Set<ResumeAgentId>();
   for (const id of input.requested) {
     if (!resumeAnalysisAgentIds.includes(id as typeof resumeAnalysisAgentIds[number])) throw new Error(`该核查 Agent 已移除：${id}`);
-    visit(id, visited, new Set(), order);
+    visit(id as ResumeAgentId, visited, new Set(), order);
   }
 
   const outputs: Outputs = {};
@@ -280,7 +283,7 @@ export async function runResumeAgents(input: {
     }));
   }
   return {
-    requested: input.requested,
+    requested: input.requested as ResumeAgentId[],
     executed,
     reused,
     outputs,

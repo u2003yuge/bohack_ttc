@@ -5,6 +5,7 @@ import { competitionLogoAsset, competitionLogoLabels } from "../shared/competiti
 import type { CompetitionProfile } from "../shared/competitions";
 import { findKnowledgeMatch, type KnowledgeRecord } from "../shared/knowledge";
 import type { Resume } from "./types";
+import MaterialScoreLibrary, { materialScoreLabel } from "./MaterialScoreLibrary";
 import { CompetitionYearDetails } from "./CompetitionYearDetails";
 import "./competition-library.css";
 
@@ -79,7 +80,7 @@ export function CompetitionLibrary({ records, resumes, initialId, onClose, onRev
         <div className="competition-list-heading"><span>全部竞赛 <b>{filtered.length}</b><small> / {records.length}</small></span>{(query || field || year || linkedOnly) && <button onClick={clearFilters}>清除筛选</button>}</div>
         <div className="competition-items">{filtered.map((record) => <button key={record.id} className={`competition-item ${record.id === selected?.id ? "selected" : ""}`} onClick={() => setSelectedId(record.id)} aria-pressed={record.id === selected?.id}>
           <span className="competition-item-top"><small>{record.field || "领域待补充"}</small><ArrowUpRight size={14} /></span><div className="competition-card-title"><CompetitionLogo profile={record.competition} /><strong>{record.title}</strong></div><span>{record.summary || "暂无简介"}</span>
-          <footer><small>{record.origin ? "自动整理" : record.competition ? `${record.competition.report_year} 目录` : "原有资料"}</small><small>{record.evidenceSources?.length ?? 0} 个来源{references.get(record.id)?.length ? ` · ${references.get(record.id)!.length} 份简历引用` : ""}</small></footer>
+          <footer><span className="catalog-card-material-meta"><small>{record.origin ? "自动整理" : record.competition ? `${record.competition.report_year} 目录` : "原有资料"}</small><small className="catalog-card-material-score">{materialScoreLabel(record.materialScores) ?? "材料分待评"}</small></span><small>{record.evidenceSources?.length ?? 0} 个来源{references.get(record.id)?.length ? ` · ${references.get(record.id)!.length} 份简历引用` : ""}</small></footer>
         </button>)}{!filtered.length && <div className="competition-empty"><Search size={24} /><strong>没有找到相关竞赛</strong><p>试试其他关键词或清除筛选条件。</p><button onClick={clearFilters}>清除筛选</button></div>}</div>
       </aside>
       <article className="competition-detail" aria-label="竞赛详细资料" key={selected?.id ?? "empty"}>
@@ -94,6 +95,7 @@ export function CompetitionLibrary({ records, resumes, initialId, onClose, onRev
           <div className="competition-abilities"><section><h3>需要具备的能力</h3><div>{profile?.acquires?.length ? profile.acquires.map((ability) => <span key={ability}>{ability}</span>) : <p>能力要求待补充。</p>}</div></section><section><h3>可反映的素质</h3><div>{(profile?.projection ?? selected.signals).map((quality) => <span key={quality}>{quality}</span>)}</div></section></div>
           {profile?.notes && <section className="competition-notes"><h3>使用提示</h3><p>{profile.notes}</p></section>}
           <section className="competition-sources"><header><h3>信息来源</h3><small>{(selected.evidenceSources ?? []).length} 条可追溯资料</small></header>{(selected.evidenceSources ?? []).map((source, index) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer"><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{source.title}</strong><small>{source.url}</small></div><ArrowUpRight size={15} /></a>)}{!selected.evidenceSources?.length && <p>尚未登记来源，可从人工审核入口补充。</p>}</section>
+          <MaterialScoreLibrary scores={selected.materialScores} onSelectEvidence={onSelectEvidence} />
           <p className="competition-footnote">赛事背景用于理解经历；资料年份不等于获奖年份，个人能力仍需结合参赛角色、作品及获奖材料核实。</p>
           <div className="competition-review-link"><button onClick={() => onReview(selected.id)}>人工评估与资料管理<ArrowUpRight size={14} /></button></div>
           {Boolean(references.get(selected.id)?.length) && <section className="competition-references"><h3>引用此赛事的简历</h3>{references.get(selected.id)!.map(({ resume, evidence }) => <button key={resume.id} onClick={() => onSelectEvidence(resume.id, evidence)}><span>{resume.name}</span><small>原文：{evidence}</small><ArrowUpRight size={14} /></button>)}</section>}

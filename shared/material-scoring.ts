@@ -1,7 +1,11 @@
 /** Versioned, deterministic scoring. Models may extract facts; they never supply points. */
-export const scoringVersion = "material-derived-v1.1.0";
-export const calibrationStatus = "初版规则参数，待双人标注校准";
-export const decayRatio = 0.5;
+export const scoringVersion = "material-derived-v1.4.0";
+export const calibrationStatus = "v1.4 赛事质量与表现分离、行动系数设最低归因值，待双人标注校准";
+export const decayRatio = 0.55;
+export const decayRatios: Record<MaterialType, number> = { award: 0.45, research: 0.6, project: 0.55, work: 0.7, patent: 0.55, opensource: 0.6, certificate: 0.45 };
+export const awardEventWeights = { participants: 0.5, judging: 0.5 } as const;
+export const awardTierMultipliers = { top: 1, first: 0.85, second: 0.65, third: 0.45, finalist: 0.25 } as const;
+export const awardSelectivityReference = 0.001;
 export const abilityDimensions = [
   { key: "professional_execution", label: "专业执行" },
   { key: "problem_solving", label: "问题解决" },
@@ -21,7 +25,7 @@ export const materialTypeLabels = {
 } as const;
 export type MaterialType = keyof typeof materialTypeLabels;
 export type EvidenceState =
-  "简历自述" | "背景已核实" | "个人材料支持" | "独立来源支持个人贡献" | "冲突/未能消歧";
+  "简历自述" | "背景已核实" | "个人材料支持" | "独立来源支持个人贡献" | "资料库背景" | "冲突/未能消歧";
 export type Evidence = {
   origin: "resume" | "research";
   quote: string;
@@ -53,76 +57,76 @@ const complexity = [
   choice(
     "advanced",
     "多重约束或跨系统复杂问题",
-    160,
+    120,
     "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective",
   ),
   choice(
     "complex",
     "明确的系统或方法复杂度",
-    100,
+    80,
     "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm",
   ),
-  choice("bounded", "明确的模块或任务", 60, "模块|接口|流程|实验|module|interface|workflow|experiment"),
-  choice("basic", "有明确对象的基础实现", 25, "脚本|页面|表单|script|page|form"),
+  choice("bounded", "明确的模块或任务", 45, "模块|接口|流程|实验|module|interface|workflow|experiment"),
+  choice("basic", "有明确对象的基础实现", 20, "脚本|页面|表单|script|page|form"),
 ];
 const delivery = [
   choice(
     "accepted",
     "验收或持续生产交付",
-    160,
+    120,
     "验收|生产环境|持续运行|正式交付|production|accepted delivery",
   ),
-  choice("released", "已上线或部署", 100, "上线|部署|发布|交付|deployed|released|delivered"),
-  choice("tested", "完成测试或可运行原型", 60, "测试通过|原型|试点|prototype|pilot|tested"),
-  choice("designed", "形成明确方案或设计", 25, "设计方案|技术方案|需求分析|design document|proposal"),
+  choice("released", "已上线或部署", 80, "上线|部署|发布|交付|deployed|released|delivered"),
+  choice("tested", "完成测试或可运行原型", 45, "测试通过|原型|试点|prototype|pilot|tested"),
+  choice("designed", "形成明确方案或设计", 20, "设计方案|技术方案|需求分析|design document|proposal"),
 ];
 const outcome = [
   choice(
     "measured",
     "有明确指标与比较结果",
-    160,
+    120,
     "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d",
   ),
-  choice("adopted", "有实际采用或验收结果", 100, "验收|正式采用|实际使用|投产|adopted|in use|production"),
-  choice("delivered", "有明确交付成果", 60, "交付|完成|实现|delivered|completed|implemented"),
-  choice("documented", "形成可检查的文档或作品", 25, "报告|文档|作品|report|documentation|artifact"),
+  choice("adopted", "有实际采用或验收结果", 80, "验收|正式采用|实际使用|投产|adopted|in use|production"),
+  choice("delivered", "有明确交付成果", 45, "交付|完成|实现|delivered|completed|implemented"),
+  choice("documented", "形成可检查的文档或作品", 20, "报告|文档|作品|report|documentation|artifact"),
 ];
 const adoption = [
   choice(
     "wide",
     "有多单位或公开采用证据",
-    160,
+    120,
     "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers",
   ),
-  choice("production", "实际部署或应用", 100, "实际使用|投产|生产环境|上线|production|deployed"),
-  choice("pilot", "试点或测试使用", 60, "试点|试用|pilot|trial"),
-  choice("demo", "可访问或演示", 25, "演示|可访问|demo|accessible"),
+  choice("production", "实际部署或应用", 80, "实际使用|投产|生产环境|上线|production|deployed"),
+  choice("pilot", "试点或测试使用", 45, "试点|试用|pilot|trial"),
+  choice("demo", "可访问或演示", 20, "演示|可访问|demo|accessible"),
 ];
 export const factorDefinitions: Record<MaterialType, FactorDefinition[]> = {
   award: [
-    { key: "participants", label: "有效参赛规模", weight: 0.2, kind: "size", choices: [] },
-    { key: "award_rate", label: "官方目标奖项比例", weight: 0.35, kind: "selectivity", choices: [] },
-    factor("tier", "本赛事奖项层级", 0.25, [
-      choice("top", "本赛事最高奖", 160, "特等奖|冠军|金奖|金牌|grand prize|champion|gold"),
-      choice("first", "一等奖 / 一等层级", 120, "一等奖|first prize"),
-      choice("second", "二等奖 / 银奖", 80, "二等奖|银奖|银牌|second prize|silver"),
-      choice("third", "三等奖 / 铜奖", 50, "三等奖|铜奖|铜牌|third prize|bronze"),
-      choice("finalist", "有明确结果的入围或优胜", 25, "入围|优胜|finalist|honorable mention"),
+    { key: "participants", label: "有效参赛规模", weight: awardEventWeights.participants, kind: "size", choices: [] },
+    { key: "award_rate", label: "官方目标奖项比例（表现比例）", weight: 0, kind: "selectivity", choices: [] },
+    factor("tier", "本赛事奖项层级（表现比例）", 0, [
+      choice("top", "本赛事最高奖", 100, "特等奖|冠军|金奖|金牌|grand prize|champion|gold"),
+      choice("first", "一等奖 / 一等层级", 75, "一等奖|first prize"),
+      choice("second", "二等奖 / 银奖", 50, "二等奖|银奖|银牌|second prize|silver"),
+      choice("third", "三等奖 / 铜奖", 30, "三等奖|铜奖|铜牌|third prize|bronze"),
+      choice("finalist", "有明确结果的入围或优胜", 15, "入围|优胜|finalist|honorable mention"),
     ]),
-    factor("judging", "赛制与评审规则", 0.2, [
+    factor("judging", "赛制与评审规则", awardEventWeights.judging, [
       choice(
         "reproducible",
         "可复核测试 / 盲评和答辩",
-        160,
+        100,
         "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review",
       ),
       choice(
         "rubric",
         "明确评分规则和专家评审",
-        100,
+        75,
         "评分标准|评审标准|专家评审|scoring rubric|judging criteria",
       ),
-      choice("specified", "有明确赛制或评审方式", 60, "限时|答辩|评审|比赛规则|timed|judged|defense"),
+      choice("specified", "有明确赛制或评审方式", 45, "限时|答辩|评审|比赛规则|timed|judged|defense"),
     ]),
   ],
   research: [
@@ -131,96 +135,96 @@ export const factorDefinitions: Record<MaterialType, FactorDefinition[]> = {
       choice(
         "validated",
         "对照、消融及统计验证",
-        160,
+        100,
         "消融|统计显著|置信区间|ablation|statistical significance|confidence interval",
       ),
-      choice("controlled", "对照或基线实验", 100, "对照|基线|baseline|controlled experiment"),
-      choice("method", "明确研究方法", 60, "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"),
+      choice("controlled", "对照或基线实验", 75, "对照|基线|baseline|controlled experiment"),
+      choice("method", "明确研究方法", 45, "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"),
     ]),
     factor("experiments", "实验质量", 0.2, [
       choice(
         "robust",
         "多数据集、误差或鲁棒性分析",
-        160,
+        100,
         "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness",
       ),
-      choice("comparison", "明确实验比较", 100, "对比实验|基线|baseline|comparative experiment"),
-      choice("specified", "有实验设置", 60, "实验设置|实验结果|experimental setup|experimental results"),
+      choice("comparison", "明确实验比较", 75, "对比实验|基线|baseline|comparative experiment"),
+      choice("specified", "有实验设置", 45, "实验设置|实验结果|experimental setup|experimental results"),
     ]),
     factor("reproducibility", "可复现性", 0.15, [
-      choice("reproduced", "明确的独立复现记录", 160, "独立复现成功|第三方复现|independently reproduced"),
+      choice("reproduced", "明确的独立复现记录", 100, "独立复现成功|第三方复现|independently reproduced"),
       choice(
         "complete",
         "代码、数据和运行说明齐全",
-        100,
+        75,
         "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)",
       ),
       choice(
         "available",
         "提供开放材料",
-        50,
+        40,
         "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code",
       ),
     ]),
     factor("status", "成果状态", 0.1, [
-      choice("published", "已正式发表", 120, "已发表|正式发表|已在线发表|published|online publication"),
-      choice("accepted", "已录用未发表", 80, "已录用|accepted"),
-      choice("preprint", "预印本", 30, "预印本|preprint|arxiv"),
+      choice("published", "已正式发表", 80, "已发表|正式发表|已在线发表|published|online publication"),
+      choice("accepted", "已录用未发表", 55, "已录用|accepted"),
+      choice("preprint", "预印本", 20, "预印本|preprint|arxiv"),
     ]),
     factor("content", "研究内容与验证结果", 0.15, outcome),
   ],
   project: [
-    factor("complexity", "问题复杂度", 0.3, complexity),
+    factor("complexity", "问题复杂度", 0.25, complexity),
     factor("constraints", "技术 / 业务约束", 0.2, [
       choice(
         "multiple",
         "多重约束与权衡",
-        160,
+        100,
         "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency",
       ),
       choice(
         "explicit",
         "明确性能或业务约束",
-        100,
+        75,
         "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility",
       ),
-      choice("bounded", "明确任务边界", 50, "需求|约束|任务|requirement|constraint|task"),
+      choice("bounded", "明确任务边界", 40, "需求|约束|任务|requirement|constraint|task"),
     ]),
     factor("delivery", "交付阶段", 0.2, delivery),
     factor("adoption", "部署 / 采用", 0.15, adoption),
-    factor("outcome", "结果质量", 0.15, outcome),
+    factor("outcome", "结果质量", 0.2, outcome),
   ],
   work: [
-    factor("complexity", "任务复杂度", 0.25, complexity),
-    factor("scope", "具体责任范围", 0.2, [
-      choice("end_to_end", "明确的端到端责任", 160, "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"),
+    factor("complexity", "任务复杂度", 0.2, complexity),
+    factor("scope", "具体责任范围", 0.25, [
+      choice("end_to_end", "明确的端到端责任", 100, "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"),
       choice(
         "owned",
         "独立负责具体范围",
-        100,
+        75,
         "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for",
       ),
-      choice("specific", "明确执行任务", 50, "开发|设计|测试|分析|implemented|developed|tested|analyzed"),
+      choice("specific", "明确执行任务", 40, "开发|设计|测试|分析|implemented|developed|tested|analyzed"),
     ]),
     factor("delivery", "实际交付", 0.25, delivery),
     factor("impact", "结果影响", 0.3, outcome),
   ],
   patent: [
     factor("status", "公开 / 授权状态", 0.2, [
-      choice("granted", "已授权", 120, "已授权|授权公告|granted"),
-      choice("published", "已公开", 60, "已公开|公开公告|published application"),
-      choice("filed", "有申请记录", 25, "申请号|已申请|application number|filed"),
+      choice("granted", "已授权", 80, "已授权|授权公告|granted"),
+      choice("published", "已公开", 45, "已公开|公开公告|published application"),
+      choice("filed", "有申请记录", 20, "申请号|已申请|application number|filed"),
     ]),
     factor("technical", "技术问题与方法", 0.35, complexity),
     factor("claims", "权利要求", 0.25, [
       choice(
         "validated",
         "明确权利要求及实现验证",
-        160,
+        100,
         "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)",
       ),
-      choice("specific", "有具体权利要求", 90, "权利要求|patent claims"),
-      choice("description", "有技术方案说明", 40, "技术方案|technical solution"),
+      choice("specific", "有具体权利要求", 70, "权利要求|patent claims"),
+      choice("description", "有技术方案说明", 30, "技术方案|technical solution"),
     ]),
     factor("application", "应用情况", 0.2, adoption),
   ],
@@ -230,55 +234,55 @@ export const factorDefinitions: Record<MaterialType, FactorDefinition[]> = {
       choice(
         "engineering",
         "测试、CI 与接口文档",
-        160,
+        100,
         "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试",
       ),
       choice(
         "tested",
         "自动测试或持续集成",
-        100,
+        75,
         "单元测试|集成测试|持续集成|unit test|integration test|CI/CD",
       ),
-      choice("documented", "有使用说明", 50, "README|使用说明|接口文档|documentation"),
+      choice("documented", "有使用说明", 40, "README|使用说明|接口文档|documentation"),
     ]),
     factor("maintenance", "维护持续性", 0.15, [
       choice(
         "sustained",
         "持续发布并处理问题",
-        160,
+        100,
         "持续维护|定期发布|持续发布|sustained maintenance|regular releases",
       ),
-      choice("responded", "有问题处理或版本维护", 90, "修复|版本发布|issue|bug fix|release"),
-      choice("changes", "有可定位提交", 40, "提交|pull request|commit"),
+      choice("responded", "有问题处理或版本维护", 70, "修复|版本发布|issue|bug fix|release"),
+      choice("changes", "有可定位提交", 30, "提交|pull request|commit"),
     ]),
     factor("contribution", "具体贡献", 0.2, [
-      choice("core", "核心功能与维护责任", 160, "维护者|核心模块|核心功能|maintainer|core module"),
+      choice("core", "核心功能与维护责任", 100, "维护者|核心模块|核心功能|maintainer|core module"),
       choice(
         "implemented",
         "明确的代码或文档贡献",
-        90,
+        70,
         "实现|开发|修复|编写|implemented|developed|fixed|authored",
       ),
-      choice("reviewed", "明确评审或测试贡献", 40, "代码评审|测试|code review|tested"),
+      choice("reviewed", "明确评审或测试贡献", 30, "代码评审|测试|code review|tested"),
     ]),
     factor("adoption", "使用 / 采用", 0.2, adoption),
   ],
   certificate: [
     factor("assessment", "考核方式", 0.45, [
-      choice("practical", "实操考核", 140, "实操考核|实验考核|practical exam|hands.on assessment"),
-      choice("exam", "明确考试", 90, "通过考试|认证考试|passed.{0,20}exam|certification exam"),
-      choice("coursework", "课程考核", 40, "课程作业|结课考核|coursework|course assessment"),
+      choice("practical", "实操考核", 100, "实操考核|实验考核|practical exam|hands.on assessment"),
+      choice("exam", "明确考试", 70, "通过考试|认证考试|passed.{0,20}exam|certification exam"),
+      choice("coursework", "课程考核", 30, "课程作业|结课考核|coursework|course assessment"),
     ]),
     factor("practice", "实际练习与作品", 0.35, delivery),
     factor("curriculum", "课程内容深度", 0.2, [
-      choice("advanced", "有明确高级专题", 140, "高级|进阶|专题|advanced|specialized"),
+      choice("advanced", "有明确高级专题", 100, "高级|进阶|专题|advanced|specialized"),
       choice(
         "specific",
         "有明确方法与实践内容",
-        80,
+        60,
         "实验|项目|算法|系统|experiment|project|algorithm|system",
       ),
-      choice("foundation", "基础课程内容", 30, "基础|入门|foundation|introductory"),
+      choice("foundation", "基础课程内容", 25, "基础|入门|foundation|introductory"),
     ]),
   ],
 };
@@ -297,6 +301,8 @@ export const typeAdaptation: Record<MaterialType, Record<AbilityKey, number>> = 
   ]),
 ) as Record<MaterialType, Record<AbilityKey, number>>;
 export const actionLevels = { guided: 0.25, concrete: 0.5, owned: 0.75, validated: 1 } as const;
+export const actionFloor = 0.1;
+export const actionCoefficients: Record<AbilityKey, Record<keyof typeof actionLevels, number>> = { professional_execution: { guided: 0.2, concrete: 0.45, owned: 0.7, validated: 0.9 }, problem_solving: { guided: 0.2, concrete: 0.45, owned: 0.7, validated: 0.9 }, ownership_delivery: { guided: 0.25, concrete: 0.5, owned: 0.75, validated: 0.95 }, collaboration_organization: { guided: 0.25, concrete: 0.5, owned: 0.75, validated: 0.95 }, learning_research: { guided: 0.2, concrete: 0.45, owned: 0.7, validated: 0.9 } };
 export type MaterialInput = {
   material_id: string;
   material_type: MaterialType;
@@ -334,6 +340,14 @@ export type AbilityMapping = {
 };
 export type ScoredMaterial = MaterialInput & {
   material_score: number | null;
+  event_score: number | null;
+  performance_ratio: number | null;
+  performance_breakdown: {
+    award_rate: number | null;
+    selectivity_multiplier: number | null;
+    tier_multiplier: number | null;
+    reason: string;
+  } | null;
   score_breakdown: FactorScore[];
   score_coverage: number;
   missing_factors: string[];
@@ -368,6 +382,7 @@ export type Assessment = {
   extraction: "model" | "rules";
   calibration: string;
   rho: number;
+  rhoByType?: Record<MaterialType, number>;
   materials: ScoredMaterial[];
   abilities: Record<AbilityKey, AbilityScore>;
   type_summaries: Array<{ type: MaterialType; score: number | null; count: number }>;
@@ -375,9 +390,54 @@ export type Assessment = {
   inputSnapshot: string;
   researchSnapshot: unknown;
   rulesSnapshot: unknown;
+  materialContributions?: Record<string, Record<AbilityKey, number | null>>;
 };
 export type AssessmentHistoryEntry = { reason: "import" | "review"; assessment: Assessment };
+export type LibraryMaterialScore = {
+  knowledgeIds: string[];
+  candidateId: string;
+  candidateName: string;
+  assessmentId: string;
+  evaluatedAt: string;
+  scoringVersion: string;
+  materialId: string;
+  materialType: MaterialType;
+  materialTitle: string;
+  year: string | number | null;
+  resumeClaim: string;
+  materialScore: number | null;
+  eventScore: number | null;
+  performanceRatio: number | null;
+  performanceBreakdown: ScoredMaterial["performance_breakdown"];
+  scoreCoverage: number;
+  provisional: boolean;
+  missingFactors: string[];
+  scoreBreakdown: FactorScore[];
+  sources: Evidence[];
+  abilityContributions: Record<AbilityKey, {
+    score: number | null;
+    typeCoefficient: number;
+    actionCoefficient: number | null;
+    derivedContribution: number | null;
+    typeRank: number | null;
+    decay: number | null;
+    contribution: number | null;
+    reason: string;
+    evidence: Evidence[];
+  }>;
+};
 export const roundPoints = (value: number) => Math.round(value * 1e6) / 1e6;
+/** Every material's contribution after sorting and same-type decay. */
+export function withMaterialContributions(assessment: Assessment): Assessment {
+  const materialContributions = Object.fromEntries(assessment.materials.map((material) => [
+    material.material_id,
+    Object.fromEntries(abilityDimensions.map(({ key }) => [
+      key,
+      assessment.abilities[key].terms.find((term) => term.material_id === material.material_id)?.contribution ?? null,
+    ])) as Record<AbilityKey, number | null>,
+  ]));
+  return { ...assessment, materialContributions };
+}
 export const normalizeIdentity = (value: string) =>
   value
     .normalize("NFKC")
@@ -504,7 +564,7 @@ export function scoreFactor(def: FactorDefinition, observation?: FactorObservati
       observation.value >= 0 &&
       Number.isFinite(observation.value)
     )
-      points = 12 * Math.log1p(observation.value);
+      points = 8 * Math.log1p(observation.value);
     else if (
       def.kind === "selectivity" &&
       observation.official &&
@@ -512,7 +572,7 @@ export function scoreFactor(def: FactorDefinition, observation?: FactorObservati
       observation.value > 0 &&
       observation.value <= 1
     )
-      points = 30 * -Math.log(observation.value);
+      points = 18 * -Math.log(observation.value);
     else if (!def.kind) points = def.choices.find((item) => item.key === observation.value)?.points ?? null;
   }
   return {
@@ -523,20 +583,20 @@ export function scoreFactor(def: FactorDefinition, observation?: FactorObservati
       points === null
         ? "没有符合规则的事实依据，保持 NA。"
         : def.kind === "size"
-          ? "12 × ln(1 + 有效参赛规模)"
+          ? "8 × ln(1 + 有效参赛规模)"
           : def.kind === "selectivity"
-            ? "30 × -ln(官方公布比例)"
+            ? "18 × -ln(官方公布比例)"
             : (def.choices.find((c) => c.key === observation?.value)?.label ?? ""),
   };
 }
 const actionPatterns: Record<AbilityKey, RegExp> = {
   professional_execution:
-    /(?:从事|开发(?!工程师|人员|岗)|实现|搭建|设计(?!师)|测试(?!工程师|岗位)|训练|部署|编写|构建|优化|重构|implement(?:ed|ing|s)?\b|develop(?:ed|ing|s)?\b|built\b|build(?:ing|s)?\b|design(?:ed|ing|s)?\b|test(?:ed|ing|s)?\b|deploy(?:ed|ing|s)?\b|cod(?:ed|ing)\b)\s*[^，。；;\n]{1,}/i,
+    /(?:从事|开发(?!者|工具|工程师|人员|岗)|实现|搭建|设计(?!师)|测试(?!工程师|岗位)|训练|部署|编写|构建|优化|重构|implement(?:ed|ing|s)?\b|develop(?:ed|ing|s)?\b|built\b|build(?:ing|s)?\b|design(?:ed|ing|s)?\b|test(?:ed|ing|s)?\b|deploy(?:ed|ing|s)?\b|cod(?:ed|ing)\b)\s*[^，。；;\n]{1,}/i,
   problem_solving:
     /(?:定位|排查|拆解|比较|权衡|解决|验证|复盘|分析|diagnos\w*|debug\w*|compar\w*|solv\w*|validat\w*|analy[sz]\w*)\s*[^，。；;\n]{1,}/i,
-  ownership_delivery: /(?:负责|主导|承担|推进|交付|领导|owned|responsible for|deliver\w*)\s*[^，。；;\n]{1,}/i,
+  ownership_delivery: /(?:负责|主导|承担|推进|推动|交付|领导|主要负责人|负责人|社长|团支书|owned|responsible for|deliver\w*)\s*[^，。；;\n]{1,}/i,
   collaboration_organization:
-    /(?:协调|组织|带领|沟通|分工|跨团队推进|协同|领导|coordinat\w*|organiz\w*|led|collaborat\w*)\s*[^，。；;\n]{1,}/i,
+    /(?:协调|组织|带领|沟通|分工|跨团队推进|协同|推动|领导|主要负责人|负责人|社长|团支书|举办|联合|coordinat\w*|organiz\w*|led|collaborat\w*)\s*[^，。；;\n]{1,}/i,
   learning_research:
     /(?:研究(?!生|所|院|员)|学习|实验|复现|假设|消融|文献调研|learn(?:ed|ing|s)?\b|research(?:ed|ing)?\b|experiment(?:ed|ing|s)?\b|reproduc\w*|ablation)\s*[^，。；;\n]{1,}/i,
 };
@@ -559,9 +619,12 @@ export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapp
   let selected: { level: keyof typeof actionLevels; evidence: Evidence } | undefined;
   for (const evidence of matched) {
     const text = positiveText(evidence.quote);
-    const owned = /独立|负责|主导|承担|带领|owned|independen\w*|responsible for|led/i.test(text);
+    const directTechnical = /(?:我|本人|独立|亲自|负责|主导|承担).{0,25}(?:开发|实现|搭建|设计|测试|训练|部署|编写|构建|优化|重构|develop|implement|design|test|deploy|code)/i.test(text);
+    const leadership = /独立|负责|主导|承担|带领|领导|主要负责人|负责人|社长|团支书|owned|independen\w*|responsible for|led/i.test(text);
+    if (key === "professional_execution" && !directTechnical) continue;
+    const owned = key === "professional_execution" ? directTechnical : leadership;
     const validated =
-      /上线|验收|交付|测试通过|验证通过|降低.{0,25}\d|提升.{0,25}\d|复现成功|生产环境|deployed|delivered|production|reduced.{0,25}\d/i.test(
+      /上线|验收|交付|测试通过|验证通过|举办.{0,20}(?:场|次)|发布|推广|落地|降低.{0,25}\d|提升.{0,25}\d|复现成功|生产环境|deployed|delivered|production|reduced.{0,25}\d/i.test(
         text,
       );
     const level = /在指导下|协助|assisted|under guidance/i.test(text)
@@ -574,7 +637,11 @@ export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapp
     if (!selected || actionLevels[level] > actionLevels[selected.level]) selected = { level, evidence };
   }
   return {
-    mapping_coefficient: selected ? actionLevels[selected.level] : null,
+    mapping_coefficient: selected
+      ? actionCoefficients[key][selected.level]
+      : isCatalogBackground(material)
+        ? null
+        : actionFloor,
     rule: selected?.level ?? null,
     mapping_reason: selected
       ? {
@@ -583,19 +650,97 @@ export function mapAction(material: MaterialInput, key: AbilityKey): AbilityMapp
           owned: "明确承担该行动的责任",
           validated: "明确承担责任且有交付或验证结果",
         }[selected.level]
-      : "未找到支持该维度的个人行动证据。",
+      : isCatalogBackground(material)
+        ? "资料库背景条目不生成候选人个人能力贡献。"
+        : `未找到直接行动证据，使用最低归因系数 ${actionFloor}，结果标记为暂定。`,
     supporting_evidence: selected ? [selected.evidence] : [],
     type_coefficient: typeAdaptation[material.material_type][key],
     derived_contribution: null,
   };
 }
-export function scoreMaterials(inputs: MaterialInput[], rho = decayRatio) {
-  if (!Number.isFinite(rho) || rho <= 0 || rho >= 1) throw new Error("递减参数必须在 0 与 1 之间。");
+
+function isCatalogBackground(material: MaterialInput): boolean {
+  return typeof material.external_facts.catalog_id === "string";
+}
+
+function awardPerformance(
+  material: MaterialInput,
+): { ratio: number | null; breakdown: NonNullable<ScoredMaterial["performance_breakdown"]> } {
+  if (isCatalogBackground(material)) {
+    return {
+      ratio: 1,
+      breakdown: {
+        award_rate: null,
+        selectivity_multiplier: null,
+        tier_multiplier: null,
+        reason: "资料库背景条目只使用赛事质量分，不代表候选人获奖表现。",
+      },
+    };
+  }
+  const rate = material.factor_observations.award_rate;
+  const tier = material.factor_observations.tier;
+  const p = rate && rate.official && typeof rate.value === "number" && rate.value > 0 && rate.value <= 1
+    ? rate.value
+    : null;
+  const tierMultiplier = tier && typeof tier.value === "string" && Object.hasOwn(awardTierMultipliers, tier.value)
+    ? awardTierMultipliers[tier.value as keyof typeof awardTierMultipliers]
+    : null;
+  const selectivityMultiplier = p === null
+    ? null
+    : roundPoints(Math.min(1, Math.max(0, -Math.log(p) / -Math.log(awardSelectivityReference))));
+  const ratio = selectivityMultiplier !== null && tierMultiplier !== null
+    ? roundPoints(selectivityMultiplier * tierMultiplier)
+    : null;
+  return {
+    ratio,
+    breakdown: {
+      award_rate: p,
+      selectivity_multiplier: selectivityMultiplier,
+      tier_multiplier: tierMultiplier,
+      reason: ratio === null
+        ? "官方目标奖项比例或实际获奖层级不足，无法形成候选人表现比例。"
+        : "表现比例 = 官方选择性系数 × 实际获奖层级系数。",
+    },
+  };
+}
+
+export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
+  const effectiveRho = rho ?? decayRatio;
+  if (!Number.isFinite(effectiveRho) || effectiveRho <= 0 || effectiveRho >= 1)
+    throw new Error("递减参数必须在 0 与 1 之间。");
+  // Omitting rho selects the calibrated per-type decay. Passing rho explicitly
+  // keeps the caller's single decay value, including an explicit 0.5.
+  const decayForType = (type: MaterialType) => rho === undefined ? decayRatios[type] : effectiveRho;
   const materials: ScoredMaterial[] = deduplicate(inputs).map((material) => {
     const definitions = factorDefinitions[material.material_type];
-    const breakdown = definitions.map((def) => scoreFactor(def, material.factor_observations[def.key]));
+    const rawBreakdown = definitions.map((def) => scoreFactor(def, material.factor_observations[def.key]));
+    const breakdown = material.material_type === "award"
+      ? rawBreakdown.map((factor) =>
+          factor.key === "award_rate" || factor.key === "tier"
+            ? { ...factor, contribution: null, reason: "该因素进入候选人表现比例，不直接进入赛事质量分。" }
+            : factor,
+        )
+      : rawBreakdown;
     const known = breakdown.filter((item) => item.contribution !== null);
-    const score = known.length ? roundPoints(known.reduce((sum, item) => sum + item.contribution!, 0)) : null;
+    const eventScore = material.material_type === "award"
+      ? known.length
+        ? roundPoints(known.reduce((sum, item) => sum + item.contribution!, 0))
+        : null
+      : null;
+    const performance = material.material_type === "award" ? awardPerformance(material) : { ratio: null, breakdown: null };
+    const score = material.material_type === "award"
+      ? eventScore !== null && performance.ratio !== null
+        ? roundPoints(eventScore * performance.ratio)
+        : null
+      : known.length
+        ? roundPoints(known.reduce((sum, item) => sum + item.contribution!, 0))
+        : null;
+    const positiveDefinitions = definitions.filter((definition) => definition.weight > 0);
+    const missingFactors = breakdown.filter((item) => item.points === null).map((item) => item.label);
+    if (material.material_type === "award" && performance.ratio === null) {
+      if (!material.factor_observations.award_rate) missingFactors.push("官方目标奖项比例（表现比例）");
+      if (!material.factor_observations.tier) missingFactors.push("本赛事奖项层级（表现比例）");
+    }
     const mapping = Object.fromEntries(
       abilityDimensions.map(({ key }) => {
         const value = mapAction(material, key);
@@ -609,13 +754,15 @@ export function scoreMaterials(inputs: MaterialInput[], rho = decayRatio) {
     return {
       ...material,
       material_score: score,
+      event_score: material.material_type === "award" ? eventScore : null,
+      performance_ratio: material.material_type === "award" ? performance.ratio : null,
+      performance_breakdown: material.material_type === "award" ? performance.breakdown : null,
       score_breakdown: breakdown,
-      score_coverage: roundPoints(
-        known.reduce((sum, item) => sum + item.weight, 0) /
-          definitions.reduce((sum, item) => sum + item.weight, 0),
-      ),
-      missing_factors: breakdown.filter((item) => item.points === null).map((item) => item.label),
-      provisional: known.length !== breakdown.length,
+      score_coverage: roundPoints(known.reduce((sum, item) => sum + item.weight, 0) / positiveDefinitions.reduce((sum, item) => sum + item.weight, 0)),
+      missing_factors: [...new Set(missingFactors)],
+      provisional: material.material_type === "award"
+        ? known.length !== positiveDefinitions.length || performance.ratio === null
+        : known.length !== breakdown.length,
       dimension_mapping: mapping,
     };
   });
@@ -641,8 +788,8 @@ export function scoreMaterials(inputs: MaterialInput[], rho = decayRatio) {
             mapping_coefficient: mapping.mapping_coefficient!,
             derived_contribution: mapping.derived_contribution!,
             rank: index + 1,
-            decay: rho ** index,
-            contribution: roundPoints(mapping.derived_contribution! * rho ** index),
+            decay: decayForType(type) ** index,
+            contribution: roundPoints(mapping.derived_contribution! * decayForType(type) ** index),
             evidence: mapping.supporting_evidence,
           });
         });
@@ -652,11 +799,17 @@ export function scoreMaterials(inputs: MaterialInput[], rho = decayRatio) {
         {
           score: terms.length ? roundPoints(terms.reduce((sum, term) => sum + term.contribution, 0)) : null,
           provisional: materials.some(
-            (m) => m.provisional || m.dimension_mapping[key].derived_contribution === null,
+            (m) =>
+              m.provisional ||
+              m.dimension_mapping[key].derived_contribution === null ||
+              (m.dimension_mapping[key].rule === null && !isCatalogBackground(m)),
           ),
           terms,
-          missing_materials: materials.filter((m) => m.dimension_mapping[key].derived_contribution === null)
-            .length,
+          missing_materials: materials.filter(
+            (m) =>
+              m.dimension_mapping[key].derived_contribution === null ||
+              (m.dimension_mapping[key].rule === null && !isCatalogBackground(m)),
+          ).length,
         },
       ];
     }),
@@ -669,7 +822,7 @@ export function scoreMaterials(inputs: MaterialInput[], rho = decayRatio) {
       type,
       count: materials.filter((m) => m.material_type === type).length,
       score: group.length
-        ? roundPoints(group.reduce((sum, m, index) => sum + m.material_score! * rho ** index, 0))
+        ? roundPoints(group.reduce((sum, m, index) => sum + m.material_score! * decayForType(type) ** index, 0))
         : null,
     };
   });
