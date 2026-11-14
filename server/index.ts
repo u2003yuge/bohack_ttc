@@ -4,7 +4,7 @@ import resumes from "./resumes.js";
 import agents from "./agents/router.js";
 import { deadline, errorMessage, limit } from "./operations.js";
 import { normalizeProjectBreakdownRequest, structureJobRequirements, suggestAnalysisTask, suggestProjectBreakdown } from "./analysis.js";
-import type { AnalysisEvent } from "../src/research-types.js";
+import type { AnalysisEvent, AnalysisResult } from "../src/research-types.js";
 import { resumeAnalysisAgentIds, runResumeAgents } from "./agents/registry.js";
 import scoring from "./scoring/router.js";
 
@@ -60,7 +60,7 @@ app.post("/api/agent", async (request, response) => {
   console.log(`[agent ${requestId}] started (candidate evidence only)`);
   try {
     const run = await runResumeAgents({
-      context: { resumeText, fileName: resumeName || "未命名简历", roleRequirements, question, includeResearch: false, webResearchEnabled: false },
+      context: { resumeText, fileName: resumeName || "未命名简历", roleRequirements, question },
       requested: [...resumeAnalysisAgentIds],
       signal: scope.signal,
       onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {

@@ -39,7 +39,6 @@ export async function evaluateResume(text: string, options: EvaluationOptions = 
     );
     const research = options.research ?? ({ items: [], notes: [] } as ResearchBatch);
     scope.signal.throwIfAborted();
-    options.emit?.({ type: "research", research });
     options.emit?.({
       type: "progress",
       progress: { stage: "scoring", message: "正在按固定规则计算材料分、个人贡献和五维能力。" },

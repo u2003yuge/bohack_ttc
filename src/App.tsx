@@ -1319,6 +1319,8 @@ function WeightProposalPreview({ proposal, currentWeights, impact, selectedHasSc
 
 export default function App() {
   const [resumes, setResumes] = useState<Resume[]>([]);
+  const [resumesLoading, setResumesLoading] = useState(true);
+  const [resumeLoadError, setResumeLoadError] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selectedResumeIds, setSelectedResumeIds] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
@@ -1473,10 +1475,13 @@ export default function App() {
   }, [selected]);
 
   async function loadResumes(selectFirst = false) {
+    setResumesLoading(true);
+    setResumeLoadError("");
     try {
       const response = await fetch("/api/resumes");
       if (!response.ok) throw new Error("无法读取简历文件夹。");
       const payload = await response.json() as ResumeListResponse;
+      if (!Array.isArray(payload.resumes)) throw new Error("简历列表格式无效。");
       // The sidebar reflects the local resume folder. Built-in demo candidates
       // remain available only in the historical sample database, not alongside
       // imported resumes in the active workspace.
@@ -1485,8 +1490,8 @@ export default function App() {
         setSelectedId(payload.resumes[0].id);
       }
     } catch {
-      setImportError("无法连接本地简历文件夹，请确认服务正在运行。");
-    }
+      setResumeLoadError("无法读取本地简历库，请确认服务正在运行后重试。");
+    } finally { setResumesLoading(false); }
   }
 
   async function importPdfs(files?: FileList | null) {
@@ -1716,7 +1721,34 @@ export default function App() {
     setBatchProgress("分析已停止，已完成的候选人结果已保留。");
     setAgentError("分析已停止，已完成的材料结果仍可查看。");
   }
-  if (!selected) return null;
+  if (!selected) return <div className="app-shell">
+    <header className="topbar">
+      <a className="brand" href="#" aria-label="Bohack 简历工作台首页" onClick={(event) => { event.preventDefault(); setKnowledgeOpen(false); setHistoryOpen(false); }}><span className="brand-mark"><BriefcaseBusiness size={17} /></span><span>bohack<span className="brand-dot">.</span></span></a>
+      <div className="topbar-spacer" />
+      <button className="compare-button" onClick={() => openKnowledge()}><BookOpen size={14} />资料库</button>
+      <button className="compare-button" onClick={() => openHistory()}><Database size={14} />历史样本</button>
+    </header>
+    <div className="resume-startup-workspace">
+      {knowledgeOpen ? <KnowledgeLibraryView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} />
+        : historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} />
+          : <main className="resume-startup" aria-busy={resumesLoading || extracting}>
+            <section className="resume-startup-card">
+              {resumesLoading ? <LoaderCircle className="spin" size={32} /> : <FolderOpen size={32} />}
+              <h1>{resumesLoading ? "正在读取简历库" : resumeLoadError ? "简历库读取失败" : "还没有简历"}</h1>
+              <p role={resumeLoadError ? "alert" : "status"}>{resumesLoading ? "正在读取本地简历，请稍候。" : resumeLoadError || "导入 PDF 简历或整个文件夹，开始查看与分析。"}</p>
+              {importError && <p className="inline-error" role="alert">{importError}</p>}
+              <div className="resume-startup-actions">
+                <button className="import-button" onClick={() => fileInput.current?.click()} disabled={resumesLoading || extracting}>{extracting ? <LoaderCircle className="spin" size={16} /> : <Upload size={16} />}{extracting ? `正在识别 ${importProgress}` : "导入 PDF 简历"}</button>
+                <button className="secondary-action" onClick={() => folderInput.current?.click()} disabled={resumesLoading || extracting}><FolderOpen size={14} />导入文件夹</button>
+                <button className="secondary-action" onClick={() => void loadResumes()} disabled={resumesLoading || extracting}>{resumesLoading ? "读取中…" : "重新读取简历库"}</button>
+                <button className="secondary-action" onClick={openResumeFolder} disabled={resumesLoading || extracting}><FolderOpen size={14} />打开存储位置</button>
+              </div>
+            </section>
+          </main>}
+    </div>
+    <input ref={fileInput} className="visually-hidden" type="file" accept="application/pdf,.pdf" multiple onChange={(event) => importPdfs(event.target.files)} />
+    <input ref={(element) => { folderInput.current = element; element?.setAttribute("webkitdirectory", ""); }} className="visually-hidden" type="file" multiple onChange={(event) => importPdfs(event.target.files)} />
+  </div>;
 
   return (
     <div className="app-shell">
@@ -1759,6 +1791,7 @@ export default function App() {
               <button className="secondary-action" onClick={openResumeFolder} title="打开本地简历存储文件夹"><FolderOpen size={14} />打开存储位置</button>
             </div>
             {importError && <div className="inline-error" role="status">{importError}</div>}
+            {resumeLoadError && <div className="inline-error" role="alert">{resumeLoadError}<button type="button" onClick={() => void loadResumes()} disabled={resumesLoading}>重试</button></div>}
           </div>
 
           <div className="list-label"><span>候选人</span><div className="list-label-actions"><span>最近更新</span><button type="button" className="selection-mode-toggle" onClick={() => setSelectionMode((current) => !current)} disabled={batchBusy}>{selectionMode ? "完成" : "多选"}</button></div></div>
