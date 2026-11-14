@@ -52,3 +52,5 @@
 .venue-metric-sources strong { font-weight: 500; }.venue-metric-sources svg { vertical-align: middle; margin-left: 5px; }
 .venue-metric-sources span { color: #889780; }.venue-metrics .venue-metric-boundary { margin-top: 12px; padding-top: 11px; border-top: 1px solid #e3e9df; color: #8a9884; font-size: 10px; }
 @media (max-width: 760px) { .venue-ranking dl > div { grid-template-columns: 1fr; gap: 2px; }.venue-tools select[aria-label="分级体系与版本"] { max-width: 260px; } }
+
+.venue-item .catalog-card-material-meta { display: grid; gap: 3px; }.venue-item .catalog-card-material-score { color: #527b55; font-weight: 600; }

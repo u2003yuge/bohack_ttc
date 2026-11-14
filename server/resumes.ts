@@ -5,57 +5,21 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import {
-  enrichKnowledgeDraft,
-  suggestComparisonRanking,
-  suggestHistoricalFilters,
-  suggestKnowledgeAssessment,
-  suggestKnowledgeFilters,
-  suggestScoreWeights,
-} from "./analysis.js";
-import {
-  resumeAnalysisAgentIds,
-  runResumeAgents,
-  type AgentArtifact,
-  type ResumeAgentId,
-} from "./agents/registry.js";
+import { enrichKnowledgeDraft, suggestComparisonRanking, suggestHistoricalFilters, suggestKnowledgeAssessment, suggestKnowledgeFilters, suggestScoreWeights } from "./analysis.js";
+import { resumeAnalysisAgentIds, runResumeAgents, type AgentArtifact, type ResumeAgentId } from "./agents/registry.js";
 import { respondWithAnalysis } from "./analysis-response.js";
 import { interruptible } from "./operations.js";
-import {
-  defaultScoreWeights,
-  normalizeComparisonRankDraft,
-  normalizeWeights,
-  type ComparisonRankDraft,
-  type ScoreCard,
-  type ScoreHistoryEntry,
-  type ScoreWeights,
-} from "../shared/scoring.js";
-import {
-  historicalCandidates,
-  normalizeHistoricalCandidate,
-  roleGroup,
-  type HistoricalCandidate,
-  type HistoricalFilterOptions,
-} from "../shared/history.js";
-import {
-  knowledgeRecords,
-  normalizeKnowledgeEvidenceSources,
-  normalizeKnowledgeImport,
-  type KnowledgeRecord,
-  type KnowledgeReviewEntry,
-} from "../shared/knowledge.js";
+import { defaultScoreWeights, normalizeComparisonRankDraft, normalizeWeights, type ComparisonRankDraft, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
+import { historicalYears, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
+import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { materialLibraryStore } from "./material-library-store.js";
 import { buildCatalogAssessment } from "./scoring/catalog.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
-import {
-  scoringVersion,
-  withMaterialContributions,
-  type Assessment,
-  type AssessmentHistoryEntry,
-} from "../shared/material-scoring.js";
-import type { AnalysisResult, ResearchBatch } from "../src/research-types.js";
+import { loadTrackedResumeReport, saveTrackedResumeReport } from "./tracked-resume-cache.js";
+import { scoringVersion, withMaterialContributions, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
+import type { AgentDebug, AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
 type ResumeRecord = {
   id: string;
@@ -68,6 +32,8 @@ type ResumeRecord = {
   source: "pdf";
   text: string;
   education: string;
+  identity: string;
+  keywords: string[];
   skills: string[];
   summary: string;
   analysisReport: string;
@@ -76,20 +42,18 @@ type ResumeRecord = {
   assessment?: Assessment;
   assessmentHistory?: AssessmentHistoryEntry[];
   agentArtifacts?: AgentArtifact[];
-  analysisStatus: "complete" | "unavailable" | "failed";
+  analysisDebug?: AgentDebug;
+  analysisStatus: "complete" | "processing" | "unavailable" | "failed";
   analysisError: string;
   analyzedAt: string;
-  analysisDebug?: import("../src/research-types.js").AgentDebug;
   pages: number;
   size: number;
   extractionVersion: number;
+  reviewStatus?: "pending" | "passed" | "rejected";
 };
 
 const directory = path.resolve(process.env.RESUME_DIR || ".data/resumes");
-const pdfjsDirectory = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../node_modules/pdfjs-dist",
-);
+const pdfjsDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../node_modules/pdfjs-dist");
 const router = Router();
 const maxPdfSize = 30 * 1024 * 1024;
 const extractionVersion = 3;
@@ -102,122 +66,87 @@ const assessmentSaves = new Map<string, Promise<ResumeRecord>>();
 router.get("/history", async (_request, response, next) => {
   try {
     const local = await readHistoryCandidates();
-    response.json({
-      candidates: [
-        ...historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" as const })),
-        ...local.map((candidate) => ({ ...candidate, source: "local" as const })),
-      ],
-      description: "本地历史招聘基准样本",
-    });
-  } catch (error) {
-    next(error);
-  }
+    response.json({ candidates: local.map((candidate) => ({ ...candidate, source: "local" as const })), description: "本地历史招聘基准样本" });
+  } catch (error) { next(error); }
 });
 
 router.post("/history/filter-draft", async (request, response, next) => {
   try {
-    const instruction =
-      typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
-    const records = [...historicalCandidates, ...(await readHistoryCandidates())];
+    const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
+    const records = await readHistoryCandidates();
     const options: HistoricalFilterOptions = {
       roleGroups: [...new Set(records.map((candidate) => roleGroup(candidate.role)))].slice(0, 20),
-      years: [...new Set(records.map((candidate) => candidate.year))]
-        .sort((left, right) => right - left)
-        .slice(0, 30),
+      years: [...new Set([...historicalYears, ...records.map((candidate) => candidate.year)])].sort((left, right) => right - left).slice(0, 30),
     };
-    if (!instruction) {
-      response.status(400).json({ error: "请描述希望查看的历史样本。" });
-      return;
-    }
-    if (!process.env.OPENAI_API_KEY) {
-      response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" });
-      return;
-    }
+    if (!instruction) { response.status(400).json({ error: "请描述希望查看的历史样本。" }); return; }
+    if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" }); return; }
     const suggestion = await suggestHistoricalFilters(instruction, options);
     response.json({ suggestion });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/comparison/rank-draft", async (request, response, next) => {
   try {
-    const instruction =
-      typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
-    if (!instruction) {
-      response.status(400).json({ error: "请描述希望按什么能力比较候选人。" });
-      return;
-    }
-    if (!process.env.OPENAI_API_KEY) {
-      response.status(503).json({ error: "尚未配置模型服务，无法生成排名方案。" });
-      return;
-    }
+    const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
+    if (!instruction) { response.status(400).json({ error: "请描述希望按什么能力比较候选人。" }); return; }
+    if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成排名方案。" }); return; }
     const currentDraft = normalizeComparisonRankDraft(request.body?.current ?? {});
-    if ("error" in currentDraft) {
-      response.status(400).json({ error: "当前排名或图表设置无效，请刷新后重试。" });
-      return;
-    }
+    if ("error" in currentDraft) { response.status(400).json({ error: "当前排名或图表设置无效，请刷新后重试。" }); return; }
     const suggestion = await suggestComparisonRanking(instruction, currentDraft as ComparisonRankDraft);
     response.json({ suggestion });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/history", async (request, response, next) => {
   try {
     const local = await readHistoryCandidates();
-    const candidate = normalizeHistoricalCandidate(
-      request.body,
-      `hist-local-${randomUUID()}`,
-      local.length + 1,
-    );
-    if ("error" in candidate) {
-      response.status(400).json({ error: candidate.error });
-      return;
-    }
+    const candidate = normalizeHistoricalCandidate(request.body, `hist-local-${randomUUID()}`, local.length + 1);
+    if ("error" in candidate) { response.status(400).json({ error: candidate.error }); return; }
     local.unshift(candidate);
     await writeHistoryCandidates(local);
     response.status(201).json({ candidate: { ...candidate, source: "local" } });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.put("/history/:id", async (request, response, next) => {
   try {
     const local = await readHistoryCandidates();
     const index = local.findIndex((candidate) => candidate.id === request.params.id);
-    if (index < 0) {
-      response.status(404).json({ error: "找不到本地历史样本。" });
-      return;
-    }
+    if (index < 0) { response.status(404).json({ error: "找不到本地历史样本。" }); return; }
     const candidate = normalizeHistoricalCandidate(request.body, local[index].id, index + 1);
-    if ("error" in candidate) {
-      response.status(400).json({ error: candidate.error });
-      return;
-    }
+    if ("error" in candidate) { response.status(400).json({ error: candidate.error }); return; }
     local[index] = candidate;
     await writeHistoryCandidates(local);
     response.json({ candidate: { ...candidate, source: "local" } });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.delete("/history/:id", async (request, response, next) => {
   try {
     const local = await readHistoryCandidates();
     const nextRecords = local.filter((candidate) => candidate.id !== request.params.id);
-    if (nextRecords.length === local.length) {
-      response.status(404).json({ error: "找不到本地历史样本。" });
-      return;
-    }
+    if (nextRecords.length === local.length) { response.status(404).json({ error: "找不到本地历史样本。" }); return; }
     await writeHistoryCandidates(nextRecords);
     response.json({ deleted: true });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
+});
+
+router.put("/:id/decision", async (request, response, next) => {
+  try {
+    const decision = request.body?.decision;
+    if (decision !== "passed" && decision !== "rejected") {
+      response.status(400).json({ error: "请选择通过或拒绝。" });
+      return;
+    }
+    const record = await readRecord(request.params.id);
+    if (!record) {
+      response.status(404).json({ error: "找不到这份简历。" });
+      return;
+    }
+    const updated = { ...record, reviewStatus: decision };
+    await writeRecord(updated);
+    response.json({ resume: updated });
+  } catch (error) { next(error); }
 });
 
 router.get("/knowledge", async (request, response, next) => {
@@ -227,38 +156,10 @@ router.get("/knowledge", async (request, response, next) => {
     const records = await readKnowledgeRecords();
     const kind = request.query.kind;
     if (kind !== undefined && !["competition", "journal", "company"].includes(String(kind))) {
-      response.status(400).json({ error: "请选择竞赛、期刊或企业类别。" });
-      return;
+      response.status(400).json({ error: "请选择竞赛、期刊或企业类别。" }); return;
     }
-    response.json({
-      records: records
-        .filter((record) => kind === undefined || record.kind === kind)
-        .map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })),
-      source: "local-json",
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/knowledge/materials", async (_request, response, next) => {
-  try {
-    await synchronizeMaterialLibrary();
-    const records = await readKnowledgeRecords();
-    response.json({ materials: await materialLibraryStore.list(records), source: "local-material-library" });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/knowledge/materials/sync", async (_request, response, next) => {
-  try {
-    await synchronizeMaterialLibrary();
-    const records = await readKnowledgeRecords();
-    response.json({ materials: await materialLibraryStore.list(records), synced: true });
-  } catch (error) {
-    next(error);
-  }
+    response.json({ records: records.filter((record) => kind === undefined || record.kind === kind).map((record) => ({ ...record, ...(reviews[record.id] ?? {}) })), source: "local-json" });
+  } catch (error) { next(error); }
 });
 
 router.get("/knowledge/export", async (_request, response, next) => {
@@ -267,78 +168,57 @@ router.get("/knowledge/export", async (_request, response, next) => {
     const reviews = await readKnowledgeReviews();
     const records = custom.map((record) => ({ ...record, ...(reviews[record.id] ?? {}) }));
     const builtInIds = new Set(knowledgeRecords.map((record) => record.id));
-    const builtInReviews = Object.fromEntries(
-      Object.entries(reviews)
-        .filter(([id, review]) => builtInIds.has(id) && Boolean(review.reviewHistory?.length))
-        .map(([id, review]) => [id, review.reviewHistory]),
-    );
-    response.json({
-      format: "bohack-knowledge-library",
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      records,
-      reviews: builtInReviews,
-    });
-  } catch (error) {
-    next(error);
-  }
+    const builtInReviews = Object.fromEntries(Object.entries(reviews)
+      .filter(([id, review]) => builtInIds.has(id) && Boolean(review.reviewHistory?.length))
+      .map(([id, review]) => [id, review.reviewHistory]));
+    response.json({ format: "bohack-knowledge-library", version: 1, exportedAt: new Date().toISOString(), records, reviews: builtInReviews });
+  } catch (error) { next(error); }
 });
 
 router.post("/knowledge/import/preview", async (request, response, next) => {
   try {
     const bundle = normalizeKnowledgeImport(request.body);
-    if ("error" in bundle) {
-      response.status(400).json({ error: bundle.error });
-      return;
-    }
+    if ("error" in bundle) { response.status(400).json({ error: bundle.error }); return; }
     const existingIds = new Set((await readCustomKnowledge()).map((record) => record.id));
     const existingBuiltInIds = new Set(knowledgeRecords.map((record) => record.id));
     if (bundle.records.some((record) => existingBuiltInIds.has(record.id))) {
-      response.status(400).json({ error: "导入文件包含内置资料 ID；请先导出自建资料，再导入该备份。" });
-      return;
+      response.status(400).json({ error: "导入文件包含内置资料 ID；请先导出自建资料，再导入该备份。" }); return;
+    }
+    const existingRecords = await readKnowledgeRecords();
+    const existingRecordIds = new Set(existingRecords.map((record) => record.id));
+    const duplicate = bundle.records.map((record) => existingRecordIds.has(record.id) ? undefined : findKnowledgeDuplicate(record, existingRecords)).find(Boolean);
+    if (duplicate) {
+      response.status(409).json({ error: `导入中包含已有同一场比赛资料“${duplicate!.record.title}”；请合并后再导入，避免重复记录。`, duplicate: duplicate!.record }); return;
     }
     const updateCount = bundle.records.filter((record) => existingIds.has(record.id)).length;
     const existingReviews = await readKnowledgeReviews();
     const reviewIds = Object.keys(bundle.reviews ?? {});
-    const updateReviewCount = reviewIds.filter((id) =>
-      Boolean(existingReviews[id]?.reviewHistory?.length),
-    ).length;
-    response.json({
-      bundle,
-      insertCount: bundle.records.length - updateCount,
-      updateCount,
-      insertReviewCount: reviewIds.length - updateReviewCount,
-      updateReviewCount,
-    });
-  } catch (error) {
-    next(error);
-  }
+    const updateReviewCount = reviewIds.filter((id) => Boolean(existingReviews[id]?.reviewHistory?.length)).length;
+    response.json({ bundle, insertCount: bundle.records.length - updateCount, updateCount, insertReviewCount: reviewIds.length - updateReviewCount, updateReviewCount });
+  } catch (error) { next(error); }
 });
 
 router.post("/knowledge/import", async (request, response, next) => {
   try {
     const bundle = normalizeKnowledgeImport(request.body);
-    if ("error" in bundle) {
-      response.status(400).json({ error: bundle.error });
-      return;
-    }
+    if ("error" in bundle) { response.status(400).json({ error: bundle.error }); return; }
     const builtInIds = new Set(knowledgeRecords.map((record) => record.id));
     if (bundle.records.some((record) => builtInIds.has(record.id))) {
-      response.status(400).json({ error: "导入文件包含内置资料 ID，已取消写入。" });
-      return;
+      response.status(400).json({ error: "导入文件包含内置资料 ID，已取消写入。" }); return;
+    }
+    const existingRecords = await readKnowledgeRecords();
+    const existingRecordIds = new Set(existingRecords.map((record) => record.id));
+    const duplicate = bundle.records.map((record) => existingRecordIds.has(record.id) ? undefined : findKnowledgeDuplicate(record, existingRecords)).find(Boolean);
+    if (duplicate) {
+      response.status(409).json({ error: `导入中包含已有同一场比赛资料“${duplicate!.record.title}”；已取消写入，请合并后再导入。`, duplicate: duplicate!.record }); return;
     }
     const custom = await readCustomKnowledge();
     const existingIds = new Set(custom.map((record) => record.id));
     const importedIds = new Set(bundle.records.map((record) => record.id));
-    const nextCustom = [
-      ...bundle.records.map(({ reviewHistory: _reviewHistory, ...record }) => record),
-      ...custom.filter((record) => !importedIds.has(record.id)),
-    ];
+    const nextCustom = [...bundle.records.map(({ reviewHistory: _reviewHistory, ...record }) => record), ...custom.filter((record) => !importedIds.has(record.id))];
     const reviews = await readKnowledgeReviews();
     const builtInReviewIds = Object.keys(bundle.reviews ?? {});
-    const updateReviewCount = builtInReviewIds.filter((id) =>
-      Boolean(reviews[id]?.reviewHistory?.length),
-    ).length;
+    const updateReviewCount = builtInReviewIds.filter((id) => Boolean(reviews[id]?.reviewHistory?.length)).length;
     for (const record of bundle.records) {
       const history = record.reviewHistory ?? [];
       const latest = history.at(-1);
@@ -378,28 +258,17 @@ router.post("/knowledge/import", async (request, response, next) => {
       insertReviewCount: builtInReviewIds.length - updateReviewCount,
       updateReviewCount,
     });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/knowledge/filter-draft", async (request, response, next) => {
   try {
-    const instruction =
-      typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
-    if (!instruction) {
-      response.status(400).json({ error: "请描述希望查找的资料。" });
-      return;
-    }
-    if (!process.env.OPENAI_API_KEY) {
-      response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" });
-      return;
-    }
+    const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
+    if (!instruction) { response.status(400).json({ error: "请描述希望查找的资料。" }); return; }
+    if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" }); return; }
     const suggestion = await suggestKnowledgeFilters(instruction);
     response.json({ suggestion });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/knowledge", async (request, response, next) => {
@@ -408,42 +277,34 @@ router.post("/knowledge", async (request, response, next) => {
     const kind = input.kind as KnowledgeRecord["kind"];
     const title = typeof input.title === "string" ? input.title.trim().slice(0, 160) : "";
     if (!title || !["competition", "journal", "company"].includes(kind)) {
-      response.status(400).json({ error: "请填写资料名称并选择有效类别。" });
-      return;
+      response.status(400).json({ error: "请填写资料名称并选择有效类别。" }); return;
+    }
+    const custom = await readCustomKnowledge();
+    const allRecords = [...knowledgeRecords, ...custom];
+    const aliases = Array.isArray(input.aliases) ? input.aliases.filter((item: unknown): item is string => typeof item === "string").map((item: string) => item.trim()).filter(Boolean).slice(0, 8) : [];
+    const duplicate = findKnowledgeDuplicate({ kind, title, aliases, organizer: textInput(input.organizer, 120), region: textInput(input.region, 80), field: textInput(input.field, 120), officialUrl: safeHttpUrl(input.officialUrl) }, allRecords);
+    if (duplicate) {
+      const reason = duplicate.reason === "competition-series" ? "赛事系列、年份或分赛站" : duplicate.reason === "official-url" ? "官方来源地址" : "名称或别名";
+      response.status(409).json({ error: `检测到已有同一场比赛资料“${duplicate.record.title}”（匹配依据：${reason}），本次未重复加入。请直接打开已有条目补充信息。`, duplicate: duplicate.record }); return;
     }
     const record: KnowledgeRecord = {
       id: `custom-${crypto.randomUUID()}`,
       kind,
       title,
-      aliases: Array.isArray(input.aliases)
-        ? input.aliases
-            .filter((item: unknown): item is string => typeof item === "string")
-            .map((item: string) => item.trim())
-            .filter(Boolean)
-            .slice(0, 8)
-        : [],
-      field: textInput(input.field, 120),
-      organizer: textInput(input.organizer, 120),
-      region: textInput(input.region, 80),
-      summary: textInput(input.summary, 1200),
-      signals: Array.isArray(input.signals)
-        ? input.signals.filter((item: unknown): item is string => typeof item === "string").slice(0, 10)
-        : [],
-      officialUrl: safeHttpUrl(input.officialUrl),
-      significanceScore: 50,
+      aliases,
+      field: textInput(input.field, 120), organizer: textInput(input.organizer, 120), region: textInput(input.region, 80),
+      summary: textInput(input.summary, 1200), signals: Array.isArray(input.signals) ? input.signals.filter((item: unknown): item is string => typeof item === "string").slice(0, 10) : [],
+      officialUrl: safeHttpUrl(input.officialUrl), significanceScore: 50,
       evidenceSources: normalizeKnowledgeEvidenceSources(input.evidenceSources),
       scoreRationale: "新建资料尚未评估。请核验可靠来源和岗位相关证据。",
-      verificationStatus: "示例资料，待核验",
-      updatedAt: new Date().toISOString().slice(0, 10),
+      verificationStatus: "示例资料，待核验", updatedAt: new Date().toISOString().slice(0, 10),
     };
-    const custom = await readCustomKnowledge();
-    custom.unshift(record);
+    const customRecords = custom;
+    customRecords.unshift(record);
     await mkdir(path.dirname(customKnowledgePath), { recursive: true });
-    await writeFile(customKnowledgePath, JSON.stringify(custom, null, 2), "utf8");
+    await writeFile(customKnowledgePath, JSON.stringify(customRecords, null, 2), "utf8");
     response.status(201).json({ record });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/knowledge/enrich", async (request, response, next) => {
@@ -488,20 +349,18 @@ router.put("/knowledge/:id", async (request, response, next) => {
   try {
     const records = await readKnowledgeRecords();
     const existing = records.find((item) => item.id === request.params.id);
-    if (!existing) {
-      response.status(404).json({ error: "找不到资料记录。" });
-      return;
-    }
-    if (!existing.id.startsWith("custom-")) {
-      response.status(403).json({ error: "内置示例资料只读；可直接保存其人工评估与核验记录。" });
-      return;
-    }
+    if (!existing) { response.status(404).json({ error: "找不到资料记录。" }); return; }
+    if (!existing.id.startsWith("custom-")) { response.status(403).json({ error: "内置示例资料只读；可直接保存其人工评估与核验记录。" }); return; }
     const input = request.body ?? {};
     const title = textInput(input.title, 160);
     const kind = input.kind as KnowledgeRecord["kind"];
     if (!title || !["competition", "journal", "company"].includes(kind)) {
-      response.status(400).json({ error: "请填写资料名称并选择有效类别。" });
-      return;
+      response.status(400).json({ error: "请填写资料名称并选择有效类别。" }); return;
+    }
+    const duplicate = findKnowledgeDuplicate({ kind, title, aliases: stringList(input.aliases, 8, 100), organizer: textInput(input.organizer, 120), region: textInput(input.region, 80), field: textInput(input.field, 120), officialUrl: safeHttpUrl(input.officialUrl) }, records, existing.id);
+    if (duplicate) {
+      const reason = duplicate.reason === "competition-series" ? "赛事系列、年份或分赛站" : duplicate.reason === "official-url" ? "官方来源地址" : "名称或别名";
+      response.status(409).json({ error: `保存失败：已有同一场比赛资料“${duplicate.record.title}”（匹配依据：${reason}），请合并到已有条目。`, duplicate: duplicate.record }); return;
     }
     const updated: KnowledgeRecord = {
       ...existing,
@@ -514,10 +373,7 @@ router.put("/knowledge/:id", async (request, response, next) => {
       summary: textInput(input.summary, 1200),
       signals: stringList(input.signals, 10, 100),
       officialUrl: safeHttpUrl(input.officialUrl),
-      evidenceSources: normalizeKnowledgeEvidenceSources(
-        input.evidenceSources,
-        existing.evidenceSources ?? [],
-      ),
+      evidenceSources: normalizeKnowledgeEvidenceSources(input.evidenceSources, existing.evidenceSources ?? []),
       updatedAt: new Date().toISOString().slice(0, 10),
     };
     const custom = await readCustomKnowledge();
@@ -526,19 +382,14 @@ router.put("/knowledge/:id", async (request, response, next) => {
     await writeFile(customKnowledgePath, JSON.stringify(next, null, 2), "utf8");
     const reviews = await readKnowledgeReviews();
     response.json({ record: { ...updated, ...(reviews[updated.id] ?? {}) } });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.delete("/knowledge/:id", async (request, response, next) => {
   try {
     const custom = await readCustomKnowledge();
     const nextRecords = custom.filter((record) => record.id !== request.params.id);
-    if (nextRecords.length === custom.length) {
-      response.status(404).json({ error: "只能删除本地新增的资料，或该资料已不存在。" });
-      return;
-    }
+    if (nextRecords.length === custom.length) { response.status(404).json({ error: "只能删除本地新增的资料，或该资料已不存在。" }); return; }
     await mkdir(path.dirname(customKnowledgePath), { recursive: true });
     await catalogStore.remove(request.params.id);
     await writeFile(customKnowledgePath, JSON.stringify(nextRecords, null, 2), "utf8");
@@ -549,77 +400,40 @@ router.delete("/knowledge/:id", async (request, response, next) => {
       await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
     }
     response.json({ deleted: true });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.put("/knowledge/:id/review", async (request, response, next) => {
   try {
     const record = (await readKnowledgeRecords()).find((item) => item.id === request.params.id);
-    if (!record) {
-      response.status(404).json({ error: "找不到资料记录。" });
-      return;
-    }
+    if (!record) { response.status(404).json({ error: "找不到资料记录。" }); return; }
     const score = Number(request.body?.significanceScore);
     const reviews = await readKnowledgeReviews();
     const previous = reviews[record.id];
-    const rationale =
-      typeof request.body?.scoreRationale === "string"
-        ? request.body.scoreRationale.trim().slice(0, 500)
-        : (previous?.scoreRationale ?? record.scoreRationale);
+    const rationale = typeof request.body?.scoreRationale === "string" ? request.body.scoreRationale.trim().slice(0, 500) : previous?.scoreRationale ?? record.scoreRationale;
     const verificationStatus = request.body?.verificationStatus;
-    if (!Number.isFinite(score) || score < 0 || score > 100) {
-      response.status(400).json({ error: "含金量评分需要是 0 到 100 之间的数字。" });
-      return;
-    }
-    if (verificationStatus !== undefined && !["示例资料，待核验", "已核验"].includes(verificationStatus)) {
-      response.status(400).json({ error: "请选择有效的核验状态。" });
-      return;
-    }
+    if (!Number.isFinite(score) || score < 0 || score > 100) { response.status(400).json({ error: "含金量评分需要是 0 到 100 之间的数字。" }); return; }
+    if (verificationStatus !== undefined && !["示例资料，待核验", "已核验"].includes(verificationStatus)) { response.status(400).json({ error: "请选择有效的核验状态。" }); return; }
     const status = verificationStatus ?? previous?.verificationStatus ?? record.verificationStatus;
     const reviewedAt = new Date().toISOString();
     const source = request.body?.source === "ai-assisted" ? "ai-assisted" : "manual";
     const previousHistory = Array.isArray(previous?.reviewHistory) ? previous.reviewHistory : [];
     const availableSourceIds = new Set((record.evidenceSources ?? []).map((item) => item.id));
     const evidenceSourceIds: string[] = Array.isArray(request.body?.evidenceSourceIds)
-      ? [
-          ...new Set<string>(
-            request.body.evidenceSourceIds.filter(
-              (id: unknown): id is string => typeof id === "string" && availableSourceIds.has(id),
-            ) as string[],
-          ),
-        ].slice(0, 12)
+      ? [...new Set<string>(request.body.evidenceSourceIds.filter((id: unknown): id is string => typeof id === "string" && availableSourceIds.has(id)) as string[])].slice(0, 12)
       : [];
     const evidenceSources = (record.evidenceSources ?? [])
       .filter((item) => evidenceSourceIds.includes(item.id))
       .map((item) => ({ ...item }));
-    const reviewHistory = [
-      ...previousHistory,
-      {
-        id: randomUUID(),
-        significanceScore: Math.round(score),
-        scoreRationale: rationale,
-        verificationStatus: status,
-        updatedAt: reviewedAt,
-        source,
-        evidenceSourceIds,
-        evidenceSources,
-      } satisfies KnowledgeReviewEntry,
-    ].slice(-30);
-    reviews[record.id] = {
-      significanceScore: Math.round(score),
-      scoreRationale: rationale,
-      verificationStatus: status,
-      updatedAt: reviewedAt.slice(0, 10),
-      reviewHistory,
-    };
+    const reviewHistory = [...previousHistory, {
+      id: randomUUID(), significanceScore: Math.round(score), scoreRationale: rationale,
+      verificationStatus: status, updatedAt: reviewedAt, source, evidenceSourceIds, evidenceSources,
+    } satisfies KnowledgeReviewEntry].slice(-30);
+    reviews[record.id] = { significanceScore: Math.round(score), scoreRationale: rationale, verificationStatus: status, updatedAt: reviewedAt.slice(0, 10), reviewHistory };
     await mkdir(path.dirname(knowledgeReviewsPath), { recursive: true });
     await writeFile(knowledgeReviewsPath, JSON.stringify(reviews, null, 2), "utf8");
     response.json({ record: { ...record, ...reviews[record.id] } });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/knowledge/:id/suggest", async (request, response, next) => {
@@ -658,9 +472,7 @@ router.put("/scoring/weights", async (request, response, next) => {
     const weights = normalizeWeightInput(request.body?.weights);
     await saveWeights(weights);
     response.json({ weights });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/scoring/weights/adjust", async (request, response, next) => {
@@ -675,9 +487,7 @@ router.post("/scoring/weights/adjust", async (request, response, next) => {
       : await readWeights();
     const proposal = await suggestScoreWeights(instruction, currentWeights);
     response.json(proposal);
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.use(async (_request, _response, next) => {
@@ -689,10 +499,26 @@ router.use(async (_request, _response, next) => {
   }
 });
 
+router.get("/knowledge/materials", async (_request, response, next) => {
+  try {
+    await synchronizeMaterialLibrary();
+    const records = await readKnowledgeRecords();
+    response.json({ materials: await materialLibraryStore.list(records), source: "local-material-library" });
+  } catch (error) { next(error); }
+});
+
+router.post("/knowledge/materials/sync", async (_request, response, next) => {
+  try {
+    await synchronizeMaterialLibrary();
+    const records = await readKnowledgeRecords();
+    response.json({ materials: await materialLibraryStore.list(records), synced: true });
+  } catch (error) { next(error); }
+});
+
 router.get("/", async (_request, response, next) => {
   try {
-    const records = await readDirectory();
-    response.json({ directory, resumes: records });
+    const result = await readDirectory();
+    response.json({ directory, resumes: result.records, skippedFiles: result.skippedFiles });
   } catch (error) {
     next(error);
   }
@@ -706,14 +532,11 @@ router.post("/scan", async (_request, response, next) => {
       const filePath = path.join(directory, name);
       const id = path.basename(name, path.extname(name));
       const existing = await readRecord(id);
-      if (
-        existing?.extractionVersion === extractionVersion &&
-        existing.assessment?.version === scoringVersion
-      ) {
+      if (existing?.extractionVersion === extractionVersion && existing.assessment?.version === scoringVersion) {
         records.push(existing);
         continue;
       }
-      const record = await indexPdf(filePath, id, name, { analyze: false });
+      const record = await indexPdf(filePath, id, name);
       await writeRecord(record);
       records.push(record);
     }
@@ -724,8 +547,7 @@ router.post("/scan", async (_request, response, next) => {
 });
 
 router.post("/open-folder", (_request, response) => {
-  const command =
-    process.platform === "win32" ? "explorer.exe" : process.platform === "darwin" ? "open" : "xdg-open";
+  const command = process.platform === "win32" ? "explorer.exe" : process.platform === "darwin" ? "open" : "xdg-open";
   const child = spawn(command, [directory], { detached: true, stdio: "ignore" });
   child.once("error", () => response.status(500).json({ error: "无法打开简历文件夹。" }));
   child.once("spawn", () => {
@@ -733,6 +555,44 @@ router.post("/open-folder", (_request, response) => {
     response.json({ opened: true });
   });
 });
+
+async function finishImportedAnalysis(id: string): Promise<void> {
+  const record = await readRecord(id);
+  if (!record || record.analysisStatus !== "processing") return;
+  try {
+    const run = await runResumeAgents({
+      context: { resumeText: record.text, fileName: record.fileName, useModel: true },
+      requested: [...resumeAnalysisAgentIds],
+      artifacts: record.agentArtifacts,
+    });
+    const assessment = run.outputs["score-calculation"] as Assessment | undefined;
+    const reportOutput = run.outputs["analysis-report"];
+    const reportText = reportOutput && typeof reportOutput === "object" && typeof (reportOutput as { answer?: unknown }).answer === "string"
+      ? (reportOutput as { answer: string }).answer
+      : typeof reportOutput === "string" ? reportOutput : "";
+    const current = await readRecord(id);
+    if (!current) return;
+    await writeRecord({
+      ...current,
+      assessment: assessment ?? current.assessment,
+      assessmentHistory: assessment ? [{ reason: "import", assessment }] : current.assessmentHistory,
+      analysisReport: reportText || (assessment ? assessmentReport(assessment) : current.analysisReport),
+      analysisStatus: "complete",
+      analysisError: "",
+      analyzedAt: new Date().toISOString(),
+      analysisDebug: run.debug,
+      agentArtifacts: run.artifacts,
+    });
+  } catch (error) {
+    const current = await readRecord(id);
+    if (!current) return;
+    await writeRecord({
+      ...current,
+      analysisStatus: "failed",
+      analysisError: error instanceof Error ? error.message : "后台分析失败，请重试。",
+    });
+  }
+}
 
 router.post("/", async (request, response, next) => {
   try {
@@ -759,9 +619,36 @@ router.post("/", async (request, response, next) => {
     await writeFile(filePath, buffer, { flag: "wx" });
 
     try {
-      const record = await indexPdf(filePath, id, fileName, { analyze: false });
+      let record = await indexPdf(filePath, id, fileName, { analyze: false });
+      if (record.text && process.env.OPENAI_API_KEY) {
+        const profileRun = await runResumeAgents({
+          context: { resumeText: record.text, fileName, useModel: true },
+          requested: ["candidate-profile"],
+        });
+        const profile = profileRun.outputs["candidate-profile"] as {
+          name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
+        } | null | undefined;
+        if (profile) {
+          record = {
+            ...record,
+            name: profile.name?.trim() || record.name,
+            identity: profile.identity?.trim() || "待提取身份",
+            keywords: stringList(profile.keywords, 5, 24),
+            role: profile.role?.trim() || record.role,
+            location: profile.location?.trim() || record.location,
+            education: profile.education?.trim() || record.education,
+            skills: stringList(profile.skills, 10, 60),
+            summary: profile.summary?.trim() || "",
+            initials: (profile.name?.trim() || record.name).split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+            analysisStatus: "processing",
+            analysisError: "候选人画像已完成，评分与分析报告正在后台生成。",
+            agentArtifacts: profileRun.artifacts,
+          };
+        }
+      }
       await writeRecord(record);
       response.status(201).json(record);
+      if (record.analysisStatus === "processing") void finishImportedAnalysis(id).catch(() => undefined);
     } catch (error) {
       await rm(filePath, { force: true });
       throw error;
@@ -779,10 +666,7 @@ router.get("/:id/file", async (request, response, next) => {
       return;
     }
     response.type("application/pdf");
-    response.setHeader(
-      "Content-Disposition",
-      `inline; filename*=UTF-8''${encodeURIComponent(record.fileName)}`,
-    );
+    response.setHeader("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(record.fileName)}`);
     response.sendFile(path.join(directory, record.fileName));
   } catch (error) {
     next(error);
@@ -809,33 +693,17 @@ router.delete("/:id", async (request, response, next) => {
 router.post("/:id/agents/run", async (request, response, next) => {
   try {
     const record = await readRecord(request.params.id);
-    if (!record) {
-      response.status(404).json({ error: "找不到这份简历。" });
-      return;
-    }
+    if (!record) { response.status(404).json({ error: "找不到这份简历。" }); return; }
     const body = request.body ?? {};
     const requested = Array.isArray(body.agents) ? body.agents : [];
     const ocrText = typeof body.ocrText === "string" ? body.ocrText : "";
-    if (
-      !requested.length ||
-      requested.some(
-        (id: unknown) =>
-          typeof id !== "string" ||
-          !resumeAnalysisAgentIds.includes(id as (typeof resumeAnalysisAgentIds)[number]),
-      )
-    ) {
-      response
-        .status(400)
-        .json({ error: "请提供有效的分析 Agent 功能列表。", available: resumeAnalysisAgentIds });
-      return;
+    if (!requested.length || requested.some((id: unknown) => typeof id !== "string" || !resumeAnalysisAgentIds.includes(id as typeof resumeAnalysisAgentIds[number]))) {
+      response.status(400).json({ error: "请提供有效的分析 Agent 功能列表。", available: resumeAnalysisAgentIds }); return;
     }
-    if (
-      ocrText.length > 100_000 ||
-      (typeof body.force !== "undefined" && typeof body.force !== "boolean") ||
-      (typeof body.useModel !== "undefined" && typeof body.useModel !== "boolean")
-    ) {
-      response.status(400).json({ error: "OCR 文本不得超过 100000 字符，force 和 useModel 必须为布尔值。" });
-      return;
+    if (ocrText.length > 100_000 || typeof body.force !== "undefined" && typeof body.force !== "boolean"
+      || typeof body.useModel !== "undefined" && typeof body.useModel !== "boolean"
+      ) {
+      response.status(400).json({ error: "OCR 文本不得超过 100000 字符，force 和 useModel 必须为布尔值。" }); return;
     }
     const controller = new AbortController();
     const cancel = () => controller.abort(new Error("Agent 运行已取消。"));
@@ -846,14 +714,12 @@ router.post("/:id/agents/run", async (request, response, next) => {
         context: {
           resumeText: ocrText.trim() ? ocrText : record.text,
           fileName: record.fileName,
-          roleRequirements:
-            typeof body.roleRequirements === "string" ? body.roleRequirements.slice(0, 12_000) : "",
+          roleRequirements: typeof body.roleRequirements === "string" ? body.roleRequirements.slice(0, 12_000) : "",
           question: typeof body.question === "string" ? body.question.slice(0, 2_000) : "",
           reviewerFocus: typeof body.reviewerFocus === "string" ? body.reviewerFocus.slice(0, 500) : "",
           useModel: body.useModel !== false,
-          includeResearch: false,
         },
-        requested: requested as (typeof resumeAnalysisAgentIds)[number][],
+        requested: requested as typeof resumeAnalysisAgentIds[number][],
         artifacts: record.agentArtifacts,
         force: body.force === true,
         signal: controller.signal,
@@ -861,36 +727,21 @@ router.post("/:id/agents/run", async (request, response, next) => {
       const candidate = run.outputs["candidate-profile"];
       const nextRecord: ResumeRecord = { ...record, agentArtifacts: run.artifacts };
       if (run.executed.includes("candidate-profile") && candidate && typeof candidate === "object") {
-        const fields = candidate as {
-          name?: unknown;
-          role?: unknown;
-          location?: unknown;
-          education?: unknown;
-          skills?: unknown;
-          summary?: unknown;
-        };
+        const fields = candidate as { name?: unknown; identity?: unknown; keywords?: unknown; role?: unknown; location?: unknown; education?: unknown; skills?: unknown; summary?: unknown };
         if (typeof fields.name === "string" && fields.name.trim()) nextRecord.name = fields.name.trim();
+        if (typeof fields.identity === "string") nextRecord.identity = fields.identity.trim();
+        if (Array.isArray(fields.keywords)) nextRecord.keywords = stringList(fields.keywords, 5, 24);
         if (typeof fields.role === "string" && fields.role.trim()) nextRecord.role = fields.role.trim();
-        if (typeof fields.location === "string" && fields.location.trim())
-          nextRecord.location = fields.location.trim();
-        if (typeof fields.education === "string" && fields.education.trim())
-          nextRecord.education = fields.education.trim();
-        if (Array.isArray(fields.skills))
-          nextRecord.skills = fields.skills
-            .filter((value): value is string => typeof value === "string")
-            .slice(0, 10);
+        if (typeof fields.location === "string" && fields.location.trim()) nextRecord.location = fields.location.trim();
+        if (typeof fields.education === "string" && fields.education.trim()) nextRecord.education = fields.education.trim();
+        if (Array.isArray(fields.skills)) nextRecord.skills = fields.skills.filter((value): value is string => typeof value === "string").slice(0, 10);
         if (typeof fields.summary === "string") nextRecord.summary = fields.summary;
       }
       if (run.executed.includes("analysis-report")) {
         const reportOutput = run.outputs["analysis-report"];
-        const reportText =
-          reportOutput &&
-          typeof reportOutput === "object" &&
-          typeof (reportOutput as { answer?: unknown }).answer === "string"
-            ? (reportOutput as { answer: string }).answer
-            : typeof reportOutput === "string"
-              ? reportOutput
-              : "";
+        const reportText = reportOutput && typeof reportOutput === "object" && typeof (reportOutput as { answer?: unknown }).answer === "string"
+          ? (reportOutput as { answer: string }).answer
+          : typeof reportOutput === "string" ? reportOutput : "";
         if (reportText) nextRecord.analysisReport = reportText;
         nextRecord.analysisStatus = "complete";
         nextRecord.analysisError = "";
@@ -900,10 +751,7 @@ router.post("/:id/agents/run", async (request, response, next) => {
       if (run.executed.includes("score-calculation")) {
         const assessment = run.outputs["score-calculation"] as Assessment;
         nextRecord.assessment = assessment;
-        nextRecord.assessmentHistory = [
-          ...(record.assessmentHistory ?? []),
-          { reason: "review", assessment },
-        ];
+        nextRecord.assessmentHistory = [...(record.assessmentHistory ?? []), { reason: "review", assessment }];
       }
       controller.signal.throwIfAborted();
       await writeRecord(nextRecord, controller.signal);
@@ -912,50 +760,28 @@ router.post("/:id/agents/run", async (request, response, next) => {
       request.removeListener("aborted", cancel);
       response.removeListener("close", cancel);
     }
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/:id/assessment", async (request, response, next) => {
   try {
     const record = await readRecord(request.params.id);
-    if (!record) {
-      response.status(404).json({ error: "找不到这份简历。" });
-      return;
-    }
+    if (!record) { response.status(404).json({ error: "找不到这份简历。" }); return; }
     const { ocrText = "", streamProgress = false } = request.body ?? {};
-    if (Object.hasOwn(request.body ?? {}, "includeResearch")) {
+    if (Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false) {
       response.status(400).json({ error: "候选人成果真实性核查功能已移除。" });
       return;
     }
     if (typeof streamProgress !== "boolean" || typeof ocrText !== "string" || ocrText.length > 100_000) {
-      response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本最多 100000 字符。" });
-      return;
+      response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本最多 100000 字符。" }); return;
     }
     await respondWithAnalysis(request, response, async (options) => {
-      const result = await evaluateResume(ocrText.trim() ? ocrText : record.text, {
-        ...options,
-        includeResearch: false,
-        useModel: true,
-      });
+      const result = await evaluateResume(ocrText.trim() ? ocrText : record.text, { ...options, useModel: true });
       options.signal.throwIfAborted();
-      const updated = await saveAssessment(
-        record.id,
-        result.assessment,
-        assessmentReport(result.assessment),
-        options.signal,
-      );
-      return {
-        ...result,
-        assessment: updated.assessment ?? result.assessment,
-        resume: updated,
-        answer: assessmentReport(updated.assessment ?? result.assessment),
-      };
+      const updated = await saveAssessment(record.id, result.assessment, assessmentReport(result.assessment), options.signal);
+      return { ...result, assessment: updated.assessment ?? result.assessment, resume: updated, answer: assessmentReport(updated.assessment ?? result.assessment) };
     });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 router.post("/:id/analyze", async (request, response, next) => {
@@ -966,19 +792,25 @@ router.post("/:id/analyze", async (request, response, next) => {
       return;
     }
     const { roleRequirements, question, streamProgress = false, ocrText = "" } = request.body ?? {};
-    if (
-      Object.hasOwn(request.body ?? {}, "includeResearch") ||
-      Object.hasOwn(request.body ?? {}, "webResearchEnabled")
-    ) {
+    if ((Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false)
+      || (Object.hasOwn(request.body ?? {}, "webResearchEnabled") && request.body.webResearchEnabled !== false)) {
       response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
       return;
     }
-    if (typeof question !== "string" || typeof roleRequirements !== "string") {
+    if (typeof question !== "string" || typeof roleRequirements !== "string" || typeof request.body?.force !== "undefined" && typeof request.body.force !== "boolean") {
       response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
       return;
     }
     if (typeof streamProgress !== "boolean" || typeof ocrText !== "string" || ocrText.length > 100_000) {
       response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本不得超过 100000 字符。" });
+      return;
+    }
+    if (request.body.force !== true && record.analysisStatus === "complete" && record.analysisReport?.trim()) {
+      await respondWithAnalysis(request, response, async ({ emit }) => {
+        emit({ type: "progress", progress: { stage: "analyzing", message: "已加载保存的分析报告，无需重新调用 Agent。" } });
+        return { answer: record.analysisReport, assessment: record.assessment, resume: record,
+          research: { items: [], notes: [] }, researchStatus: "not-requested", cached: true };
+      });
       return;
     }
     if (!process.env.OPENAI_API_KEY) {
@@ -993,16 +825,10 @@ router.post("/:id/analyze", async (request, response, next) => {
     await respondWithAnalysis(request, response, async ({ signal, emit }) => {
       const markdown: string[] = [];
       const run = await runResumeAgents({
-        context: {
-          resumeText,
-          fileName: record.fileName,
-          roleRequirements,
-          question,
-          includeResearch: false,
-          webResearchEnabled: false,
-        },
+        context: { resumeText, fileName: record.fileName, roleRequirements, question },
         requested: [...resumeAnalysisAgentIds],
         artifacts: record.agentArtifacts,
+        force: request.body.force === true,
         signal,
         onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {
           if (section) {
@@ -1010,28 +836,11 @@ router.post("/:id/analyze", async (request, response, next) => {
             emit({ type: "agent", agentId: id, label, markdown: section, reused, completed, total, timing });
           }
           if (id === "score-calculation") emit({ type: "assessment", assessment: output as Assessment });
-          emit({
-            type: "progress",
-            progress: {
-              stage: id.includes("research")
-                ? "researching"
-                : id === "score-calculation"
-                  ? "scoring"
-                  : "analyzing",
-              completed,
-              total,
-              message: `${label}已完成${reused ? "（复用已有结果）" : ""}。`,
-            },
-          });
+          emit({ type: "progress", progress: { stage: id.includes("research") ? "researching" : id === "score-calculation" ? "scoring" : "analyzing", completed, total, message: `${label}已完成${reused ? "（复用已有结果）" : ""}。` } });
         },
       });
       signal.throwIfAborted();
-      const report = run.outputs["analysis-report"] as
-        | {
-            researchSources?: AnalysisResult["researchSources"];
-            researchStatus?: AnalysisResult["researchStatus"];
-          }
-        | undefined;
+      const report = run.outputs["analysis-report"] as { researchSources?: AnalysisResult["researchSources"]; researchStatus?: AnalysisResult["researchStatus"] } | undefined;
       const answer = markdown.join("\n\n");
       const assessment = run.outputs["score-calculation"] as Assessment;
       const updated = await saveAssessment(record.id, assessment, answer, signal);
@@ -1053,34 +862,39 @@ router.post("/:id/analyze", async (request, response, next) => {
   }
 });
 
-async function readDirectory(): Promise<ResumeRecord[]> {
+async function readDirectory(): Promise<{ records: ResumeRecord[]; skippedFiles: Array<{ fileName: string; reason: string }> }> {
   const names = await readdir(directory);
   const pdfNames = names.filter((name) => name.toLowerCase().endsWith(".pdf"));
   const records: ResumeRecord[] = [];
+  const skippedFiles: Array<{ fileName: string; reason: string }> = [];
   for (let offset = 0; offset < pdfNames.length; offset += 3) {
-    const batch = await Promise.all(
-      pdfNames.slice(offset, offset + 3).map(async (name) => {
-        const id = path.basename(name, path.extname(name));
-        const existing = await readRecord(id);
-        // Startup listing must stay responsive. Existing metadata is returned as-is;
-        // analysis is an explicit user action and never runs during a refresh.
-        if (existing) return existing;
+    const batch = await Promise.all(pdfNames.slice(offset, offset + 3).map(async (name) => {
+      const id = path.basename(name, path.extname(name));
+      const existing = await readRecord(id);
+      // Startup listing must stay responsive. Existing metadata is returned as-is;
+      // explicit scan/retry endpoints can rebuild stale records in the background.
+      // Score migrations belong to explicit analysis, not a page-load GET.
+      // Re-indexing here can block the list on hundreds of model calls and
+      // replace existing reports/history. Newly discovered files are indexed offline.
+      if (existing) return loadTrackedResumeReport(existing, path.join(directory, existing.fileName));
+      try {
         const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
-        await writeRecord(record);
-        return record;
-      }),
-    );
-    records.push(...batch);
+        const restored = await loadTrackedResumeReport(record, path.join(directory, name));
+        await writeRecord(restored);
+        return restored;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!/invalid pdf|pdf structure|xref|endstream/i.test(message)) throw error;
+        skippedFiles.push({ fileName: name, reason: "PDF 文件结构损坏或不完整" });
+        return null;
+      }
+    }));
+    records.push(...batch.filter((record): record is ResumeRecord => record !== null));
   }
-  return records.sort(sortRecords);
+  return { records: records.sort(sortRecords), skippedFiles: skippedFiles.sort((left, right) => left.fileName.localeCompare(right.fileName, "zh-CN")) };
 }
 
-export async function indexPdf(
-  filePath: string,
-  id: string,
-  fileName: string,
-  options: { analyze?: boolean } = {},
-): Promise<ResumeRecord> {
+export async function indexPdf(filePath: string, id: string, fileName: string, options: { analyze?: boolean } = {}): Promise<ResumeRecord> {
   const buffer = await readFile(filePath);
   const pdf = await getDocument({
     data: new Uint8Array(buffer),
@@ -1093,28 +907,19 @@ export async function indexPdf(
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
     const content = await page.getTextContent();
-    pages.push(content.items.map((item) => ("str" in item ? item.str : "")).join(" "));
+    pages.push(content.items.map((item) => "str" in item ? item.str : "").join(" "));
     page.cleanup();
   }
   await pdf.destroy();
   const text = pages.join("\n\n").trim();
-  const shouldAnalyze = options.analyze !== false;
-  const initialContext = { resumeText: text, fileName, useModel: true, includeResearch: false };
-  const initialAgents =
-    text && shouldAnalyze
-      ? await runResumeAgents({ context: initialContext, requested: [...resumeAnalysisAgentIds] })
-      : null;
-  const ai = initialAgents?.outputs["candidate-profile"] as
-    | {
-        name?: string;
-        role?: string;
-        location?: string;
-        education?: string;
-        skills?: string[];
-        summary?: string;
-      }
-    | null
-    | undefined;
+  const analyze = options.analyze !== false;
+  const initialContext = { resumeText: text, fileName, useModel: true };
+  const initialAgents = text && analyze
+    ? await runResumeAgents({ context: initialContext, requested: [...resumeAnalysisAgentIds] })
+    : null;
+  const ai = initialAgents?.outputs["candidate-profile"] as {
+    name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
+  } | null | undefined;
   const fallbackName = path.basename(fileName, path.extname(fileName)).replace(/[-_]+/g, " ").trim();
   const name = ai?.name?.trim() || fallbackName || "未命名候选人";
   const fileStats = await stat(filePath);
@@ -1125,23 +930,17 @@ export async function indexPdf(
     role: ai?.role?.trim() || "待提取岗位",
     location: ai?.location?.trim() || "未识别地点",
     received: new Intl.DateTimeFormat("zh-CN", { month: "numeric", day: "numeric" }).format(fileStats.mtime),
-    initials: name
-      .trim()
-      .split(/\s+/)
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase(),
+    initials: name.trim().split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
     source: "pdf",
     text,
     education: ai?.education?.trim() || "待确认",
-    skills: Array.isArray(ai?.skills)
-      ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10)
-      : [],
+    identity: ai?.identity?.trim() || "待提取身份",
+    keywords: Array.isArray(ai?.keywords) ? ai.keywords.filter((value): value is string => typeof value === "string").slice(0, 5) : [],
+    skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
     analysisReport: "",
-    analysisStatus: shouldAnalyze && process.env.OPENAI_API_KEY ? "failed" : "unavailable",
-    analysisError: shouldAnalyze && process.env.OPENAI_API_KEY ? "" : "尚未运行分析；点击分析按钮开始。",
+    analysisStatus: analyze && process.env.OPENAI_API_KEY ? "failed" : "unavailable",
+    analysisError: !analyze ? "已完成离线文本索引，尚未运行 AI 分析。" : process.env.OPENAI_API_KEY ? "" : "未配置模型服务，无法生成初始分析报告。",
     analyzedAt: "",
     pages: pages.length,
     size: fileStats.size,
@@ -1149,27 +948,20 @@ export async function indexPdf(
     agentArtifacts: initialAgents?.artifacts ?? [],
   };
 
-  if (text && shouldAnalyze) {
-    try {
+  if (text && analyze) {
+  try {
       const assessment = withMaterialContributions(initialAgents?.outputs["score-calculation"] as Assessment);
       record.assessment = assessment;
       record.assessmentHistory = [{ reason: "import", assessment }];
       let analysisReport = assessmentReport(assessment);
-      if (process.env.OPENAI_API_KEY)
-        try {
-          const reportOutput = initialAgents?.outputs["analysis-report"];
-          if (
-            reportOutput &&
-            typeof reportOutput === "object" &&
-            typeof (reportOutput as { answer?: unknown }).answer === "string"
-          ) {
-            analysisReport = (reportOutput as { answer: string }).answer;
-          } else if (typeof reportOutput === "string") {
-            analysisReport = reportOutput;
-          }
-        } catch {
-          record.assessment.notes.push("初始文字报告生成失败，当前展示规则计算报告。");
+      if (process.env.OPENAI_API_KEY) try {
+        const reportOutput = initialAgents?.outputs["analysis-report"];
+        if (reportOutput && typeof reportOutput === "object" && typeof (reportOutput as { answer?: unknown }).answer === "string") {
+          analysisReport = (reportOutput as { answer: string }).answer;
+        } else if (typeof reportOutput === "string") {
+          analysisReport = reportOutput;
         }
+      } catch { record.assessment.notes.push("初始文字报告生成失败，当前展示规则计算报告。"); }
       record.analysisReport = analysisReport;
       record.analysisStatus = "complete";
       record.analysisError = "";
@@ -1191,9 +983,7 @@ async function readWeights(): Promise<ScoreWeights> {
   try {
     const parsed = JSON.parse(await readFile(settingsPath, "utf8")) as { weights?: Partial<ScoreWeights> };
     return normalizeWeightInput(parsed.weights);
-  } catch {
-    return defaultScoreWeights;
-  }
+  } catch { return defaultScoreWeights; }
 }
 
 async function saveWeights(weights: ScoreWeights): Promise<void> {
@@ -1203,10 +993,13 @@ async function saveWeights(weights: ScoreWeights): Promise<void> {
 
 async function readHistoryCandidates(): Promise<HistoricalCandidate[]> {
   try {
-    return JSON.parse(await readFile(historyCandidatesPath, "utf8")) as HistoricalCandidate[];
-  } catch {
-    return [];
+    const parsed = JSON.parse(await readFile(historyCandidatesPath, "utf8"));
+    if (!Array.isArray(parsed)) return [];
+    // Keep the on-disk store aligned with the years exposed by the history UI.
+    // This also removes stale records from years no longer supported by the UI.
+    return parsed.filter((candidate): candidate is HistoricalCandidate => candidate && typeof candidate === "object" && historicalYears.includes(Number((candidate as { year?: unknown }).year) as (typeof historicalYears)[number]));
   }
+  catch { return []; }
 }
 
 async function writeHistoryCandidates(candidates: HistoricalCandidate[]): Promise<void> {
@@ -1215,43 +1008,24 @@ async function writeHistoryCandidates(candidates: HistoricalCandidate[]): Promis
 }
 
 function normalizeWeightInput(input: unknown): ScoreWeights {
-  const record = input && typeof input === "object" ? (input as Partial<ScoreWeights>) : {};
-  return normalizeWeights(
-    Object.fromEntries(
-      Object.keys(defaultScoreWeights).map((key) => {
-        const value = Number(record[key as keyof ScoreWeights]);
-        return [
-          key,
-          Number.isFinite(value) ? Math.max(0, value) : defaultScoreWeights[key as keyof ScoreWeights],
-        ];
-      }),
-    ) as ScoreWeights,
-  );
+  const record = input && typeof input === "object" ? input as Partial<ScoreWeights> : {};
+  return normalizeWeights(Object.fromEntries(Object.keys(defaultScoreWeights).map((key) => {
+    const value = Number(record[key as keyof ScoreWeights]);
+    return [key, Number.isFinite(value) ? Math.max(0, value) : defaultScoreWeights[key as keyof ScoreWeights]];
+  })) as ScoreWeights);
 }
 
-type StoredKnowledgeReview = {
-  significanceScore?: number;
-  scoreRationale?: string;
-  verificationStatus?: KnowledgeRecord["verificationStatus"];
-  updatedAt?: string;
-  reviewHistory?: KnowledgeReviewEntry[];
-};
+type StoredKnowledgeReview = { significanceScore?: number; scoreRationale?: string; verificationStatus?: KnowledgeRecord["verificationStatus"]; updatedAt?: string; reviewHistory?: KnowledgeReviewEntry[] };
 
 async function readKnowledgeReviews(): Promise<Record<string, StoredKnowledgeReview>> {
-  try {
-    return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, StoredKnowledgeReview>;
-  } catch {
-    return {};
-  }
+  try { return JSON.parse(await readFile(knowledgeReviewsPath, "utf8")) as Record<string, StoredKnowledgeReview>; }
+  catch { return {}; }
 }
 
 function stringList(value: unknown, maxItems: number, maxLength: number): string[] {
   if (!Array.isArray(value)) return [];
-  return value
-    .filter((item): item is string => typeof item === "string")
-    .map((item) => item.trim().slice(0, maxLength))
-    .filter(Boolean)
-    .slice(0, maxItems);
+  return value.filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim().slice(0, maxLength)).filter(Boolean).slice(0, maxItems);
 }
 
 function textInput(value: unknown, limit: number): string {
@@ -1260,15 +1034,11 @@ function textInput(value: unknown, limit: number): string {
 
 function safeHttpUrl(value: unknown): string {
   const candidate = textInput(value, 500);
-  try {
-    const url = new URL(candidate);
-    return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : "";
-  } catch {
-    return "";
-  }
+  try { const url = new URL(candidate); return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : ""; }
+  catch { return ""; }
 }
 
-async function writeRecord(record: ResumeRecord, signal?: AbortSignal): Promise<void> {
+export async function writeRecord(record: ResumeRecord, signal?: AbortSignal): Promise<void> {
   await mkdir(path.join(directory, ".metadata"), { recursive: true });
   const destination = metadataPath(record.id);
   const temporary = `${destination}.${randomUUID()}.tmp`;
@@ -1276,51 +1046,62 @@ async function writeRecord(record: ResumeRecord, signal?: AbortSignal): Promise<
     await writeFile(temporary, JSON.stringify(record, null, 2), { encoding: "utf8", signal });
     signal?.throwIfAborted();
     await rename(temporary, destination);
-  } catch (error) {
-    await rm(temporary, { force: true });
-    throw error;
-  }
+    try { await saveTrackedResumeReport(record, path.join(directory, record.fileName)); }
+    catch (error) { console.warn(`[resume-cache] Could not update tracked report cache for ${record.id}:`, error); }
+  } catch (error) { await rm(temporary, { force: true }); throw error; }
 }
 
-async function saveAssessment(
-  id: string,
-  assessment: Assessment,
-  report: string,
-  signal?: AbortSignal,
-): Promise<ResumeRecord> {
+async function saveAssessment(id: string, assessment: Assessment, report: string, signal?: AbortSignal): Promise<ResumeRecord> {
   const previous = assessmentSaves.get(id) ?? Promise.resolve();
-  const pending = previous
-    .catch(() => undefined)
-    .then(async () => {
-      signal?.throwIfAborted();
-      const latest = await readRecord(id);
-      if (!latest) throw new Error("候选人档案已删除，未重新创建评分记录。");
-      const duplicate = latest.assessmentHistory?.some((entry) => entry.assessment.id === assessment.id);
-      const savedAssessment = withMaterialContributions(
-        duplicate ? { ...assessment, id: randomUUID(), evaluatedAt: new Date().toISOString() } : assessment,
-      );
-      const updated: ResumeRecord = {
-        ...latest,
-        assessment: savedAssessment,
-        assessmentHistory: [
-          ...(latest.assessmentHistory ?? []),
-          { reason: "review", assessment: savedAssessment },
-        ],
-        analysisReport: report,
-        analysisStatus: "complete",
-        analysisError: "",
-        analyzedAt: savedAssessment.evaluatedAt,
-      };
-      signal?.throwIfAborted();
-      await writeRecord(updated, signal);
-      await persistMaterialLibrary(updated, savedAssessment, signal);
-      return updated;
-    });
+  const pending = previous.catch(() => undefined).then(async () => {
+    signal?.throwIfAborted();
+    const latest = await readRecord(id);
+    if (!latest) throw new Error("候选人档案已删除，未重新创建评分记录。");
+    const duplicate = latest.assessmentHistory?.some((entry) => entry.assessment.id === assessment.id);
+    const savedAssessment = withMaterialContributions(
+      duplicate ? { ...assessment, id: randomUUID(), evaluatedAt: new Date().toISOString() } : assessment,
+    );
+    const updated: ResumeRecord = { ...latest, assessment: savedAssessment, assessmentHistory: [...(latest.assessmentHistory ?? []), { reason: "review", assessment: savedAssessment }], analysisReport: report, analysisStatus: "complete", analysisError: "", analyzedAt: savedAssessment.evaluatedAt };
+    signal?.throwIfAborted();
+    await writeRecord(updated, signal);
+    await persistMaterialLibrary(updated, savedAssessment, signal);
+    return updated;
+  });
   assessmentSaves.set(id, pending);
   // Keep the resolved tail in the per-candidate queue. A second request can
   // finish extracting after the first write and still must observe that write
   // before appending its own history entry.
   return pending;
+}
+
+export async function readRecord(id: string): Promise<ResumeRecord | null> {
+  try {
+    const record = JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
+    if (
+      record.source === "pdf" &&
+      record.assessment &&
+      Array.isArray(record.assessment.materials) &&
+      record.assessment.abilities &&
+      !record.assessment.materialContributions
+    ) {
+      record.assessment = withMaterialContributions(record.assessment);
+      record.assessmentHistory = record.assessmentHistory?.map((entry) => ({
+        ...entry,
+        assessment:
+          Array.isArray(entry.assessment.materials) && entry.assessment.abilities
+            ? withMaterialContributions(entry.assessment)
+            : entry.assessment,
+      }));
+      await writeRecord(record);
+    }
+    return await loadTrackedResumeReport(record, path.join(directory, record.fileName));
+  } catch {
+    return null;
+  }
+}
+
+function metadataPath(id: string): string {
+  return path.join(directory, ".metadata", `${path.basename(id)}.json`);
 }
 
 async function persistMaterialLibrary(
@@ -1355,9 +1136,7 @@ async function synchronizeMaterialLibrary(): Promise<void> {
       throw error;
     }
     const records = await readKnowledgeRecords();
-    for (const file of files.filter(
-      (value) => value.endsWith(".json") && value !== "material-library.json",
-    )) {
+    for (const file of files.filter((value) => value.endsWith(".json") && value !== "material-library.json")) {
       const record = await readRecord(file.slice(0, -5));
       if (record?.source === "pdf" && record.assessment) await materialLibraryStore.save(record, records);
     }
@@ -1369,27 +1148,6 @@ async function synchronizeMaterialLibrary(): Promise<void> {
   } finally {
     if (materialLibrarySync === operation) materialLibrarySync = undefined;
   }
-}
-
-async function readRecord(id: string): Promise<ResumeRecord | null> {
-  try {
-    const record = JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
-    if (record.source === "pdf" && record.assessment && !record.assessment.materialContributions) {
-      record.assessment = withMaterialContributions(record.assessment);
-      record.assessmentHistory = record.assessmentHistory?.map((entry) => ({
-        ...entry,
-        assessment: withMaterialContributions(entry.assessment),
-      }));
-      await writeRecord(record);
-    }
-    return record;
-  } catch {
-    return null;
-  }
-}
-
-function metadataPath(id: string): string {
-  return path.join(directory, ".metadata", `${path.basename(id)}.json`);
 }
 
 function sortRecords(a: ResumeRecord, b: ResumeRecord): number {

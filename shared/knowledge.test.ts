@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { demoKnowledgeRecords, findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, knowledgeReviewTimelineX, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
+import { demoKnowledgeRecords, findKnowledgeDuplicate, findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeRecords, knowledgeReviewTimelineX, normalizeKnowledgeEvidenceSources, normalizeKnowledgeFilterDraft, normalizeKnowledgeImport, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeRecord } from "./knowledge.js";
 
 const record: KnowledgeRecord = {
   id: "competition-icpc",
@@ -43,6 +43,28 @@ test("returns only records that match the supplied resume body", () => {
   assert.deepEqual(findKnowledgeReferences("获得 ICPC 区域赛奖项。", [record]), [record]);
 });
 
+test("deduplicates competition editions and regional stations as one series", () => {
+  const existing: KnowledgeRecord = {
+    ...record,
+    title: "全国大学生数学建模竞赛",
+    aliases: ["数学建模竞赛"],
+    officialUrl: "https://example.org/math-contest/",
+  };
+  const duplicate = findKnowledgeDuplicate({
+    kind: "competition",
+    title: "2024 年全国大学生数学建模竞赛华东赛区",
+    aliases: ["数学建模竞赛·华东分赛站"],
+    officialUrl: "",
+  }, [existing]);
+  assert.equal(duplicate?.record.id, existing.id);
+  assert.equal(duplicate?.reason, "competition-series");
+});
+
+test("keeps distinct competition series separate", () => {
+  const existing: KnowledgeRecord = { ...record, title: "全国大学生数学建模竞赛", aliases: ["数学建模竞赛"] };
+  assert.equal(findKnowledgeDuplicate({ kind: "competition", title: "全国大学生程序设计竞赛", aliases: ["程序设计竞赛"] }, [existing]), undefined);
+});
+
 test("cross references prioritize the most specific matching name", () => {
   const broad = { ...record, id: "broad", title: "AI", aliases: [] };
   const specific = { ...record, id: "specific", title: "AI 研究竞赛", aliases: [] };
@@ -50,12 +72,12 @@ test("cross references prioritize the most specific matching name", () => {
 });
 
 test("seed knowledge library covers all three categories with distinct official entries", () => {
-  assert.equal(demoKnowledgeRecords.length, 23);
+  assert.ok(demoKnowledgeRecords.length >= 23);
   assert.deepEqual(new Set(demoKnowledgeRecords.map((item) => item.kind)), new Set(["competition", "journal", "company"]));
   assert.equal(new Set(demoKnowledgeRecords.map((item) => item.id)).size, demoKnowledgeRecords.length);
   assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "competition").length >= 8);
   assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "journal").length >= 7);
-  assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "company").length >= 8);
+  assert.ok(demoKnowledgeRecords.filter((item) => item.kind === "company").length >= 14);
   assert.ok(demoKnowledgeRecords.every((item) => item.verificationStatus === "示例资料，待核验"));
 });
 
@@ -141,13 +163,15 @@ test("knowledge readiness separates source gaps, verification, human review, and
 test("knowledge import validates and preserves custom records and bounded review history", () => {
   const bundle = normalizeKnowledgeImport({
     format: "bohack-knowledge-library", version: 1, exportedAt: "2026-11-14T00:00:00.000Z",
-    records: [{ ...record, id: "custom-12345678", officialUrl: "javascript:alert(1)", significanceScore: 72,
+    records: [{ ...record, id: "custom-12345678", officialUrl: "javascript:alert(1)", logoPath: "/company_logos/example.svg", logoUrl: "javascript:alert(1)", significanceScore: 72,
       reviewHistory: [{ id: "review-1", significanceScore: 74, scoreRationale: "已核对", verificationStatus: "已核验", updatedAt: "2026-11-14T00:00:00.000Z", source: "manual" }],
     }],
   });
   assert.equal("error" in bundle, false);
   if ("error" in bundle) return;
   assert.equal(bundle.records[0].officialUrl, "");
+  assert.equal(bundle.records[0].logoPath, "/company_logos/example.svg");
+  assert.equal(bundle.records[0].logoUrl, undefined);
   assert.equal(bundle.records[0].reviewHistory?.[0].significanceScore, 74);
   assert.equal(bundle.records[0].reviewHistory?.[0].verificationStatus, "已核验");
 });

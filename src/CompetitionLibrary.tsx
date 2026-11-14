@@ -6,6 +6,7 @@ import type { CompetitionProfile } from "../shared/competitions";
 import { findKnowledgeMatch, type KnowledgeRecord } from "../shared/knowledge";
 import type { Resume } from "./types";
 import MaterialScoreLibrary, { materialScoreLabel } from "./MaterialScoreLibrary";
+import { CompetitionYearDetails } from "./CompetitionYearDetails";
 import "./competition-library.css";
 
 type Props = {
@@ -89,6 +90,7 @@ export function CompetitionLibrary({ records, resumes, initialId, onClose, onRev
           {selectedLogo && <details className="competition-logo-provenance"><summary>图标来源与对应说明</summary><p>{selectedLogo.notes}</p>{selectedLogo.sourceUrl && <a href={selectedLogo.sourceUrl} target="_blank" rel="noreferrer">查看原图片来源<ArrowUpRight size={12} /></a>}<p>按原始赛事 ID {profile?.id}、名称及目录官网对应；网站、机构和平台图标不等同于赛事专属赛徽，也不改变人工核验状态。</p></details>}
           <dl className="competition-facts"><div><dt>主办方</dt><dd>{selected.organizer || "待补充"}</dd></div><div><dt>赛事官网</dt><dd>{selected.officialUrl ? <a href={selected.officialUrl} target="_blank" rel="noreferrer">访问官方网站<ArrowUpRight size={13} /></a> : "暂无可确认的官网"}</dd></div>{profile && <div><dt>资料出处</dt><dd>{selected.origin ? "自动整理赛事资料" : "已整理赛事目录"} · {selected.origin ? selected.origin.collectedAt.slice(0, 10) : profile.report_year}</dd></div>}</dl>
           <section className="competition-copy"><h3>赛事介绍</h3><p>{profile?.info || selected.summary || "详细介绍待补充。"}</p></section>
+          <CompetitionYearDetails key={selected.id} history={profile?.history} />
           <div className="competition-dimensions"><section><span>INFLUENCE</span><h3>赛事影响力</h3><p>{profile?.influence || "暂无专项资料，需结合来源核实。"}</p></section><section><span>DIFFICULTY</span><h3>参赛难度</h3><p>{profile?.difficulty || "暂无专项资料，需结合具体届次与赛项判断。"}</p></section></div>
           <div className="competition-abilities"><section><h3>需要具备的能力</h3><div>{profile?.acquires?.length ? profile.acquires.map((ability) => <span key={ability}>{ability}</span>) : <p>能力要求待补充。</p>}</div></section><section><h3>可反映的素质</h3><div>{(profile?.projection ?? selected.signals).map((quality) => <span key={quality}>{quality}</span>)}</div></section></div>
           {profile?.notes && <section className="competition-notes"><h3>使用提示</h3><p>{profile.notes}</p></section>}

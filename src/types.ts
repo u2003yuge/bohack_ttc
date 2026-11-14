@@ -16,6 +16,8 @@ export type Resume = {
   text: string;
   experiences?: Experience[];
   education: string;
+  identity?: string;
+  keywords?: string[];
   skills: string[];
   summary?: string;
   analysisReport?: string;
@@ -24,13 +26,14 @@ export type Resume = {
   assessment?: Assessment;
   assessmentHistory?: AssessmentHistoryEntry[];
   benchmark?: Benchmark;
-  analysisStatus?: "complete" | "unavailable" | "failed";
+  analysisStatus?: "complete" | "processing" | "unavailable" | "failed";
   analysisError?: string;
   analyzedAt?: string;
   analysisDebug?: import("./research-types.js").AgentDebug;
   fileName?: string;
   pages?: number;
   size?: number;
+  reviewStatus?: "pending" | "passed" | "rejected";
 };
 import type { ScoreCard, ScoreHistoryEntry } from "../shared/scoring.js";
 import type { Benchmark } from "../shared/history.js";

@@ -23,7 +23,7 @@ export type ResumeAgentId = (typeof resumeAgentIds)[number];
 export type LegacyResumeAgentId = "achievement-research";
 export const resumeAnalysisAgentIds = resumeAgentIds;
 const agentVersions: Record<ResumeAgentId, number> = {
-  "candidate-profile": 1,
+  "candidate-profile": 2,
   // Bump both stages so older artifacts without the current action evidence
   // shape are recalculated instead of reusing all-NA ability scores.
   "material-extraction": 2,
@@ -130,7 +130,7 @@ const definitions: Record<ResumeAgentId, Definition> = {
           name: candidate?.name || context.fileName,
           resumeText: context.resumeText,
           roleRequirements: context.roleRequirements,
-          question: context.question || "请根据职位要求分析候选人。",
+          question: `${context.question || "请根据职位要求分析候选人。"}\n\n职责边界：本 Agent 只输出岗位匹配判断、主要风险和面试追问；不要重复候选人基本信息、材料清单、能力分数或项目人话拆解，这些由其它 Agent 独立输出。`,
           analysisContext: JSON.stringify({ assessment: objectOutput<Assessment>(outputs, "score-calculation").abilities }),
         }, signal);
         return { answer, researchSources: [], researchStatus: "not-requested" as const };
@@ -177,7 +177,7 @@ export function resumeAgentMarkdown(id: ResumeAgentId, output: unknown): string 
   if (id === "candidate-profile") {
     const profile = output && typeof output === "object" ? output as Partial<CandidateFields> : null;
     if (!profile) return "### 候选人信息\n\n暂未从简历中提取到基本信息。";
-    return `### 候选人信息\n\n| 项目 | 提取结果 |\n| --- | --- |\n| 姓名 | ${profile.name || "未识别"} |\n| 岗位 | ${profile.role || "未识别"} |\n| 地点 | ${profile.location || "未识别"} |\n| 教育 | ${profile.education || "未识别"} |\n| 技能关键词 | ${(profile.skills ?? []).join("、") || "未识别"} |\n\n${profile.summary || ""}`;
+    return `### 候选人信息\n\n| 项目 | 提取结果 |\n| --- | --- |\n| 姓名 | ${profile.name || "未识别"} |\n| 身份 | ${profile.identity || "未识别"} |\n| 关键词 | ${(profile.keywords ?? []).join("、") || "未识别"} |\n| 岗位 | ${profile.role || "未识别"} |\n| 地点 | ${profile.location || "未识别"} |\n| 教育 | ${profile.education || "未识别"} |\n| 技能 | ${(profile.skills ?? []).join("、") || "未识别"} |\n\n${profile.summary || ""}`;
   }
   if (id === "material-extraction") {
     const materials = Array.isArray(value.materials) ? value.materials as Array<Record<string, unknown>> : [];

@@ -6,7 +6,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import type { KnowledgeRecord } from "../../shared/knowledge.js";
+import { knowledgeRecords, type KnowledgeRecord } from "../../shared/knowledge.js";
+import { competitionCatalog } from "../../shared/competitions.js";
 
 test("catalog API loads offline, separates categories and preserves competition and venue review history", async () => {
   const data = await mkdtemp(path.join(tmpdir(), "bohack-catalog-"));
@@ -17,7 +18,7 @@ test("catalog API loads offline, separates categories and preserves competition 
   await new Promise<void>((resolve) => reservation.close(() => resolve()));
   const child = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     cwd: fileURLToPath(new URL("../../", import.meta.url)),
-    env: { ...process.env, PORT: String(address.port), RESUME_DIR: data, OPENAI_API_KEY: "", TAVILY_API_KEY: "" },
+    env: { ...process.env, PORT: String(address.port), RESUME_DIR: data, KNOWLEDGE_DB_DIR: path.join(data, "library"), OPENAI_API_KEY: "", TAVILY_API_KEY: "" },
     stdio: ["ignore", "pipe", "pipe"], windowsHide: true,
   });
   let stderr = "";
@@ -32,15 +33,17 @@ test("catalog API loads offline, separates categories and preserves competition 
       child.once("exit", () => { clearTimeout(timer); reject(new Error(stderr || "API exited")); });
     });
     const competitions = (await json("?kind=competition")).records as KnowledgeRecord[];
-    assert.equal(competitions.length, 122);
-    assert.equal(competitions.filter((record) => record.competition).length, 118);
+    assert.deepEqual(competitions.map((record) => record.id).sort(), knowledgeRecords.filter((record) => record.kind === "competition").map((record) => record.id).sort());
+    assert.equal(competitions.filter((record) => record.competition).length, competitionCatalog.length);
     assert.ok(competitions.every((record) => record.kind === "competition"));
+    assert.equal(competitions.filter((record) => record.competition?.history).length, 118);
+    assert.equal(competitions.find((record) => record.competition?.id === "2023-01")?.competition?.history?.years["2024"].participants?.unit, "队");
     const venues = (await json("?kind=journal")).records as KnowledgeRecord[];
     assert.equal(venues.length, 100);
     assert.equal(venues.filter((record) => record.venue?.type === "会议").length, 55);
     assert.equal(venues.filter((record) => record.venue?.type === "期刊").length, 45);
-    assert.equal((await json()).records.length, 230);
-    assert.equal((await json("?kind=company")).records.length, 8);
+    assert.equal((await json()).records.length, knowledgeRecords.length);
+    assert.equal((await json("?kind=company")).records.length, knowledgeRecords.filter((record) => record.kind === "company").length);
     assert.equal((await fetch(endpoint + "?kind=invalid")).status, 400);
     const target = competitions.find((record) => record.id === "competition-acm-icpc")!;
     const sourceId = target.evidenceSources![0].id;
@@ -67,8 +70,8 @@ test("catalog API loads offline, separates categories and preserves competition 
     assert.equal(backup.reviews[venue.id][0].significanceScore, 85);
     const restored = await fetch(`${endpoint}/import`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(backup) });
     assert.equal(restored.status, 200);
-    assert.equal((await restored.json()).records.length, 230);
-    assert.equal((await json("?kind=company")).records.length, 8);
+    assert.equal((await restored.json()).records.length, knowledgeRecords.length);
+    assert.equal((await json("?kind=company")).records.length, knowledgeRecords.filter((record) => record.kind === "company").length);
   } finally {
     child.kill();
     if (child.exitCode === null && child.signalCode === null) await new Promise<void>((resolve) => child.once("exit", () => resolve()));

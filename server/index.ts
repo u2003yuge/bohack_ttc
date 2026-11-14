@@ -17,13 +17,14 @@ app.use("/api/scoring", scoring);
 
 app.get("/api/health", (_request, response) => response.json({
   agent: Boolean(process.env.OPENAI_API_KEY),
-  webSearch: false,
+  webSearch: Boolean(process.env.TAVILY_API_KEY),
   model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
 }));
 
 app.post("/api/agent", async (request, response) => {
   const { resumeName, resumeText, roleRequirements = "", question, streamProgress = false } = request.body ?? {};
-  if (Object.hasOwn(request.body ?? {}, "includeResearch") || Object.hasOwn(request.body ?? {}, "webResearchEnabled")) {
+  if ((Object.hasOwn(request.body ?? {}, "includeResearch") && request.body.includeResearch !== false)
+    || (Object.hasOwn(request.body ?? {}, "webResearchEnabled") && request.body.webResearchEnabled !== false)) {
     response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
     return;
   }
@@ -59,7 +60,7 @@ app.post("/api/agent", async (request, response) => {
   console.log(`[agent ${requestId}] started (candidate evidence only)`);
   try {
     const run = await runResumeAgents({
-      context: { resumeText, fileName: resumeName || "未命名简历", roleRequirements, question, includeResearch: false, webResearchEnabled: false },
+      context: { resumeText, fileName: resumeName || "未命名简历", roleRequirements, question },
       requested: [...resumeAnalysisAgentIds],
       signal: scope.signal,
       onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {

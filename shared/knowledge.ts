@@ -1,9 +1,47 @@
 import { mergeCompetitionCatalog, normalizeCompetitionProfile, type CompetitionProfile } from "./competitions.js";
+import { mergeCompanyCatalog } from "./companies.js";
 import { findVenueMatch, mergeVenueCatalog } from "./venues.js";
 import { normalizeVenueProfile, type VenueProfile } from "./venue-profile.js";
 import type { LibraryMaterialScore } from "./material-scoring.js";
 
 export type KnowledgeKind = "competition" | "journal" | "company";
+export type CompanyProfile = {
+  englishName: string;
+  countryRegion: string;
+  industry: string;
+  foundedYear: number | null;
+  headquarters: string;
+  info: string;
+  shortInfo: string;
+  influence: string;
+  businessScope: string;
+  representativeProducts: string;
+  publicSignals: string[];
+  notes: string;
+  source: { title: string; url: string; sourceType: string; accessedAt: string };
+};
+
+function normalizeCompanyProfile(input: unknown): CompanyProfile | undefined {
+  if (!input || typeof input !== "object") return undefined;
+  const value = input as Record<string, unknown>;
+  const source = value.source && typeof value.source === "object" ? value.source as Record<string, unknown> : {};
+  const text = (key: string, max: number) => typeof value[key] === "string" ? (value[key] as string).trim().slice(0, max) : "";
+  const year = typeof value.foundedYear === "number" && Number.isInteger(value.foundedYear) && value.foundedYear > 0 ? value.foundedYear : null;
+  return {
+    englishName: text("englishName", 160), countryRegion: text("countryRegion", 100), industry: text("industry", 160),
+    foundedYear: year, headquarters: text("headquarters", 160), info: text("info", 4000), shortInfo: text("shortInfo", 800),
+    influence: text("influence", 1200), businessScope: text("businessScope", 500), representativeProducts: text("representativeProducts", 500),
+    publicSignals: Array.isArray(value.publicSignals) ? value.publicSignals.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 200)).filter(Boolean).slice(0, 12) : [],
+    notes: text("notes", 1200),
+    source: {
+      title: typeof source.title === "string" ? source.title.trim().slice(0, 200) : "",
+      url: typeof source.url === "string" ? source.url.trim().slice(0, 500) : "",
+      sourceType: typeof source.sourceType === "string" ? source.sourceType.trim().slice(0, 80) : "",
+      accessedAt: typeof source.accessedAt === "string" ? source.accessedAt.trim().slice(0, 40) : "",
+    },
+  };
+}
+
 export type KnowledgeReviewEntry = {
   id: string;
   significanceScore: number;
@@ -119,6 +157,10 @@ export type KnowledgeRecord = {
   summary: string;
   signals: string[];
   officialUrl: string;
+  /** Local, versioned brand asset used before any remote favicon fallback. */
+  logoPath?: string;
+  /** Optional remote logo URL for imported records. */
+  logoUrl?: string;
   significanceScore: number;
   scoreRationale: string;
   verificationStatus: "示例资料，待核验" | "已核验";
@@ -127,6 +169,7 @@ export type KnowledgeRecord = {
   reviewHistory?: KnowledgeReviewEntry[];
   competition?: CompetitionProfile;
   venue?: VenueProfile;
+  company?: CompanyProfile;
   origin?: { type: "discovered"; collectedAt: string };
   materialScores?: LibraryMaterialScore[];
 };
@@ -190,6 +233,16 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       if (url.protocol === "http:" || url.protocol === "https:") safeOfficialUrl = url.toString();
     } catch { /* Ignore malformed import URLs. */ }
     const verificationStatus = record.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验";
+    const logoPath = typeof record.logoPath === "string" && /^\/company_logos\/[a-zA-Z0-9_-]+\.(?:svg|png|webp)$/i.test(record.logoPath.trim())
+      ? record.logoPath.trim().slice(0, 240)
+      : "";
+    let logoUrl = "";
+    if (typeof record.logoUrl === "string") {
+      try {
+        const url = new URL(record.logoUrl.trim());
+        if (url.protocol === "http:" || url.protocol === "https:") logoUrl = url.toString().slice(0, 500);
+      } catch { /* Ignore malformed imported logo URLs. */ }
+    }
     const venue = kind === "journal" ? normalizeVenueProfile(record.venue) : undefined;
     records.push({
       id, kind: kind as KnowledgeKind, title,
@@ -200,6 +253,8 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       summary: typeof record.summary === "string" ? record.summary.trim().slice(0, 1200) : "",
       signals: Array.isArray(record.signals) ? record.signals.filter((signal): signal is string => typeof signal === "string").map((signal) => signal.trim().slice(0, 100)).filter(Boolean).slice(0, 10) : [],
       officialUrl: safeOfficialUrl,
+      ...(logoPath ? { logoPath } : {}),
+      ...(logoUrl ? { logoUrl } : {}),
       significanceScore: Math.round(score),
       scoreRationale: typeof record.scoreRationale === "string" ? record.scoreRationale.trim().slice(0, 500) : "",
       verificationStatus,
@@ -207,6 +262,7 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       evidenceSources: sources,
       ...(kind === "competition" && normalizeCompetitionProfile(record.competition) ? { competition: normalizeCompetitionProfile(record.competition) } : {}),
       ...(venue ? { venue } : {}),
+      ...(kind === "company" && normalizeCompanyProfile(record.company) ? { company: normalizeCompanyProfile(record.company) } : {}),
       ...(record.origin && typeof record.origin === "object" && (record.origin as Record<string, unknown>).type === "discovered"
         && typeof (record.origin as Record<string, unknown>).collectedAt === "string"
         ? { origin: { type: "discovered" as const, collectedAt: String((record.origin as Record<string, unknown>).collectedAt).slice(0, 40) } } : {}),
@@ -316,6 +372,42 @@ export function findKnowledgeMatch(text: string, record: KnowledgeRecord): strin
   return null;
 }
 
+export type KnowledgeDuplicateMatch = {
+  record: KnowledgeRecord;
+  reason: "exact-name" | "competition-series" | "official-url";
+};
+
+const competitionEditionWords = /(?:19|20)\d{2}年?|第[一二三四五六七八九十百千万0-9]+届|总决赛|决赛|复赛|初赛|省赛|市赛|校赛|区域赛|分赛站|赛站|赛区|全国赛|国际赛|华东赛区|华南赛区|华北赛区|西南赛区|东北赛区|华中赛区|东部赛区|西部赛区/g;
+
+function competitionIdentityText(value: string): string {
+  return value.normalize("NFKC").toLocaleLowerCase().replace(competitionEditionWords, "").replace(/[\s\p{P}\p{S}]+/gu, "");
+}
+
+function httpIdentity(value: string): string {
+  try {
+    const url = new URL(value);
+    return `${url.hostname.toLocaleLowerCase()}${url.pathname.replace(/\/$/, "")}`;
+  } catch { return ""; }
+}
+
+export function findKnowledgeDuplicate(candidate: Pick<KnowledgeRecord, "kind" | "title"> & Partial<Pick<KnowledgeRecord, "aliases" | "organizer" | "officialUrl" | "field" | "region" | "competition">>, records: KnowledgeRecord[], ignoreId?: string): KnowledgeDuplicateMatch | undefined {
+  if (candidate.kind !== "competition") return undefined;
+  const candidateNames = [candidate.title, ...(candidate.aliases ?? []), candidate.competition?.name ?? ""].map((value) => value.trim()).filter(Boolean);
+  const exactNames = new Set(candidateNames.map((value) => value.normalize("NFKC").toLocaleLowerCase().replace(/[\s\p{P}\p{S}]+/gu, "")));
+  const candidateSeries = new Set(candidateNames.map(competitionIdentityText).filter((value) => value.length >= 4));
+  const candidateUrl = httpIdentity(candidate.officialUrl ?? "");
+  for (const record of records) {
+    if (record.id === ignoreId || record.kind !== "competition") continue;
+    const recordNames = [record.title, ...record.aliases, record.competition?.name ?? ""].map((value) => value.trim()).filter(Boolean);
+    const recordExactNames = recordNames.map((value) => value.normalize("NFKC").toLocaleLowerCase().replace(/[\s\p{P}\p{S}]+/gu, ""));
+    if (recordExactNames.some((name) => exactNames.has(name))) return { record, reason: "exact-name" };
+    const recordSeries = recordNames.map(competitionIdentityText).filter((value) => value.length >= 4);
+    if (recordSeries.some((recordName) => [...candidateSeries].some((candidateName) => candidateName === recordName || candidateName.includes(recordName) || recordName.includes(candidateName)))) return { record, reason: "competition-series" };
+    if (candidateUrl && [record.officialUrl, record.competition?.official_website ?? ""].map(httpIdentity).includes(candidateUrl)) return { record, reason: "official-url" };
+  }
+  return undefined;
+}
+
 export function findKnowledgeReferences(text: string, records: KnowledgeRecord[]): KnowledgeRecord[] {
   return records
     .map((record, index) => ({ record, index, match: findKnowledgeMatch(text, record) }))
@@ -363,6 +455,30 @@ export const demoKnowledgeRecords: KnowledgeRecord[] = [
   { id: "company-microsoft", kind: "company", title: "微软", aliases: ["Microsoft"], field: "软件 / 云计算 / 人工智能", organizer: "Microsoft Corporation", region: "国际", summary: "覆盖软件、云平台、开发者工具和人工智能等业务的科技公司。", signals: ["具体产品线和团队", "个人负责的系统范围", "工程质量与业务影响", "实习 / 外包 / 正式岗位类型"], officialUrl: "https://www.microsoft.com/", significanceScore: 83, scoreRationale: "示例参考分。品牌不能替代职责核验，应确认雇佣关系、团队、工作范围和候选人的实际贡献。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
   { id: "company-dji", kind: "company", title: "大疆创新", aliases: ["DJI", "DJI Technology"], field: "机器人 / 无人机 / 消费电子", organizer: "深圳市大疆创新科技有限公司", region: "中国", summary: "以无人机及相关影像、机器人和智能硬件产品闻名的科技公司。", signals: ["硬件与软件的协作内容", "产品交付和质量指标", "候选人负责的技术模块", "商业或用户影响"], officialUrl: "https://www.dji.com/", significanceScore: 77, scoreRationale: "示例参考分。应结合具体研发方向、项目交付及个人可验证成果评估，不按公司名气直接赋分。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
   { id: "company-catl", kind: "company", title: "宁德时代", aliases: ["CATL", "宁德时代新能源科技股份有限公司"], field: "新能源 / 电池 / 制造", organizer: "宁德时代新能源科技股份有限公司", region: "中国 / 国际", summary: "新能源科技企业，业务覆盖动力电池、储能和相关制造及研发活动。", signals: ["研发 / 制造 / 供应链等岗位类型", "负责产品或工艺范围", "质量、安全与效率结果", "数据和项目证据"], officialUrl: "https://www.catl.com/", significanceScore: 76, scoreRationale: "示例参考分。公司背景不等同于个人技术水平，应核实具体岗位、项目职责和量化成果。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
+  { id: "company-baidu", kind: "company", title: "百度", aliases: ["Baidu"], field: "人工智能 / 搜索 / 云计算", organizer: "百度集团", region: "中国", summary: "以搜索、人工智能、智能云和自动驾驶等业务为核心的科技企业。", signals: ["AI 产品落地", "搜索与推荐", "云平台工程", "数据规模"], officialUrl: "https://www.baidu.com/", significanceScore: 82, scoreRationale: "公司背景只能帮助理解业务环境，仍需回到候选人的具体产品、团队和可验证结果。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
+  { id: "company-jd", kind: "company", title: "京东", aliases: ["JD.com", "京东集团"], field: "电商 / 物流 / 零售科技", organizer: "京东集团", region: "中国", summary: "覆盖零售、物流、供应链和技术服务的综合性企业。", signals: ["供应链复杂度", "交易与履约", "大型业务系统", "运营效率"], officialUrl: "https://www.jd.com/", significanceScore: 78, scoreRationale: "需区分业务线、岗位类型和个人实际负责范围，不以公司名称替代经历判断。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
+  { id: "company-xiaomi", kind: "company", title: "小米", aliases: ["Xiaomi"], field: "消费电子 / 互联网 / 智能硬件", organizer: "小米集团", region: "中国 / 国际", summary: "连接消费电子、智能硬件、互联网服务和生态产品的科技企业。", signals: ["软硬件协同", "生态产品", "用户规模", "产品交付"], officialUrl: "https://www.mi.com/", significanceScore: 77, scoreRationale: "应结合具体产品线、研发或业务职责、交付结果和个人贡献进行评估。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
+  { id: "company-openai", kind: "company", title: "OpenAI", aliases: ["Open AI"], field: "人工智能 / 大模型 / 开发者平台", organizer: "OpenAI", region: "国际", summary: "专注人工智能模型、开发者平台和相关应用的研究与产品组织。", signals: ["大模型应用", "模型评测", "开发者生态", "AI 安全与治理"], officialUrl: "https://openai.com/", significanceScore: 90, scoreRationale: "AI 方向相关性较强，但必须核对具体团队、职能、项目边界和候选人的实际工作。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
+  { id: "company-anthropic", kind: "company", title: "Anthropic", aliases: ["Anthropic PBC"], field: "人工智能 / 大模型 / AI 安全", organizer: "Anthropic PBC", region: "国际", summary: "聚焦大模型研究、产品化和 AI 安全的人工智能公司。", signals: ["模型研究", "AI 安全", "API 平台", "研究到产品"], officialUrl: "https://www.anthropic.com/", significanceScore: 88, scoreRationale: "背景信号需要结合岗位与项目证据解释，不能仅根据公司品牌推断能力。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
+  { id: "company-ttc", kind: "company", title: "TTC", aliases: ["TTC 公司", "TTC 人才科技"], field: "AI 招聘 / 人才科技 / 企业效率", organizer: "TTC", region: "中国", summary: "本项目关注的 AI 招聘与人才挖掘方向公司资料入口，用于记录其岗位背景、业务语境和候选人经历线索。", signals: ["招聘流程智能化", "简历量化评阅", "Agent 工作流", "企业效率工具"], officialUrl: "", significanceScore: 70, scoreRationale: "TTC 条目用于项目内资料整理与岗位语境参考；未登记官方入口，不能据此推断候选人与公司的真实关系。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
 ];
 
-export const knowledgeRecords: KnowledgeRecord[] = mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords));
+const companyLogoPaths: Record<string, string> = {
+  "company-alibaba": "/company_logos/alibaba.svg",
+  "company-tencent": "/company_logos/tencent.svg",
+  "company-huawei": "/company_logos/huawei.svg",
+  "company-startup-example": "/company_logos/starbridge.svg",
+  "company-bytedance": "/company_logos/bytedance.svg",
+  "company-microsoft": "/company_logos/microsoft.svg",
+  "company-dji": "/company_logos/dji.svg",
+  "company-catl": "/company_logos/catl.svg",
+  "company-baidu": "/company_logos/baidu.svg",
+  "company-jd": "/company_logos/jd.svg",
+  "company-xiaomi": "/company_logos/xiaomi.svg",
+  "company-openai": "/company_logos/openai.svg",
+  "company-anthropic": "/company_logos/anthropic.svg",
+  "company-ttc": "/company_logos/ttc.svg",
+};
+
+export const knowledgeRecords: KnowledgeRecord[] = mergeCompanyCatalog(mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords)))
+  .map((record) => companyLogoPaths[record.id] ? { ...record, logoPath: companyLogoPaths[record.id] } : record);

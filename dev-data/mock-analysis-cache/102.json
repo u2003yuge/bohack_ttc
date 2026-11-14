@@ -1,0 +1,3623 @@
+{
+  "format": "bohack-tracked-resume-report",
+  "version": 1,
+  "resumeSha256": "34fc0efbbe3fad68e63b5bf12ccf9a2541bddb4c5d55b7360f1f65f9c950e4bb",
+  "id": "102",
+  "analysisReport": "### 候选人信息\n\n| 项目 | 提取结果 |\n| --- | --- |\n| 姓名 | 冯·莱卡恩 |\n| 岗位 | 游戏客户端开发工程师 |\n| 地点 | 上海市浦东新区 |\n| 教育 | 杭州职业技术学院，大专，数字媒体技术，2021.09–2024.06 |\n| 技能关键词 | C++、TypeScript 脚本绑定、资源生命周期跟踪、向量矩阵、碰撞检测、Shader、美术资源导入规范维护、Profiler 分析 GC、Draw Call 和资源加载卡顿 |\n\n游戏客户端开发方向，具备游戏脚本工具、动作游戏及交互展厅项目实践经历。\n\n### 简历材料提取\n\n- **开源作品｜Puerts 游戏脚本工具：脚本类型映射：** 1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts\n\n### 五维能力评分\n\n| 能力维度 | 规则得分 |\n| --- | ---: |\n| 专业执行 | NA |\n| 问题解决 | NA |\n| 责任与交付 | NA |\n| 协作与组织 | NA |\n| 学习与研究 | NA |\n\n得分按已提取材料和个人行动证据计算。\n\n### 项目经历人话拆解\n\n没有可拆解的项目或工作经历。\n\n### 综合分析\n\n## 结论\n**当前简历证据不足以支持其符合 AI 应用研发工程师的必须条件。** 可见经历集中在游戏客户端和交互项目，未展示大模型应用、RAG、Agent、文档智能或相关系统交付。其游戏开发中的性能分析、资源管理和问题复现经验对工程实践有一定相关性，但不能替代 AI 工程落地证据。\n\n简历明确标注为“模拟合成简历”，并称人物、任职、获奖等信息虚构。因此，以下仅按文本内容判断，不将其作为已核实的真实经历。\n\n## 证据匹配\n- **大模型应用、RAG、Agent、文档智能设计开发：未体现。** 未出现 LLM API、Prompt、检索增强、向量数据库、Agent 框架或文档分析系统经验。\n- **模型调用、工具调用、评测、监控和数据闭环：未体现。** 有记录帧时间、资源加载日志及使用 Profiler 排查客户端问题的描述，但未体现模型评测、AI 监控或数据闭环。\n- **跨职能协作并落地业务：部分支持，证据有限。** 简历提及团队项目和协作工程实践，但未说明合作对象、本人职责边界、实际用户或业务结果。\n- **3 年以上软件或 AI 应用研发经验：未支持。** 所列教育与项目时间不足以证明满足三年以上研发经验，且未列企业工作或实习经历。\n- **Python 或 TypeScript：部分支持。** 提及 TypeScript 脚本绑定及 C# 与 TypeScript 类型转换样例；未展示 Python，也未证明 TypeScript 用于 AI 应用研发。\n- **LLM API、Prompt、RAG、向量数据库或 Agent 框架：未支持。**\n- **完整项目交付经验：部分支持。** 项目描述涉及角色状态、关卡加载、存档、UI和性能问题定位，但没有上线、验收、用户使用、维护或交付结果证据。\n- **优先经验：未支持。** 未见招聘、文档解析、知识库、企业效率工具、模型评测、数据治理、搜索增强或多 Agent 编排经验；量化成果也未提供可核验指标。\n\n技术深度目前主要体现为游戏客户端基础和性能排查，不能据此判断其 AI 系统设计能力。业务落地证据缺失；简历没有说明项目对应的业务问题、真实使用场景或效果指标。\n\n## 待核实信息\n- 简历声明为模拟合成，所列项目、任职、竞赛和署名均不能视为真实履历证据。\n- TypeScript 的熟练程度、实际代码规模及是否承担独立设计与交付尚不明确。\n- 项目指标未给出具体数值、测试方法或可查验的交付物。\n- 未提供 Python、LLM/RAG/Agent、模型评测或生产环境系统经验的证据。\n\n## 建议追问\n- 请现场设计一个面向企业文档问答的 RAG 系统，说明数据接入、切分、索引、检索、重排、生成、权限和评测方案，并解释关键取舍。\n- 是否实际调用过 LLM API 或构建过 Agent 工作流？请说明工具调用、失败重试、成本控制、日志监控和安全边界，并展示可验证的代码或演示。\n- 请选一个本人主导的项目，说明需求、架构、个人贡献、交付标准、上线或验收情况，以及能复核的结果。\n- 简历提到使用 Profiler 和复现步骤排查问题。请举例说明如何定位问题、验证修复，并说明这套方法如何迁移到 AI 应用的质量与性能排查。\n- 请澄清哪些经历是实际完成的，哪些属于模拟或练习材料；目前材料明确标注为合成内容，不能据此认定其有真实项目交付经历。\n\n## 评分依据与覆盖情况\n遵循已提供的规则评分摘要：五个维度的分数均为 `NA`（`null`），均为暂定状态，每项显示缺少 1 项材料。本次不重新评分，也不推算岗位匹配分。该摘要不足以证明候选人具备或不具备某项能力。\n\n没有提供岗位背景网页线索，本次未联网核验。公开项目页面即使能说明项目本身的背景，也不能证明候选人的个人贡献。",
+  "analysisStatus": "complete",
+  "analysisError": "",
+  "analyzedAt": "2026-11-14T14:16:41.995Z",
+  "assessment": {
+    "id": "197ce444-5a8e-494a-ab97-c29787fe6eea",
+    "version": "material-derived-v1.1.0",
+    "evaluatedAt": "2026-11-14T14:16:41.995Z",
+    "inputHash": "ea743a26d58d8fd9d334e80b7f6f5150bfb8492b7ff6b8992f7c4f16b924d45a",
+    "extraction": "model",
+    "calibration": "初版规则参数，待双人标注校准",
+    "rho": 0.5,
+    "materials": [
+      {
+        "material_id": "m-c12599a7c8a0cd6d",
+        "material_type": "opensource",
+        "title": "Puerts 游戏脚本工具：脚本类型映射",
+        "year": "2025.03 - 2025.08",
+        "organization": "杭州职业技术学院开源实践小组",
+        "stage": "开源应用实践",
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。",
+            "source": "简历原文"
+          },
+          {
+            "origin": "resume",
+            "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "开源应用实践成员",
+          "input_context": {}
+        },
+        "factor_observations": {},
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-c12599a7c8a0cd6d"
+        ],
+        "material_score": null,
+        "score_breakdown": [
+          {
+            "key": "runnable",
+            "label": "可运行性",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "quality",
+            "label": "代码质量",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "maintenance",
+            "label": "维护持续性",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "contribution",
+            "label": "具体贡献",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "使用 / 采用",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "可运行性",
+          "代码质量",
+          "维护持续性",
+          "具体贡献",
+          "使用 / 采用"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.5,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.85,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.85,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.6,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": null,
+            "rule": null,
+            "mapping_reason": "未找到支持该维度的个人行动证据。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": null
+          }
+        }
+      }
+    ],
+    "abilities": {
+      "professional_execution": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 1
+      },
+      "problem_solving": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 1
+      },
+      "ownership_delivery": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 1
+      },
+      "collaboration_organization": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 1
+      },
+      "learning_research": {
+        "score": null,
+        "provisional": true,
+        "terms": [],
+        "missing_materials": 1
+      }
+    },
+    "type_summaries": [
+      {
+        "type": "award",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "research",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "project",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "work",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "patent",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "opensource",
+        "count": 1,
+        "score": null
+      },
+      {
+        "type": "certificate",
+        "count": 0,
+        "score": null
+      }
+    ],
+    "notes": [
+      "跳过无法在简历中定位连续原文的材料。",
+      "跳过无法在简历中定位连续原文的材料。",
+      "跳过无法在简历中定位连续原文的材料。"
+    ],
+    "inputSnapshot": "冯·莱卡恩   游戏客户端开发工程师  23 岁｜所在地：上海市浦东新区｜大专 · 已毕业  专业技能  • 了解 C++ 与 TypeScript 脚本绑定，能够跟踪资源生命周期。  • 理解向量矩阵、碰撞检测与常见 Shader，能维护美术资源导入规范。  • 使用 Profiler 分析 GC、Draw Call 和资源加载卡顿。  工作 / 实习经历  暂无企业工作或实习经历；主要经历见项目与研究部分。  教育背景  杭州职业技术学院 · 大专  数字媒体技术｜2021.09 - 2024.06  相关课程：计算机图形学、游戏引擎、数据结构、三维交互  竞赛与奖项  全国职业院校技能大赛  2023｜高职组全国二等奖｜团队成员  项目经历  1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts  2. 低多边形动作游戏  个 人 与 协 作工程实践 · 主要开 发者  2025.09 - 2026.02｜ 独立 实践  • 实 现角色状态 、关卡加载、 存档 与 UI，记录目标设备的 帧率及内存 ， 按复现步骤 定 位 资源 泄漏 与交互 错误 。  • 搭建 5 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  3. 交互式科学展厅  校内 研究与工程实践 · 实验设计成员  2024.03 - 2024.08｜ 校内 实践  • 实 现角色状态 、关卡加载、 存档 与 UI，记录目标设备的 帧率及内存 ， 按复现步骤 定 位 资源 泄漏 与交互 错误 。  • 搭建 4 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  论文（模拟署名成果）  暂无 论文发表 或 预印 本成 果 。  MOCK   合 成 简 历｜ 人物 、 论文署名 、 获 奖 及任 职 均虚 构； 论文题名 和 公 开项目 来自真 实资 料 。   102 · 1",
+    "researchSnapshot": null,
+    "rulesSnapshot": {
+      "factorDefinitions": {
+        "award": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.2,
+            "kind": "size",
+            "choices": []
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例",
+            "weight": 0.35,
+            "kind": "selectivity",
+            "choices": []
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "top",
+                "label": "本赛事最高奖",
+                "points": 160,
+                "pattern": "特等奖|冠军|金奖|金牌|grand prize|champion|gold"
+              },
+              {
+                "key": "first",
+                "label": "一等奖 / 一等层级",
+                "points": 120,
+                "pattern": "一等奖|first prize"
+              },
+              {
+                "key": "second",
+                "label": "二等奖 / 银奖",
+                "points": 80,
+                "pattern": "二等奖|银奖|银牌|second prize|silver"
+              },
+              {
+                "key": "third",
+                "label": "三等奖 / 铜奖",
+                "points": 50,
+                "pattern": "三等奖|铜奖|铜牌|third prize|bronze"
+              },
+              {
+                "key": "finalist",
+                "label": "有明确结果的入围或优胜",
+                "points": 25,
+                "pattern": "入围|优胜|finalist|honorable mention"
+              }
+            ]
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "reproducible",
+                "label": "可复核测试 / 盲评和答辩",
+                "points": 160,
+                "pattern": "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review"
+              },
+              {
+                "key": "rubric",
+                "label": "明确评分规则和专家评审",
+                "points": 100,
+                "pattern": "评分标准|评审标准|专家评审|scoring rubric|judging criteria"
+              },
+              {
+                "key": "specified",
+                "label": "有明确赛制或评审方式",
+                "points": 60,
+                "pattern": "限时|答辩|评审|比赛规则|timed|judged|defense"
+              }
+            ]
+          }
+        ],
+        "research": [
+          {
+            "key": "question",
+            "label": "研究问题",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "rigor",
+            "label": "方法严谨度",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "validated",
+                "label": "对照、消融及统计验证",
+                "points": 160,
+                "pattern": "消融|统计显著|置信区间|ablation|statistical significance|confidence interval"
+              },
+              {
+                "key": "controlled",
+                "label": "对照或基线实验",
+                "points": 100,
+                "pattern": "对照|基线|baseline|controlled experiment"
+              },
+              {
+                "key": "method",
+                "label": "明确研究方法",
+                "points": 60,
+                "pattern": "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"
+              }
+            ]
+          },
+          {
+            "key": "experiments",
+            "label": "实验质量",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "robust",
+                "label": "多数据集、误差或鲁棒性分析",
+                "points": 160,
+                "pattern": "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness"
+              },
+              {
+                "key": "comparison",
+                "label": "明确实验比较",
+                "points": 100,
+                "pattern": "对比实验|基线|baseline|comparative experiment"
+              },
+              {
+                "key": "specified",
+                "label": "有实验设置",
+                "points": 60,
+                "pattern": "实验设置|实验结果|experimental setup|experimental results"
+              }
+            ]
+          },
+          {
+            "key": "reproducibility",
+            "label": "可复现性",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "reproduced",
+                "label": "明确的独立复现记录",
+                "points": 160,
+                "pattern": "独立复现成功|第三方复现|independently reproduced"
+              },
+              {
+                "key": "complete",
+                "label": "代码、数据和运行说明齐全",
+                "points": 100,
+                "pattern": "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)"
+              },
+              {
+                "key": "available",
+                "label": "提供开放材料",
+                "points": 50,
+                "pattern": "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code"
+              }
+            ]
+          },
+          {
+            "key": "status",
+            "label": "成果状态",
+            "weight": 0.1,
+            "choices": [
+              {
+                "key": "published",
+                "label": "已正式发表",
+                "points": 120,
+                "pattern": "已发表|正式发表|已在线发表|published|online publication"
+              },
+              {
+                "key": "accepted",
+                "label": "已录用未发表",
+                "points": 80,
+                "pattern": "已录用|accepted"
+              },
+              {
+                "key": "preprint",
+                "label": "预印本",
+                "points": 30,
+                "pattern": "预印本|preprint|arxiv"
+              }
+            ]
+          },
+          {
+            "key": "content",
+            "label": "研究内容与验证结果",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 160,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 100,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 60,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 25,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "project": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.3,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "multiple",
+                "label": "多重约束与权衡",
+                "points": 160,
+                "pattern": "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency"
+              },
+              {
+                "key": "explicit",
+                "label": "明确性能或业务约束",
+                "points": 100,
+                "pattern": "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility"
+              },
+              {
+                "key": "bounded",
+                "label": "明确任务边界",
+                "points": 50,
+                "pattern": "需求|约束|任务|requirement|constraint|task"
+              }
+            ]
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 160,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 100,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 60,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 25,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 160,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 100,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 60,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 25,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "work": [
+          {
+            "key": "complexity",
+            "label": "任务复杂度",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "scope",
+            "label": "具体责任范围",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "end_to_end",
+                "label": "明确的端到端责任",
+                "points": 160,
+                "pattern": "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"
+              },
+              {
+                "key": "owned",
+                "label": "独立负责具体范围",
+                "points": 100,
+                "pattern": "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for"
+              },
+              {
+                "key": "specific",
+                "label": "明确执行任务",
+                "points": 50,
+                "pattern": "开发|设计|测试|分析|implemented|developed|tested|analyzed"
+              }
+            ]
+          },
+          {
+            "key": "delivery",
+            "label": "实际交付",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 160,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 100,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 60,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 25,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "patent": [
+          {
+            "key": "status",
+            "label": "公开 / 授权状态",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "granted",
+                "label": "已授权",
+                "points": 120,
+                "pattern": "已授权|授权公告|granted"
+              },
+              {
+                "key": "published",
+                "label": "已公开",
+                "points": 60,
+                "pattern": "已公开|公开公告|published application"
+              },
+              {
+                "key": "filed",
+                "label": "有申请记录",
+                "points": 25,
+                "pattern": "申请号|已申请|application number|filed"
+              }
+            ]
+          },
+          {
+            "key": "technical",
+            "label": "技术问题与方法",
+            "weight": 0.35,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 160,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 100,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 60,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 25,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "claims",
+            "label": "权利要求",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "validated",
+                "label": "明确权利要求及实现验证",
+                "points": 160,
+                "pattern": "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)"
+              },
+              {
+                "key": "specific",
+                "label": "有具体权利要求",
+                "points": 90,
+                "pattern": "权利要求|patent claims"
+              },
+              {
+                "key": "description",
+                "label": "有技术方案说明",
+                "points": 40,
+                "pattern": "技术方案|technical solution"
+              }
+            ]
+          },
+          {
+            "key": "application",
+            "label": "应用情况",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 160,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 100,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 60,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 25,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          }
+        ],
+        "opensource": [
+          {
+            "key": "runnable",
+            "label": "可运行性",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "quality",
+            "label": "代码质量",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "engineering",
+                "label": "测试、CI 与接口文档",
+                "points": 160,
+                "pattern": "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试"
+              },
+              {
+                "key": "tested",
+                "label": "自动测试或持续集成",
+                "points": 100,
+                "pattern": "单元测试|集成测试|持续集成|unit test|integration test|CI/CD"
+              },
+              {
+                "key": "documented",
+                "label": "有使用说明",
+                "points": 50,
+                "pattern": "README|使用说明|接口文档|documentation"
+              }
+            ]
+          },
+          {
+            "key": "maintenance",
+            "label": "维护持续性",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "sustained",
+                "label": "持续发布并处理问题",
+                "points": 160,
+                "pattern": "持续维护|定期发布|持续发布|sustained maintenance|regular releases"
+              },
+              {
+                "key": "responded",
+                "label": "有问题处理或版本维护",
+                "points": 90,
+                "pattern": "修复|版本发布|issue|bug fix|release"
+              },
+              {
+                "key": "changes",
+                "label": "有可定位提交",
+                "points": 40,
+                "pattern": "提交|pull request|commit"
+              }
+            ]
+          },
+          {
+            "key": "contribution",
+            "label": "具体贡献",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "core",
+                "label": "核心功能与维护责任",
+                "points": 160,
+                "pattern": "维护者|核心模块|核心功能|maintainer|core module"
+              },
+              {
+                "key": "implemented",
+                "label": "明确的代码或文档贡献",
+                "points": 90,
+                "pattern": "实现|开发|修复|编写|implemented|developed|fixed|authored"
+              },
+              {
+                "key": "reviewed",
+                "label": "明确评审或测试贡献",
+                "points": 40,
+                "pattern": "代码评审|测试|code review|tested"
+              }
+            ]
+          },
+          {
+            "key": "adoption",
+            "label": "使用 / 采用",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 160,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 100,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 60,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 25,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          }
+        ],
+        "certificate": [
+          {
+            "key": "assessment",
+            "label": "考核方式",
+            "weight": 0.45,
+            "choices": [
+              {
+                "key": "practical",
+                "label": "实操考核",
+                "points": 140,
+                "pattern": "实操考核|实验考核|practical exam|hands.on assessment"
+              },
+              {
+                "key": "exam",
+                "label": "明确考试",
+                "points": 90,
+                "pattern": "通过考试|认证考试|passed.{0,20}exam|certification exam"
+              },
+              {
+                "key": "coursework",
+                "label": "课程考核",
+                "points": 40,
+                "pattern": "课程作业|结课考核|coursework|course assessment"
+              }
+            ]
+          },
+          {
+            "key": "practice",
+            "label": "实际练习与作品",
+            "weight": 0.35,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 160,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 100,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 60,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 25,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "curriculum",
+            "label": "课程内容深度",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "有明确高级专题",
+                "points": 140,
+                "pattern": "高级|进阶|专题|advanced|specialized"
+              },
+              {
+                "key": "specific",
+                "label": "有明确方法与实践内容",
+                "points": 80,
+                "pattern": "实验|项目|算法|系统|experiment|project|algorithm|system"
+              },
+              {
+                "key": "foundation",
+                "label": "基础课程内容",
+                "points": 30,
+                "pattern": "基础|入门|foundation|introductory"
+              }
+            ]
+          }
+        ]
+      },
+      "typeAdaptation": {
+        "award": {
+          "professional_execution": 0.65,
+          "problem_solving": 0.7,
+          "ownership_delivery": 0.45,
+          "collaboration_organization": 0.35,
+          "learning_research": 0.55
+        },
+        "research": {
+          "professional_execution": 0.7,
+          "problem_solving": 0.9,
+          "ownership_delivery": 0.6,
+          "collaboration_organization": 0.35,
+          "learning_research": 1
+        },
+        "project": {
+          "professional_execution": 1,
+          "problem_solving": 1,
+          "ownership_delivery": 0.95,
+          "collaboration_organization": 0.75,
+          "learning_research": 0.65
+        },
+        "work": {
+          "professional_execution": 1,
+          "problem_solving": 0.85,
+          "ownership_delivery": 1,
+          "collaboration_organization": 0.8,
+          "learning_research": 0.6
+        },
+        "patent": {
+          "professional_execution": 0.6,
+          "problem_solving": 0.85,
+          "ownership_delivery": 0.5,
+          "collaboration_organization": 0.3,
+          "learning_research": 0.8
+        },
+        "opensource": {
+          "professional_execution": 1,
+          "problem_solving": 0.85,
+          "ownership_delivery": 0.85,
+          "collaboration_organization": 0.6,
+          "learning_research": 0.7
+        },
+        "certificate": {
+          "professional_execution": 0.45,
+          "problem_solving": 0.4,
+          "ownership_delivery": 0.25,
+          "collaboration_organization": 0.15,
+          "learning_research": 0.7
+        }
+      },
+      "actionLevels": {
+        "guided": 0.25,
+        "concrete": 0.5,
+        "owned": 0.75,
+        "validated": 1
+      },
+      "rho": 0.5
+    }
+  },
+  "assessmentHistory": [
+    {
+      "reason": "review",
+      "assessment": {
+        "id": "197ce444-5a8e-494a-ab97-c29787fe6eea",
+        "version": "material-derived-v1.1.0",
+        "evaluatedAt": "2026-11-14T14:16:41.995Z",
+        "inputHash": "ea743a26d58d8fd9d334e80b7f6f5150bfb8492b7ff6b8992f7c4f16b924d45a",
+        "extraction": "model",
+        "calibration": "初版规则参数，待双人标注校准",
+        "rho": 0.5,
+        "materials": [
+          {
+            "material_id": "m-c12599a7c8a0cd6d",
+            "material_type": "opensource",
+            "title": "Puerts 游戏脚本工具：脚本类型映射",
+            "year": "2025.03 - 2025.08",
+            "organization": "杭州职业技术学院开源实践小组",
+            "stage": "开源应用实践",
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "开源应用实践成员",
+              "input_context": {}
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-c12599a7c8a0cd6d"
+            ],
+            "material_score": null,
+            "score_breakdown": [
+              {
+                "key": "runnable",
+                "label": "可运行性",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "quality",
+                "label": "代码质量",
+                "weight": 0.25,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "maintenance",
+                "label": "维护持续性",
+                "weight": 0.15,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "contribution",
+                "label": "具体贡献",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "adoption",
+                "label": "使用 / 采用",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0,
+            "missing_factors": [
+              "可运行性",
+              "代码质量",
+              "维护持续性",
+              "具体贡献",
+              "使用 / 采用"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": 0.5,
+                "rule": "concrete",
+                "mapping_reason": "有对象和动作的具体个人行动",
+                "supporting_evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+                    "source": "简历原文"
+                  }
+                ],
+                "type_coefficient": 1,
+                "derived_contribution": null
+              },
+              "problem_solving": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.85,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.85,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.6,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.7,
+                "derived_contribution": null
+              }
+            }
+          }
+        ],
+        "abilities": {
+          "professional_execution": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "problem_solving": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "ownership_delivery": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "collaboration_organization": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "learning_research": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          }
+        },
+        "type_summaries": [
+          {
+            "type": "award",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "research",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "project",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "work",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "patent",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "opensource",
+            "count": 1,
+            "score": null
+          },
+          {
+            "type": "certificate",
+            "count": 0,
+            "score": null
+          }
+        ],
+        "notes": [
+          "跳过无法在简历中定位连续原文的材料。",
+          "跳过无法在简历中定位连续原文的材料。",
+          "跳过无法在简历中定位连续原文的材料。"
+        ],
+        "inputSnapshot": "冯·莱卡恩   游戏客户端开发工程师  23 岁｜所在地：上海市浦东新区｜大专 · 已毕业  专业技能  • 了解 C++ 与 TypeScript 脚本绑定，能够跟踪资源生命周期。  • 理解向量矩阵、碰撞检测与常见 Shader，能维护美术资源导入规范。  • 使用 Profiler 分析 GC、Draw Call 和资源加载卡顿。  工作 / 实习经历  暂无企业工作或实习经历；主要经历见项目与研究部分。  教育背景  杭州职业技术学院 · 大专  数字媒体技术｜2021.09 - 2024.06  相关课程：计算机图形学、游戏引擎、数据结构、三维交互  竞赛与奖项  全国职业院校技能大赛  2023｜高职组全国二等奖｜团队成员  项目经历  1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts  2. 低多边形动作游戏  个 人 与 协 作工程实践 · 主要开 发者  2025.09 - 2026.02｜ 独立 实践  • 实 现角色状态 、关卡加载、 存档 与 UI，记录目标设备的 帧率及内存 ， 按复现步骤 定 位 资源 泄漏 与交互 错误 。  • 搭建 5 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  3. 交互式科学展厅  校内 研究与工程实践 · 实验设计成员  2024.03 - 2024.08｜ 校内 实践  • 实 现角色状态 、关卡加载、 存档 与 UI，记录目标设备的 帧率及内存 ， 按复现步骤 定 位 资源 泄漏 与交互 错误 。  • 搭建 4 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  论文（模拟署名成果）  暂无 论文发表 或 预印 本成 果 。  MOCK   合 成 简 历｜ 人物 、 论文署名 、 获 奖 及任 职 均虚 构； 论文题名 和 公 开项目 来自真 实资 料 。   102 · 1",
+        "researchSnapshot": null,
+        "rulesSnapshot": {
+          "factorDefinitions": {
+            "award": [
+              {
+                "key": "participants",
+                "label": "有效参赛规模",
+                "weight": 0.2,
+                "kind": "size",
+                "choices": []
+              },
+              {
+                "key": "award_rate",
+                "label": "官方目标奖项比例",
+                "weight": 0.35,
+                "kind": "selectivity",
+                "choices": []
+              },
+              {
+                "key": "tier",
+                "label": "本赛事奖项层级",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "top",
+                    "label": "本赛事最高奖",
+                    "points": 160,
+                    "pattern": "特等奖|冠军|金奖|金牌|grand prize|champion|gold"
+                  },
+                  {
+                    "key": "first",
+                    "label": "一等奖 / 一等层级",
+                    "points": 120,
+                    "pattern": "一等奖|first prize"
+                  },
+                  {
+                    "key": "second",
+                    "label": "二等奖 / 银奖",
+                    "points": 80,
+                    "pattern": "二等奖|银奖|银牌|second prize|silver"
+                  },
+                  {
+                    "key": "third",
+                    "label": "三等奖 / 铜奖",
+                    "points": 50,
+                    "pattern": "三等奖|铜奖|铜牌|third prize|bronze"
+                  },
+                  {
+                    "key": "finalist",
+                    "label": "有明确结果的入围或优胜",
+                    "points": 25,
+                    "pattern": "入围|优胜|finalist|honorable mention"
+                  }
+                ]
+              },
+              {
+                "key": "judging",
+                "label": "赛制与评审规则",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "reproducible",
+                    "label": "可复核测试 / 盲评和答辩",
+                    "points": 160,
+                    "pattern": "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review"
+                  },
+                  {
+                    "key": "rubric",
+                    "label": "明确评分规则和专家评审",
+                    "points": 100,
+                    "pattern": "评分标准|评审标准|专家评审|scoring rubric|judging criteria"
+                  },
+                  {
+                    "key": "specified",
+                    "label": "有明确赛制或评审方式",
+                    "points": 60,
+                    "pattern": "限时|答辩|评审|比赛规则|timed|judged|defense"
+                  }
+                ]
+              }
+            ],
+            "research": [
+              {
+                "key": "question",
+                "label": "研究问题",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "rigor",
+                "label": "方法严谨度",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "validated",
+                    "label": "对照、消融及统计验证",
+                    "points": 160,
+                    "pattern": "消融|统计显著|置信区间|ablation|statistical significance|confidence interval"
+                  },
+                  {
+                    "key": "controlled",
+                    "label": "对照或基线实验",
+                    "points": 100,
+                    "pattern": "对照|基线|baseline|controlled experiment"
+                  },
+                  {
+                    "key": "method",
+                    "label": "明确研究方法",
+                    "points": 60,
+                    "pattern": "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"
+                  }
+                ]
+              },
+              {
+                "key": "experiments",
+                "label": "实验质量",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "robust",
+                    "label": "多数据集、误差或鲁棒性分析",
+                    "points": 160,
+                    "pattern": "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness"
+                  },
+                  {
+                    "key": "comparison",
+                    "label": "明确实验比较",
+                    "points": 100,
+                    "pattern": "对比实验|基线|baseline|comparative experiment"
+                  },
+                  {
+                    "key": "specified",
+                    "label": "有实验设置",
+                    "points": 60,
+                    "pattern": "实验设置|实验结果|experimental setup|experimental results"
+                  }
+                ]
+              },
+              {
+                "key": "reproducibility",
+                "label": "可复现性",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "reproduced",
+                    "label": "明确的独立复现记录",
+                    "points": 160,
+                    "pattern": "独立复现成功|第三方复现|independently reproduced"
+                  },
+                  {
+                    "key": "complete",
+                    "label": "代码、数据和运行说明齐全",
+                    "points": 100,
+                    "pattern": "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)"
+                  },
+                  {
+                    "key": "available",
+                    "label": "提供开放材料",
+                    "points": 50,
+                    "pattern": "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code"
+                  }
+                ]
+              },
+              {
+                "key": "status",
+                "label": "成果状态",
+                "weight": 0.1,
+                "choices": [
+                  {
+                    "key": "published",
+                    "label": "已正式发表",
+                    "points": 120,
+                    "pattern": "已发表|正式发表|已在线发表|published|online publication"
+                  },
+                  {
+                    "key": "accepted",
+                    "label": "已录用未发表",
+                    "points": 80,
+                    "pattern": "已录用|accepted"
+                  },
+                  {
+                    "key": "preprint",
+                    "label": "预印本",
+                    "points": 30,
+                    "pattern": "预印本|preprint|arxiv"
+                  }
+                ]
+              },
+              {
+                "key": "content",
+                "label": "研究内容与验证结果",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "project": [
+              {
+                "key": "complexity",
+                "label": "问题复杂度",
+                "weight": 0.3,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "constraints",
+                "label": "技术 / 业务约束",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "multiple",
+                    "label": "多重约束与权衡",
+                    "points": 160,
+                    "pattern": "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency"
+                  },
+                  {
+                    "key": "explicit",
+                    "label": "明确性能或业务约束",
+                    "points": 100,
+                    "pattern": "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确任务边界",
+                    "points": 50,
+                    "pattern": "需求|约束|任务|requirement|constraint|task"
+                  }
+                ]
+              },
+              {
+                "key": "delivery",
+                "label": "交付阶段",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "adoption",
+                "label": "部署 / 采用",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              },
+              {
+                "key": "outcome",
+                "label": "结果质量",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "work": [
+              {
+                "key": "complexity",
+                "label": "任务复杂度",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "scope",
+                "label": "具体责任范围",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "end_to_end",
+                    "label": "明确的端到端责任",
+                    "points": 160,
+                    "pattern": "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"
+                  },
+                  {
+                    "key": "owned",
+                    "label": "独立负责具体范围",
+                    "points": 100,
+                    "pattern": "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "明确执行任务",
+                    "points": 50,
+                    "pattern": "开发|设计|测试|分析|implemented|developed|tested|analyzed"
+                  }
+                ]
+              },
+              {
+                "key": "delivery",
+                "label": "实际交付",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "impact",
+                "label": "结果影响",
+                "weight": 0.3,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "patent": [
+              {
+                "key": "status",
+                "label": "公开 / 授权状态",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "granted",
+                    "label": "已授权",
+                    "points": 120,
+                    "pattern": "已授权|授权公告|granted"
+                  },
+                  {
+                    "key": "published",
+                    "label": "已公开",
+                    "points": 60,
+                    "pattern": "已公开|公开公告|published application"
+                  },
+                  {
+                    "key": "filed",
+                    "label": "有申请记录",
+                    "points": 25,
+                    "pattern": "申请号|已申请|application number|filed"
+                  }
+                ]
+              },
+              {
+                "key": "technical",
+                "label": "技术问题与方法",
+                "weight": 0.35,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "claims",
+                "label": "权利要求",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "validated",
+                    "label": "明确权利要求及实现验证",
+                    "points": 160,
+                    "pattern": "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "有具体权利要求",
+                    "points": 90,
+                    "pattern": "权利要求|patent claims"
+                  },
+                  {
+                    "key": "description",
+                    "label": "有技术方案说明",
+                    "points": 40,
+                    "pattern": "技术方案|technical solution"
+                  }
+                ]
+              },
+              {
+                "key": "application",
+                "label": "应用情况",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              }
+            ],
+            "opensource": [
+              {
+                "key": "runnable",
+                "label": "可运行性",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "quality",
+                "label": "代码质量",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "engineering",
+                    "label": "测试、CI 与接口文档",
+                    "points": 160,
+                    "pattern": "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "自动测试或持续集成",
+                    "points": 100,
+                    "pattern": "单元测试|集成测试|持续集成|unit test|integration test|CI/CD"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "有使用说明",
+                    "points": 50,
+                    "pattern": "README|使用说明|接口文档|documentation"
+                  }
+                ]
+              },
+              {
+                "key": "maintenance",
+                "label": "维护持续性",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "sustained",
+                    "label": "持续发布并处理问题",
+                    "points": 160,
+                    "pattern": "持续维护|定期发布|持续发布|sustained maintenance|regular releases"
+                  },
+                  {
+                    "key": "responded",
+                    "label": "有问题处理或版本维护",
+                    "points": 90,
+                    "pattern": "修复|版本发布|issue|bug fix|release"
+                  },
+                  {
+                    "key": "changes",
+                    "label": "有可定位提交",
+                    "points": 40,
+                    "pattern": "提交|pull request|commit"
+                  }
+                ]
+              },
+              {
+                "key": "contribution",
+                "label": "具体贡献",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "core",
+                    "label": "核心功能与维护责任",
+                    "points": 160,
+                    "pattern": "维护者|核心模块|核心功能|maintainer|core module"
+                  },
+                  {
+                    "key": "implemented",
+                    "label": "明确的代码或文档贡献",
+                    "points": 90,
+                    "pattern": "实现|开发|修复|编写|implemented|developed|fixed|authored"
+                  },
+                  {
+                    "key": "reviewed",
+                    "label": "明确评审或测试贡献",
+                    "points": 40,
+                    "pattern": "代码评审|测试|code review|tested"
+                  }
+                ]
+              },
+              {
+                "key": "adoption",
+                "label": "使用 / 采用",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              }
+            ],
+            "certificate": [
+              {
+                "key": "assessment",
+                "label": "考核方式",
+                "weight": 0.45,
+                "choices": [
+                  {
+                    "key": "practical",
+                    "label": "实操考核",
+                    "points": 140,
+                    "pattern": "实操考核|实验考核|practical exam|hands.on assessment"
+                  },
+                  {
+                    "key": "exam",
+                    "label": "明确考试",
+                    "points": 90,
+                    "pattern": "通过考试|认证考试|passed.{0,20}exam|certification exam"
+                  },
+                  {
+                    "key": "coursework",
+                    "label": "课程考核",
+                    "points": 40,
+                    "pattern": "课程作业|结课考核|coursework|course assessment"
+                  }
+                ]
+              },
+              {
+                "key": "practice",
+                "label": "实际练习与作品",
+                "weight": 0.35,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "curriculum",
+                "label": "课程内容深度",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "有明确高级专题",
+                    "points": 140,
+                    "pattern": "高级|进阶|专题|advanced|specialized"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "有明确方法与实践内容",
+                    "points": 80,
+                    "pattern": "实验|项目|算法|系统|experiment|project|algorithm|system"
+                  },
+                  {
+                    "key": "foundation",
+                    "label": "基础课程内容",
+                    "points": 30,
+                    "pattern": "基础|入门|foundation|introductory"
+                  }
+                ]
+              }
+            ]
+          },
+          "typeAdaptation": {
+            "award": {
+              "professional_execution": 0.65,
+              "problem_solving": 0.7,
+              "ownership_delivery": 0.45,
+              "collaboration_organization": 0.35,
+              "learning_research": 0.55
+            },
+            "research": {
+              "professional_execution": 0.7,
+              "problem_solving": 0.9,
+              "ownership_delivery": 0.6,
+              "collaboration_organization": 0.35,
+              "learning_research": 1
+            },
+            "project": {
+              "professional_execution": 1,
+              "problem_solving": 1,
+              "ownership_delivery": 0.95,
+              "collaboration_organization": 0.75,
+              "learning_research": 0.65
+            },
+            "work": {
+              "professional_execution": 1,
+              "problem_solving": 0.85,
+              "ownership_delivery": 1,
+              "collaboration_organization": 0.8,
+              "learning_research": 0.6
+            },
+            "patent": {
+              "professional_execution": 0.6,
+              "problem_solving": 0.85,
+              "ownership_delivery": 0.5,
+              "collaboration_organization": 0.3,
+              "learning_research": 0.8
+            },
+            "opensource": {
+              "professional_execution": 1,
+              "problem_solving": 0.85,
+              "ownership_delivery": 0.85,
+              "collaboration_organization": 0.6,
+              "learning_research": 0.7
+            },
+            "certificate": {
+              "professional_execution": 0.45,
+              "problem_solving": 0.4,
+              "ownership_delivery": 0.25,
+              "collaboration_organization": 0.15,
+              "learning_research": 0.7
+            }
+          },
+          "actionLevels": {
+            "guided": 0.25,
+            "concrete": 0.5,
+            "owned": 0.75,
+            "validated": 1
+          },
+          "rho": 0.5
+        }
+      }
+    }
+  ],
+  "agentArtifacts": [
+    {
+      "id": "candidate-profile",
+      "inputHash": "bc74090cf6ab3b49803cffe01d63d201d84b1036df61dddcc8299e8b7123afb0",
+      "output": {
+        "name": "冯·莱卡恩",
+        "role": "游戏客户端开发工程师",
+        "location": "上海市浦东新区",
+        "education": "杭州职业技术学院，大专，数字媒体技术，2021.09–2024.06",
+        "skills": [
+          "C++",
+          "TypeScript 脚本绑定",
+          "资源生命周期跟踪",
+          "向量矩阵",
+          "碰撞检测",
+          "Shader",
+          "美术资源导入规范维护",
+          "Profiler 分析 GC、Draw Call 和资源加载卡顿"
+        ],
+        "summary": "游戏客户端开发方向，具备游戏脚本工具、动作游戏及交互展厅项目实践经历。"
+      }
+    },
+    {
+      "id": "material-extraction",
+      "inputHash": "8eb7db240c159d8646be9ac58e7afee7c7767d584d5c2924411a17b9ad72c968",
+      "output": {
+        "materials": [
+          {
+            "material_id": "m-c12599a7c8a0cd6d",
+            "material_type": "opensource",
+            "title": "Puerts 游戏脚本工具：脚本类型映射",
+            "year": "2025.03 - 2025.08",
+            "organization": "杭州职业技术学院开源实践小组",
+            "stage": "开源应用实践",
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "开源应用实践成员",
+              "input_context": {}
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ]
+          }
+        ],
+        "notes": [
+          "跳过无法在简历中定位连续原文的材料。",
+          "跳过无法在简历中定位连续原文的材料。",
+          "跳过无法在简历中定位连续原文的材料。"
+        ],
+        "mode": "model"
+      }
+    },
+    {
+      "id": "score-calculation",
+      "inputHash": "ab64ca82bcb6fa638edc46c24597ad242e2423fc71b4dbf9c423feb123793a39",
+      "output": {
+        "id": "197ce444-5a8e-494a-ab97-c29787fe6eea",
+        "version": "material-derived-v1.1.0",
+        "evaluatedAt": "2026-11-14T14:16:41.995Z",
+        "inputHash": "ea743a26d58d8fd9d334e80b7f6f5150bfb8492b7ff6b8992f7c4f16b924d45a",
+        "extraction": "model",
+        "calibration": "初版规则参数，待双人标注校准",
+        "rho": 0.5,
+        "materials": [
+          {
+            "material_id": "m-c12599a7c8a0cd6d",
+            "material_type": "opensource",
+            "title": "Puerts 游戏脚本工具：脚本类型映射",
+            "year": "2025.03 - 2025.08",
+            "organization": "杭州职业技术学院开源实践小组",
+            "stage": "开源应用实践",
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "开源应用实践成员",
+              "input_context": {}
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-c12599a7c8a0cd6d"
+            ],
+            "material_score": null,
+            "score_breakdown": [
+              {
+                "key": "runnable",
+                "label": "可运行性",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "quality",
+                "label": "代码质量",
+                "weight": 0.25,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "maintenance",
+                "label": "维护持续性",
+                "weight": 0.15,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "contribution",
+                "label": "具体贡献",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "adoption",
+                "label": "使用 / 采用",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0,
+            "missing_factors": [
+              "可运行性",
+              "代码质量",
+              "维护持续性",
+              "具体贡献",
+              "使用 / 采用"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": 0.5,
+                "rule": "concrete",
+                "mapping_reason": "有对象和动作的具体个人行动",
+                "supporting_evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。",
+                    "source": "简历原文"
+                  }
+                ],
+                "type_coefficient": 1,
+                "derived_contribution": null
+              },
+              "problem_solving": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.85,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.85,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.6,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.7,
+                "derived_contribution": null
+              }
+            }
+          }
+        ],
+        "abilities": {
+          "professional_execution": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "problem_solving": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "ownership_delivery": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "collaboration_organization": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          },
+          "learning_research": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 1
+          }
+        },
+        "type_summaries": [
+          {
+            "type": "award",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "research",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "project",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "work",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "patent",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "opensource",
+            "count": 1,
+            "score": null
+          },
+          {
+            "type": "certificate",
+            "count": 0,
+            "score": null
+          }
+        ],
+        "notes": [
+          "跳过无法在简历中定位连续原文的材料。",
+          "跳过无法在简历中定位连续原文的材料。",
+          "跳过无法在简历中定位连续原文的材料。"
+        ],
+        "inputSnapshot": "冯·莱卡恩   游戏客户端开发工程师  23 岁｜所在地：上海市浦东新区｜大专 · 已毕业  专业技能  • 了解 C++ 与 TypeScript 脚本绑定，能够跟踪资源生命周期。  • 理解向量矩阵、碰撞检测与常见 Shader，能维护美术资源导入规范。  • 使用 Profiler 分析 GC、Draw Call 和资源加载卡顿。  工作 / 实习经历  暂无企业工作或实习经历；主要经历见项目与研究部分。  教育背景  杭州职业技术学院 · 大专  数字媒体技术｜2021.09 - 2024.06  相关课程：计算机图形学、游戏引擎、数据结构、三维交互  竞赛与奖项  全国职业院校技能大赛  2023｜高职组全国二等奖｜团队成员  项目经历  1. Puerts 游戏脚本工具：脚本类型映射  杭州职业技术学院开源实践小组 · 开源应用实践成员  2025.03 - 2025.08｜开源应用实践  • 整理 C# 与 TypeScript 的类型转换样例，补充泛型和空值边界的运行验证。  • 搭建 3 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  公 开 参考 ：github.com/Tencent/puerts  2. 低多边形动作游戏  个 人 与 协 作工程实践 · 主要开 发者  2025.09 - 2026.02｜ 独立 实践  • 实 现角色状态 、关卡加载、 存档 与 UI，记录目标设备的 帧率及内存 ， 按复现步骤 定 位 资源 泄漏 与交互 错误 。  • 搭建 5 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  3. 交互式科学展厅  校内 研究与工程实践 · 实验设计成员  2024.03 - 2024.08｜ 校内 实践  • 实 现角色状态 、关卡加载、 存档 与 UI，记录目标设备的 帧率及内存 ， 按复现步骤 定 位 资源 泄漏 与交互 错误 。  • 搭建 4 个交互关卡，记录目标桌面设备 下 的 帧时间 和资源加载 日志 。  论文（模拟署名成果）  暂无 论文发表 或 预印 本成 果 。  MOCK   合 成 简 历｜ 人物 、 论文署名 、 获 奖 及任 职 均虚 构； 论文题名 和 公 开项目 来自真 实资 料 。   102 · 1",
+        "researchSnapshot": null,
+        "rulesSnapshot": {
+          "factorDefinitions": {
+            "award": [
+              {
+                "key": "participants",
+                "label": "有效参赛规模",
+                "weight": 0.2,
+                "kind": "size",
+                "choices": []
+              },
+              {
+                "key": "award_rate",
+                "label": "官方目标奖项比例",
+                "weight": 0.35,
+                "kind": "selectivity",
+                "choices": []
+              },
+              {
+                "key": "tier",
+                "label": "本赛事奖项层级",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "top",
+                    "label": "本赛事最高奖",
+                    "points": 160,
+                    "pattern": "特等奖|冠军|金奖|金牌|grand prize|champion|gold"
+                  },
+                  {
+                    "key": "first",
+                    "label": "一等奖 / 一等层级",
+                    "points": 120,
+                    "pattern": "一等奖|first prize"
+                  },
+                  {
+                    "key": "second",
+                    "label": "二等奖 / 银奖",
+                    "points": 80,
+                    "pattern": "二等奖|银奖|银牌|second prize|silver"
+                  },
+                  {
+                    "key": "third",
+                    "label": "三等奖 / 铜奖",
+                    "points": 50,
+                    "pattern": "三等奖|铜奖|铜牌|third prize|bronze"
+                  },
+                  {
+                    "key": "finalist",
+                    "label": "有明确结果的入围或优胜",
+                    "points": 25,
+                    "pattern": "入围|优胜|finalist|honorable mention"
+                  }
+                ]
+              },
+              {
+                "key": "judging",
+                "label": "赛制与评审规则",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "reproducible",
+                    "label": "可复核测试 / 盲评和答辩",
+                    "points": 160,
+                    "pattern": "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review"
+                  },
+                  {
+                    "key": "rubric",
+                    "label": "明确评分规则和专家评审",
+                    "points": 100,
+                    "pattern": "评分标准|评审标准|专家评审|scoring rubric|judging criteria"
+                  },
+                  {
+                    "key": "specified",
+                    "label": "有明确赛制或评审方式",
+                    "points": 60,
+                    "pattern": "限时|答辩|评审|比赛规则|timed|judged|defense"
+                  }
+                ]
+              }
+            ],
+            "research": [
+              {
+                "key": "question",
+                "label": "研究问题",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "rigor",
+                "label": "方法严谨度",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "validated",
+                    "label": "对照、消融及统计验证",
+                    "points": 160,
+                    "pattern": "消融|统计显著|置信区间|ablation|statistical significance|confidence interval"
+                  },
+                  {
+                    "key": "controlled",
+                    "label": "对照或基线实验",
+                    "points": 100,
+                    "pattern": "对照|基线|baseline|controlled experiment"
+                  },
+                  {
+                    "key": "method",
+                    "label": "明确研究方法",
+                    "points": 60,
+                    "pattern": "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"
+                  }
+                ]
+              },
+              {
+                "key": "experiments",
+                "label": "实验质量",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "robust",
+                    "label": "多数据集、误差或鲁棒性分析",
+                    "points": 160,
+                    "pattern": "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness"
+                  },
+                  {
+                    "key": "comparison",
+                    "label": "明确实验比较",
+                    "points": 100,
+                    "pattern": "对比实验|基线|baseline|comparative experiment"
+                  },
+                  {
+                    "key": "specified",
+                    "label": "有实验设置",
+                    "points": 60,
+                    "pattern": "实验设置|实验结果|experimental setup|experimental results"
+                  }
+                ]
+              },
+              {
+                "key": "reproducibility",
+                "label": "可复现性",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "reproduced",
+                    "label": "明确的独立复现记录",
+                    "points": 160,
+                    "pattern": "独立复现成功|第三方复现|independently reproduced"
+                  },
+                  {
+                    "key": "complete",
+                    "label": "代码、数据和运行说明齐全",
+                    "points": 100,
+                    "pattern": "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)"
+                  },
+                  {
+                    "key": "available",
+                    "label": "提供开放材料",
+                    "points": 50,
+                    "pattern": "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code"
+                  }
+                ]
+              },
+              {
+                "key": "status",
+                "label": "成果状态",
+                "weight": 0.1,
+                "choices": [
+                  {
+                    "key": "published",
+                    "label": "已正式发表",
+                    "points": 120,
+                    "pattern": "已发表|正式发表|已在线发表|published|online publication"
+                  },
+                  {
+                    "key": "accepted",
+                    "label": "已录用未发表",
+                    "points": 80,
+                    "pattern": "已录用|accepted"
+                  },
+                  {
+                    "key": "preprint",
+                    "label": "预印本",
+                    "points": 30,
+                    "pattern": "预印本|preprint|arxiv"
+                  }
+                ]
+              },
+              {
+                "key": "content",
+                "label": "研究内容与验证结果",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "project": [
+              {
+                "key": "complexity",
+                "label": "问题复杂度",
+                "weight": 0.3,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "constraints",
+                "label": "技术 / 业务约束",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "multiple",
+                    "label": "多重约束与权衡",
+                    "points": 160,
+                    "pattern": "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency"
+                  },
+                  {
+                    "key": "explicit",
+                    "label": "明确性能或业务约束",
+                    "points": 100,
+                    "pattern": "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确任务边界",
+                    "points": 50,
+                    "pattern": "需求|约束|任务|requirement|constraint|task"
+                  }
+                ]
+              },
+              {
+                "key": "delivery",
+                "label": "交付阶段",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "adoption",
+                "label": "部署 / 采用",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              },
+              {
+                "key": "outcome",
+                "label": "结果质量",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "work": [
+              {
+                "key": "complexity",
+                "label": "任务复杂度",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "scope",
+                "label": "具体责任范围",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "end_to_end",
+                    "label": "明确的端到端责任",
+                    "points": 160,
+                    "pattern": "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"
+                  },
+                  {
+                    "key": "owned",
+                    "label": "独立负责具体范围",
+                    "points": 100,
+                    "pattern": "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "明确执行任务",
+                    "points": 50,
+                    "pattern": "开发|设计|测试|分析|implemented|developed|tested|analyzed"
+                  }
+                ]
+              },
+              {
+                "key": "delivery",
+                "label": "实际交付",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "impact",
+                "label": "结果影响",
+                "weight": 0.3,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "patent": [
+              {
+                "key": "status",
+                "label": "公开 / 授权状态",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "granted",
+                    "label": "已授权",
+                    "points": 120,
+                    "pattern": "已授权|授权公告|granted"
+                  },
+                  {
+                    "key": "published",
+                    "label": "已公开",
+                    "points": 60,
+                    "pattern": "已公开|公开公告|published application"
+                  },
+                  {
+                    "key": "filed",
+                    "label": "有申请记录",
+                    "points": 25,
+                    "pattern": "申请号|已申请|application number|filed"
+                  }
+                ]
+              },
+              {
+                "key": "technical",
+                "label": "技术问题与方法",
+                "weight": 0.35,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "claims",
+                "label": "权利要求",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "validated",
+                    "label": "明确权利要求及实现验证",
+                    "points": 160,
+                    "pattern": "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "有具体权利要求",
+                    "points": 90,
+                    "pattern": "权利要求|patent claims"
+                  },
+                  {
+                    "key": "description",
+                    "label": "有技术方案说明",
+                    "points": 40,
+                    "pattern": "技术方案|technical solution"
+                  }
+                ]
+              },
+              {
+                "key": "application",
+                "label": "应用情况",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              }
+            ],
+            "opensource": [
+              {
+                "key": "runnable",
+                "label": "可运行性",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "quality",
+                "label": "代码质量",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "engineering",
+                    "label": "测试、CI 与接口文档",
+                    "points": 160,
+                    "pattern": "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "自动测试或持续集成",
+                    "points": 100,
+                    "pattern": "单元测试|集成测试|持续集成|unit test|integration test|CI/CD"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "有使用说明",
+                    "points": 50,
+                    "pattern": "README|使用说明|接口文档|documentation"
+                  }
+                ]
+              },
+              {
+                "key": "maintenance",
+                "label": "维护持续性",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "sustained",
+                    "label": "持续发布并处理问题",
+                    "points": 160,
+                    "pattern": "持续维护|定期发布|持续发布|sustained maintenance|regular releases"
+                  },
+                  {
+                    "key": "responded",
+                    "label": "有问题处理或版本维护",
+                    "points": 90,
+                    "pattern": "修复|版本发布|issue|bug fix|release"
+                  },
+                  {
+                    "key": "changes",
+                    "label": "有可定位提交",
+                    "points": 40,
+                    "pattern": "提交|pull request|commit"
+                  }
+                ]
+              },
+              {
+                "key": "contribution",
+                "label": "具体贡献",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "core",
+                    "label": "核心功能与维护责任",
+                    "points": 160,
+                    "pattern": "维护者|核心模块|核心功能|maintainer|core module"
+                  },
+                  {
+                    "key": "implemented",
+                    "label": "明确的代码或文档贡献",
+                    "points": 90,
+                    "pattern": "实现|开发|修复|编写|implemented|developed|fixed|authored"
+                  },
+                  {
+                    "key": "reviewed",
+                    "label": "明确评审或测试贡献",
+                    "points": 40,
+                    "pattern": "代码评审|测试|code review|tested"
+                  }
+                ]
+              },
+              {
+                "key": "adoption",
+                "label": "使用 / 采用",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              }
+            ],
+            "certificate": [
+              {
+                "key": "assessment",
+                "label": "考核方式",
+                "weight": 0.45,
+                "choices": [
+                  {
+                    "key": "practical",
+                    "label": "实操考核",
+                    "points": 140,
+                    "pattern": "实操考核|实验考核|practical exam|hands.on assessment"
+                  },
+                  {
+                    "key": "exam",
+                    "label": "明确考试",
+                    "points": 90,
+                    "pattern": "通过考试|认证考试|passed.{0,20}exam|certification exam"
+                  },
+                  {
+                    "key": "coursework",
+                    "label": "课程考核",
+                    "points": 40,
+                    "pattern": "课程作业|结课考核|coursework|course assessment"
+                  }
+                ]
+              },
+              {
+                "key": "practice",
+                "label": "实际练习与作品",
+                "weight": 0.35,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "curriculum",
+                "label": "课程内容深度",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "有明确高级专题",
+                    "points": 140,
+                    "pattern": "高级|进阶|专题|advanced|specialized"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "有明确方法与实践内容",
+                    "points": 80,
+                    "pattern": "实验|项目|算法|系统|experiment|project|algorithm|system"
+                  },
+                  {
+                    "key": "foundation",
+                    "label": "基础课程内容",
+                    "points": 30,
+                    "pattern": "基础|入门|foundation|introductory"
+                  }
+                ]
+              }
+            ]
+          },
+          "typeAdaptation": {
+            "award": {
+              "professional_execution": 0.65,
+              "problem_solving": 0.7,
+              "ownership_delivery": 0.45,
+              "collaboration_organization": 0.35,
+              "learning_research": 0.55
+            },
+            "research": {
+              "professional_execution": 0.7,
+              "problem_solving": 0.9,
+              "ownership_delivery": 0.6,
+              "collaboration_organization": 0.35,
+              "learning_research": 1
+            },
+            "project": {
+              "professional_execution": 1,
+              "problem_solving": 1,
+              "ownership_delivery": 0.95,
+              "collaboration_organization": 0.75,
+              "learning_research": 0.65
+            },
+            "work": {
+              "professional_execution": 1,
+              "problem_solving": 0.85,
+              "ownership_delivery": 1,
+              "collaboration_organization": 0.8,
+              "learning_research": 0.6
+            },
+            "patent": {
+              "professional_execution": 0.6,
+              "problem_solving": 0.85,
+              "ownership_delivery": 0.5,
+              "collaboration_organization": 0.3,
+              "learning_research": 0.8
+            },
+            "opensource": {
+              "professional_execution": 1,
+              "problem_solving": 0.85,
+              "ownership_delivery": 0.85,
+              "collaboration_organization": 0.6,
+              "learning_research": 0.7
+            },
+            "certificate": {
+              "professional_execution": 0.45,
+              "problem_solving": 0.4,
+              "ownership_delivery": 0.25,
+              "collaboration_organization": 0.15,
+              "learning_research": 0.7
+            }
+          },
+          "actionLevels": {
+            "guided": 0.25,
+            "concrete": 0.5,
+            "owned": 0.75,
+            "validated": 1
+          },
+          "rho": 0.5
+        }
+      }
+    },
+    {
+      "id": "plain-language-breakdown",
+      "inputHash": "77f02951e7a549fc0665f346c71d16889bae0a45790ab08a3509fcc2325e84de",
+      "output": {
+        "projects": [],
+        "notes": [
+          "没有抽取到可拆解的项目或工作经历。"
+        ]
+      }
+    },
+    {
+      "id": "analysis-report",
+      "inputHash": "c5a2e1fe6be570ce3997a0a840b716b1a0c7a361a21fd20a980660dc713fa3d8",
+      "output": {
+        "answer": "## 结论\n**当前简历证据不足以支持其符合 AI 应用研发工程师的必须条件。** 可见经历集中在游戏客户端和交互项目，未展示大模型应用、RAG、Agent、文档智能或相关系统交付。其游戏开发中的性能分析、资源管理和问题复现经验对工程实践有一定相关性，但不能替代 AI 工程落地证据。\n\n简历明确标注为“模拟合成简历”，并称人物、任职、获奖等信息虚构。因此，以下仅按文本内容判断，不将其作为已核实的真实经历。\n\n## 证据匹配\n- **大模型应用、RAG、Agent、文档智能设计开发：未体现。** 未出现 LLM API、Prompt、检索增强、向量数据库、Agent 框架或文档分析系统经验。\n- **模型调用、工具调用、评测、监控和数据闭环：未体现。** 有记录帧时间、资源加载日志及使用 Profiler 排查客户端问题的描述，但未体现模型评测、AI 监控或数据闭环。\n- **跨职能协作并落地业务：部分支持，证据有限。** 简历提及团队项目和协作工程实践，但未说明合作对象、本人职责边界、实际用户或业务结果。\n- **3 年以上软件或 AI 应用研发经验：未支持。** 所列教育与项目时间不足以证明满足三年以上研发经验，且未列企业工作或实习经历。\n- **Python 或 TypeScript：部分支持。** 提及 TypeScript 脚本绑定及 C# 与 TypeScript 类型转换样例；未展示 Python，也未证明 TypeScript 用于 AI 应用研发。\n- **LLM API、Prompt、RAG、向量数据库或 Agent 框架：未支持。**\n- **完整项目交付经验：部分支持。** 项目描述涉及角色状态、关卡加载、存档、UI和性能问题定位，但没有上线、验收、用户使用、维护或交付结果证据。\n- **优先经验：未支持。** 未见招聘、文档解析、知识库、企业效率工具、模型评测、数据治理、搜索增强或多 Agent 编排经验；量化成果也未提供可核验指标。\n\n技术深度目前主要体现为游戏客户端基础和性能排查，不能据此判断其 AI 系统设计能力。业务落地证据缺失；简历没有说明项目对应的业务问题、真实使用场景或效果指标。\n\n## 待核实信息\n- 简历声明为模拟合成，所列项目、任职、竞赛和署名均不能视为真实履历证据。\n- TypeScript 的熟练程度、实际代码规模及是否承担独立设计与交付尚不明确。\n- 项目指标未给出具体数值、测试方法或可查验的交付物。\n- 未提供 Python、LLM/RAG/Agent、模型评测或生产环境系统经验的证据。\n\n## 建议追问\n- 请现场设计一个面向企业文档问答的 RAG 系统，说明数据接入、切分、索引、检索、重排、生成、权限和评测方案，并解释关键取舍。\n- 是否实际调用过 LLM API 或构建过 Agent 工作流？请说明工具调用、失败重试、成本控制、日志监控和安全边界，并展示可验证的代码或演示。\n- 请选一个本人主导的项目，说明需求、架构、个人贡献、交付标准、上线或验收情况，以及能复核的结果。\n- 简历提到使用 Profiler 和复现步骤排查问题。请举例说明如何定位问题、验证修复，并说明这套方法如何迁移到 AI 应用的质量与性能排查。\n- 请澄清哪些经历是实际完成的，哪些属于模拟或练习材料；目前材料明确标注为合成内容，不能据此认定其有真实项目交付经历。\n\n## 评分依据与覆盖情况\n遵循已提供的规则评分摘要：五个维度的分数均为 `NA`（`null`），均为暂定状态，每项显示缺少 1 项材料。本次不重新评分，也不推算岗位匹配分。该摘要不足以证明候选人具备或不具备某项能力。\n\n没有提供岗位背景网页线索，本次未联网核验。公开项目页面即使能说明项目本身的背景，也不能证明候选人的个人贡献。",
+        "researchSources": [],
+        "researchStatus": "not-requested"
+      }
+    }
+  ],
+  "analysisDebug": {
+    "totalDurationMs": 47816,
+    "maxParallel": 2,
+    "timings": [
+      {
+        "id": "candidate-profile",
+        "label": "候选人基本信息提取",
+        "stage": 0,
+        "startedAtMs": 0,
+        "durationMs": 4124,
+        "reused": false,
+        "parallelWith": [
+          "material-extraction"
+        ]
+      },
+      {
+        "id": "material-extraction",
+        "label": "简历材料抽取",
+        "stage": 0,
+        "startedAtMs": 0,
+        "durationMs": 26834,
+        "reused": false,
+        "parallelWith": [
+          "candidate-profile"
+        ]
+      },
+      {
+        "id": "score-calculation",
+        "label": "材料与能力规则评分",
+        "stage": 1,
+        "startedAtMs": 26834,
+        "durationMs": 3,
+        "reused": false,
+        "parallelWith": [
+          "plain-language-breakdown"
+        ]
+      },
+      {
+        "id": "plain-language-breakdown",
+        "label": "项目经历人话拆解",
+        "stage": 1,
+        "startedAtMs": 26837,
+        "durationMs": 0,
+        "reused": false,
+        "parallelWith": [
+          "score-calculation"
+        ]
+      },
+      {
+        "id": "analysis-report",
+        "label": "分析报告生成",
+        "stage": 2,
+        "startedAtMs": 26837,
+        "durationMs": 20979,
+        "reused": false,
+        "parallelWith": []
+      }
+    ]
+  }
+}

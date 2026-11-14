@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type { AnalysisEvent, AnalysisResult, ResearchBatch } from "../src/research-types.js";
+import { AnalysisFailure } from "./agent.js";
 import { deadline, errorMessage, interruptible, limit } from "./operations.js";
 
 type AnalysisOperation = (options: { signal: AbortSignal; emit: (event: AnalysisEvent) => void }) => Promise<AnalysisResult>;
@@ -8,6 +9,7 @@ type AnalysisOperation = (options: { signal: AbortSignal; emit: (event: Analysis
 export async function respondWithAnalysis(request: Request, response: Response, operation: AnalysisOperation) {
   const streamProgress = request.body?.streamProgress === true;
   const scope = deadline(undefined, limit("AGENT_TIMEOUT_MS", 300_000), "分析已达到总时限，请查看已完成资料或缩小问题范围后重试。");
+  const research: ResearchBatch = { items: [], notes: [] };
   const disconnected = () => { if (!response.writableEnded) scope.abort(new Error("用户已取消分析或关闭页面。")); };
   response.once("close", disconnected);
   const emit = (event: AnalysisEvent) => {
@@ -31,7 +33,7 @@ export async function respondWithAnalysis(request: Request, response: Response, 
   } catch (error) {
     const message = scope.signal.aborted ? errorMessage(scope.signal.reason) : errorMessage(error);
     scope.abort(error);
-    const event: AnalysisEvent = { type: "error", error: `分析未完成：${message}` };
+    const event: AnalysisEvent = { type: "error", error: `分析未完成：${message}`, research: error instanceof AnalysisFailure ? error.research : research };
     if (!response.destroyed) {
       if (streamProgress) { emit(event); response.end(); }
       else response.status(502).json(event);

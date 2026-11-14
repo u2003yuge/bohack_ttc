@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import {
   ArrowDownToLine,
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUp,
   ArrowUpFromLine,
@@ -24,7 +25,6 @@ import {
   Plus,
   Search,
   ShieldCheck,
-  SlidersHorizontal,
   Sparkles,
   Trash2,
   Upload,
@@ -34,16 +34,17 @@ import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import type { Resume } from "./types";
 import { CompetitionLibrary } from "./CompetitionLibrary";
 import { VenueLibrary } from "./VenueLibrary";
+import { CompanyLibrary } from "./CompanyLibrary";
 import type { AnalysisEvent, AnalysisProgress, AnalysisResult } from "./research-types";
 import { readAnalysisEvents } from "./analysis-stream";
-import { calculateComposite, calculateGrowthTimeline, defaultScoreWeights, normalizeWeights, scoreCriteria, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
-import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
+import { calculateComposite, calculateGrowthTimeline, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
+import { calculateBenchmark, historicalScoreBands, historicalYears, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 import ScoringWorkspace from "./ScoringWorkspace";
 import MaterialAssessment, { MaterialAssessmentRadar } from "./MaterialAssessment";
-import EmptyResumeWorkspace from "./EmptyResumeWorkspace";
 
 type AgentHealth = { agent: boolean; webSearch: boolean; model: string };
+type ResumeDecision = "pending" | "passed" | "rejected";
 type KnowledgeSource = { title: string; url: string; snippet: string };
 type KnowledgeReviewSuggestion = { score: number; rationale: string };
 type KnowledgeImportPreview = { bundle: KnowledgeImportBundle; insertCount: number; updateCount: number; insertReviewCount: number; updateReviewCount: number };
@@ -53,7 +54,7 @@ type WeightProposal = { weights: ScoreWeights; rationale: string };
 type WeightImpact = { currentScore: number; proposedScore: number; currentRank: number; proposedRank: number; total: number; demoCount: number };
 type AnalysisSection = { agentId: string; label: string; markdown: string; timing?: import("./research-types.js").AgentTiming };
 
-type ResumeListResponse = { resumes: Resume[]; directory: string };
+type ResumeListResponse = { resumes: Resume[]; directory: string; skippedFiles?: Array<{ fileName: string; reason: string }> };
 const defaultAiRoleRequirements = `岗位：AI 应用研发工程师
 Base 地：上海 / 北京 / 深圳，可接受部分远程
 岗位类型：全职，中高级
@@ -111,10 +112,9 @@ function renderEvidenceText(value: string, query: string) {
   return <>{value.slice(0, index)}<mark className="sample-evidence-hit">{value.slice(index, index + target.length)}</mark>{value.slice(index + target.length)}</>;
 }
 
-function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
+function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult, onPreferredWidth }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void; onPreferredWidth?: (width: number) => void }) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const renderPassRef = useRef<Promise<void>>(Promise.resolve());
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [zoom, setZoom] = useState(1);
@@ -126,17 +126,6 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
   const [showAwardMask, setShowAwardMask] = useState(true);
   const [evidenceLineIds, setEvidenceLineIds] = useState<string[]>([]);
   const [openKnowledge, setOpenKnowledge] = useState<{ record: KnowledgeRecord; lineId: string; x: number; y: number; page: number } | null>(null);
-  const [viewerWidth, setViewerWidth] = useState(0);
-
-  useEffect(() => {
-    const viewer = viewerRef.current;
-    if (!viewer) return;
-    const updateWidth = () => setViewerWidth(viewer.clientWidth);
-    updateWidth();
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(viewer);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -157,7 +146,6 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
           import("pdfjs-dist"),
           import("pdfjs-dist/build/pdf.worker.min.mjs?url"),
         ]);
-        if (cancelled) return;
         pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
         loadingTask = pdfjs.getDocument({
           url,
@@ -182,7 +170,7 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
     })();
     return () => {
       cancelled = true;
-      void loadingTask?.destroy().catch(() => undefined);
+      void loadingTask?.destroy();
     };
   }, [url]);
 
@@ -190,38 +178,33 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
     if (!document) return;
     let cancelled = false;
     const renderTasks: RenderTask[] = [];
-    const previousRenderPass = renderPassRef.current;
-    const renderPass = (async () => {
+    void (async () => {
       try {
-        // cancel() requests cancellation; its promise must settle before the
-        // next pass resizes or reuses any of the same page canvases.
-        await previousRenderPass.catch(() => undefined);
-        if (cancelled) return;
         const pdfjs = await import("pdfjs-dist");
-        if (cancelled) return;
         setLoading(true);
         setPageErrors({});
         const detected: PdfTextLine[] = [];
         const pageTextLines: PdfTextLine[] = [];
+        let preferredWidth = 0;
         for (let currentPage = 1; currentPage <= document.numPages; currentPage += 1) {
           if (cancelled) return;
           try {
           const page = await document.getPage(currentPage);
-          if (cancelled) return;
           const textContent = await page.getTextContent();
-          if (cancelled) return;
           const pageElement = pageRefs.current[currentPage - 1];
           const canvas = pageElement?.querySelector("canvas");
           const context = canvas?.getContext("2d");
           if (!canvas || !context) throw new Error("浏览器无法创建 PDF 阅读画布。");
           const baseViewport = page.getViewport({ scale: 1 });
-          // clientWidth includes the reader's horizontal padding. Leave a tiny
-          // safety gap for the scrollbar and the page shadow so wide/landscape
-          // PDFs never get clipped by the page wrapper.
-          const containerWidth = viewerRef.current?.clientWidth || viewerWidth || 650;
-          const availableWidth = Math.max(220, containerWidth - 42);
-          const fitScale = Math.min(1, availableWidth / baseViewport.width);
-          const renderScale = zoom * fitScale;
+          // Render at the requested document scale. The parent workspace grows
+          // to accommodate the page, while the reader itself keeps horizontal
+          // scrolling available when a user manually narrows the column.
+          const renderScale = zoom;
+          const nextPreferredWidth = Math.ceil(baseViewport.width * renderScale + 84);
+          if (nextPreferredWidth > preferredWidth) {
+            preferredWidth = nextPreferredWidth;
+            onPreferredWidth?.(preferredWidth);
+          }
           const viewport = page.getViewport({ scale: renderScale });
           const deviceScale = window.devicePixelRatio || 1;
           const maxCanvasDimension = 16384;
@@ -269,7 +252,6 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
           });
           renderTasks.push(renderTask);
           await renderTask.promise;
-          if (cancelled) return;
           page.cleanup();
           } catch (cause) {
             if (cancelled || (cause instanceof Error && cause.name === "RenderingCancelledException")) return;
@@ -294,12 +276,11 @@ function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceRes
         }
       }
     })();
-    renderPassRef.current = renderPass;
     return () => {
       cancelled = true;
       renderTasks.forEach((task) => task.cancel());
     };
-  }, [document, viewerWidth, zoom]);
+  }, [document, onPreferredWidth, zoom]);
 
   useEffect(() => {
     const query = normalizeEvidence(evidenceTarget);
@@ -556,7 +537,7 @@ function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: stri
     ? "当前岗位族暂无历史样本，无法计算百分位或录用参考线。"
     : benchmark.sampleCount < 10
       ? `当前仅有 ${benchmark.sampleCount} 份历史样本，百分位和参考线容易受单条记录影响。`
-      : "本地演示样本仅用于说明比较方式，不代表真实招聘结果；参考线不是录用规则。";
+      : "历史样本来自授权记录；参考线只用于辅助比较，不是录用规则。";
   const cohortLabel = benchmark.sampleRoleGroup === "all"
     ? "全部岗位族（当前岗位暂无样本）"
     : `${roleGroupLabel(benchmark.sampleRoleGroup)}岗位族`;
@@ -596,7 +577,7 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agent
   const [filterAssistantBusy, setFilterAssistantBusy] = useState(false);
   const [filterAssistantError, setFilterAssistantError] = useState("");
   const groups = [...new Set(candidates.map((candidate) => roleGroup(candidate.role)))].sort();
-  const years = [...new Set(candidates.map((candidate) => candidate.year))].sort((a, b) => b - a);
+  const years = [...new Set([...historicalYears, ...candidates.map((candidate) => candidate.year)])].sort((a, b) => b - a);
   const baseFiltered = candidates.filter((candidate) => (roleFilter === "all" || roleGroup(candidate.role) === roleFilter) && (yearFilter === "all" || candidate.year === Number(yearFilter)));
   const filtered = baseFiltered.filter((candidate) => matchesHistoricalFilters(candidate, scoreBandFilter, outcomeFilter));
   const selected = filtered.find((candidate) => candidate.id === selectedId) ?? filtered[0] ?? null;
@@ -667,20 +648,20 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, onClose, agent
 
   return <main className="history-database-main">
     <div className="history-database-shell">
-      <header className="history-database-header"><div><span className="eyebrow">LOCAL RECRUITING BENCHMARK</span><h2>历史招聘样本库</h2><p>只保存匿名样本的岗位、年份、综合分与筛选结果；本地录入可随时修改或删除。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></header>
+      <header className="history-database-header"><div><span className="eyebrow">LOCAL RECRUITING BENCHMARK</span><h2>历史招聘样本库</h2><p>只保存授权录入的历史样本，年份支持 2024、2025；本地录入可随时修改或删除。</p></div><button className="back-to-workspace" onClick={onClose}>返回简历分析</button></header>
       <section className="history-filter-assistant"><div className="history-filter-assistant-title"><div><Sparkles size={14} /><strong>自然语言筛选</strong></div><small>只发送筛选选项与指令，不发送样本记录</small></div><div className="history-filter-assistant-input"><input value={filterInstruction} onChange={(event) => { setFilterInstruction(event.target.value); setFilterProposal(null); setFilterAssistantError(""); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void proposeFilters(); } }} placeholder="例如：看 2025 年高分的产品岗位最终录取样本" aria-label="描述要查找的历史样本" /><button type="button" onClick={() => void proposeFilters()} disabled={!agentAvailable || filterAssistantBusy || !filterInstruction.trim()} title={agentAvailable ? "生成筛选方案" : "请先配置模型服务"}>{filterAssistantBusy ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}{filterAssistantBusy ? "整理中" : "生成方案"}</button></div>{filterAssistantError && <div className="inline-error">{filterAssistantError}</div>}{filterProposal && <div className="history-filter-proposal"><div><strong>筛选草案</strong><span>{filterProposal.rationale}</span><small>{filterProposal.roleGroup === "all" ? "全部岗位" : roleGroupLabel(filterProposal.roleGroup)} · {filterProposal.year === "all" ? "全部年份" : filterProposal.year} · {filterProposal.scoreBand === "all" ? "全部分数" : `${historicalScoreBands.find((band) => band.key === filterProposal.scoreBand)?.label} 分`} · {outcomeLabels[filterProposal.outcome]}</small></div><div><button type="button" onClick={() => setFilterProposal(null)}>放弃</button><button type="button" onClick={applyFilterProposal}>应用筛选</button></div></div>}</section>
-      <section className="history-database-summary"><div><span>当前样本</span><strong>{filtered.length}</strong></div><div><span>首轮通过</span><strong>{filtered.length ? Math.round(screenedCount / filtered.length * 100) : 0}%</strong></div><div><span>最终录取</span><strong>{filtered.length ? Math.round(hiredCount / filtered.length * 100) : 0}%</strong></div><div><span>综合分中位数</span><strong>{median(filtered.map((candidate) => candidate.composite)).toFixed(1)}</strong></div><small>当前筛选范围 · 演示样本与本地样本分开标记</small></section>
+      <section className="history-database-summary"><div><span>当前样本</span><strong>{filtered.length}</strong></div><div><span>首轮通过</span><strong>{filtered.length ? Math.round(screenedCount / filtered.length * 100) : 0}%</strong></div><div><span>最终录取</span><strong>{filtered.length ? Math.round(hiredCount / filtered.length * 100) : 0}%</strong></div><div><span>综合分中位数</span><strong>{median(filtered.map((candidate) => candidate.composite)).toFixed(1)}</strong></div><small>仅展示授权录入的历史样本 · 支持 2024–2025</small></section>
       <section className="history-database-chart"><div className="history-database-section-head"><div><span className="eyebrow">SCORE DISTRIBUTION</span><h3>按招聘结果查看分数</h3></div><div className="history-database-filters"><label>岗位<select value={roleFilter} onChange={(event) => { setRoleFilter(event.target.value); setScoreBandFilter(null); setSelectedId(""); }}><option value="all">全部岗位族</option>{groups.map((group) => <option key={group} value={group}>{roleGroupLabel(group)}</option>)}</select></label><label>年份<select value={yearFilter} onChange={(event) => { setYearFilter(event.target.value); setScoreBandFilter(null); setSelectedId(""); }}><option value="all">全部年份</option>{years.map((year) => <option key={year} value={year}>{year}</option>)}</select></label></div></div>
         <div className="history-score-distribution"><div className="history-score-distribution-head"><strong>分数区间</strong><span>{filterSummary ? `当前筛选 ${filterSummary} · ${filtered.length} 份` : "点击区间或结果筛选样本"}</span></div><div className="history-score-bins">{historicalScoreBands.map((band) => { const bandRecords = baseFiltered.filter((candidate) => candidate.composite >= band.min && candidate.composite <= band.max); const hired = bandRecords.filter((candidate) => candidate.hired).length; const screened = bandRecords.filter((candidate) => candidate.screened && !candidate.hired).length; const rejected = bandRecords.length - hired - screened; return <button type="button" key={band.key} className={scoreBandFilter === band.key ? "active" : ""} disabled={!bandRecords.length} aria-pressed={scoreBandFilter === band.key} aria-label={`${band.label} 分区间：${bandRecords.length} 份，最终录取 ${hired} 份，首轮通过 ${screened} 份，未过首轮 ${rejected} 份`} onClick={() => { setScoreBandFilter((current) => current === band.key ? null : band.key); setSelectedId(""); }}><span className="history-score-bin-label">{band.label}</span><strong>{bandRecords.length}<small>份</small></strong><span className="history-score-bin-track"><i style={{ width: `${bandRecords.length / maxBandCount * 100}%` }}><b className="hired" style={{ width: `${bandRecords.length ? hired / bandRecords.length * 100 : 0}%` }} /><b className="screened" style={{ width: `${bandRecords.length ? screened / bandRecords.length * 100 : 0}%` }} /><b className="rejected" style={{ width: `${bandRecords.length ? rejected / bandRecords.length * 100 : 0}%` }} /></i></span><small className="history-score-bin-detail">录取 {hired} · 首轮 {screened} · 未过 {rejected}</small></button>; })}</div><div className="history-score-outcome-filter" role="group" aria-label="按招聘结果筛选">{(Object.keys(outcomeLabels) as HistoricalOutcomeFilter[]).map((outcome) => <button type="button" key={outcome} className={outcomeFilter === outcome ? "active" : ""} aria-pressed={outcomeFilter === outcome} onClick={() => { setOutcomeFilter(outcome); setSelectedId(""); }}>{outcome !== "all" && <i className={outcome} />}{outcomeLabels[outcome]}</button>)}</div></div>
         <div className="history-database-plot">{lanes.map((lane) => <div className="history-database-lane" key={lane.key}><span>{lane.label}<small>{lane.records.length}</small></span><div className={`history-database-track ${lane.key}`}>{lane.records.map((candidate) => <button key={candidate.id} className={`history-database-dot ${candidate.id === selected?.id ? "selected" : ""} ${candidate.source === "local" ? "local" : "demo"}`} style={{ left: `${candidate.composite}%` }} title={`${candidate.name} · ${candidate.role} · ${candidate.year} · ${candidate.composite} 分`} aria-label={`选中${candidate.name}，${candidate.year} 年${candidate.role}，${candidate.composite} 分，${lane.label}`} aria-pressed={candidate.id === selected?.id} onClick={() => setSelectedId(candidate.id)} />)}</div></div>)}<div className="history-database-axis"><span /><div><i>0</i><i>25</i><i>50</i><i>75</i><i>100</i></div></div></div>
-        <div className="history-database-legend"><span><i className="demo" />演示样本</span><span><i className="local" />本地录入</span></div>
+        <div className="history-database-legend"><span><i className="local" />授权 / 本地样本</span></div>
         {selected && <div className="history-database-selected"><strong>{selected.name}</strong><span>{selected.role} · {selected.year} · {selected.composite} 分 · {selected.screened ? "通过首轮" : "未过首轮"} · {selected.hired ? "最终录取" : "未录取"}</span><b>{selected.source === "local" ? "本地" : "演示"}</b></div>}
       </section>
       <section className="history-database-records"><div className="history-database-section-head"><div><span className="eyebrow">SAMPLE RECORDS</span><h3>样本记录</h3></div><button className="history-add-button" onClick={beginAdd}><Plus size={13} />新增本地样本</button></div>
-        {formOpen && <form className="history-record-form" onSubmit={(event) => { event.preventDefault(); void save(); }}><strong>{editingId ? "编辑本地样本" : "新增匿名样本"}</strong><label>匿名代号<input value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} maxLength={80} placeholder="匿名样本" /></label><label>岗位名称<input value={draft.role} onChange={(event) => setDraft({ ...draft, role: event.target.value })} maxLength={120} required placeholder="例如：产品经理" /></label><label>招聘年份<input type="number" min="1980" max={new Date().getFullYear() + 1} value={draft.year} onChange={(event) => setDraft({ ...draft, year: Number(event.target.value) })} required /></label><label>综合分<input type="number" min="0" max="100" step="0.1" value={draft.composite} onChange={(event) => setDraft({ ...draft, composite: Number(event.target.value) })} required /></label><label className="history-check-label"><input type="checkbox" checked={draft.screened} onChange={(event) => setDraft({ ...draft, screened: event.target.checked, hired: event.target.checked ? draft.hired : false })} />通过首轮</label><label className="history-check-label"><input type="checkbox" checked={draft.hired} onChange={(event) => setDraft({ ...draft, hired: event.target.checked, screened: event.target.checked || draft.screened })} />最终录取</label>{error && <div className="inline-error">{error}</div>}<div><button type="button" onClick={() => { setFormOpen(false); setEditingId(""); setDraft(emptyHistoricalDraft()); setError(""); }}>取消</button><button type="submit" disabled={busy || !draft.role.trim()}>{busy ? "保存中" : "保存样本"}</button></div></form>}
+        {formOpen && <form className="history-record-form" onSubmit={(event) => { event.preventDefault(); void save(); }}><strong>{editingId ? "编辑本地样本" : "新增匿名样本"}</strong><label>匿名代号<input value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} maxLength={80} placeholder="匿名样本" /></label><label>岗位名称<input value={draft.role} onChange={(event) => setDraft({ ...draft, role: event.target.value })} maxLength={120} required placeholder="例如：产品经理" /></label><label>招聘年份<select value={draft.year} onChange={(event) => setDraft({ ...draft, year: Number(event.target.value) })} required>{historicalYears.map((year) => <option key={year} value={year}>{year}</option>)}</select></label><label>综合分<input type="number" min="0" max="100" step="0.1" value={draft.composite} onChange={(event) => setDraft({ ...draft, composite: Number(event.target.value) })} required /></label><label className="history-check-label"><input type="checkbox" checked={draft.screened} onChange={(event) => setDraft({ ...draft, screened: event.target.checked, hired: event.target.checked ? draft.hired : false })} />通过首轮</label><label className="history-check-label"><input type="checkbox" checked={draft.hired} onChange={(event) => setDraft({ ...draft, hired: event.target.checked, screened: event.target.checked || draft.screened })} />最终录取</label>{error && <div className="inline-error">{error}</div>}<div><button type="button" onClick={() => { setFormOpen(false); setEditingId(""); setDraft(emptyHistoricalDraft()); setError(""); }}>取消</button><button type="submit" disabled={busy || !draft.role.trim()}>{busy ? "保存中" : "保存样本"}</button></div></form>}
         <div className="history-record-list">{filtered.map((candidate) => <article className={`history-record-row ${candidate.id === selected?.id ? "selected" : ""}`} key={candidate.id}><div className="history-record-score"><strong>{candidate.composite.toFixed(1)}</strong><i><b style={{ width: `${candidate.composite}%` }} /></i></div><div className="history-record-identity"><button className="history-record-select" onClick={() => setSelectedId(candidate.id)}><strong>{candidate.name}<small className={candidate.source === "local" ? "local" : "demo"}>{candidate.source === "local" ? "本地" : "演示"}</small></strong><span>{candidate.role} · {candidate.year}</span></button></div><div className="history-record-outcome"><span>{candidate.screened ? "通过首轮" : "未过首轮"}</span><span>{candidate.hired ? "最终录取" : "未录取"}</span></div>{candidate.source === "local" ? <div className="history-record-actions"><button type="button" onClick={() => beginEdit(candidate)} title="编辑样本" aria-label={`编辑${candidate.name}`}><Pencil size={13} /></button>{deleteTargetId === candidate.id ? <><button type="button" onClick={() => void remove(candidate)} disabled={busy}>确认</button><button type="button" onClick={() => setDeleteTargetId("")}>取消</button></> : <button type="button" onClick={() => setDeleteTargetId(candidate.id)} title="删除样本" aria-label={`删除${candidate.name}`}><X size={13} /></button>}</div> : <span className="history-readonly">只读</span>}</article>)}{!filtered.length && <div className="empty-list">当前筛选没有历史样本</div>}</div>
       </section>
-      <p className="history-database-disclaimer">演示样本为虚构数据。本地录入建议使用匿名代号；系统不保存历史简历 PDF、姓名、联系方式或简历正文。样本结果只用于辅助比较，不构成录用规则。</p>
+      <p className="history-database-disclaimer">历史样本仅来自授权本地录入；系统不保存历史简历 PDF、联系方式或简历正文。样本结果只用于辅助比较，不构成录用规则。</p>
     </div>
   </main>;
 }
@@ -751,6 +732,7 @@ function KnowledgeLibraryView(props: KnowledgeLibraryProps) {
     </button>)}{reviewId && <button className="knowledge-review-back" onClick={() => { setLibraryId(reviewId); setReviewId(null); }}>{section === "journal" ? "返回期刊会议资料" : "返回竞赛资料"}</button>}</nav>
     {section === "competition" && !reviewId ? <CompetitionLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
       : section === "journal" && !reviewId ? <VenueLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
+      : section === "company" && !reviewId ? <CompanyLibrary records={sectionRecords} resumes={props.resumes} initialId={libraryId} onClose={props.onClose} onReview={setReviewId} onSelectEvidence={props.onSelectEvidence} />
       : <KnowledgeBaseView key={`${section}-${reviewId ?? "browse"}`} {...props} records={sectionRecords} initialId={reviewId ?? props.initialId}
         onRecordsChange={(next) => props.onRecordsChange([...next, ...props.records.filter((record) => record.kind !== section && !next.some((item) => item.id === record.id))])} />}
   </section>;
@@ -1167,6 +1149,159 @@ function KnowledgeBaseView({ onClose, initialId, resumes, records, onRecordsChan
   );
 }
 
+function depthScore(card: ScoreCard): number {
+  const keys: ScoreKey[] = ["leadership", "expertise", "experience", "roleFit", "growth"];
+  return Math.round(keys.reduce((total, key) => total + actualScore(card.criteria[key].score), 0) / keys.length * 10) / 10;
+}
+
+function comparisonAxisScore(card: ScoreCard, axis: ComparisonMapAxis): number {
+  return axis === "depth" ? depthScore(card) : boundedScore(card.criteria[axis].score);
+}
+
+function matchesMapRegion(card: ScoreCard, mapX: ComparisonMapAxis, mapY: ComparisonMapAxis, region: ComparisonMapRegion, threshold: number): boolean {
+  return matchesComparisonMapRegion(comparisonAxisScore(card, mapX), comparisonAxisScore(card, mapY), region, threshold);
+}
+
+const mapRegionLabels: Record<Exclude<ComparisonMapRegion, "all">, string> = {
+  "high-high": "横高 · 纵高",
+  "high-low": "横高 · 纵低",
+  "low-high": "横低 · 纵高",
+  "low-low": "横低 · 纵低",
+};
+const mapQuadrantColorClasses: Record<Exclude<ComparisonMapRegion, "all">, string> = {
+  "low-high": "learning",
+  "high-high": "deep",
+  "low-low": "narrow",
+  "high-low": "broad",
+};
+
+function RecruitmentQualityMap({ candidates, selectedId, onSelect, rankLabel, rankDirection, mapX, mapY, mapRegion, mapThreshold, onRegionChange, mapLabels }: { candidates: Array<{ resume: Resume; card: ScoreCard }>; selectedId: string; onSelect: (id: string) => void; rankLabel: string; rankDirection: "asc" | "desc"; mapX: ComparisonRankDraft["mapX"]; mapY: ComparisonRankDraft["mapY"]; mapRegion: ComparisonMapRegion; mapThreshold: number; onRegionChange: (region: ComparisonMapRegion) => void; mapLabels: Record<ComparisonRankDraft["mapX"], string> }) {
+  const width = 620;
+  const height = 320;
+  const left = 56;
+  const right = 24;
+  const top = 28;
+  const bottom = 48;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const axisValue = comparisonAxisScore;
+  const pointX = (value: number) => left + (value / 100) * plotWidth;
+  const pointY = (value: number) => top + plotHeight - (value / 100) * plotHeight;
+  const xName = mapLabels[mapX];
+  const yName = mapLabels[mapY];
+  const regionCount = candidates.filter(({ card }) => matchesMapRegion(card, mapX, mapY, mapRegion, mapThreshold)).length;
+  const thresholdX = left + plotWidth * mapThreshold / 100;
+  const thresholdY = top + plotHeight * (1 - mapThreshold / 100);
+  const quadrants = comparisonMapQuadrants(left, top, plotWidth, plotHeight, mapThreshold);
+  const mapCandidates = [...candidates.filter(({ resume }) => resume.id !== selectedId), ...candidates.filter(({ resume }) => resume.id === selectedId)];
+  return <section className="quality-map-section">
+    <div className="quality-map-head"><div><span className="eyebrow">RECRUITING QUALITY MAP</span><h3>招聘质量图 · {yName} × {xName}</h3><p>坐标轴反映不同能力维度；点内序号对应当前排名，选中时显示姓名。</p></div><div className="quality-map-legend"><span className="quality-size-legend"><i className="quality-size-small" />50 分</span><span className="quality-size-legend"><i className="quality-size-large" />100 分</span><span className="quality-rank-context">气泡半径 = 综合分</span><span className="quality-rank-context">{rankLabel} · {rankDirection === "desc" ? "高分优先" : "低分优先"}</span></div></div>
+    <div className="quality-map-wrap"><svg className="quality-map" viewBox={`0 0 ${width} ${height}`} role="group" aria-label={`招聘质量图，横轴${xName}，纵轴${yName}，点序号按${rankLabel}${rankDirection === "desc" ? "高分优先" : "低分优先"}`}>
+      <rect x={left} y={top} width={plotWidth} height={plotHeight} className="quality-map-bg" />
+      {quadrants.map(({ key, x, y, width: regionWidth, height: regionHeight }) => <g key={key} className={`quality-map-region ${mapRegion === key ? "active" : ""}`} role="button" tabIndex={0} aria-label={`筛选象限：${mapRegionLabels[key]}，阈值 ${mapThreshold}`} aria-pressed={mapRegion === key} onClick={() => onRegionChange(mapRegion === key ? "all" : key)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onRegionChange(mapRegion === key ? "all" : key); } }}><rect x={x} y={y} width={regionWidth} height={regionHeight} className={`quality-quadrant quality-quadrant-${mapQuadrantColorClasses[key]}`} /><title>{`点击筛选${mapRegionLabels[key]}候选人，阈值 ${mapThreshold}`}</title></g>)}
+      <line x1={thresholdX} y1={top} x2={thresholdX} y2={top + plotHeight} className="quality-midline" /><line x1={left} y1={thresholdY} x2={left + plotWidth} y2={thresholdY} className="quality-midline" /><line x1={left} y1={top + plotHeight} x2={left + plotWidth} y2={top + plotHeight} className="quality-axis" /><line x1={left} y1={top} x2={left} y2={top + plotHeight} className="quality-axis" />
+      {quadrants.map(({ key, centerX, centerY }) => <text key={key} x={centerX} y={centerY + 3} textAnchor="middle" className="quality-quadrant-label">{mapRegionLabels[key]}</text>)}
+      {[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={pointX(tick)} y1={top + plotHeight} x2={pointX(tick)} y2={top + plotHeight + 4} className="quality-axis" /><text x={pointX(tick)} y={height - 25} textAnchor="middle" className="quality-tick">{tick}</text><line x1={left - 4} y1={pointY(tick)} x2={left} y2={pointY(tick)} className="quality-axis" /><text x={left - 9} y={pointY(tick) + 3} textAnchor="end" className="quality-tick">{tick}</text></g>)}
+      {mapCandidates.map(({ resume, card }) => { const index = candidates.findIndex((candidate) => candidate.resume.id === resume.id); const xValue = axisValue(card, mapX); const yValue = axisValue(card, mapY); const composite = actualScore(card.composite); const radius = 5 + boundedScore(composite) / 10; const x = pointX(xValue); const y = pointY(yValue); const active = resume.id === selectedId; const stableColor = [...resume.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 4 + 1; const label = resume.name.length > 8 ? `${resume.name.slice(0, 8)}…` : resume.name; return <g key={resume.id} className={`quality-point ${active ? "selected" : ""}`} role="button" tabIndex={0} aria-pressed={active} aria-label={`排名第 ${index + 1}：${resume.name}，${xName} ${xValue.toFixed(0)}，${yName} ${yValue.toFixed(0)}，${rankLabel}${rankDirection === "desc" ? "高分优先" : "低分优先"}，综合分 ${composite.toFixed(1)}`} onClick={() => onSelect(resume.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(resume.id); } }}><title>{`第 ${index + 1} 名 · ${resume.name} · ${xName} ${xValue.toFixed(0)} · ${yName} ${yValue.toFixed(0)} · 综合分 ${composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={active ? radius + 2 : radius} className={`quality-bubble quality-bubble-${stableColor}`} /><text x={x} y={y + 3} textAnchor="middle" className="quality-rank-mark">{index + 1}</text>{active && <text x={x} y={y - radius - 7} textAnchor="middle" className="quality-name">{label}</text>}</g>; })}
+      <text x={left + plotWidth / 2} y={height - 7} textAnchor="middle" className="quality-axis-label">{xName}</text><text x="14" y={top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 14 ${top + plotHeight / 2})`} className="quality-axis-label">{yName}</text>
+    </svg></div><div className="quality-map-note"><span>{mapRegion === "all" ? `点击象限联动筛选排名表；横纵轴阈值均为 ${mapThreshold}` : `象限筛选：${mapRegionLabels[mapRegion]} · ${regionCount} 位候选人 · 阈值 ${mapThreshold}`}</span><span>能力深度取领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>气泡半径映射综合分；重叠候选人可在下方排名表点选</span></div>
+  </section>;
+}
+
+
+function ComparisonPreview({ candidate, card, view, knowledgeRecords }: { candidate: Resume; card: ScoreCard; view: "resume" | "analysis"; knowledgeRecords: KnowledgeRecord[] }) {
+  if (view === "resume") {
+    return <div className="comparison-preview-body">{candidate.source === "pdf" ? <PdfReader key={candidate.id} url={`/api/resumes/${encodeURIComponent(candidate.id)}/file`} title={candidate.fileName ?? `${candidate.name}.pdf`} evidenceTarget="" knowledgeRecords={knowledgeRecords} onEvidenceResult={() => undefined} /> : <article className="comparison-sample-page"><div className="sample-document-label"><span>BOHACK SAMPLE</span><span>候选人简历</span></div><h3>{candidate.name}</h3><p className="comparison-sample-role">{candidate.role} · {candidate.location}</p><section><h4>个人概览</h4><p>{candidate.summary || candidate.text.split("。")[0]}</p></section><section><h4>工作 / 项目经历</h4>{(candidate.experiences ?? []).map((experience) => <article key={`${experience.company}-${experience.period}`}><strong>{experience.role}</strong><span>{experience.company} · {experience.period}</span><p>{experience.detail}</p></article>)}</section><section><h4>教育与技能</h4><p>{candidate.education}</p><div className="comparison-sample-skills">{candidate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></section></article>}</div>;
+  }
+  const report = candidate.analysisReport?.trim() || "这份候选人还没有生成分析报告。返回工作台后可重新运行 Agent。";
+  const composite = actualScore(card.composite);
+  return <div className="comparison-preview-body comparison-analysis-preview"><article className="comparison-analysis-paper"><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>分析文档</span></div><h3>{candidate.name} · 分析报告</h3><p className={`analysis-paper-subtitle ${composite >= 100 ? "score-at-limit" : ""}`}>{candidate.role} · 综合分 {composite.toFixed(1)}</p><div className="comparison-preview-score-grid">{scoreCriteria.map(({ key, label }) => { const score = actualScore(card.criteria[key].score); return <div key={key}><span>{label}</span><strong className={score >= 100 ? "score-at-limit" : ""}>{score.toFixed(0)}</strong></div>; })}</div><div className="comparison-analysis-text">{report}</div><small className="analysis-paper-foot">分析结果仅作招聘决策参考 · 需要招聘人员复核</small></article></div>;
+}
+
+function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEvidence, onClose, agentAvailable, knowledgeRecords, onDecision, decisionBusy, decisionError }: { resumes: Resume[]; weights: ScoreWeights; selectedId: string; onSelectResume: (id: string) => void; onEvidence: (evidence: string) => void; onClose: () => void; agentAvailable: boolean; knowledgeRecords: KnowledgeRecord[]; onDecision: (id: string, decision: Exclude<ResumeDecision, "pending">) => void; decisionBusy: boolean; decisionError: string }) {
+  const [rankCriterion, setRankCriterion] = useState<ComparisonRankCriterion>("composite");
+  const [rankDirection, setRankDirection] = useState<ComparisonRankDraft["direction"]>("desc");
+  const [mapX, setMapX] = useState<ComparisonMapAxis>("perspective");
+  const [mapY, setMapY] = useState<ComparisonMapAxis>("depth");
+  const [mapRegion, setMapRegion] = useState<ComparisonMapRegion>("all");
+  const [mapThreshold, setMapThreshold] = useState(50);
+  const [ratingFilter, setRatingFilter] = useState<ComparisonRatingFilter>("all");
+  const [rankInstruction, setRankInstruction] = useState("");
+  const [rankProposal, setRankProposal] = useState<ComparisonRankDraft | null>(null);
+  const [rankBusy, setRankBusy] = useState(false);
+  const [rankError, setRankError] = useState("");
+  const [focusEvidenceKey, setFocusEvidenceKey] = useState<ScoreKey | null>(null);
+  const [previewView, setPreviewView] = useState<"resume" | "analysis">("resume");
+  const [previewOpen, setPreviewOpen] = useState(true);
+  const evidenceCardRefs = useRef(new Map<ScoreKey, HTMLElement>());
+  const allRanked = useMemo(() => resumes.map((resume, index) => ({ resume, card: comparisonScoreCard(resume, index, weights) })).sort((left, right) => {
+    const leftScore = rankCriterion === "composite" ? left.card.composite : left.card.criteria[rankCriterion].score;
+    const rightScore = rankCriterion === "composite" ? right.card.composite : right.card.criteria[rankCriterion].score;
+    const primary = rankDirection === "desc" ? rightScore - leftScore : leftScore - rightScore;
+    return primary || right.card.composite - left.card.composite || left.resume.name.localeCompare(right.resume.name, "zh-CN");
+  }), [resumes, weights, rankCriterion, rankDirection]);
+  const sourceFiltered = useMemo(() => allRanked.filter(({ resume }) => ratingFilter === "all" || (ratingFilter === "scored" ? hasAgentScore(resume) : !hasAgentScore(resume))), [allRanked, ratingFilter]);
+  const ranked = useMemo(() => sourceFiltered.filter(({ card }) => matchesMapRegion(card, mapX, mapY, mapRegion, mapThreshold)), [sourceFiltered, mapX, mapY, mapRegion, mapThreshold]);
+  useEffect(() => {
+    if (ranked.length && !ranked.some(({ resume }) => resume.id === selectedId)) onSelectResume(ranked[0].resume.id);
+  }, [ranked, selectedId, onSelectResume]);
+  const selected = ranked.find(({ resume }) => resume.id === selectedId) ?? ranked[0];
+  const selectedDecision = selected?.resume.reviewStatus ?? "pending";
+  useEffect(() => {
+    if (!focusEvidenceKey || !selected) return;
+    const target = evidenceCardRefs.current.get(focusEvidenceKey);
+    target?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    target?.focus({ preventScroll: true });
+  }, [focusEvidenceKey, selected?.resume.id]);
+  const rankLabels: Record<ComparisonRankCriterion, string> = { composite: "综合分", ...Object.fromEntries(scoreCriteria.map(({ key, label }) => [key, label])) } as Record<ComparisonRankCriterion, string>;
+  const mapLabels: Record<ComparisonMapAxis, string> = { ...rankLabels, depth: "能力深度（五项均值）" };
+  const ratingFilterLabels: Record<ComparisonRatingFilter, string> = { all: "全部", scored: "已生成评分卡", demo: "演示 / 待评分" };
+
+  async function suggestRanking() {
+    setRankBusy(true); setRankError(""); setRankProposal(null);
+    try {
+      const response = await fetch("/api/resumes/comparison/rank-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: rankInstruction, current: { criterion: rankCriterion, direction: rankDirection, ratingFilter, mapX, mapY, mapRegion, mapThreshold } }) });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "无法生成排名方案。");
+      setRankProposal(payload.suggestion as ComparisonRankDraft);
+    } catch (error) { setRankError(error instanceof Error ? error.message : "无法生成排名方案。"); }
+    finally { setRankBusy(false); }
+  }
+
+  return <main className="comparison-main comparison-workspace-main"><div className={`comparison-layout ${previewOpen ? "" : "preview-closed"}`}>{previewOpen && <aside className="comparison-preview"><div className="comparison-preview-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h2>{selected?.resume.name ?? "未选择候选人"}</h2><p>{selected?.resume.role ?? "请从右侧排名选择候选人"}</p></div><div className="comparison-preview-head-actions"><div className="comparison-view-switch" role="tablist" aria-label="切换候选人简历或分析文档"><button type="button" className={previewView === "resume" ? "active" : ""} role="tab" aria-selected={previewView === "resume"} onClick={() => setPreviewView("resume")}><ArrowLeft size={12} />简历</button><button type="button" className={previewView === "analysis" ? "active" : ""} role="tab" aria-selected={previewView === "analysis"} onClick={() => setPreviewView("analysis")}>分析文档<ArrowRight size={12} /></button></div><button type="button" className="comparison-preview-close" onClick={() => setPreviewOpen(false)} title="关闭候选人预览，恢复全图视野" aria-label="关闭候选人预览"><X size={14} /></button></div></div>{selected ? <><ComparisonPreview candidate={selected.resume} card={selected.card} view={previewView} knowledgeRecords={knowledgeRecords} /><div className="comparison-decision-actions" aria-label="候选人初筛决定"><span>初筛结果</span><button type="button" className={`decision-button pass ${selectedDecision === "passed" ? "active" : ""}`} onClick={() => onDecision(selected.resume.id, "passed")} disabled={decisionBusy} title="标记为通过初筛">{selectedDecision === "passed" ? "已通过" : "通过"}</button><button type="button" className={`decision-button reject ${selectedDecision === "rejected" ? "active" : ""}`} onClick={() => onDecision(selected.resume.id, "rejected")} disabled={decisionBusy} title="标记为拒绝">{selectedDecision === "rejected" ? "已拒绝" : "拒绝"}</button></div>{decisionError && <div className="decision-error comparison-decision-error">{decisionError}</div>}</> : <div className="comparison-preview-empty">请从右侧排名选择候选人</div>}</aside>}<div className="comparison-panel">
+    <div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions">{!previewOpen && <button className="comparison-show-preview" type="button" onClick={() => setPreviewOpen(true)}><FileText size={13} />显示候选人预览</button>}<span className="comparison-count">显示 {ranked.length} / {resumes.length} 位</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div>
+    <p className="comparison-note">已接入 Agent 评分 {resumes.filter(hasAgentScore).length} 份 · 演示 / 待评分 {resumes.filter((resume) => !hasAgentScore(resume)).length} 份。多人排名、雷达图和质量图使用同一份评分数据。</p>
+      <div className="comparison-source-filter" role="group" aria-label="按评分来源筛选候选人"><span>评分来源</span>{(["all", "scored", "demo"] as ComparisonRatingFilter[]).map((filterKey) => { const count = filterKey === "all" ? resumes.length : resumes.filter((resume) => filterKey === "scored" ? hasAgentScore(resume) : !hasAgentScore(resume)).length; return <button key={filterKey} type="button" className={ratingFilter === filterKey ? "active" : ""} aria-pressed={ratingFilter === filterKey} onClick={() => setRatingFilter(filterKey)}>{ratingFilterLabels[filterKey]}<b>{count}</b></button>; })}</div>
+    <section className="comparison-rank-tools" aria-label="设置候选人排名依据">
+      <label>排名依据<select value={rankCriterion} onChange={(event) => setRankCriterion(event.target.value as ComparisonRankCriterion)}><option value="composite">综合分</option>{scoreCriteria.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}</select></label>
+      <label>顺序<select value={rankDirection} onChange={(event) => setRankDirection(event.target.value as ComparisonRankDraft["direction"])}><option value="desc">高分优先</option><option value="asc">低分优先</option></select></label>
+      <label>图表横轴<select value={mapX} onChange={(event) => { const next = event.target.value as ComparisonMapAxis; setMapX(next); if (next === mapY) setMapY(mapX); }}>{scoreCriteria.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}<option value="depth">能力深度（五项均值）</option></select></label>
+      <label>图表纵轴<select value={mapY} onChange={(event) => { const next = event.target.value as ComparisonMapAxis; setMapY(next); if (next === mapX) setMapX(mapY); }}>{scoreCriteria.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}<option value="depth">能力深度（五项均值）</option></select></label>
+      <label className="comparison-threshold-control">象限分界 <input type="range" min="20" max="80" step="5" value={mapThreshold} onChange={(event) => setMapThreshold(Number(event.target.value))} /><output>{mapThreshold}</output></label>
+      <div className="comparison-rank-assistant"><input value={rankInstruction} onChange={(event) => { setRankInstruction(event.target.value); setRankProposal(null); setRankError(""); }} maxLength={500} placeholder="如：只看真实评分，按专业能力降序；图表对比经验与岗位契合度" aria-label="描述候选人筛选、排名和图表维度" onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void suggestRanking(); } }} /><button type="button" onClick={() => void suggestRanking()} disabled={!agentAvailable || rankBusy || !rankInstruction.trim()} title={agentAvailable ? "生成筛选、排名与图表方案" : "请先配置模型服务"}>{rankBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}AI 建议</button>
+      </div>
+      {rankError && <span className="comparison-rank-error">{rankError}</span>}
+      {rankProposal && <div className="comparison-rank-proposal"><span>{rankProposal.rationale}</span><strong>{ratingFilterLabels[rankProposal.ratingFilter]} · 排名按{rankLabels[rankProposal.criterion]}{rankProposal.direction === "desc" ? "高分优先" : "低分优先"} · 图表 {mapLabels[rankProposal.mapY]} × {mapLabels[rankProposal.mapX]} · 分界 {rankProposal.mapThreshold} · {rankProposal.mapRegion === "all" ? "全部象限" : mapRegionLabels[rankProposal.mapRegion]}</strong><div><button type="button" onClick={() => setRankProposal(null)}>放弃</button><button type="button" onClick={() => { setRankCriterion(rankProposal.criterion); setRankDirection(rankProposal.direction); setRatingFilter(rankProposal.ratingFilter); setMapX(rankProposal.mapX); setMapY(rankProposal.mapY); setMapRegion(rankProposal.mapRegion); setMapThreshold(rankProposal.mapThreshold); setRankProposal(null); }}>应用方案</button></div></div>}
+    </section>
+    {mapRegion !== "all" && <div className="comparison-region-filter"><span>图表象限：{mapRegionLabels[mapRegion]} · {ranked.length} 位</span><button type="button" onClick={() => setMapRegion("all")}>显示全部</button></div>}
+    {sourceFiltered.length ? <RecruitmentQualityMap candidates={sourceFiltered} selectedId={selected?.resume.id ?? ""} onSelect={onSelectResume} rankLabel={rankLabels[rankCriterion]} rankDirection={rankDirection} mapX={mapX} mapY={mapY} mapRegion={mapRegion} mapThreshold={mapThreshold} onRegionChange={setMapRegion} mapLabels={mapLabels} /> : <div className="comparison-empty">当前筛选下没有候选人。可切换评分来源查看其他档案。</div>}
+     <div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.length ? ranked.map(({ resume, card }, rank) => { const reviewStatus = resume.reviewStatus ?? "pending"; return <tr key={resume.id} className={`${resume.id === selected?.resume.id ? "selected " : ""}${reviewStatus === "passed" ? "review-passed" : reviewStatus === "rejected" ? "review-rejected" : ""}`} aria-selected={resume.id === selected?.resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><button className="comparison-candidate-select" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(null); }} aria-pressed={resume.id === selected?.resume.id}><strong>{resume.name}{reviewStatus !== "pending" && <span className={`comparison-review-badge ${reviewStatus}`}>{reviewStatus === "passed" ? "已通过初筛" : "已拒绝"}</span>}</strong><small>{resume.role} · {hasAgentScore(resume) ? "Agent 评分" : "演示 / 待评分"}</small></button></td>{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const score = actualScore(criterion.score); const visualScore = boundedScore(score); const atLimit = score >= 100; return <td className="score-cell" key={key}><button type="button" className="comparison-score-evidence" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(key); }} title={`查看 ${resume.name} · ${label} 的评分依据`} aria-label={`${resume.name}，${label} ${score.toFixed(0)} 分${atLimit ? "（视觉条形已到上限）" : ""}，查看评分依据`}><span className="score-cell-score"><span className={`score-cell-value ${atLimit ? "score-at-limit" : ""}`}>{score.toFixed(0)}</span><i className={atLimit ? "at-limit" : ""}><b style={{ width: `${visualScore}%` }} /></i></span></button></td>; })}<td className={`composite-cell ${card.composite >= 100 ? "score-at-limit" : ""}`}>{actualScore(card.composite).toFixed(1)}</td></tr>; }) : <tr><td colSpan={9} className="comparison-empty-cell">当前筛选下没有候选人。</td></tr>}</tbody></table></div>
+     {selected && <section className="comparison-evidence"><div className="comparison-evidence-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{selected.resume.name} · {selected.resume.role}</h3><p>{rankLabels[rankCriterion]}排名 {ranked.findIndex(({ resume }) => resume.id === selected.resume.id) + 1} · 综合分 <strong className={actualScore(selected.card.composite) >= 100 ? "score-at-limit" : ""}>{actualScore(selected.card.composite).toFixed(1)}</strong> · 深度 {depthScore(selected.card).toFixed(1)} · 广度 {actualScore(selected.card.criteria.perspective.score).toFixed(0)}</p></div><button className="back-to-workspace" onClick={() => { onSelectResume(selected.resume.id); onClose(); }}>打开简历分析</button></div><div className="comparison-evidence-grid">{scoreCriteria.map(({ key, label }) => { const criterion = selected.card.criteria[key]; const score = actualScore(criterion.score); return <article key={key} className={focusEvidenceKey === key ? "focused" : ""} ref={(element) => { if (element) evidenceCardRefs.current.set(key, element); else evidenceCardRefs.current.delete(key); }} tabIndex={-1}><div className="comparison-evidence-metric"><span><strong>{label}</strong></span><b className={score >= 100 ? "score-at-limit" : ""}>{score.toFixed(0)}</b></div>{criterion.evidence.length ? criterion.evidence.slice(0, 2).map((evidence, index) => <button className="comparison-evidence-link" key={`${index}-${evidence}`} onClick={() => { onSelectResume(selected.resume.id); onEvidence(evidence); onClose(); }} title="回到 PDF 定位依据">{evidence}<ExternalLink size={10} /></button>) : <p>暂无可展示的证据摘要</p>}</article>; })}</div></section>}
+    <div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div>
+  </div></div></main>;
+}
+
+
+function ComparisonSelectedSidebar({ candidate, weights, index }: { candidate: Resume; weights: ScoreWeights; index: number }) {
+  const card = comparisonScoreCard(candidate, index, weights);
+  const composite = actualScore(card.composite);
+  return <section className="comparison-selected-sidebar" aria-label="当前选中候选人分数">
+    <div className="comparison-selected-sidebar-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{candidate.name}</h3><p>{candidate.role} · {candidate.location}</p></div><strong className={composite >= 100 ? "score-at-limit" : ""}>{composite.toFixed(1)}</strong></div>
+    <div className="comparison-selected-sidebar-total"><span>当前综合分</span><small>按右侧岗位权重计算</small></div>
+    <div className="comparison-selected-sidebar-grid">{scoreCriteria.map(({ key, label }) => <div key={key}><span>{label}</span><b className={actualScore(card.criteria[key].score) >= 100 ? "score-at-limit" : ""}>{actualScore(card.criteria[key].score).toFixed(0)}</b></div>)}</div>
+  </section>;
+}
+
 function AnalysisDocument({ answer, sections, busy, error, candidate, roleRequirements, scoreCard, knowledgeRecords, historyCandidates, onOpenKnowledge, onOpenHistory, onOpenScoring, agentAvailable, onEvidence }: { answer: string; sections: AnalysisSection[]; busy: boolean; error: string; candidate: Resume; roleRequirements: string; scoreCard: ScoreCard; knowledgeRecords: KnowledgeRecord[]; historyCandidates: HistoricalCandidate[]; onOpenKnowledge: (id?: string) => void; onOpenHistory: (roleGroup: string, year: number | null, selectedId?: string) => void; onOpenScoring: () => void; agentAvailable: boolean; onEvidence: (evidence: string) => void }) {
   const pages = sections.length ? sections.map((section) => section.markdown) : paginateReport(answer);
   // Keep every chart on the same score source. Once the material Agent has
@@ -1189,7 +1324,7 @@ function AnalysisDocument({ answer, sections, busy, error, candidate, roleRequir
           <div className="analysis-visual-card"><ScoreTrend card={visualScoreCard} candidate={candidate} /></div>
           <div className="analysis-visual-card"><BenchmarkBadge role={candidate.role} score={actualScore(visualScoreCard.composite)} candidates={historyCandidates} onOpenHistory={onOpenHistory} /></div>
         </section>
-        {busy && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : (answer || sections.length) ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>BOHACK / CANDIDATE REVIEW</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · {sections[index]?.label || "简历分析"}</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
+        {busy && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state"><span className="working-mark"><Sparkles size={18} /></span><strong>正在生成分析文档</strong><p>Agent 正在逐项整理简历证据、岗位匹配和项目拆解。</p><div className="loading-line"><i /></div></div> : error && !answer && !sections.length ? <div className="analysis-paper analysis-paper-state error-paper"><strong>分析文档生成失败</strong><p>{error}</p></div> : (answer || sections.length) ? pages.map((page, index) => <article className="analysis-paper" key={`${candidate.id}-${index}`}><div className="analysis-paper-head"><span>简阅 / 候选人评阅</span><span>{String(index + 1).padStart(2, "0")}</span></div><h3>{candidate.name} · {sections[index]?.label || "简历分析"}</h3><p className="analysis-paper-subtitle">{candidate.role} · {roleRequirements ? "已对照职位要求" : "职位要求待补充"}</p><div className="analysis-paper-body analysis-markdown">{renderMarkdown(page)}</div><div className="analysis-paper-foot">第 {index + 1} 页 / {pages.length}</div></article>) : <div className="analysis-paper analysis-paper-state"><span className="empty-result-icon"><Sparkles size={18} /></span><strong>等待生成分析文档</strong><p>填写职位要求并开始分析，右侧会生成一份可滚动阅读的分析文档。</p></div>}
         {candidate.assessment ? <>
           <details className="analysis-score-detail-card">
             <summary><span><strong>详细计分分析</strong><small>{candidate.assessment.materials.length} 项材料 · 能力贡献、因素分解与原文依据</small></span><ChevronDown size={16} /></summary>
@@ -1317,6 +1452,15 @@ function demoScoreCard(resume: Resume, index: number, weights: ScoreWeights): Sc
   return { criteria, weights, composite: calculateComposite(criteria, weights), formula: "weighted-mean-v1", evaluatedAt: new Date().toISOString() };
 }
 
+function comparisonScoreCard(resume: Resume, index: number, weights: ScoreWeights): ScoreCard {
+  const fallback = demoScoreCard(resume, index, weights);
+  return resume.assessment ? scoreCardFromAssessment(resume.assessment, fallback) : fallback;
+}
+
+function hasAgentScore(resume: Resume): boolean {
+  return Boolean(resume.assessment || resume.scoreCard);
+}
+
 function WeightProposalPreview({ proposal, currentWeights, impact, selectedHasScoreCard, onApply, onDiscard, busy }: { proposal: WeightProposal; currentWeights: ScoreWeights; impact: WeightImpact; selectedHasScoreCard: boolean; onApply: () => void; onDiscard: () => void; busy: boolean }) {
   const scoreChange = impact.proposedScore - impact.currentScore;
   const rankChange = impact.currentRank - impact.proposedRank;
@@ -1332,8 +1476,9 @@ function WeightProposalPreview({ proposal, currentWeights, impact, selectedHasSc
 
 export default function App() {
   const [resumes, setResumes] = useState<Resume[]>([]);
-  const [loadingResumes, setLoadingResumes] = useState(true);
+  const [resumesLoading, setResumesLoading] = useState(true);
   const [resumeLoadError, setResumeLoadError] = useState("");
+  const [resumeLoadWarning, setResumeLoadWarning] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selectedResumeIds, setSelectedResumeIds] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
@@ -1361,7 +1506,15 @@ export default function App() {
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyLaunchFilter, setHistoryLaunchFilter] = useState<{ roleGroup: string; year: number | null; selectedId: string } | null>(null);
-  const [historyCandidates, setHistoryCandidates] = useState<HistoricalCandidate[]>(historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" })));
+  const [historyCandidates, setHistoryCandidates] = useState<HistoricalCandidate[]>([]);
+  const [resumeDecisions, setResumeDecisions] = useState<Record<string, ResumeDecision>>(() => {
+    try {
+      const stored = typeof window === "undefined" ? {} : JSON.parse(window.localStorage.getItem("bohack-resume-decisions") || "{}");
+      return stored && typeof stored === "object" ? stored as Record<string, ResumeDecision> : {};
+    } catch { return {}; }
+  });
+  const [decisionBusy, setDecisionBusy] = useState(false);
+  const [decisionError, setDecisionError] = useState("");
   const [knowledgeTargetId, setKnowledgeTargetId] = useState<string | undefined>();
   const [knowledgeRecords, setKnowledgeRecords] = useState<KnowledgeRecord[]>(seedKnowledgeRecords);
   const [weights, setWeights] = useState<ScoreWeights>(defaultScoreWeights);
@@ -1378,13 +1531,48 @@ export default function App() {
   const [taskDraftError, setTaskDraftError] = useState("");
   const [batchBusy, setBatchBusy] = useState(false);
   const [batchProgress, setBatchProgress] = useState("");
+  const [documentColumnWidth, setDocumentColumnWidth] = useState<number | null>(null);
+  const documentWidthManual = useRef(false);
+  const documentResizeRef = useRef<{ startX: number; startWidth: number } | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement | null>(null);
   const analysisController = useRef<AbortController | null>(null);
+  const batchAnalysisControllers = useRef(new Map<number, AbortController>());
   const analysisRequest = useRef(0);
   const batchRun = useRef(0);
 
+  type AnalyzeOptions = { batchRunId?: number; batchIndex?: number; batchTotal?: number };
+
   const selected = resumes.find((resume) => resume.id === selectedId) ?? resumes[0];
+  useEffect(() => {
+    documentWidthManual.current = false;
+    setDocumentColumnWidth(null);
+  }, [selected?.id]);
+
+  const handleDocumentResizeStart = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (window.matchMedia("(max-width: 930px)").matches) return;
+    const element = event.currentTarget.parentElement;
+    if (!element) return;
+    documentWidthManual.current = true;
+    documentResizeRef.current = { startX: event.clientX, startWidth: element.getBoundingClientRect().width };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  }, []);
+
+  const handleDocumentResizeMove = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
+    const start = documentResizeRef.current;
+    if (!start) return;
+    const next = Math.round(Math.max(390, Math.min(2400, start.startWidth + event.clientX - start.startX)));
+    setDocumentColumnWidth(next);
+  }, []);
+
+  const handleDocumentResizeEnd = useCallback(() => {
+    documentResizeRef.current = null;
+  }, []);
+  const handlePreferredDocumentWidth = useCallback((width: number) => {
+    if (documentWidthManual.current) return;
+    setDocumentColumnWidth((current) => Math.max(current ?? 390, Math.min(2400, width)));
+  }, []);
   const filtered = useMemo(() => resumes.filter((resume) => `${resume.name} ${resume.role}`.toLowerCase().includes(filter.toLowerCase())), [resumes, filter]);
   useEffect(() => {
     setSelectedResumeIds((current) => current.filter((id) => resumes.some((resume) => resume.id === id)));
@@ -1392,7 +1580,7 @@ export default function App() {
   const weightImpact = useMemo<WeightImpact | null>(() => {
     if (!weightProposal || !selected) return null;
     const comparableResumes = resumes.filter((resume) => roleGroup(resume.role) === roleGroup(selected.role));
-    const rankFor = (nextWeights: ScoreWeights) => comparableResumes.map((resume) => ({ id: resume.id, score: demoScoreCard(resume, resumes.indexOf(resume), nextWeights).composite })).sort((a, b) => b.score - a.score);
+    const rankFor = (nextWeights: ScoreWeights) => comparableResumes.map((resume) => ({ id: resume.id, score: comparisonScoreCard(resume, resumes.indexOf(resume), nextWeights).composite })).sort((a, b) => b.score - a.score);
     const current = rankFor(weights);
     const proposed = rankFor(weightProposal.weights);
     return {
@@ -1412,6 +1600,10 @@ export default function App() {
     void refreshKnowledge();
     fetch("/api/resumes/history").then((response) => response.json()).then((payload) => { if (Array.isArray(payload.candidates)) setHistoryCandidates(payload.candidates); }).catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    try { window.localStorage.setItem("bohack-resume-decisions", JSON.stringify(resumeDecisions)); } catch { /* Local persistence is optional. */ }
+  }, [resumeDecisions]);
 
   async function refreshKnowledge() {
     try {
@@ -1485,7 +1677,7 @@ export default function App() {
   }, [selected]);
 
   async function loadResumes(selectFirst = false) {
-    setLoadingResumes(true);
+    setResumesLoading(true);
     setResumeLoadError("");
     try {
       const response = await fetch("/api/resumes");
@@ -1495,15 +1687,35 @@ export default function App() {
       // The sidebar reflects the local resume folder. Built-in demo candidates
       // remain available only in the historical sample database, not alongside
       // imported resumes in the active workspace.
-      setResumes(payload.resumes);
+      setResumes(payload.resumes.map((resume) => ({ ...resume, reviewStatus: resume.reviewStatus ?? resumeDecisions[resume.id] ?? "pending" })));
+      setResumeLoadWarning(payload.skippedFiles?.length
+        ? `已读取其余简历；以下 PDF 无法解析：${payload.skippedFiles.map((file) => file.fileName).join("、")}`
+        : "");
       if (payload.resumes.length && (selectFirst || !payload.resumes.some((resume) => resume.id === selectedId))) {
         setSelectedId(payload.resumes[0].id);
       }
     } catch {
-      setResumeLoadError("无法连接本地简历文件夹，请确认服务正在运行。");
-    } finally {
-      setLoadingResumes(false);
-    }
+      setResumeLoadError("无法读取本地简历库，请确认服务正在运行后重试。");
+    } finally { setResumesLoading(false); }
+  }
+
+  async function decideResume(decision: Exclude<ResumeDecision, "pending">, resumeId = selected?.id) {
+    const target = resumeId ? resumes.find((resume) => resume.id === resumeId) : selected;
+    if (!target || decisionBusy) return;
+    const current = target.reviewStatus ?? resumeDecisions[target.id] ?? "pending";
+    if (current === decision) return;
+    setDecisionBusy(true); setDecisionError("");
+    try {
+      if (target.source === "pdf") {
+        const response = await fetch(`/api/resumes/${encodeURIComponent(target.id)}/decision`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ decision }) });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "无法保存简历审核结果。");
+        if (payload.resume) setResumes((currentResumes) => currentResumes.map((resume) => resume.id === target.id ? payload.resume as Resume : resume));
+      }
+      setResumeDecisions((currentDecisions) => ({ ...currentDecisions, [target.id]: decision }));
+      setResumes((currentResumes) => currentResumes.map((resume) => resume.id === target.id ? { ...resume, reviewStatus: decision } : resume));
+    } catch (cause) { setDecisionError(cause instanceof Error ? cause.message : "无法保存简历审核结果。"); }
+    finally { setDecisionBusy(false); }
   }
 
   async function importPdfs(files?: FileList | null) {
@@ -1540,7 +1752,26 @@ export default function App() {
       const latest = imported[imported.length - 1];
       setSelectedId(latest.id);
       setAnswer(latest.analysisReport ?? "");
-      setAgentError(latest.analysisStatus === "failed" ? latest.analysisError ?? "自动分析未完成，可手动重试。" : "");
+      setAgentError(latest.analysisStatus === "failed" && !latest.assessment ? latest.analysisError ?? "自动分析未完成，可手动重试。" : "");
+      const pendingIds = imported.filter((resume) => resume.analysisStatus === "processing").map((resume) => resume.id);
+      if (pendingIds.length) {
+        void (async () => {
+          for (let attempt = 0; attempt < 120; attempt += 1) {
+            await new Promise((resolve) => window.setTimeout(resolve, 1500));
+            try {
+              const response = await fetch("/api/resumes");
+              if (!response.ok) return;
+              const payload = await response.json() as ResumeListResponse;
+              if (!Array.isArray(payload.resumes)) return;
+              const selectedUpdate = payload.resumes.find((resume) => resume.id === selectedId && pendingIds.includes(resume.id));
+              if (selectedUpdate?.analysisStatus === "complete") setAnswer(selectedUpdate.analysisReport ?? "");
+              if (selectedUpdate?.analysisStatus === "failed") setAgentError(selectedUpdate.analysisError ?? "后台分析失败，可重新分析。");
+              setResumes((current) => current.map((resume) => payload.resumes.find((next) => next.id === resume.id) ?? resume));
+              if (payload.resumes.filter((resume) => pendingIds.includes(resume.id)).every((resume) => resume.analysisStatus !== "processing")) return;
+            } catch { return; }
+          }
+        })();
+      }
     }
     setImportError(errors.join("\n"));
     setImportProgress("");
@@ -1559,24 +1790,31 @@ export default function App() {
     }
   }
 
-  async function analyze(target: Resume = selected): Promise<void> {
-    if (!target) return;
-    const requestId = ++analysisRequest.current;
-    analysisController.current?.abort();
+  async function analyze(target: Resume = selected, options: AnalyzeOptions = {}): Promise<boolean> {
+    if (!target) return false;
+    const background = options.batchRunId !== undefined;
+    const requestId = background ? 0 : ++analysisRequest.current;
+    if (!background) analysisController.current?.abort();
     const controller = new AbortController();
-    analysisController.current = controller;
+    if (background && options.batchRunId !== undefined) batchAnalysisControllers.current.set(options.batchRunId * 1000 + (options.batchIndex ?? 0), controller);
+    if (!background) analysisController.current = controller;
     const timeout = setTimeout(() => controller.abort(new Error("分析响应超时，已完成资料仍可查看，请重试。")), 310_000);
-    setBusy(true);
-    setAgentError("");
-    setAnswer("");
-    setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });
-    setAnalysisElapsed(0);
-    setAnalysisDebug(null);
+    if (!background) {
+      setBusy(true);
+      setAgentError("");
+      setAnswer("");
+      setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });
+      setAnalysisElapsed(0);
+      setAnalysisDebug(null);
+    }
+    const isCurrent = () => background || requestId === analysisRequest.current;
     const applyResult = (result: AnalysisResult) => {
-      setAnswer(result.answer);
-      if (result.debug) setAnalysisDebug(result.debug);
+      if (!background) {
+        setAnswer(result.answer);
+        if (result.debug) setAnalysisDebug(result.debug);
+      }
       if (result.resume) {
-        setAnalysisDebug(result.debug ?? result.resume.analysisDebug ?? null);
+        if (!background) setAnalysisDebug(result.debug ?? result.resume.analysisDebug ?? null);
         setResumes((current) => current.map((resume) => resume.id === target.id ? result.resume! : resume));
       }
       else if (result.assessment) setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: result.assessment, assessmentHistory: [...(resume.assessmentHistory ?? []), { reason: "review", assessment: result.assessment! }], analysisReport: result.answer } : resume));
@@ -1588,22 +1826,22 @@ export default function App() {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeName: target.name, resumeText: targetOcrText.trim() ? targetOcrText : target.text, ocrText: targetOcrText, roleRequirements, question, streamProgress: true }),
+        body: JSON.stringify({ resumeName: target.name, resumeText: targetOcrText.trim() ? targetOcrText : target.text, ocrText: targetOcrText, roleRequirements, question, streamProgress: true, force: true }),
         signal: controller.signal,
       });
       if (!response.ok || !response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
         const payload = await response.json();
-        if (requestId !== analysisRequest.current) return;
+        if (!isCurrent()) return false;
         if (!response.ok) throw new Error(payload.error || "分析请求失败。");
         applyResult(payload);
       } else {
         await readAnalysisEvents(response, (event: AnalysisEvent) => {
-          if (requestId !== analysisRequest.current) return;
-          if (event.type === "progress") setAnalysisProgress(event.progress);
+          if (!isCurrent()) return;
+          if (event.type === "progress" && !background) setAnalysisProgress(event.progress);
           if (event.type === "assessment" && event.assessment) {
             setResumes((current) => current.map((resume) => resume.id === target.id ? { ...resume, assessment: event.assessment } : resume));
           }
-          if (event.type === "agent") {
+          if (event.type === "agent" && !background) {
             setAnalysisSections((current) => {
               const next = current.filter((section) => section.agentId !== event.agentId);
               return [...next, { agentId: event.agentId, label: event.label, markdown: event.markdown, timing: event.timing }];
@@ -1611,19 +1849,22 @@ export default function App() {
             if (event.timing) setAnalysisDebug((current) => ({ totalDurationMs: current?.totalDurationMs ?? 0, maxParallel: Math.max(current?.maxParallel ?? 1, event.timing!.parallelWith.length + 1), timings: [...(current?.timings ?? []).filter((item) => item.id !== event.timing!.id), event.timing!] }));
             if (event.markdown) setAnswer((current) => `${current}${current ? "\n\n" : ""}${event.markdown}`);
           }
-          if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
+          if (event.type === "answer" && !background) setAnswer((current) => event.replace ? event.text : current + event.text);
           if (event.type === "complete") applyResult(event);
         });
       }
+      return true;
     } catch (error) {
-      if (requestId !== analysisRequest.current) return;
+      if (!isCurrent()) return false;
       const reason = controller.signal.aborted ? controller.signal.reason : error;
-      setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
+      if (!background) setAgentError(reason instanceof Error ? reason.message : "无法连接 Agent 服务。");
+      return false;
     } finally {
       clearTimeout(timeout);
-      if (analysisController.current === controller) analysisController.current = null;
-      void refreshKnowledge();
-      if (requestId === analysisRequest.current) setBusy(false);
+      if (background && options.batchRunId !== undefined) batchAnalysisControllers.current.delete(options.batchRunId * 1000 + (options.batchIndex ?? 0));
+      if (!background && analysisController.current === controller) analysisController.current = null;
+      if (!background) void refreshKnowledge();
+      if (!background && requestId === analysisRequest.current) setBusy(false);
     }
   }
 
@@ -1645,16 +1886,25 @@ export default function App() {
     const targets = selectedResumeIds.map((id) => resumes.find((resume) => resume.id === id)).filter((resume): resume is Resume => Boolean(resume));
     setBatchBusy(true);
     setBatchProgress(`准备分析 ${targets.length} 份简历`);
-    for (const [index, target] of targets.entries()) {
-      if (batchRun.current !== runId) break;
-      setSelectedId(target.id);
-      setBatchProgress(`正在分析 ${index + 1} / ${targets.length} · ${target.name}`);
-      await analyze(target);
-      if (batchRun.current === runId) setBatchProgress(`已完成 ${index + 1} / ${targets.length} · ${target.name}`);
-    }
+    let nextIndex = 0;
+    let completed = 0;
+    let failed = 0;
+    const worker = async () => {
+      while (batchRun.current === runId) {
+        const index = nextIndex++;
+        if (index >= targets.length) return;
+        const target = targets[index];
+        setBatchProgress(`并行分析中 · ${completed} / ${targets.length} 已完成 · 当前 ${target.name}`);
+        const ok = await analyze(target, { batchRunId: runId, batchIndex: index, batchTotal: targets.length });
+        completed += 1;
+        if (!ok) failed += 1;
+        if (batchRun.current === runId) setBatchProgress(`并行分析中 · ${completed} / ${targets.length} 已完成${ok ? "" : ` · ${target.name}失败`}`);
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(3, targets.length) }, () => worker()));
     if (batchRun.current === runId) {
       setBatchBusy(false);
-      setBatchProgress(targets.length ? `批量分析完成 · ${targets.length} 份` : "");
+      setBatchProgress(targets.length ? `批量分析完成 · ${targets.length - failed} 份成功${failed ? ` · ${failed} 份失败` : ""}` : "");
     }
   }
 
@@ -1677,6 +1927,35 @@ export default function App() {
     setComparisonOpen(false);
   }
 
+  function showAnalysisWorkspace() {
+    setScoringOpen(false);
+    setScoringRulesOpen(false);
+    setKnowledgeOpen(false);
+    setHistoryOpen(false);
+    setHistoryLaunchFilter(null);
+    setComparisonOpen(false);
+  }
+
+  function renderTopbar() {
+    const analysisActive = !scoringOpen && !scoringRulesOpen && !knowledgeOpen && !historyOpen && !comparisonOpen;
+    return <header className="topbar">
+      <button className="brand" type="button" aria-label="返回简历分析" onClick={showAnalysisWorkspace}>
+        <span className="brand-mark"><BookOpen size={17} strokeWidth={2.2} /></span>
+        <span className="brand-name">简阅</span>
+      </button>
+      <nav className="topbar-nav" aria-label="工作区">
+        <button type="button" className={`topbar-nav-item ${analysisActive ? "active" : ""}`} aria-current={analysisActive ? "page" : undefined} onClick={showAnalysisWorkspace}>简历分析</button>
+        <button type="button" className={`topbar-nav-item ${scoringOpen ? "active" : ""}`} aria-current={scoringOpen ? "page" : undefined} disabled={!selected} onClick={() => { setScoringOpen(true); setScoringRulesOpen(false); setKnowledgeOpen(false); setHistoryOpen(false); setComparisonOpen(false); }}>评分详情</button>
+        <button type="button" className={`topbar-nav-item ${scoringRulesOpen ? "active" : ""}`} aria-current={scoringRulesOpen ? "page" : undefined} disabled={!selected} onClick={() => { setScoringOpen(false); setScoringRulesOpen(true); setKnowledgeOpen(false); setHistoryOpen(false); setComparisonOpen(false); }}>算法参数</button>
+        <button type="button" className={`topbar-nav-item ${comparisonOpen ? "active" : ""}`} aria-current={comparisonOpen ? "page" : undefined} disabled={!resumes.length} onClick={() => { setScoringOpen(false); setScoringRulesOpen(false); setComparisonOpen(true); setKnowledgeOpen(false); setHistoryOpen(false); }}>候选人对比</button>
+        <button type="button" className={`topbar-nav-item ${knowledgeOpen ? "active" : ""}`} aria-current={knowledgeOpen ? "page" : undefined} onClick={() => openKnowledge()}>资料库</button>
+        <button type="button" className={`topbar-nav-item ${historyOpen ? "active" : ""}`} aria-current={historyOpen ? "page" : undefined} onClick={() => openHistory()}>历史样本</button>
+      </nav>
+      <div className="topbar-spacer" />
+      <div className="privacy-note"><ShieldCheck size={15} /> 本地存储</div>
+    </header>;
+  }
+
   function selectResume(id: string) {
     analysisRequest.current += 1;
     analysisController.current?.abort();
@@ -1691,7 +1970,8 @@ export default function App() {
     setAnalysisProgress(null);
     setEvidenceTarget("");
     setEvidenceLocation(null);
-    setAgentError(resume?.analysisStatus === "failed" ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
+    setDecisionError("");
+    setAgentError(resume?.analysisStatus === "failed" && !resume.assessment ? resume.analysisError ?? "自动分析未完成，可手动重试。" : "");
   }
 
   function selectResumeEvidence(id: string, evidence: string) {
@@ -1707,38 +1987,49 @@ export default function App() {
     batchRun.current += 1;
     analysisRequest.current += 1;
     analysisController.current?.abort();
+    for (const controller of batchAnalysisControllers.current.values()) controller.abort();
+    batchAnalysisControllers.current.clear();
     setBusy(false);
     setBatchBusy(false);
     setBatchProgress("分析已停止，已完成的候选人结果已保留。");
     setAgentError("分析已停止，已完成的材料结果仍可查看。");
   }
-  if (!selected) return <EmptyResumeWorkspace loading={loadingResumes} loadError={Boolean(resumeLoadError)} importing={extracting} progress={importProgress} error={importError || resumeLoadError} onImport={importPdfs} onRefresh={() => { void loadResumes(); }} onOpenFolder={() => { void openResumeFolder(); }} />;
+  if (!selected) return <div className="app-shell">
+    {renderTopbar()}
+    <div className="resume-startup-workspace">
+      {knowledgeOpen ? <KnowledgeLibraryView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} />
+        : historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} />
+          : <main className="resume-startup" aria-busy={resumesLoading || extracting}>
+            <section className="resume-startup-card">
+              {resumesLoading ? <LoaderCircle className="spin" size={32} /> : <FolderOpen size={32} />}
+              <h1>{resumesLoading ? "正在读取简历库" : resumeLoadError ? "简历库读取失败" : "还没有简历"}</h1>
+              <p role={resumeLoadError ? "alert" : "status"}>{resumesLoading ? "正在读取本地简历，请稍候。" : resumeLoadError || "导入 PDF 简历或整个文件夹，开始查看与分析。"}</p>
+              {importError && <p className="inline-error" role="alert">{importError}</p>}
+              <div className="resume-startup-actions">
+                <button className="import-button" onClick={() => fileInput.current?.click()} disabled={resumesLoading || extracting}>{extracting ? <LoaderCircle className="spin" size={16} /> : <Upload size={16} />}{extracting ? `正在识别 ${importProgress}` : "导入 PDF 简历"}</button>
+                <button className="secondary-action" onClick={() => folderInput.current?.click()} disabled={resumesLoading || extracting}><FolderOpen size={14} />导入文件夹</button>
+                <button className="secondary-action" onClick={() => void loadResumes()} disabled={resumesLoading || extracting}>{resumesLoading ? "读取中…" : "重新读取简历库"}</button>
+                <button className="secondary-action" onClick={openResumeFolder} disabled={resumesLoading || extracting}><FolderOpen size={14} />打开存储位置</button>
+              </div>
+            </section>
+          </main>}
+    </div>
+    <input ref={fileInput} className="visually-hidden" type="file" accept="application/pdf,.pdf" multiple onChange={(event) => importPdfs(event.target.files)} />
+    <input ref={(element) => { folderInput.current = element; element?.setAttribute("webkitdirectory", ""); }} className="visually-hidden" type="file" multiple onChange={(event) => importPdfs(event.target.files)} />
+  </div>;
 
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <a className="brand" href="#" aria-label="Bohack 简历工作台首页">
-          <span className="brand-mark"><BriefcaseBusiness size={17} strokeWidth={2.2} /></span>
-          <span>bohack<span className="brand-dot">.</span></span>
-        </a>
-        <div className="topbar-divider" />
-        <div className="workspace-name">{scoringRulesOpen ? "评分算法参数" : scoringOpen ? "评分详情" : knowledgeOpen ? "资料库" : comparisonOpen ? "候选人对比" : historyOpen ? "历史样本" : "分析文档"} <ChevronDown size={14} /></div>
-        <div className="topbar-spacer" />
-        <button className="compare-button" aria-label={scoringOpen ? "返回分析文档" : "打开评分详情"} onClick={() => { setScoringOpen((current) => !current); setScoringRulesOpen(false); setKnowledgeOpen(false); setHistoryOpen(false); setComparisonOpen(false); }}>{scoringOpen ? <><FileText size={14} />分析文档</> : <><Sparkles size={14} />评分详情</>}</button>
-        <button className="compare-button" aria-label="打开评分算法参数" onClick={() => { setScoringRulesOpen((current) => !current); setScoringOpen(false); setKnowledgeOpen(false); setHistoryOpen(false); setComparisonOpen(false); }}>{scoringRulesOpen ? <><FileText size={14} />返回分析</> : <><SlidersHorizontal size={14} />算法参数</>}</button>
-        <div className="privacy-note"><ShieldCheck size={15} /> 本地存储</div>
-        <button className="compare-button" onClick={() => { setScoringOpen(false); setScoringRulesOpen(false); setComparisonOpen((current) => !current); setKnowledgeOpen(false); setHistoryOpen(false); }} title={comparisonOpen ? "返回单人分析" : "查看候选人对比"}>{comparisonOpen ? "返回分析" : <><BriefcaseBusiness size={14} />候选人对比</>}</button>
-        <button className="compare-button" onClick={() => { if (knowledgeOpen) { setKnowledgeOpen(false); } else { openKnowledge(); } }} title={knowledgeOpen ? "返回简历分析" : "打开资料库"}>{knowledgeOpen ? "返回分析" : <><BookOpen size={14} />资料库</>}</button>
-        <button className="compare-button" onClick={() => { if (historyOpen) { setHistoryOpen(false); setHistoryLaunchFilter(null); } else { openHistory(); } }} title={historyOpen ? "返回简历分析" : "管理历史招聘样本"}>{historyOpen ? "返回分析" : <><Database size={14} />历史样本</>}</button>
-        <button className="icon-button help-button" title="隐私与数据说明" aria-label="隐私与数据说明"><CircleHelp size={18} /></button>
-        <div className="user-avatar" title="工作区">B</div>
-      </header>
+      {renderTopbar()}
 
-      <div className="workspace">
+      <div className={`workspace ${comparisonOpen ? "comparison-mode" : ""}`} style={{ "--document-column-width": documentColumnWidth ? `${documentColumnWidth}px` : undefined } as CSSProperties}>
         <aside className="sidebar">
           <div className="sidebar-head">
             <div className="sidebar-title-row"><h1>简历库</h1><span className="count-badge">{resumes.length}</span></div>
-            <p>所有候选人</p>
+            <div className="product-slogan" aria-label="一个能自搜索、自积累的简历量化评阅台。Self-searching, self-accumulating quantified resume review desk.">
+              <strong>一个能自搜索、自积累的简历量化评阅台</strong>
+              <span>Self-searching, self-accumulating quantified resume review desk.</span>
+            </div>
             <label className="search-box">
               <Search size={15} />
               <input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="搜索姓名或岗位" aria-label="搜索简历" />
@@ -1754,7 +2045,9 @@ export default function App() {
               <button className="secondary-action" onClick={() => folderInput.current?.click()} disabled={extracting}><FolderOpen size={14} />导入文件夹</button>
               <button className="secondary-action" onClick={openResumeFolder} title="打开本地简历存储文件夹"><FolderOpen size={14} />打开存储位置</button>
             </div>
-            {(importError || resumeLoadError) && <div className="inline-error" role="status">{importError || resumeLoadError}</div>}
+            {importError && <div className="inline-error" role="status">{importError}</div>}
+            {resumeLoadError && <div className="inline-error" role="alert">{resumeLoadError}<button type="button" onClick={() => void loadResumes()} disabled={resumesLoading}>重试</button></div>}
+            {resumeLoadWarning && <div className="inline-error" role="status">{resumeLoadWarning}</div>}
           </div>
 
           <div className="list-label"><span>候选人</span><div className="list-label-actions"><span>最近更新</span><button type="button" className="selection-mode-toggle" onClick={() => setSelectionMode((current) => !current)} disabled={batchBusy}>{selectionMode ? "完成" : "多选"}</button></div></div>
@@ -1774,22 +2067,25 @@ export default function App() {
             {batchProgress && <div className="selection-progress" role="status">{batchProgress}</div>}
           </div>}
           <div className="candidate-list">
-            {filtered.map((resume, index) => (
-              <div className={`candidate-row ${resume.id === selected.id ? "selected" : ""} ${selectedResumeIds.includes(resume.id) ? "checked" : ""}`} key={resume.id}>
+            {filtered.map((resume, index) => {
+              const reviewStatus = resume.reviewStatus ?? "pending";
+              return <div className={`candidate-row ${resume.id === selected.id ? "selected" : ""} ${selectedResumeIds.includes(resume.id) ? "checked" : ""} ${reviewStatus === "passed" ? "review-passed" : reviewStatus === "rejected" ? "review-rejected" : ""}`} key={resume.id}>
                 {selectionMode && <input className="candidate-checkbox" type="checkbox" checked={selectedResumeIds.includes(resume.id)} onChange={() => toggleResumeSelection(resume.id)} disabled={batchBusy} aria-label={`选择${resume.name}`} />}
                 <button className="candidate-row-main" type="button" onClick={() => selectResume(resume.id)} disabled={batchBusy}>
                 <span className={`candidate-avatar avatar-${index % 4}`}>{resume.initials}</span>
-                <span className="candidate-copy"><strong>{resume.name}</strong><span>{resume.role}</span></span>
+                <span className="candidate-copy"><strong>{resume.name}</strong><span>{resume.identity || resume.role}</span>{resume.keywords?.length ? <small className="candidate-keywords">{resume.keywords.slice(0, 3).join(" · ")}</small> : null}{reviewStatus !== "pending" && <em className={`candidate-review-status ${reviewStatus}`}>{reviewStatus === "passed" ? "已通过初筛" : "已拒绝"}</em>}</span>
                 <span className="candidate-date">{resume.received}</span>
                 </button>
-              </div>
-            ))}
+              </div>;
+            })}
             {filtered.length === 0 && <div className="empty-list">没有匹配的简历</div>}
           </div>
           <div className="sidebar-footer"><span className="status-dot" /> 本地工作区 <span className="footer-count">{resumes.length} 份简历</span></div>
         </aside>
 
-            {scoringRulesOpen ? <ScoringWorkspace key="scoring-rules" initialTab="rules" resumes={resumes} selected={selected} onSelect={selectResume} onUpdate={(updated) => { setResumes((current) => current.map((resume) => resume.id === updated.id ? updated : resume)); }} onEvidence={locateEvidence} onRead={() => setScoringRulesOpen(false)} agentAvailable={Boolean(health?.agent)} /> : scoringOpen ? <ScoringWorkspace key="scoring-detail" initialTab="candidate" resumes={resumes} selected={selected} onSelect={selectResume} onUpdate={(updated) => { setResumes((current) => current.map((resume) => resume.id === updated.id ? updated : resume)); if (updated.id === selected.id && updated.analysisReport) setAnswer(updated.analysisReport); }} onEvidence={(quote) => { setScoringOpen(false); locateEvidence(quote); }} onRead={() => setScoringOpen(false)} agentAvailable={Boolean(health?.agent)} /> : historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeLibraryView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : comparisonOpen ? <ScoringWorkspace key="scoring-comparison" initialTab="comparison" initialSelectedIds={selectedResumeIds} resumes={resumes} selected={selected} onSelect={selectResume} onUpdate={(updated) => { setResumes((current) => current.map((resume) => resume.id === updated.id ? updated : resume)); }} onEvidence={locateEvidence} onRead={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} /> : <>
+            {scoringRulesOpen ? <ScoringWorkspace key="scoring-rules" initialTab="rules" resumes={resumes} selected={selected} onSelect={selectResume} onUpdate={(updated) => { setResumes((current) => current.map((resume) => resume.id === updated.id ? updated : resume)); }} onEvidence={locateEvidence} onRead={() => setScoringRulesOpen(false)} agentAvailable={Boolean(health?.agent)} /> : scoringOpen ? <ScoringWorkspace key="scoring-detail" initialTab="candidate" resumes={resumes} selected={selected} onSelect={selectResume} onUpdate={(updated) => { setResumes((current) => current.map((resume) => resume.id === updated.id ? updated : resume)); if (updated.id === selected.id && updated.analysisReport) setAnswer(updated.analysisReport); }} onEvidence={(quote) => { setScoringOpen(false); locateEvidence(quote); }} onRead={() => setScoringOpen(false)} agentAvailable={Boolean(health?.agent)} /> : historyOpen ? <HistoricalDatabaseView candidates={historyCandidates} onCandidatesChange={setHistoryCandidates} onClose={() => { setHistoryOpen(false); setHistoryLaunchFilter(null); }} agentAvailable={Boolean(health?.agent)} initialFilter={historyLaunchFilter} initialSelectedId={historyLaunchFilter?.selectedId ?? ""} /> : knowledgeOpen ? <KnowledgeLibraryView resumes={resumes} records={knowledgeRecords} onRecordsChange={setKnowledgeRecords} initialId={knowledgeTargetId} onSelectEvidence={selectResumeEvidence} onClose={() => setKnowledgeOpen(false)} agentAvailable={Boolean(health?.agent)} webSearchAvailable={Boolean(health?.webSearch)} /> : <>
+              {comparisonOpen && <ComparisonView key="comparison" resumes={resumes.filter((resume) => !selectedResumeIds.length || selectedResumeIds.includes(resume.id))} weights={weights} selectedId={selected.id} onSelectResume={selectResume} onEvidence={locateEvidence} onClose={() => setComparisonOpen(false)} agentAvailable={Boolean(health?.agent)} knowledgeRecords={knowledgeRecords} onDecision={(id, decision) => void decideResume(decision, id)} decisionBusy={decisionBusy || batchBusy} decisionError={decisionError} />}
+              {!comparisonOpen && <>
         <main className="document-column">
           <div className="document-header">
             <div className="document-person">
@@ -1798,12 +2094,17 @@ export default function App() {
             </div>
             <div className="document-actions">
               {selected.source === "pdf" && pdfUrl && <a className="icon-button" href={pdfUrl} download={`${selected.name}.pdf`} title="下载原始 PDF" aria-label="下载原始 PDF"><ArrowDownToLine size={17} /></a>}
-              <button className="analyze-button" onClick={() => void analyze()} disabled={busy || batchBusy || !health?.agent} title={!health?.agent ? "请先在 .env 配置模型服务" : "使用 Agent 分析这份简历"}>
-                {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}
-                {busy ? "分析中" : selected.analysisStatus === "failed" ? "重试分析" : "重新分析"}
+              <div className="decision-actions" role="group" aria-label={`${selected.name}审核结果`}>
+                <button type="button" className={`decision-button pass ${(selected.reviewStatus ?? resumeDecisions[selected.id] ?? "pending") === "passed" ? "active" : ""}`} onClick={() => void decideResume("passed")} disabled={decisionBusy || batchBusy} title="标记为通过初筛">{(selected.reviewStatus ?? resumeDecisions[selected.id] ?? "pending") === "passed" ? "已通过" : "通过"}</button>
+                <button type="button" className={`decision-button reject ${(selected.reviewStatus ?? resumeDecisions[selected.id] ?? "pending") === "rejected" ? "active" : ""}`} onClick={() => void decideResume("rejected")} disabled={decisionBusy || batchBusy}>{(selected.reviewStatus ?? resumeDecisions[selected.id] ?? "pending") === "rejected" ? "已拒绝" : "拒绝"}</button>
+              </div>
+              <button className="analyze-button" onClick={() => void analyze()} disabled={busy || batchBusy || selected.analysisStatus === "processing" || !health?.agent} title={!health?.agent ? "请先在 .env 配置模型服务" : "使用 Agent 分析这份简历"}>
+                {busy || selected.analysisStatus === "processing" ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}
+                {busy ? "分析中" : selected.analysisStatus === "processing" ? "后台分析中" : selected.analysisStatus === "failed" ? "重试分析" : "重新分析"}
               </button>
             </div>
           </div>
+          {decisionError && <div className="decision-error" role="alert">{decisionError}</div>}
 
           <div className="document-toolbar">
             <div className="document-tab"><FileText size={15} /><span>{selected.source === "pdf" ? (selected.fileName ?? `${selected.name}.pdf`) : "简历预览"}</span></div>
@@ -1812,10 +2113,10 @@ export default function App() {
 
           <section className="reader-area" aria-label="简历阅读区">
             {selected.source === "pdf" && pdfUrl ? (
-              <PdfReader key={selected.id} url={pdfUrl} title={selected.fileName ?? `${selected.name}.pdf`} evidenceTarget={evidenceTarget} knowledgeRecords={knowledgeRecords} onEvidenceResult={handleEvidenceResult} />
+              <PdfReader key={selected.id} url={pdfUrl} title={selected.fileName ?? `${selected.name}.pdf`} evidenceTarget={evidenceTarget} knowledgeRecords={knowledgeRecords} onEvidenceResult={handleEvidenceResult} onPreferredWidth={handlePreferredDocumentWidth} />
             ) : (
               <div className="sample-page">
-                <div className="sample-document-label"><span>BOHACK SAMPLE</span><span>简历资料 · 示例</span></div>
+                <div className="sample-document-label"><span>简阅示例</span><span>简历资料 · 示例</span></div>
                 <div className="sample-name-block"><div><h3>{selected.name}</h3><p>{selected.role} <span>·</span> {selected.location}</p></div><div className="sample-contact">人才档案<br />{selected.name.toLowerCase().replace(" ", ".")}@example.com</div></div>
                 <div className="sample-summary">{renderEvidenceText(`${selected.text.split("。")[0]}。`, evidenceTarget)}</div>
                 <div className="sample-section"><h4>工作经历</h4>{(selected.experiences ?? []).map((experience) => <article className="experience" key={experience.company}><div className="experience-heading"><div><strong>{experience.role}</strong><span>{experience.company}</span></div><time>{experience.period}</time></div><p>{renderEvidenceText(experience.detail, evidenceTarget)}</p></article>)}</div>
@@ -1825,18 +2126,34 @@ export default function App() {
               </div>
             )}
           </section>
+          <button className="document-column-resizer" type="button" aria-label="调整简历阅读区宽度" title="左右拖动调整简历阅读区宽度" onPointerDown={handleDocumentResizeStart} onPointerMove={handleDocumentResizeMove} onPointerUp={handleDocumentResizeEnd} onPointerCancel={handleDocumentResizeEnd} />
         </main>
 
         <aside className="report-column">
-          <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
+          <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "processing" ? "分析中" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onOpenScoring={() => { setScoringRulesOpen(false); setScoringOpen(true); }} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy || selected.analysisStatus === "processing"} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onOpenScoring={() => { setScoringRulesOpen(false); setScoringOpen(true); }} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
-          <div className="analysis-footer"><ShieldCheck size={14} /><span>分析基于当前简历文本和已生成的规则评分。</span></div>
+           <div className="analysis-footer"><ShieldCheck size={14} /><span>分析基于当前简历文本和已生成的规则评分。</span></div>
         </aside>
+              </>}
 
         <aside className="analysis-column">
-          <div className="analysis-header"><div><span className="eyebrow">BOHACK AGENT</span><h2>分析工作区</h2></div><span className={`agent-indicator ${health?.agent ? "ready" : ""}`} title={health?.agent ? "模型已连接" : "等待配置模型服务"}><span /></span></div>
+          {comparisonOpen && <ComparisonSelectedSidebar candidate={selected} weights={weights} index={Math.max(0, resumes.indexOf(selected))} />}
+          {comparisonOpen && <section className="comparison-job-sidebar" aria-label="多人对比岗位偏好调参">
+            <div className="comparison-job-sidebar-head"><div><span className="eyebrow">COMPARISON AI TUNING</span><h2>多人 AI 调参台</h2></div><span>{Object.values(weights).reduce((sum, value) => sum + value, 0)}%</span></div>
+            <p className="comparison-job-sidebar-note">修改岗位要求或权重后，中央排名会即时重算；不会改写候选人的原始能力评分。</p>
+            <label className="field-label" htmlFor="comparison-role-requirements"><span className="field-label-title">岗位要求 <em>用于当前对比</em></span><button type="button" className="field-agent-button" onClick={structureRoleRequirements} disabled={roleProfileBusy || !health?.agent || !roleRequirements.trim()}>{roleProfileBusy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}整理岗位重点</button></label>
+            <textarea id="comparison-role-requirements" className="role-input comparison-role-input" value={roleRequirements} onChange={(event) => { setRoleRequirements(event.target.value); setRoleProfileProposal(null); setRoleProfileError(""); }} rows={6} />
+            {roleProfileProposal && <div className="role-profile-proposal"><strong>AI 整理草案</strong><p>{roleProfileProposal.requirements}</p><small>{roleProfileProposal.rationale}</small><div><button type="button" onClick={() => { setRoleRequirements(roleProfileProposal.requirements); setRoleProfileProposal(null); }}>采用草案</button><button type="button" onClick={() => setRoleProfileProposal(null)}>保留原文</button></div></div>}
+            {roleProfileError && <div className="inline-error">{roleProfileError}</div>}
+            <div className="comparison-weight-heading"><strong>排序权重</strong><span>总和自动归一化</span></div>
+            <div className="comparison-weight-list">{scoreCriteria.map(({ key, label }) => <label key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => { setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights); setWeightProposal(null); setWeightError(""); }} onBlur={() => void updateWeights(weights)} /><b>%</b></label>)}</div>
+            <div className="weight-agent comparison-weight-agent"><input value={weightInstruction} onChange={(event) => { setWeightInstruction(event.target.value); setWeightProposal(null); setWeightError(""); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void adjustWeightsWithAgent(); } }} placeholder="让 AI 调整排序权重" /><button title="让 AI 调整排序权重" aria-label="让 AI 调整排序权重" onClick={() => void adjustWeightsWithAgent()} disabled={weightBusy || weightSaving || !health?.agent}>{weightBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div>
+            {weightError && <div className="inline-error">{weightError}</div>}
+            {weightProposal && weightImpact && <WeightProposalPreview proposal={weightProposal} currentWeights={weights} impact={weightImpact} selectedHasScoreCard={hasAgentScore(selected)} onDiscard={() => setWeightProposal(null)} onApply={() => void updateWeights(weightProposal.weights)} busy={weightSaving} />}
+          </section>}
+          <div className="analysis-header"><div><span className="eyebrow">简阅智能助手</span><h2>分析工作区</h2></div><span className={`agent-indicator ${health?.agent ? "ready" : ""}`} title={health?.agent ? "模型已连接" : "等待配置模型服务"}><span /></span></div>
           <div className="agent-capabilities"><div><Sparkles size={14} /><span>简历分析 Skill</span><Check size={14} className="capability-check" /></div><div><Globe2 size={14} /><span>网页搜索</span><span className={`capability-state ${health?.webSearch ? "available" : "unavailable"}`}>{health?.webSearch ? "已连接" : "待配置"}</span></div></div>
           <label className="field-label" htmlFor="role-requirements"><span className="field-label-title">职位要求 <em>可选</em></span><button type="button" className="field-agent-button" onClick={structureRoleRequirements} disabled={roleProfileBusy || !health?.agent || !roleRequirements.trim()} title="让 AI 整理职位要求">{roleProfileBusy ? <LoaderCircle className="spin" size={12} /> : <Sparkles size={12} />}整理岗位重点</button></label>
           <textarea id="role-requirements" className="role-input" value={roleRequirements} onChange={(event) => { setRoleRequirements(event.target.value); setRoleProfileProposal(null); setRoleProfileError(""); }} placeholder="粘贴职位描述或关键要求，例如：5 年以上 B2B 产品经验，熟悉数据分析与团队协作……" rows={5} />
@@ -1858,12 +2175,12 @@ export default function App() {
             {scoreCriteria.map(({ key, label }) => <label className="weight-row" key={key}><span>{label}</span><input type="number" min="0" max="100" value={weights[key]} onChange={(event) => { setWeights({ ...weights, [key]: Number(event.target.value) } as ScoreWeights); setWeightProposal(null); setWeightError(""); }} onBlur={() => updateWeights(weights)} /><span>%</span></label>)}
             <div className="weight-agent"><input value={weightInstruction} onChange={(event) => { setWeightInstruction(event.target.value); setWeightProposal(null); setWeightError(""); }} onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); adjustWeightsWithAgent(); } }} placeholder="让 AI 调整，例如：更看重专业能力和岗位契合度" /><button title="生成权重调整方案" aria-label="生成权重调整方案" onClick={adjustWeightsWithAgent} disabled={weightBusy || weightSaving || !health?.agent}>{weightBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}</button></div>
             {weightError && <div className="inline-error">{weightError}</div>}
-            {weightProposal && weightImpact && <WeightProposalPreview proposal={weightProposal} currentWeights={weights} impact={weightImpact} selectedHasScoreCard={Boolean(selected.scoreCard)} onDiscard={() => setWeightProposal(null)} onApply={() => updateWeights(weightProposal.weights)} busy={weightSaving} />}
+            {weightProposal && weightImpact && <WeightProposalPreview proposal={weightProposal} currentWeights={weights} impact={weightImpact} selectedHasScoreCard={hasAgentScore(selected)} onDiscard={() => setWeightProposal(null)} onApply={() => updateWeights(weightProposal.weights)} busy={weightSaving} />}
           </div>}
           {!health?.agent && <div className="setup-hint"><span className="setup-icon"><CircleHelp size={15} /></span><span>配置服务密钥后可生成 AI 文字报告；材料评分可直接使用规则抽取。<code>OPENAI_API_KEY</code>{health ? "" : " · 服务连接中"}</span></div>}
 
         </aside>
-        </>}
+            </>}
       </div>
     </div>
   );
