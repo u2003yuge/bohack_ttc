@@ -48,7 +48,7 @@ export function CompanyLibrary({ records, resumes, initialId, onClose, onReview,
     return records.filter((record) => (!field || record.field === field)
       && (!region || record.region === region)
       && (!linkedOnly || Boolean(references.get(record.id)?.length))
-      && (!keyword || `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")}`.toLocaleLowerCase().includes(keyword)));
+      && (!keyword || `${record.title} ${record.aliases.join(" ")} ${record.field} ${record.organizer} ${record.summary} ${record.signals.join(" ")} ${record.company?.englishName ?? ""} ${record.company?.headquarters ?? ""} ${record.company?.businessScope ?? ""} ${record.company?.representativeProducts ?? ""} ${record.company?.info ?? ""}`.toLocaleLowerCase().includes(keyword)));
   }, [records, query, field, region, linkedOnly, references]);
   const selected = filtered.find((record) => record.id === selectedId) ?? filtered[0];
   const clearFilters = () => { setQuery(""); setField(""); setRegion(""); setLinkedOnly(false); };
@@ -84,9 +84,12 @@ export function CompanyLibrary({ records, resumes, initialId, onClose, onReview,
           <div className="company-detail-identity"><CompanyLogo record={selected} large /><div><h2>{selected.title}</h2><p className="competition-intro">{selected.summary}</p></div></div>
           <div className="venue-tags">{[selected.field, selected.region, ...selected.aliases].filter(Boolean).slice(0, 8).map((value) => <span key={value}>{value}</span>)}</div>
           <dl className="competition-facts"><div><dt>所属 / 主体</dt><dd>{selected.organizer || "待补充"}</dd></div><div><dt>官方网站</dt><dd>{selected.officialUrl ? <a href={selected.officialUrl} target="_blank" rel="noreferrer">访问官网<ArrowUpRight size={13} /></a> : "暂无可确认的官网"}</dd></div><div><dt>图标来源</dt><dd>{selected.officialUrl ? "官网 favicon · 按域名自动获取" : "暂无官网入口，使用文字图标"}</dd></div></dl>
-          <section className="competition-copy"><h3>公司背景</h3><p>{selected.summary || "详细介绍待补充。"}</p></section>
-          <div className="competition-dimensions"><section><span>BUSINESS CONTEXT</span><h3>业务背景</h3><p>{selected.field || "业务领域待补充。"} · {selected.region || "地区待补充。"}</p></section><section><span>REVIEW BOUNDARY</span><h3>审核边界</h3><p>公司名称只提供组织背景，需结合候选人的团队、职责、项目结果和个人贡献判断。</p></section></div>
-          <section className="competition-abilities"><section><h3>可观察的信号</h3><div>{selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <p>观察点待补充。</p>}</div></section></section>
+          <dl className="competition-facts"><div><dt>英文名称</dt><dd>{selected.company?.englishName || "待补充"}</dd></div><div><dt>总部</dt><dd>{selected.company?.headquarters || "待补充"}</dd></div><div><dt>成立年份</dt><dd>{selected.company?.foundedYear ?? "待补充"}</dd></div><div><dt>业务范围</dt><dd>{selected.company?.businessScope || selected.field || "待补充"}</dd></div><div><dt>代表产品 / 平台</dt><dd>{selected.company?.representativeProducts || "待补充"}</dd></div></dl>
+          <section className="competition-copy"><h3>公司背景</h3><p>{selected.company?.info || selected.summary || "详细介绍待补充。"}</p></section>
+          {selected.company?.influence && <section className="competition-copy"><h3>业务影响</h3><p>{selected.company.influence}</p></section>}
+          <div className="competition-dimensions"><section><span>BUSINESS CONTEXT</span><h3>业务背景</h3><p>{selected.company?.industry || selected.field || "业务领域待补充。"} · {selected.region || "地区待补充。"}</p></section><section><span>REVIEW BOUNDARY</span><h3>审核边界</h3><p>公司名称只提供组织背景，需结合候选人的团队、职责、项目结果和个人贡献判断。</p></section></div>
+          <section className="competition-abilities"><section><h3>公开资料线索</h3><div>{selected.company?.publicSignals?.length ? selected.company.publicSignals.map((signal) => <span key={signal}>{signal}</span>) : selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <p>观察点待补充。</p>}</div></section></section>
+          {selected.company?.notes && <p className="competition-footnote">{selected.company.notes}</p>}
           {selected.evidenceSources?.length ? <section className="competition-sources"><header><h3>信息来源</h3><small>{selected.evidenceSources.length} 条可追溯资料</small></header>{selected.evidenceSources.map((source, index) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer"><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{source.title}</strong><small>{source.url}</small></div><ArrowUpRight size={15} /></a>)}</section> : null}
           <p className="competition-footnote">公司背景用于理解候选人经历，不代表录用结论；应优先核对具体岗位、团队、任职关系和可量化成果。</p>
           <div className="competition-review-link"><button onClick={() => onReview(selected.id)}>人工评估与资料管理<ArrowUpRight size={14} /></button></div>

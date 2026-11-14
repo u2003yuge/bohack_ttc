@@ -1,0 +1,6076 @@
+{
+  "format": "bohack-competition-years",
+  "version": 1,
+  "sourceFile": "more_competitions.json",
+  "sourceSha256": "7ab14013c55f2cc43c896890ded39da7cc7cc89473fc97c798ffe2fa50811819",
+  "records": [
+    {
+      "id": "2023-01",
+      "name": "中国大学生方程式系列赛事",
+      "official_website": "https://www.formulastudent.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "64支电车队、28支无人车队，共92支车队",
+            "unit": "队",
+            "scope": "2024蔚来杯FSEC与FSAC总决赛"
+          },
+          "award_categories": [
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "冠军",
+            "亚军",
+            "季军",
+            "专项奖",
+            "蔚来大奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": {
+            "reported": "国际交流奖：FSEC冠军15万元/9万元、亚军10万元/6万元、季军7万元/4万元；最佳导师1万元/人、最佳经理人5000元/人",
+            "currency": "人民币",
+            "scope": "公告所列奖项"
+          },
+          "sources": [
+            {
+              "title": "中国汽车工程学会：2024赛事收官",
+              "url": "https://www.sae-china.org/news/society/202410/6607.html"
+            },
+            {
+              "title": "2024蔚来大奖公告",
+              "url": "https://img.sae-china.org/web/2024/10/2024%E4%B8%AD%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%96%B9%E7%A8%8B%E5%BC%8F%E7%B3%BB%E5%88%97%E8%B5%9B%E4%BA%8B%E2%80%9C%E8%94%9A%E6%9D%A5%E5%A4%A7%E5%A5%96%E2%80%9D%E5%85%AC%E5%91%8A.pdf"
+            }
+          ],
+          "notes": "2024系列赛事含多个子赛项；奖项类别为赛事手册和组委会奖项公告所列。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "129支车队、5000余名师生",
+            "unit": "队/人",
+            "scope": "2025蔚来杯电动方程式报道"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "重庆大学：2025中国大学生方程式赛事",
+              "url": "https://www.cqu.edu.cn/info/1111/63651.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "在办",
+          "status_basis": "2026系列赛已启动；只核实部分分项结束，未核实全部系列赛结束。",
+          "participants": {
+            "reported": "203支赛车队完成在线报名（78油车、86电车、39无人车）",
+            "unit": "队",
+            "scope": "截至2026-03-09正式报名"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "2026正式参赛车队名单",
+              "url": "https://gef.sae-china.org/a7251.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "系列赛下的子赛事未拆分；需以获奖年份的具体系列赛、赛项和车队角色为准。"
+    },
+    {
+      "id": "2023-02",
+      "name": "KTK设计奖·全球华人设计比赛",
+      "official_website": "https://www.ktkda.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1.4万余件参赛作品",
+            "unit": "作品",
+            "scope": "专业组与学生组"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "KTK 2024获奖完整名单",
+              "url": "https://ktkda.cn/newsDetail.aspx?flowNo=6030"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "在办",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": [
+            "设计大师奖",
+            "设计师大奖",
+            "金奖",
+            "银奖",
+            "铜奖",
+            "评审奖",
+            "优秀奖",
+            "入围奖",
+            "专项设计奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": {
+            "reported": "专业组设计大师奖3万元；学生组设计师大奖2万元，均为税前",
+            "currency": "人民币",
+            "scope": "官网2026章程"
+          },
+          "sources": [
+            {
+              "title": "KTK 2026参赛规章",
+              "url": "https://www.ktkda.cn/competition.aspx"
+            }
+          ],
+          "notes": "官网2026规则按专业组、学生组和分区赛/全国赛分别设置；奖项数不等于获奖结果。"
+        }
+      },
+      "notes": "各届主题和作品类别变化较大，应以官网对应届次通知为准。"
+    },
+    {
+      "id": "2023-03",
+      "name": "大学生财务决策竞赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "全国300余所高校、近万名学生",
+            "unit": "人/校",
+            "scope": "第十二届网中网杯全国总决赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "东北大学秦皇岛分校：第十二届财务决策大赛",
+              "url": "https://glxy.neuq.edu.cn/info/1311/9025.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "郑州商学院：2026网中网杯全国总决赛",
+              "url": "https://www.zbu.edu.cn/jwc/2026/0609/c911a112777/page.htm"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "2023目录没有官网链接。因同名或近似赛事可能由不同组织实施，未把近年“网中网杯”规则、主办关系或数据直接回填为本条赛事事实。"
+    },
+    {
+      "id": "2023-04",
+      "name": "“中译国青杯”国际组织文件翻译大赛",
+      "official_website": "https://youthcup.ctpc.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "9个国家和地区、800余所高校、6500余名报名者",
+            "unit": "人/校",
+            "scope": "中译国青杯"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "华东政法大学：中译国青杯报道",
+              "url": "https://news.ecupl.edu.cn/2024/0323/c672a212924/page.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "官网当前展示届次规则；本记录仅抽取赛事长期主题，获奖年份的语种、组别与具体评审要求须另核。"
+    },
+    {
+      "id": "2023-05",
+      "name": "中国大学生人力资源创新实践大赛（HRU大赛）",
+      "official_website": "http://www.cnhru.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "100余所高校、1000余名选手",
+            "unit": "人/校",
+            "scope": "第九届总决赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "青岛工学院：第九届HRU大赛",
+              "url": "https://www.qit.edu.cn/info/1032/50151.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "竞赛名称和赛道设置存在届次变化；简历核验时应核对年份、赛道、组别及个人负责内容。"
+    },
+    {
+      "id": "2023-06",
+      "name": "中国大学生广告艺术节学院奖",
+      "official_website": "https://www.5iidea.com/xyj",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "8849组作品，1000余所高校",
+            "unit": "作品/校",
+            "scope": "学院奖2024秋季征集相关茅台王子杯子赛事报道；不是全年合计"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "天津财经大学：2024学院奖",
+              "url": "https://zhujiang.tjufe.edu.cn/2024/1211/c62a26713/page.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录中的“学院奖”与“全国大学生广告艺术大赛”是不同赛事，不应合并。具体奖项和命题以对应届次规则为准。"
+    },
+    {
+      "id": "2023-07",
+      "name": "中国石油工程设计大赛",
+      "official_website": "https://cpedc.cup.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "49所高校及科研院所、4511支队伍、6500余名选手、2906份作品",
+            "unit": "队/人/作品",
+            "scope": "第十五届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "一等奖27组、二等奖94组、三等奖359组",
+            "unit": "组",
+            "scope": "总决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国石油工程设计大赛颁奖大会",
+              "url": "https://cpedc.cup.edu.cn/c/dsxw/725.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "近届题目和赛项可能调整；个人贡献应结合具体专业模块与团队成果核实。"
+    },
+    {
+      "id": "2023-08",
+      "name": "中国国际飞行器设计挑战赛",
+      "official_website": "https://www.sport.gov.cn/hgzx/n15154/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "100余所院校、1600余名师生",
+            "unit": "人/校",
+            "scope": "总决赛"
+          },
+          "award_categories": null,
+          "award_rate": "科技创新评比获奖作品不超过参评作品60%；一/二/三等奖按实际参赛组数15%/20%/25%",
+          "awards": null,
+          "bonuses": {
+            "reported": "第一名2000元、第二名1000元、第三名500元，税后、按机组",
+            "currency": "人民币",
+            "scope": "2026江苏新沂站，不能当作全国总决赛奖金"
+          },
+          "sources": [
+            {
+              "title": "体育总局：2026 CADC成绩册",
+              "url": "https://www.sport.gov.cn/hgzx/n5375/c30166538/content.html"
+            },
+            {
+              "title": "2026 CADC参赛通知",
+              "url": "https://www.sport.gov.cn/hgzx/n15154/c29918692/content.html"
+            },
+            {
+              "title": "体育总局：2026 CADC江苏新沂站通知",
+              "url": "https://www.sport.gov.cn/hgzx/n14912/n14914/n14923/c29862033/content.html"
+            }
+          ],
+          "notes": "未查得字段：。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "目录以“国际”命名不等同于每届均为国际组别；具体项目、参赛资格和比赛规则须按获奖年份核对。"
+    },
+    {
+      "id": "2023-09",
+      "name": "“中装杯”全国大学生环境设计大赛",
+      "official_website": "https://www.cbda.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "官网及赛题常经中装新网、摩课云等渠道发布；目录名称与近年届次名称可能存在简称差异。"
+    },
+    {
+      "id": "2023-10",
+      "name": "东方设计奖·全国高校创新设计大赛",
+      "official_website": "https://oda.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1000余所高校师生报名作品",
+            "unit": "作品/校",
+            "scope": "东方设计奖"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "乐山师范学院：2024东方设计奖",
+              "url": "https://www.lsnu.edu.cn/info/1041/4380.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "不同类别和命题的评审标准差异明显；不能用一个赛项的制作要求概括所有获奖作品。"
+    },
+    {
+      "id": "2023-11",
+      "name": "“外教社·词达人杯”全国大学生英语词汇能力大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": [
+            "特等奖",
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导教师奖",
+            "优秀组织奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "2025章程明确省赛和全国决赛均按四级奖项设置；比例见 award_rate。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "2023目录未给出竞赛网址；平台入口和具体组别以当年主办方通知为准。"
+    },
+    {
+      "id": "2023-12",
+      "name": "全国大学生人力资源管理综合能力竞赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未提供赛事官网链接，所列来源为主办方信息的高校转发；近年届次规则不等同于 2023 届规则。"
+    },
+    {
+      "id": "2023-13",
+      "name": "全国大学生计算机应用能力与信息素养大赛",
+      "official_website": "https://www.51ds.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "官网近年将赛事名称表述为“计算机应用能力与数字素养大赛”；分析 2023 获奖记录时应保留简历原名并核对届次。"
+    },
+    {
+      "id": "2023-14",
+      "name": "全国大学生软件创新大赛",
+      "official_website": "https://www.swcontest.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "341所高校、1530支队伍",
+            "unit": "队/校",
+            "scope": "第十七届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "海南大学：第十七届软件创新大赛",
+              "url": "https://cs.hainanu.edu.cn/info/1201/7540.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "具体题目、技术栈、个人或团队赛制以获奖届次通知为准。"
+    },
+    {
+      "id": "2023-15",
+      "name": "全国大学生软件测试大赛",
+      "official_website": "https://www.mooctest.org/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "516所高校、15690名师生",
+            "unit": "人/校",
+            "scope": "总决赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": {
+            "reported": "个人全国二等奖奖金1000元（学校报道）",
+            "currency": "人民币",
+            "scope": "具体奖项"
+          },
+          "sources": [
+            {
+              "title": "玉林师范学院：2024软件测试大赛",
+              "url": "https://cse.ylu.edu.cn/info/1038/4769.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "近年赛道会更新；不能仅凭赛事名称推定选手具备自动化测试或测试开发经验。"
+    },
+    {
+      "id": "2023-16",
+      "name": "全国大学生语言文字能力大赛",
+      "official_website": "https://www.yywz.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "全国决赛一等奖317、二等奖1575、三等奖2092、优秀奖1050",
+            "unit": "人",
+            "scope": "三个组别"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "语言文字能力大赛：2024决赛公示",
+              "url": "https://www.yywz.org.cn/index/index/newinfo/id/242"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录所列名称与近年官网名称略有变化，获奖年份和具体组别需核对。"
+    },
+    {
+      "id": "2023-17",
+      "name": "全国大学生结构设计信息技术大赛",
+      "official_website": "http://www.gseducation.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "官网曾由广厦教育网发布赛题；软件版本、建筑条件和答辩要求须按届次核对。"
+    },
+    {
+      "id": "2023-18",
+      "name": "全国大学生商务谈判大赛",
+      "official_website": "https://www.negotiationchina.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "赛制、语言和案例范围按届次变化；仅有参赛经历不能推断真实商业谈判经验。"
+    },
+    {
+      "id": "2023-19",
+      "name": "全国大学生数学竞赛",
+      "official_website": "https://www.cmathc.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "32.5万余名学生报名初赛",
+            "unit": "人",
+            "scope": "第十六届初赛"
+          },
+          "award_categories": null,
+          "award_rate": "初赛获奖比例约34.3%",
+          "awards": {
+            "reported": "获奖111756人：一等奖25213、二等奖38706、三等奖47837",
+            "unit": "人",
+            "scope": "初赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国大学生数学竞赛：第十六届初赛获奖通知",
+              "url": "https://www.cmathc.org.cn/csmd/101.html"
+            }
+          ],
+          "notes": "未查得字段：bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "325304人报名初赛；决赛实际1229人",
+            "unit": "人",
+            "scope": "第十六届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "决赛一等奖269、二等奖360、三等奖590",
+            "unit": "人",
+            "scope": "全国决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国大学生数学竞赛：第十六届决赛",
+              "url": "https://www.cmathc.org.cn/csmd/136.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "352138人报名初赛；决赛实际1342人",
+            "unit": "人",
+            "scope": "第十七届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "决赛一等奖281、二等奖400、三等奖627",
+            "unit": "人",
+            "scope": "全国决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国大学生数学竞赛：第十七届决赛",
+              "url": "https://www.cmathc.org.cn/xwdt/470.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "获奖信息应带上专业或非专业组、初赛或决赛阶段和具体年份。"
+    },
+    {
+      "id": "2023-20",
+      "name": "全国邮政行业职业教育快递技能大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "2023目录注明“高职赛”；未找到稳定的独立赛事官网，所列来源为主管部门及承办信息的公开转述。"
+    },
+    {
+      "id": "2023-21",
+      "name": "全国供应链大赛",
+      "official_website": "https://www.clpp.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "6008人报名；其中学生4916人、教师571人、企业职工521人",
+            "unit": "人",
+            "scope": "2024全国供应链大赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "本科组决赛一等奖24队、二等奖34队",
+            "unit": "队",
+            "scope": "本科组"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "厦门华厦学院：2024全国供应链大赛",
+              "url": "https://sg.hxxy.edu.cn/info/1085/7427.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "近年赛制包含不同赛项；不能仅凭赛事名称认定参赛者完成了供应链岗位实习。"
+    },
+    {
+      "id": "2023-22",
+      "name": "全国高校计算机能力挑战赛",
+      "official_website": "https://www.ncccu.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1500余所高校、4万余人次",
+            "unit": "校/人次",
+            "scope": "2024全国高校计算机能力挑战赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国高校计算机能力挑战赛官网：2024总结",
+              "url": "https://www.ncccu.org.cn/ueditor/php/upload/file/20241209/1733716340299573.pdf"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1500余所高校、4万余人次",
+            "unit": "校/人次",
+            "scope": "2025届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国高校计算机能力挑战赛：2025总结",
+              "url": "https://ncccu2025.oss-cn-zhangjiakou.aliyuncs.com/ueditor/20260107/54805ec2edb1019fe3cc42a6bd015b01.pdf"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": [
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导奖/组织奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "官网明确个人赛和团队赛分项评奖。"
+        }
+      },
+      "notes": "必须结合具体赛项判断技术难度；不同科目获奖不宜按同一能力画像处理。"
+    },
+    {
+      "id": "2023-23",
+      "name": "全国高校企业价值创造实战竞赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "全国31个省区市、434所院校、3860支队伍、13020名选手",
+            "unit": "校/队/人",
+            "scope": "第七届"
+          },
+          "award_categories": null,
+          "award_rate": "晋级全国总决赛及获奖概率约4.6%",
+          "awards": {
+            "reported": "一等奖27队",
+            "unit": "队",
+            "scope": "全国总决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "吉林财经大学：全国高校企业价值创造实战竞赛统计",
+              "url": "https://www.jlufe.edu.cn/__local/C/70/06/A3BF94C01882148F98D1CEEC7AA_22F9F027_34359B.pdf"
+            }
+          ],
+          "notes": "未查得字段：bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "全国51所院校参加总决赛",
+            "unit": "校",
+            "scope": "第八届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "江苏理工学院：2025竞赛总决赛",
+              "url": "https://glxy.jsut.edu.cn/2025/1224/c8569a207512/page.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "全国近4万名选手参赛；总决赛41支本科队、12支高职队",
+            "unit": "人/队",
+            "scope": "第九届暨第十五届全国财会大赛总决赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "团队一等奖8个、二等奖19个、三等奖26个",
+            "unit": "队",
+            "scope": "总决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国教育新闻网：第九届全国高校企业价值创造实战竞赛总决赛",
+              "url": "https://m.edu.k618.cn/gaoxiao/202611/t20261108_20065282.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "目录未附官网；近年同名赛事信息仅用于初步识别，不视为 2023 届规则或组织关系的证据。"
+    },
+    {
+      "id": "2023-24",
+      "name": "全国高校经济决策虚仿实验大赛",
+      "official_website": "https://www.jiecl.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "广西大学：第七届全国高校经济决策虚仿实验大赛",
+              "url": "https://sef.gxu.edu.cn/info/10837/89714.htm"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "数百所高校、数千支队伍（赛事报道概数）",
+            "unit": "校/队",
+            "scope": "第八届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "桂林学院：第八届全国高校经济决策虚仿实验大赛",
+              "url": "https://www.glc.edu.cn/info/1012/50088.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "300余所高校、2万余名选手",
+            "unit": "校/人",
+            "scope": "第九届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "湖北师范大学：第九届竞赛通知",
+              "url": "https://www.hbfs.edu.cn/_upload/article/files/25/7b/c31be1244486b536cce17a22b3ef/bbd253ff-1065-4f78-8af1-53d98568bdf0.pdf"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "官网和赛项主题需以获奖届次公告为准，避免把近年多个主题当作某届固定设置。"
+    },
+    {
+      "id": "2023-25",
+      "name": "全国高校模拟飞行锦标赛",
+      "official_website": "https://www.sport.gov.cn/hgzx/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "国家体育总局：2024全国高校模拟飞行锦标赛",
+              "url": "https://www.sport.gov.cn/hgzx/n11026/c28180570/content.html"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "17所高校、近300名选手",
+            "unit": "校/人",
+            "scope": "全国高校锦标赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "报道学校获一等奖34项、二等奖4项、三等奖11项",
+            "unit": "项",
+            "scope": "单校获奖统计，不代表全国总量"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国民用航空飞行学院：2025模拟飞行锦标赛",
+              "url": "https://news.cafuc.edu.cn/info/1012/75073.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应核对获奖年份的具体飞行科目、设备和参赛组别；模拟器成绩不能外推为持证或实飞能力。"
+    },
+    {
+      "id": "2023-26",
+      "name": "全国高等学校民航服务技能大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "内蒙古师范大学：2024全国高等学校民航服务技能大赛",
+              "url": "https://tour.imnu.edu.cn/info/1121/4360.htm"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "全国百余所高校参赛",
+            "unit": "校",
+            "scope": "2025届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "湖南科技学院：2025民航服务技能大赛",
+              "url": "https://www.huse.edu.cn/news/info/1808/151541.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "渭南师范学院：第十六届民航服务技能大赛",
+              "url": "https://news.wnu.edu.cn/info/1002/27783.htm"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "未找到可确认为该届赛事的独立官方网站；本条为谨慎的领域画像，不能替代官方规则。"
+    },
+    {
+      "id": "2023-27",
+      "name": "“求是杯”国际诗歌创作与翻译大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "623所高校、553个专业、4653篇作品",
+            "unit": "校/专业/篇",
+            "scope": "第七届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "南开大学：第七届求是杯赛事总结",
+              "url": "https://sfs.nankai.edu.cn/2026/0402/c4597a591983/page.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "目录未附官网；该来源为近年高校主办方页面，不代表 2023 届具体语种与赛制。"
+    },
+    {
+      "id": "2023-28",
+      "name": "时报金犊奖",
+      "official_website": "https://www.ad-young.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "全球1000余所高校、10万余件作品",
+            "unit": "校/作品",
+            "scope": "第33届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "365件获奖作品",
+            "unit": "件",
+            "scope": "全部获奖作品"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "华南农业大学：第33届时报金犊奖",
+              "url": "https://scau.edu.cn/2024/1128/c17646a394104/page.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1727所院校、104080件作品",
+            "unit": "校/作品",
+            "scope": "第34届"
+          },
+          "award_categories": null,
+          "award_rate": "等级奖以上比例不到0.5%",
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "东北农业大学：第34届时报金犊奖",
+              "url": "https://www.neau.edu.cn/info/1043/32569.htm"
+            }
+          ],
+          "notes": "未查得字段：bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "16个国家和地区、近1765所院校、11万余件作品、近79万人参与",
+            "unit": "校/作品/人",
+            "scope": "第35届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "东北农业大学：第35届时报金犊奖",
+              "url": "https://www.neau.edu.cn/info/1301/38366.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "评估简历时应区分全球、地区、类别和企业命题奖项，避免只看“金犊奖”简称。"
+    },
+    {
+      "id": "2023-29",
+      "name": "国际先进机器人及仿真技术大赛",
+      "official_website": "https://www.ilur.org/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未提供官网地址，按主办组织官网核验；赛项规则应回到获奖年份查找。"
+    },
+    {
+      "id": "2023-30",
+      "name": "金蝶云管理创新杯",
+      "official_website": "https://developer.kingdee.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "近年名称和平台模块可能更新；应记录获奖时赛道、软件版本及个人操作职责。"
+    },
+    {
+      "id": "2023-31",
+      "name": "“品茗杯”全国高校智能建造创新应用大赛",
+      "official_website": "https://www.ccen.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "预赛报名队伍连续两年超5000；总决赛近500支队伍，384所高校",
+            "unit": "队/校",
+            "scope": "第五届"
+          },
+          "award_categories": [
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导教师奖",
+            "优秀组织奖"
+          ],
+          "award_rate": "团队奖一等奖10%、二等奖20%、三等奖30%；前60%晋级总决赛",
+          "awards": {
+            "reported": "一等奖33项、二等奖61项、三等奖89项",
+            "unit": "项",
+            "scope": "总决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国建设教育协会：第五届品茗杯总决赛",
+              "url": "https://www.ccen.com.cn/info/1150/5367.htm"
+            }
+          ],
+          "notes": "第五届总决赛官方通知列明一、二、三等奖；具体名额已记录在 awards。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "赛事名称与冠名可能变化；应核验具体届次、赛道和获奖队伍提交的成果类型。"
+    },
+    {
+      "id": "2023-32",
+      "name": "“泰山杯”全国医学影像技术专业大学生（本科）实践技能大赛",
+      "official_website": "https://csit.cma.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "64所院校报名，46所进入决赛，350余名选手",
+            "unit": "校/人",
+            "scope": "第十一届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "邵阳学院：第十一届泰山杯",
+              "url": "https://fsdeyy.hnsyu.edu.cn/info/1038/2406.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应核对本科组身份、届次和具体技能模块；医疗操作能力需由正规课程与实习经历另行佐证。"
+    },
+    {
+      "id": "2023-33",
+      "name": "新华三杯全国大学生数字技术大赛",
+      "official_website": "https://www.h3c.com/cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "近千所院校、4万余名学子报名",
+            "unit": "校/人",
+            "scope": "第十四届（2024-2025赛季）"
+          },
+          "award_categories": [
+            "特等奖",
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导教师奖",
+            "优秀组织奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": {
+            "reported": "个人赛特等奖平板电脑；一二三等奖为电子设备；团队赛为H3C认证培训/考试名额",
+            "currency": "实物/培训名额",
+            "scope": "官网奖项设置"
+          },
+          "sources": [
+            {
+              "title": "新华三集团：第十四届大赛收官",
+              "url": "https://www.h3c.com/cn/d_202505/2454478_30008_0.htm"
+            },
+            {
+              "title": "新华三第十四届官网奖项设置",
+              "url": "https://www.h3c.com/cn/pub/2024_Event/h3c_cup2024/"
+            }
+          ],
+          "notes": "新华三官网按本科组/职业组分别设置个人赛和团队赛奖项。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "700余所院校、4.7万余名学子报名",
+            "unit": "校/人",
+            "scope": "第十五届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "新华三集团：第十五届大赛收官",
+              "url": "https://www.h3c.com/cn/d_202611/2973583_30008_0.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "官网产品赛项和竞赛题目会变化；需区分竞赛奖项与厂商培训证书。"
+    },
+    {
+      "id": "2023-34",
+      "name": "“福思特杯”全国大学生审计精英挑战赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未列赛事官网；检索到的公开详情多为近年通知，不能直接当作 2023 届赛程、组别或主办关系证据。"
+    },
+    {
+      "id": "2024-01",
+      "name": "中国国际大学生创新大赛",
+      "official_website": "https://cy.ncss.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "2083.6万人次报名，514万个项目，5406所学校",
+            "unit": "人次/项目/校",
+            "scope": "中国国际大学生创新大赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "教育部：2024创新大赛获奖名单",
+              "url": "https://www.moe.gov.cn/srcsite/A08/s7056/202504/t20250418_1187857.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "2443万人次报名，619万个项目，5673所学校",
+            "unit": "人次/项目/校",
+            "scope": "中国国际大学生创新大赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "获奖项目4729个",
+            "unit": "项目",
+            "scope": "全国总决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "教育部：2025创新大赛获奖名单",
+              "url": "https://www.moe.gov.cn/srcsite/A08/s7056/202602/t20260227_1429516.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录注明原中国国际“互联网+”大学生创新创业大赛；分析获奖时应核对届次名称、赛道和项目阶段。"
+    },
+    {
+      "id": "2024-02",
+      "name": "“挑战杯”全国大学生课外学术科技作品竞赛",
+      "official_website": "http://www.tiaozhanbei.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": "未找到挑战杯2026届全国赛事启动或结果的直接官方证据；不据两年一届规律推断状态。",
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "与“挑战杯”创业计划竞赛为不同主体赛事；需区别校赛、省赛、全国赛及专项赛。"
+    },
+    {
+      "id": "2024-03",
+      "name": "“挑战杯”中国大学生创业计划大赛",
+      "official_website": "http://www.chuangqingchun.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录将其与课外学术科技作品竞赛分列；核验时关注作品是计划书、创业实践还是专项赛成果。"
+    },
+    {
+      "id": "2024-04",
+      "name": "ACM-ICPC国际大学生程序设计竞赛",
+      "official_website": "https://acm.cumt.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录给出的高校站点为赛事信息入口；应核对区域赛、总决赛、组别、队伍名次和个人出场记录。"
+    },
+    {
+      "id": "2024-05",
+      "name": "全国大学生数学建模竞赛",
+      "official_website": "https://www.mcm.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "65761队（本科59278、高职高专6483），近20万名大学生",
+            "unit": "队/人",
+            "scope": "2024高教社杯"
+          },
+          "award_categories": null,
+          "award_rate": "总获奖比例约2.87%；本科一等奖0.5%、二等奖2.03%；高职一等奖1.31%、二等奖4.63%",
+          "awards": {
+            "reported": "全国奖1885队",
+            "unit": "队",
+            "scope": "全国奖"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国工业与应用数学学会：2024数模颁奖",
+              "url": "https://www.csiam.org.cn/1037/202412/2261.html"
+            }
+          ],
+          "notes": "未查得字段：bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "68311队（本科61463、高职高专6848），20余万名学生",
+            "unit": "队/人",
+            "scope": "2025高教社杯"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "全国奖1916队；本科一等奖294、二等奖1204；高职一等奖91、二等奖327",
+            "unit": "队",
+            "scope": "全国奖"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国大学生在线：2025数模颁奖",
+              "url": "https://dxs.moe.gov.cn/zx/a/hd_sxjm_gsyw/251208/2027559.shtml"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "此处为固定能力画像；参赛人数、奖项比例、题目和规则应按获奖年份另行查证。"
+    },
+    {
+      "id": "2024-06",
+      "name": "全国大学生电子设计竞赛",
+      "official_website": "http://www.nuedcchina.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需注明具体赛题、获奖层级与个人负责模块；奖项不能自动证明独立完成整个系统。"
+    },
+    {
+      "id": "2024-07",
+      "name": "中国大学生医学技术技能大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未给独立官网，仅注明主办单位为教育部；应用赛事年份、专业组和赛项材料补足核验。"
+    },
+    {
+      "id": "2024-08",
+      "name": "全国大学生机械创新设计大赛",
+      "official_website": "http://umic.ckcest.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国大学生机械创新设计大赛官网",
+              "url": "http://umic.ckcest.cn/"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "赛题主题和成果形式会变；获奖记录应说明作品名称、实物完成情况及个人职责。"
+    },
+    {
+      "id": "2024-09",
+      "name": "全国大学生结构设计竞赛",
+      "official_website": "http://www.structurecontest.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需区分校赛、省级分区赛和全国赛；单纯提交设计图不代表完成结构模型竞赛全流程。"
+    },
+    {
+      "id": "2024-10",
+      "name": "全国大学生广告艺术大赛",
+      "official_website": "http://www.sun-ada.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "本赛事与 2023 目录中的“中国大学生广告艺术节学院奖”不同；应按作品类别和全国/赛区等级核验。"
+    },
+    {
+      "id": "2024-11",
+      "name": "全国大学生智能汽车竞赛",
+      "official_website": "http://www.eepw.com.cn/event/action/freescale_car2012/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录链接为较早赛事入口；使用前应核实当届官方站点、赛道名称和竞赛规则。"
+    },
+    {
+      "id": "2024-12",
+      "name": "全国大学生电子商务“创新、创意及创业”挑战赛",
+      "official_website": "http://www.3chuang.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核对常规赛或具体主题赛、赛区层级和项目是否实际运营。"
+    },
+    {
+      "id": "2024-13",
+      "name": "中国大学生工程实践与创新能力大赛",
+      "official_website": "http://www.gcxl.edu.cn/new/index.html",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "同一届次下不同赛项任务差异较大；获奖者应说明具体赛项、作品和个人岗位。"
+    },
+    {
+      "id": "2024-14",
+      "name": "全国大学生物流设计大赛",
+      "official_website": "http://www.clpp.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "699支队伍，近5万名师生参与",
+            "unit": "队/人",
+            "scope": "第八届"
+          },
+          "award_categories": [
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "最佳组织奖"
+          ],
+          "award_rate": null,
+          "awards": {
+            "reported": "一等奖18、二等奖33、三等奖39",
+            "unit": "队",
+            "scope": "总决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "安徽大学：第八届物流设计大赛",
+              "url": "https://www.ahu.edu.cn/_t992/2024/0606/c15129a342081/page.htm"
+            }
+          ],
+          "notes": "第八届总决赛官方报道列明奖项。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "757支队伍，300多所院校；120队进入总决赛",
+            "unit": "队/校",
+            "scope": "第九届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "江苏大学：2025物流设计大赛",
+              "url": "https://auto.ujs.edu.cn/info/1002/51987.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "本记录不混入全国供应链大赛的经营模拟赛项；应核实作品主题和获奖层级。"
+    },
+    {
+      "id": "2024-15",
+      "name": "“外研社·国才杯”“理解当代中国”全国大学生外语能力大赛",
+      "official_website": "http://uchallenge.unipus.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录所列为四个英语赛项；每个赛项独立评审，需记录获奖项目名称和组别。"
+    },
+    {
+      "id": "2024-16",
+      "name": "两岸新锐设计竞赛·华灿奖",
+      "official_website": "http://www.huacanjiang.com/home",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "30余万人、7万余件作品、1637所高校及机构",
+            "unit": "人/作品/校",
+            "scope": "第九届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国科协：华灿奖第九届颁奖",
+              "url": "https://www.castscs.org.cn/lm22/art/2024/art_2020227182.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "48万余名学生、12万余件作品",
+            "unit": "人/作品",
+            "scope": "第十届"
+          },
+          "award_categories": [
+            "特等奖",
+            "一等奖",
+            "二等奖",
+            "三等奖"
+          ],
+          "award_rate": null,
+          "awards": {
+            "reported": "获奖作品2959项：特等奖4、一等奖436、二等奖1073、三等奖1446",
+            "unit": "项",
+            "scope": "总赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "第十届华灿奖获奖公示",
+              "url": "https://www.shejijingsai.com/2025/11/1459631.html"
+            }
+          ],
+          "notes": "第十届华灿奖官方公示列明四级获奖作品。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "在办",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": {
+            "reported": "高校学生组特等奖2项，每项奖金2万元（章程/征集通知）",
+            "currency": "人民币",
+            "scope": "2026赛事计划"
+          },
+          "sources": [
+            {
+              "title": "2026华灿奖参赛报名通知",
+              "url": "https://www.sues.edu.cn/97/8c/c26790a300940/page.htm"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "赛道类别及交流活动按届次变化；建议留存作品链接和具体奖项全称。"
+    },
+    {
+      "id": "2024-17",
+      "name": "全国大学生创新创业训练计划年会展示",
+      "official_website": "http://gjcxcy.bjtu.edu.cn/Index.aspx",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "获奖或入选表述需核对年会展示名单、项目级别、项目主持人及团队成员角色。"
+    },
+    {
+      "id": "2024-18",
+      "name": "全国大学生化工设计竞赛",
+      "official_website": "http://iche.zju.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "451所高校、3686支队伍、1.8万余人",
+            "unit": "校/队/人",
+            "scope": "第十八届"
+          },
+          "award_categories": [
+            "特等奖",
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "设计文档质量优秀奖",
+            "工程图纸绘制优秀奖",
+            "现代设计方法应用优秀奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国大学生化工设计竞赛：2024联席会议",
+              "url": "https://iche.zju.edu.cn/a/sstz/1541.html"
+            }
+          ],
+          "notes": "全国奖和专项优秀奖分开设置。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "479所高校、4337支队伍、2万余人",
+            "unit": "校/队/人",
+            "scope": "第十九届"
+          },
+          "award_categories": [
+            "特等奖",
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "设计文档质量优秀奖",
+            "工程图纸绘制优秀奖",
+            "现代设计方法应用优秀奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国化工学会：第十九届化工设计竞赛",
+              "url": "https://www.ciesc.cn/site/content/4327.html"
+            }
+          ],
+          "notes": "全国奖和专项优秀奖分开设置。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "503所高校、4690支队伍、2.3万余人",
+            "unit": "校/队/人",
+            "scope": "第二十届"
+          },
+          "award_categories": [
+            "特等奖",
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "设计文档质量优秀奖",
+            "工程图纸绘制优秀奖",
+            "现代设计方法应用优秀奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国化工学会：第二十届化工设计竞赛",
+              "url": "https://www.ciesc.cn/site/content/4906.html"
+            }
+          ],
+          "notes": "全国奖和专项优秀奖分开设置。"
+        }
+      },
+      "notes": "应结合具体设计题目、竞赛阶段和队员模块辨别贡献，不能只以团队奖项推断每人掌握全部设计环节。"
+    },
+    {
+      "id": "2024-19",
+      "name": "全国大学生机器人大赛（CURC）",
+      "official_website": "http://www.cnrobocon.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "全国大学生机器人大赛（CURC）官网",
+              "url": "http://www.cnrobocon.net/"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录注明系列含 RoboMaster 与 RoboCon；简历核验必须落实到具体子赛、赛项和获奖阶段。"
+    },
+    {
+      "id": "2024-20",
+      "name": "全国大学生市场调查与分析大赛",
+      "official_website": "http://www.china-cssc.org/list-56-1.html",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1259所高校、37.5万名学生参赛",
+            "unit": "校/人",
+            "scope": "第十六届"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国农业大学：第十六届市调大赛",
+              "url": "https://news.cau.edu.cn/zhxwnew/0cc5abbfa15143bfa22615c8ded2e0c6.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "应核实获奖作品实际调研样本、赛道、组别和个人数据分析职责。"
+    },
+    {
+      "id": "2024-21",
+      "name": "全国大学生先进成图技术与产品信息建模创新大赛",
+      "official_website": "http://www.chengtudasai.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "212所高校、467支队伍、3700余名现场参赛队员；另有9000余人线上参赛",
+            "unit": "校/队/人",
+            "scope": "第十七届全国总决赛"
+          },
+          "award_categories": [
+            "团体奖",
+            "个人奖",
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导教师奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "贵州大学：第十七届全国总决赛",
+              "url": "https://mech.gzu.edu.cn/2024/0807/c23085a227545/page.htm"
+            }
+          ],
+          "notes": "第十七届赛事分团体、个人及组别奖项。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1000余所高校、1万余名学生（学校报道口径）",
+            "unit": "校/人",
+            "scope": "第十八届赛事"
+          },
+          "award_categories": [
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导教师奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "商洛学院：第十八届先进成图大赛",
+              "url": "https://www.slu.edu.cn/2025/0820/c199a53417/page.htm"
+            }
+          ],
+          "notes": "第十八届赛事按赛道/组别设置等级奖。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "1200余所高校、53万名大学生参与；2.1万名晋级全国总决赛",
+            "unit": "校/人",
+            "scope": "第十九届"
+          },
+          "award_categories": [
+            "一等奖",
+            "二等奖",
+            "三等奖",
+            "优秀指导教师奖"
+          ],
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "安徽师范大学：第十九届先进成图大赛",
+              "url": "https://www.hsu.edu.cn/49/a2/c98a215458/page.htm"
+            }
+          ],
+          "notes": "第十九届赛事按赛道/组别设置等级奖。"
+        }
+      },
+      "notes": "简历应说明专业组、软件赛或创新赛等实际赛项，避免将所有赛项统一归为CAD绘图。"
+    },
+    {
+      "id": "2024-22",
+      "name": "全国三维数字化创新设计大赛",
+      "official_website": "https://3dds.3ddl.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需记录具体主题、软件工具和是否制作实体样机，赛道之间不宜直接比较。"
+    },
+    {
+      "id": "2024-23",
+      "name": "“西门子杯”中国智能制造挑战赛",
+      "official_website": "http://www.siemenscup-cimc.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "西门子杯中国智能制造挑战赛官网",
+              "url": "http://www.siemenscup-cimc.org.cn/"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "获奖层级和个人能力需结合具体赛项、赛区阶段及实际负责的控制或系统模块判断。"
+    },
+    {
+      "id": "2024-24",
+      "name": "中国大学生服务外包创新创业大赛",
+      "official_website": "http://www.fwwb.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应注明企业命题或创业类赛道、作品完成度和团队分工。"
+    },
+    {
+      "id": "2024-25",
+      "name": "中国大学生计算机设计大赛",
+      "official_website": "http://jsjds.blcu.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "获奖简历应保留完整赛道名称和组别；作品获奖不自动代表具备生产级软件工程经验。"
+    },
+    {
+      "id": "2024-26",
+      "name": "中国高校计算机大赛",
+      "official_website": "http://www.c4best.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "按官网实际子赛、赛区或全国阶段记录；不同子赛奖项不能只按系列名横向解释。"
+    },
+    {
+      "id": "2024-27",
+      "name": "蓝桥杯全国软件和信息技术专业人才大赛",
+      "official_website": "http://dasai.lanqiao.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "蓝桥杯全国软件和信息技术专业人才大赛官网",
+              "url": "http://dasai.lanqiao.cn/"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "奖项含省赛与全国赛、不同组别和科目；应避免把省赛获奖写成全国奖。"
+    },
+    {
+      "id": "2024-28",
+      "name": "米兰设计周——中国高校设计学科师生优秀作品展",
+      "official_website": "http://www.dandad.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录链接域名与赛事名称并非明显同名，需核实具体年份的官方报名页、展览信息和奖项性质。"
+    },
+    {
+      "id": "2024-29",
+      "name": "全国大学生地质技能竞赛",
+      "official_website": "https://yuanxi.cugb.edu.cn/competition/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核实获奖项目、个人组别与野外或室内赛项；不能由竞赛推断实际地质勘查工作经历。"
+    },
+    {
+      "id": "2024-30",
+      "name": "全国大学生光电设计竞赛",
+      "official_website": "http://gd.p.moocollege.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "项目需要区分光学设计、硬件系统、算法处理或综合应用等实际方向。"
+    },
+    {
+      "id": "2024-31",
+      "name": "全国大学生集成电路创新创业大赛",
+      "official_website": "http://univ.ciciec.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "记录具体赛道、使用的工具和是否有芯片级实现或流片，避免笼统描述为芯片设计。"
+    },
+    {
+      "id": "2024-32",
+      "name": "全国大学生金相技能大赛",
+      "official_website": "http://www.cnzjjx.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应核实个人赛或团队赛、试样类别、比赛层级及实际操作环节。"
+    },
+    {
+      "id": "2024-33",
+      "name": "全国大学生信息安全竞赛",
+      "official_website": "http://www.ciscn.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "229所高校、3598名学生、1023件作品",
+            "unit": "校/人/作品",
+            "scope": "第十七届作品赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "三等奖及以上198件",
+            "unit": "作品",
+            "scope": "作品赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "华东师范大学：信息安全竞赛作品赛",
+              "url": "https://mip.ecnu.edu.cn/87/77/c2118a624503/page.htm"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": "所查来源发表于2024年12月，尚未核实为2025完整届次统计。",
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "国家信息安全漏洞库：第十八届竞赛报道",
+              "url": "https://www.itsec.gov.cn/zxxw/202412/t20241225_201783.html"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": "官网见第十九届通知线索，未能核实结果与完赛状态。",
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "核实 CTF、作品创新或其他赛项、组别和阶段；竞赛成绩不是职业资质认证。"
+    },
+    {
+      "id": "2024-34",
+      "name": "未来设计师·全国高校数字艺术设计大赛",
+      "official_website": "https://www.ncda.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应记录国家赛或省赛、具体类别以及作品是否个人或团队创作。"
+    },
+    {
+      "id": "2024-35",
+      "name": "全国周培源大学生力学竞赛",
+      "official_website": "http://zpy.cstam.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "中国力学学会：第十五届周培源大学生力学竞赛通知",
+              "url": "https://www.cstam.org.cn/upload/zglixuexuehui/profile/2024/12/30/23243c42-aa51-492d-b2d4-feb893f2b701.pdf"
+            }
+          ],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核对获奖年份、竞赛阶段及个人参赛类别；不应将理论奖项写成工程设计实践。"
+    },
+    {
+      "id": "2024-36",
+      "name": "中国大学生机械工程创新创意大赛",
+      "official_website": "http://www.gczbds.org/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录所列为系列赛事并列多个子赛，须对照届次和赛项确认奖项对应方向。"
+    },
+    {
+      "id": "2024-37",
+      "name": "中国机器人大赛暨RoboCup机器人世界杯中国赛",
+      "official_website": "http://crc.drct-caa.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应明确中国赛具体赛项、组别及是否获得国际赛资格，避免把赛事名称中的世界杯误作国际总决赛成绩。"
+    },
+    {
+      "id": "2024-38",
+      "name": "“中国软件杯”大学生软件设计大赛",
+      "official_website": "http://www.cnsoftbei.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需说明赛题、所用技术栈、产品可用性和个人代码或模块贡献。"
+    },
+    {
+      "id": "2024-39",
+      "name": "中美青年创客大赛",
+      "official_website": "https://www.eol.cn/html/lx/maker/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录链接为中国教育在线赛事页面；具体组织方、年度主题和参赛地区须按当届通知核实。"
+    },
+    {
+      "id": "2024-40",
+      "name": "睿抗机器人开发者大赛（RAICOM）",
+      "official_website": "https://www.robocom.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核实具体赛项、参赛组别和机器人平台；不同技术方向的难度差异明显。"
+    },
+    {
+      "id": "2024-41",
+      "name": "“大唐杯”全国大学生新一代信息通信技术大赛",
+      "official_website": "https://dtcup.dtxiaotangren.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录注明赛事原名为全国大学生移动通信5G技术大赛；按获奖年份使用对应名称和技术范围。"
+    },
+    {
+      "id": "2024-42",
+      "name": "华为ICT大赛",
+      "official_website": "https://e.huawei.com/cn/talent/ict-academy/#/ict-contest?compId=85131973",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "80多个国家和地区、2000多所院校、17万余名学生报名",
+            "unit": "国家/校/人",
+            "scope": "2023-2024全球赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "161支队伍、470余名选手进入全球总决赛；19支队伍获特等奖",
+            "unit": "队/人",
+            "scope": "全球赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "华为：2023-2024 ICT全球赛",
+              "url": "https://www.huawei.com/cn/huaweitech/publication/202501/huawei-ict-competition"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": "完赛",
+          "status_basis": null,
+          "participants": {
+            "reported": "20多个国家和地区、8000余名学生",
+            "unit": "国家/人",
+            "scope": "2024-2025亚太区"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": {
+            "reported": "35支队伍获一二三等奖",
+            "unit": "队",
+            "scope": "亚太区决赛"
+          },
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "华为：2024-2025 ICT亚太区总决赛",
+              "url": "https://www.huawei.com/cn/news/2025/3/ict-competition-apac-final"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": "已有2025-2026赛季官网，未核实全球总决赛结束公告。",
+          "participants": {
+            "reported": "约22万人参赛（官网页面宣传口径）",
+            "unit": "人",
+            "scope": "2025-2026全球赛"
+          },
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [
+            {
+              "title": "华为ICT大赛2025-2026全球赛",
+              "url": "https://www.huawei.com/minisite/ict-competition-2025-2026-global/cn/index.html"
+            }
+          ],
+          "notes": "未查得字段：award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        }
+      },
+      "notes": "不同赛道和全球阶段门槛不同；大赛奖项与华为职业认证需分别核实。"
+    },
+    {
+      "id": "2024-43",
+      "name": "全国大学生嵌入式芯片与系统设计竞赛",
+      "official_website": "http://www.socchina.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需注明具体赛道、芯片平台、作品是否完成实物验证以及个人开发模块。"
+    },
+    {
+      "id": "2024-44",
+      "name": "全国大学生生命科学竞赛（CULSC）",
+      "official_website": "https://www.culsc.cn/#/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录注明其包含生命科学竞赛和生命创新创业大赛；核实奖项对应哪个板块及项目角色。"
+    },
+    {
+      "id": "2024-45",
+      "name": "全国大学生物理实验竞赛",
+      "official_website": "http://wlsycx.moocollege.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "必须注明实验操作、实验设计、讲课或研究等类别，不宜把奖项统一解释为同一种技能。"
+    },
+    {
+      "id": "2024-46",
+      "name": "全国高校BIM毕业设计创新大赛",
+      "official_website": "http://gxbsxs.glodonedu.com/index",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "按专业赛道、模型深度、毕业设计是否为团队作品及获奖层级补充背景。"
+    },
+    {
+      "id": "2024-47",
+      "name": "全国高校商业精英挑战赛",
+      "official_website": "http://cubec.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "必须核对五个子赛中的具体方向、赛区阶段和个人贡献，不能只写系列赛事简称。"
+    },
+    {
+      "id": "2024-48",
+      "name": "“学创杯”全国大学生创业综合模拟大赛",
+      "official_website": "http://www.bster.cn/cyds/index",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应区分创业综合模拟、创业营销等赛项，并确认获奖是校、省还是全国阶段。"
+    },
+    {
+      "id": "2024-49",
+      "name": "中国高校智能机器人创意大赛",
+      "official_website": "http://www.robotcontest.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核实作品是概念设计、仿真还是实物系统，不能仅根据赛事名称推断机器人已实际运行。"
+    },
+    {
+      "id": "2024-50",
+      "name": "中国好创意暨全国数字艺术设计大赛",
+      "official_website": "https://www.cdec.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "奖项需附具体赛项、命题及国家/省级阶段，避免将宽泛的数字艺术类别当成单一技能。"
+    },
+    {
+      "id": "2024-51",
+      "name": "中国机器人及人工智能大赛",
+      "official_website": "https://developer.apollo.auto/devcenter/gameOperations_cn.html?target=3",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "官方网站入口可能因赛项跳转；获奖说明应提供准确赛事名称、赛道、组别和作品证据。"
+    },
+    {
+      "id": "2024-52",
+      "name": "全国大学生节能减排社会实践与科技竞赛",
+      "official_website": "http://www.jienengjianpai.org/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "区分科技作品和社会实践类别，并核实节能减排效果数据来源和个人职责。"
+    },
+    {
+      "id": "2024-53",
+      "name": "“21世纪杯”全国英语演讲比赛",
+      "official_website": "https://contest.i21st.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "赛事也可能含不同年龄或国际赛段；需核实参赛组别、演讲语言和晋级阶段。"
+    },
+    {
+      "id": "2024-54",
+      "name": "iCAN大学生创新创业大赛",
+      "official_website": "https://www.g-ican.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应区分常规创新赛、专项赛和创业项目，并查验作品进展和实际应用。"
+    },
+    {
+      "id": "2024-55",
+      "name": "“工行杯”全国大学生金融科技创新大赛",
+      "official_website": "https://www.gonghangbei.com/index/Lists/index.html?id=1",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核实奖项对应具体赛题、项目是否有技术实现，以及团队成员实际负责内容。"
+    },
+    {
+      "id": "2024-56",
+      "name": "中华经典诵写讲大赛",
+      "official_website": "https://www.jingdiansxj.cn/home",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": "检索到赛事相关活动，未能确认目标竞赛全国赛当年是否完赛。",
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "未查得字段：participants,award_rate,bonuses。人数与队伍、报名与决赛人数不能直接比较；比例与奖金以注明的赛段及组别为准。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需区分诵读、书写、讲解等具体赛事项目和学生类别。"
+    },
+    {
+      "id": "2024-57",
+      "name": "“外教社杯”全国高校学生跨文化能力大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录仅注明主办单位，未列独立赛事官网；需用获奖年份的上外赛事通知补充具体赛制。"
+    },
+    {
+      "id": "2024-58",
+      "name": "百度之星·程序设计大赛",
+      "official_website": "https://star.baidu.com/#/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应核对具体年份、赛制、个人或团队身份及获奖阶段；勿与商业开发项目经验混淆。"
+    },
+    {
+      "id": "2024-59",
+      "name": "全国大学生工业设计大赛",
+      "official_website": "https://www.cuidc.net/#/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应区分概念方案、数字模型和实体样机；核实赛项与获奖层级。"
+    },
+    {
+      "id": "2024-60",
+      "name": "全国大学生水利创新设计大赛",
+      "official_website": "http://slxy.ujs.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未给独立赛事网址；应核实主办方通知、赛题主题和个人设计模块。"
+    },
+    {
+      "id": "2024-61",
+      "name": "全国大学生化工实验大赛",
+      "official_website": "http://www.cteic.com/higherEducation-199.html",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需确认是现场实验、仿真还是报告赛项，以及对应获奖年份的组织单位。"
+    },
+    {
+      "id": "2024-62",
+      "name": "全国大学生化学实验创新设计大赛",
+      "official_website": "https://cid.nju.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需区分实验设计、实验操作和科普类赛项；作品的可重复性与安全性应重点核验。"
+    },
+    {
+      "id": "2024-63",
+      "name": "全国大学生计算机系统能力大赛",
+      "official_website": "https://compiler.educg.net/#/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录官网链接指向编译方向入口；务必按获奖年份确认其具体系统赛项。"
+    },
+    {
+      "id": "2024-64",
+      "name": "全国大学生花园设计建造竞赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未列赛事官网，需以组织单位的当届通知确认竞赛范围和是否包含实际建造。"
+    },
+    {
+      "id": "2024-65",
+      "name": "全国大学生物联网设计竞赛",
+      "official_website": "https://developer.huaweicloud.com/college/wulianwang.html",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应注明具体题目、芯片或平台、作品是否在线运行和个人承担的端侧/云端职责。"
+    },
+    {
+      "id": "2024-66",
+      "name": "全国大学生信息安全与对抗技术竞赛",
+      "official_website": "http://www.isclab.org.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "与全国大学生信息安全竞赛为不同名称条目；核验时应查看参赛证书和具体赛项全称。"
+    },
+    {
+      "id": "2024-67",
+      "name": "全国大学生测绘学科创新创业智能大赛",
+      "official_website": "http://smt.whu.edu.cn/index.htm",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录未给独立竞赛网站；应核实赛项全称、软件或设备以及个人技术贡献。"
+    },
+    {
+      "id": "2024-68",
+      "name": "全国大学生统计建模大赛",
+      "official_website": "http://tjjmds.ai-learning.net/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应核实获奖论文的作者顺序、研究贡献和赛区/全国阶段。"
+    },
+    {
+      "id": "2024-69",
+      "name": "全国大学生能源经济学术创意大赛",
+      "official_website": "http://energy.ckcest.cn/eneco/contribution/index.html#/index",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核对当年主题、论文或案例类别、数据来源和团队具体分工。"
+    },
+    {
+      "id": "2024-70",
+      "name": "全国大学生基础医学创新研究暨实验设计论坛（大赛）",
+      "official_website": "http://www.jcyxds.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应区分研究设计、实验完成度和论坛交流；获奖不能替代论文发表或临床资格。"
+    },
+    {
+      "id": "2024-71",
+      "name": "全国大学生数字媒体科技作品及创意竞赛",
+      "official_website": "http://mit.caai.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核对创意类或科技作品类、作品链接和个人制作职责。"
+    },
+    {
+      "id": "2024-72",
+      "name": "全国本科院校税收风险管控案例大赛",
+      "official_website": null,
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "官网未在目录中给出，需以获奖年份公众号通知或证书确认主办方、赛道和层级。"
+    },
+    {
+      "id": "2024-73",
+      "name": "全国企业竞争模拟大赛",
+      "official_website": "http://www.ibizsim.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "应注明模拟平台、参赛模块、轮次和个人职责，区分竞赛模拟与真实经营成果。"
+    },
+    {
+      "id": "2024-74",
+      "name": "全国高等院校数智化企业经营沙盘大赛",
+      "official_website": "http://spbk.seentao.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需区分模拟经营沙盘与实际企业数字化实施经验，核验所获奖项的阶段和项目组别。"
+    },
+    {
+      "id": "2024-75",
+      "name": "全国数字建筑创新应用大赛",
+      "official_website": "http://bisai.ccen.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核对赛项、作品与行业项目的关系，以及团队成员对模型和数据的具体贡献。"
+    },
+    {
+      "id": "2024-76",
+      "name": "全球校园人工智能算法精英大赛",
+      "official_website": "https://developer.huawei.com/consumer/cn/activity/digixActivity/digixdetail/101655281685926449?ha_source=HR&ha_sourceId=8900",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录链接带有推广参数；核验时需打开赛事正式规则页面确认组别、算法赛和作品赛区别。"
+    },
+    {
+      "id": "2024-77",
+      "name": "国际大学生智能农业装备创新大赛",
+      "official_website": "http://uiaec.ujs.edu.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "核对获奖年份的赛项、样机实测要求及“国际”参赛范围，不能只按名称推断。"
+    },
+    {
+      "id": "2024-78",
+      "name": "“科云杯”全国大学生财会职业能力大赛",
+      "official_website": "http://match.xmkeyun.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "需核实个人或团队赛、具体业务模块和赛段；竞赛操作不等于实际企业记账授权。"
+    },
+    {
+      "id": "2024-79",
+      "name": "全国职业院校技能大赛",
+      "official_website": "https://chinaskills.icve.com.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录标注高职赛；核验参赛学段、赛项和奖项级别，避免与普通本科竞赛直接混比。"
+    },
+    {
+      "id": "2024-80",
+      "name": "全国大学生机器人大赛-RoboTac",
+      "official_website": "http://www.robotac.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录将RoboTac单列，不能与全国大学生机器人大赛（CURC）下其他子赛合并。"
+    },
+    {
+      "id": "2024-81",
+      "name": "世界技能大赛",
+      "official_website": "http://worldskillschina.mohrss.gov.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录将此项标为高职赛。需区分正式世界技能大赛国家队选手、技术官员、观摩人员及国内选拔赛获奖者。"
+    },
+    {
+      "id": "2024-82",
+      "name": "世界技能大赛中国选拔赛",
+      "official_website": "http://worldskillschina.mohrss.gov.cn/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录标注高职赛；应区分省级选拔、全国选拔、国家集训队和正式世界技能大赛参赛身份。"
+    },
+    {
+      "id": "2024-83",
+      "name": "一带一路暨金砖国家技能发展与技术创新大赛",
+      "official_website": "https://www.brskills.com/",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "赛事包含多个独立赛项；须核实获奖年份、学段标注、国赛/国际赛身份和奖项范围。"
+    },
+    {
+      "id": "2024-84",
+      "name": "码蹄杯全国职业院校程序设计大赛",
+      "official_website": "https://matiji.net/matibei",
+      "checked_at": "2026-11-14",
+      "years": {
+        "2024": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2025": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        },
+        "2026": {
+          "edition": null,
+          "status": null,
+          "status_basis": null,
+          "participants": null,
+          "award_categories": null,
+          "award_rate": null,
+          "awards": null,
+          "bonuses": null,
+          "sources": [],
+          "notes": "本次检索尚未核实该年度人数、奖项设置、获奖结果、获奖比例、奖金及赛事状态；null 表示未知，不表示零或未举办。"
+        }
+      },
+      "notes": "目录标注高职赛；应确认职业院校组别、赛题等级和省赛/全国赛阶段。"
+    }
+  ]
+}

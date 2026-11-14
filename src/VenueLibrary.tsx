@@ -46,6 +46,11 @@ function VenueMetrics({ venue }: { venue?: VenueProfile }) {
   </section>;
 }
 
+function impactFactor2025(venue?: VenueProfile): string {
+  const value = venue?.type === "期刊" ? venue.impact_factor?.years["2025"] : null;
+  return typeof value === "number" && Number.isFinite(value) ? String(value) : "—";
+}
+
 export function VenueLibrary({ records, resumes, initialId, onClose, onReview, onSelectEvidence }: Props) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("");
@@ -101,6 +106,7 @@ export function VenueLibrary({ records, resumes, initialId, onClose, onReview, o
         <div className="competition-items">{filtered.map((record) => <button key={record.id} className={`competition-item venue-item ${record.id === selected?.id ? "selected" : ""}`} aria-pressed={record.id === selected?.id} onClick={() => setSelectedId(record.id)}>
           <span className="competition-item-top"><small>{record.venue?.type ?? "类型待补充"} · {record.venue?.scope ?? record.region}</small><ArrowUpRight size={14} /></span>
           <div className="venue-item-identity"><VenueLogo venue={record.venue} /><div><strong>{record.venue?.abbreviation || record.title}</strong>{record.venue?.abbreviation && record.venue.abbreviation !== record.title && <span className="venue-full-name">{record.title}</span>}</div></div><span>{record.summary || "暂无简介"}</span>
+          <div className="venue-item-impact" aria-label={`2025 年影响因子：${impactFactor2025(record.venue)}`}><span>2025 影响因子</span><b>{impactFactor2025(record.venue)}</b></div>
           <footer><small>{record.venue?.rankings.map((item) => `${item.year} ${item.rank}`).join(" · ") || "未登记分级"}</small><small>{references.get(record.id)?.length ? `${references.get(record.id)!.length} 份简历引用` : `${record.evidenceSources?.length ?? 0} 个来源`}</small></footer>
         </button>)}{!filtered.length && <div className="competition-empty"><Search size={24} /><strong>没有找到相关期刊或会议</strong><p>试试其他关键词或清除筛选条件。</p><button onClick={clearFilters}>清除筛选</button></div>}</div>
       </aside>

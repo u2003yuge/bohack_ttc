@@ -1,0 +1,2608 @@
+{
+  "format": "bohack-company-catalog",
+  "version": 1,
+  "sourceFile": "enterprise.md",
+  "sourceSha256": "e70b281434b716ef9c130d6c08a5841db22a50ad82c2ad78c851aad8e2af34a4",
+  "records": [
+    {
+      "name": "阿里巴巴集团",
+      "english_name": "Alibaba Group",
+      "country_region": "中国",
+      "industry": "电子商务、云计算与数字服务",
+      "founded_year": 1999,
+      "headquarters": "中国杭州",
+      "official_website": "https://www.alibabagroup.com/en-US/about-alibaba",
+      "info": "阿里巴巴集团（Alibaba Group）是一家总部位于中国杭州、主要从事电子商务、云计算与数字服务的企业，成立于1999年。官网及公司公开资料将其核心业务概括为电商平台、云计算、物流、数字媒体和本地生活。其代表性产品、品牌或平台包括：淘宝、天猫、阿里云、菜鸟、支付宝生态。从企业经历核查角度看，阿里巴巴集团的项目通常可能涉及电子商务、云计算与数字服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自连接商家、消费者与服务提供者，形成覆盖零售、企业服务和数字基础设施的商业生态。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "阿里巴巴集团是一家专注于电子商务、云计算与数字服务、以电商平台等业务为核心的中国企业。",
+      "influence": "连接商家、消费者与服务提供者，形成覆盖零售、企业服务和数字基础设施的商业生态；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "电商平台、云计算、物流、数字媒体和本地生活",
+      "representative_products": "淘宝、天猫、阿里云、菜鸟、支付宝生态",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "阿里巴巴集团官方公司介绍",
+        "url": "https://www.alibabagroup.com/en-US/about-alibaba",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-alibaba-group"
+    },
+    {
+      "name": "腾讯",
+      "english_name": "Tencent",
+      "country_region": "中国",
+      "industry": "互联网、数字内容与企业服务",
+      "founded_year": 1998,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.tencent.com/en-us/about.html",
+      "info": "腾讯（Tencent）是一家总部位于中国深圳、主要从事互联网、数字内容与企业服务的企业，成立于1998年。官网及公司公开资料将其核心业务概括为社交平台、数字内容、游戏、金融科技和云服务。其代表性产品、品牌或平台包括：微信、QQ、腾讯游戏、腾讯云。从企业经历核查角度看，腾讯的项目通常可能涉及互联网、数字内容与企业服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以社交网络和数字内容服务覆盖广泛用户，并为企业提供云、支付和营销基础设施。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "腾讯是一家专注于互联网、数字内容与企业服务、以社交平台等业务为核心的中国企业。",
+      "influence": "以社交网络和数字内容服务覆盖广泛用户，并为企业提供云、支付和营销基础设施；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "社交平台、数字内容、游戏、金融科技和云服务",
+      "representative_products": "微信、QQ、腾讯游戏、腾讯云",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "腾讯官方公司介绍",
+        "url": "https://www.tencent.com/en-us/about.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-tencent"
+    },
+    {
+      "name": "华为",
+      "english_name": "Huawei",
+      "country_region": "中国",
+      "industry": "信息与通信技术",
+      "founded_year": 1987,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.huawei.com/en/corporate-information",
+      "info": "华为（Huawei）是一家总部位于中国深圳、主要从事信息与通信技术的企业，成立于1987年。官网及公司公开资料将其核心业务概括为通信网络、云计算、智能终端和数字能源。其代表性产品、品牌或平台包括：运营商网络、企业网络、华为云、智能手机与鸿蒙生态。从企业经历核查角度看，华为的项目通常可能涉及信息与通信技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自长期参与全球通信基础设施建设，业务覆盖运营商、企业和消费者市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "华为是一家专注于信息与通信技术、以通信网络等业务为核心的中国企业。",
+      "influence": "长期参与全球通信基础设施建设，业务覆盖运营商、企业和消费者市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "通信网络、云计算、智能终端和数字能源",
+      "representative_products": "运营商网络、企业网络、华为云、智能手机与鸿蒙生态",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "华为官方公司介绍",
+        "url": "https://www.huawei.com/en/corporate-information",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-huawei"
+    },
+    {
+      "name": "字节跳动",
+      "english_name": "ByteDance",
+      "country_region": "中国",
+      "industry": "互联网平台与内容科技",
+      "founded_year": 2012,
+      "headquarters": "中国北京",
+      "official_website": "https://www.bytedance.com/en/",
+      "info": "字节跳动（ByteDance）是一家总部位于中国北京、主要从事互联网平台与内容科技的企业，成立于2012年。官网及公司公开资料将其核心业务概括为内容平台、广告技术、创作者服务和企业工具。其代表性产品、品牌或平台包括：抖音、TikTok、今日头条、剪映、飞书。从企业经历核查角度看，字节跳动的项目通常可能涉及互联网平台与内容科技中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自通过推荐算法和内容产品服务多地区用户，形成全球化的内容与创作者生态。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "字节跳动是一家专注于互联网平台与内容科技、以内容平台等业务为核心的中国企业。",
+      "influence": "通过推荐算法和内容产品服务多地区用户，形成全球化的内容与创作者生态；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "内容平台、广告技术、创作者服务和企业工具",
+      "representative_products": "抖音、TikTok、今日头条、剪映、飞书",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "字节跳动官方公司介绍",
+        "url": "https://www.bytedance.com/en/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-bytedance"
+    },
+    {
+      "name": "百度",
+      "english_name": "Baidu",
+      "country_region": "中国",
+      "industry": "人工智能、互联网与云服务",
+      "founded_year": 2000,
+      "headquarters": "中国北京",
+      "official_website": "https://ir.baidu.com/company-information",
+      "info": "百度（Baidu）是一家总部位于中国北京、主要从事人工智能、互联网与云服务的企业，成立于2000年。官网及公司公开资料将其核心业务概括为搜索、人工智能、智能云和自动驾驶。其代表性产品、品牌或平台包括：百度搜索、文心、百度智能云、Apollo。从企业经历核查角度看，百度的项目通常可能涉及人工智能、互联网与云服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自在中文搜索和人工智能基础设施领域具有长期产品积累，并推进大模型与自动驾驶应用。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "百度是一家专注于人工智能、互联网与云服务、以搜索等业务为核心的中国企业。",
+      "influence": "在中文搜索和人工智能基础设施领域具有长期产品积累，并推进大模型与自动驾驶应用；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "搜索、人工智能、智能云和自动驾驶",
+      "representative_products": "百度搜索、文心、百度智能云、Apollo",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "百度官方公司介绍",
+        "url": "https://ir.baidu.com/company-information",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-baidu"
+    },
+    {
+      "name": "京东",
+      "english_name": "JD.com",
+      "country_region": "中国",
+      "industry": "电子商务与供应链",
+      "founded_year": 1998,
+      "headquarters": "中国北京",
+      "official_website": "https://corporate.jd.com/",
+      "info": "京东（JD.com）是一家总部位于中国北京、主要从事电子商务与供应链的企业，成立于1998年。官网及公司公开资料将其核心业务概括为零售、物流、供应链技术和企业采购。其代表性产品、品牌或平台包括：京东商城、京东物流、京东工业、京东云。从企业经历核查角度看，京东的项目通常可能涉及电子商务与供应链中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以自营零售和物流网络见长，为消费者和企业提供商品、履约与供应链服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "京东是一家专注于电子商务与供应链、以零售等业务为核心的中国企业。",
+      "influence": "以自营零售和物流网络见长，为消费者和企业提供商品、履约与供应链服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "零售、物流、供应链技术和企业采购",
+      "representative_products": "京东商城、京东物流、京东工业、京东云",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "京东官方公司介绍",
+        "url": "https://corporate.jd.com/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-jd-com"
+    },
+    {
+      "name": "小米",
+      "english_name": "Xiaomi",
+      "country_region": "中国",
+      "industry": "消费电子与智能制造",
+      "founded_year": 2010,
+      "headquarters": "中国北京",
+      "official_website": "https://www.mi.com/global/about/",
+      "info": "小米（Xiaomi）是一家总部位于中国北京、主要从事消费电子与智能制造的企业，成立于2010年。官网及公司公开资料将其核心业务概括为智能手机、IoT、家电、软件和互联网服务。其代表性产品、品牌或平台包括：小米手机、米家、澎湃OS、智能电动汽车。从企业经历核查角度看，小米的项目通常可能涉及消费电子与智能制造中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以高性价比智能硬件和互联设备生态形成全球消费者品牌，并拓展智能出行。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "小米是一家专注于消费电子与智能制造、以智能手机等业务为核心的中国企业。",
+      "influence": "以高性价比智能硬件和互联设备生态形成全球消费者品牌，并拓展智能出行；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智能手机、IoT、家电、软件和互联网服务",
+      "representative_products": "小米手机、米家、澎湃OS、智能电动汽车",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "小米官方公司介绍",
+        "url": "https://www.mi.com/global/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-xiaomi"
+    },
+    {
+      "name": "美团",
+      "english_name": "Meituan",
+      "country_region": "中国",
+      "industry": "本地生活与即时服务",
+      "founded_year": 2010,
+      "headquarters": "中国北京",
+      "official_website": "https://about.meituan.com/en",
+      "info": "美团（Meituan）是一家总部位于中国北京、主要从事本地生活与即时服务的企业，成立于2010年。官网及公司公开资料将其核心业务概括为餐饮外卖、到店服务、旅行和即时配送。其代表性产品、品牌或平台包括：美团外卖、美团到店、闪购、美团民宿。从企业经历核查角度看，美团的项目通常可能涉及本地生活与即时服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自连接消费者、商户与配送网络，构建覆盖生活服务场景的本地商业平台。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "美团是一家专注于本地生活与即时服务、以餐饮外卖等业务为核心的中国企业。",
+      "influence": "连接消费者、商户与配送网络，构建覆盖生活服务场景的本地商业平台；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "餐饮外卖、到店服务、旅行和即时配送",
+      "representative_products": "美团外卖、美团到店、闪购、美团民宿",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "美团官方公司介绍",
+        "url": "https://about.meituan.com/en",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-meituan"
+    },
+    {
+      "name": "拼多多",
+      "english_name": "PDD Holdings",
+      "country_region": "中国",
+      "industry": "电子商务与消费科技",
+      "founded_year": 2015,
+      "headquarters": "中国上海",
+      "official_website": "https://www.pddholdings.com/about-us/",
+      "info": "拼多多（PDD Holdings）是一家总部位于中国上海、主要从事电子商务与消费科技的企业，成立于2015年。官网及公司公开资料将其核心业务概括为农产品与商品电商、海外电商和供应链服务。其代表性产品、品牌或平台包括：拼多多、Temu。从企业经历核查角度看，拼多多的项目通常可能涉及电子商务与消费科技中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自通过社交化和数字化方式连接消费者与商家，并将电商服务拓展到多个海外市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "拼多多是一家专注于电子商务与消费科技、以农产品与商品电商等业务为核心的中国企业。",
+      "influence": "通过社交化和数字化方式连接消费者与商家，并将电商服务拓展到多个海外市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "农产品与商品电商、海外电商和供应链服务",
+      "representative_products": "拼多多、Temu",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "拼多多官方公司介绍",
+        "url": "https://www.pddholdings.com/about-us/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-pdd-holdings"
+    },
+    {
+      "name": "网易",
+      "english_name": "NetEase",
+      "country_region": "中国",
+      "industry": "互联网、游戏与数字内容",
+      "founded_year": 1997,
+      "headquarters": "中国杭州",
+      "official_website": "https://ir.netease.com/company-profile",
+      "info": "网易（NetEase）是一家总部位于中国杭州、主要从事互联网、游戏与数字内容的企业，成立于1997年。官网及公司公开资料将其核心业务概括为游戏、音乐、教育、云音乐和传媒。其代表性产品、品牌或平台包括：网易游戏、网易云音乐、有道。从企业经历核查角度看，网易的项目通常可能涉及互联网、游戏与数字内容中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自在网络游戏和数字内容领域拥有长期运营能力，产品覆盖娱乐、音乐与学习场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "网易是一家专注于互联网、游戏与数字内容、以游戏等业务为核心的中国企业。",
+      "influence": "在网络游戏和数字内容领域拥有长期运营能力，产品覆盖娱乐、音乐与学习场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "游戏、音乐、教育、云音乐和传媒",
+      "representative_products": "网易游戏、网易云音乐、有道",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "网易官方公司介绍",
+        "url": "https://ir.netease.com/company-profile",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-netease"
+    },
+    {
+      "name": "联想集团",
+      "english_name": "Lenovo",
+      "country_region": "中国",
+      "industry": "计算设备与信息技术",
+      "founded_year": 1984,
+      "headquarters": "中国北京/美国罗利",
+      "official_website": "https://www.lenovo.com/us/en/about/",
+      "info": "联想集团（Lenovo）是一家总部位于中国北京/美国罗利、主要从事计算设备与信息技术的企业，成立于1984年。官网及公司公开资料将其核心业务概括为个人电脑、服务器、智能设备和IT服务。其代表性产品、品牌或平台包括：ThinkPad、Yoga、Legion、基础设施方案。从企业经历核查角度看，联想集团的项目通常可能涉及计算设备与信息技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自是全球化的计算设备和企业IT供应商，业务覆盖个人、数据中心和智能设备市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "联想集团是一家专注于计算设备与信息技术、以个人电脑等业务为核心的中国企业。",
+      "influence": "是全球化的计算设备和企业IT供应商，业务覆盖个人、数据中心和智能设备市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "个人电脑、服务器、智能设备和IT服务",
+      "representative_products": "ThinkPad、Yoga、Legion、基础设施方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "联想集团官方公司介绍",
+        "url": "https://www.lenovo.com/us/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-lenovo"
+    },
+    {
+      "name": "宁德时代",
+      "english_name": "CATL",
+      "country_region": "中国",
+      "industry": "动力电池与新能源技术",
+      "founded_year": 2011,
+      "headquarters": "中国宁德",
+      "official_website": "https://www.catl.com/en/about/",
+      "info": "宁德时代（CATL）是一家总部位于中国宁德、主要从事动力电池与新能源技术的企业，成立于2011年。官网及公司公开资料将其核心业务概括为动力电池、储能系统和电池材料循环。其代表性产品、品牌或平台包括：动力电池系统、储能电池、换电与零碳解决方案。从企业经历核查角度看，宁德时代的项目通常可能涉及动力电池与新能源技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自服务全球新能源汽车和储能产业链，推动电池技术、制造和回收体系发展。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "宁德时代是一家专注于动力电池与新能源技术、以动力电池等业务为核心的中国企业。",
+      "influence": "服务全球新能源汽车和储能产业链，推动电池技术、制造和回收体系发展；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "动力电池、储能系统和电池材料循环",
+      "representative_products": "动力电池系统、储能电池、换电与零碳解决方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "宁德时代官方公司介绍",
+        "url": "https://www.catl.com/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-catl"
+    },
+    {
+      "name": "比亚迪",
+      "english_name": "BYD",
+      "country_region": "中国",
+      "industry": "新能源汽车与先进制造",
+      "founded_year": 1995,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.byd.com/en/about-byd",
+      "info": "比亚迪（BYD）是一家总部位于中国深圳、主要从事新能源汽车与先进制造的企业，成立于1995年。官网及公司公开资料将其核心业务概括为新能源汽车、动力电池、轨道交通和电子制造。其代表性产品、品牌或平台包括：王朝与海洋系列、刀片电池、云轨、电子零部件。从企业经历核查角度看，比亚迪的项目通常可能涉及新能源汽车与先进制造中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自形成从电池到整车及公共交通的新能源产业布局，并在多个国家开展销售和制造。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "比亚迪是一家专注于新能源汽车与先进制造、以新能源汽车等业务为核心的中国企业。",
+      "influence": "形成从电池到整车及公共交通的新能源产业布局，并在多个国家开展销售和制造；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "新能源汽车、动力电池、轨道交通和电子制造",
+      "representative_products": "王朝与海洋系列、刀片电池、云轨、电子零部件",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "比亚迪官方公司介绍",
+        "url": "https://www.byd.com/en/about-byd",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-byd"
+    },
+    {
+      "name": "上汽集团",
+      "english_name": "SAIC Motor",
+      "country_region": "中国",
+      "industry": "汽车与移动出行",
+      "founded_year": 1984,
+      "headquarters": "中国上海",
+      "official_website": "https://www.saicmotor.com/english/about_saic/index.shtml",
+      "info": "上汽集团（SAIC Motor）是一家总部位于中国上海、主要从事汽车与移动出行的企业，成立于1984年。官网及公司公开资料将其核心业务概括为整车、零部件、汽车金融和出行服务。其代表性产品、品牌或平台包括：名爵、荣威、上汽大众、上汽通用。从企业经历核查角度看，上汽集团的项目通常可能涉及汽车与移动出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自中国大型汽车集团之一，覆盖乘用车、商用车、零部件、金融和海外业务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "上汽集团是一家专注于汽车与移动出行、以整车等业务为核心的中国企业。",
+      "influence": "中国大型汽车集团之一，覆盖乘用车、商用车、零部件、金融和海外业务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "整车、零部件、汽车金融和出行服务",
+      "representative_products": "名爵、荣威、上汽大众、上汽通用",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "上汽集团官方公司介绍",
+        "url": "https://www.saicmotor.com/english/about_saic/index.shtml",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-saic-motor"
+    },
+    {
+      "name": "吉利控股集团",
+      "english_name": "Geely Holding Group",
+      "country_region": "中国",
+      "industry": "汽车与智能出行",
+      "founded_year": 1986,
+      "headquarters": "中国杭州",
+      "official_website": "https://zgh.com/about/",
+      "info": "吉利控股集团（Geely Holding Group）是一家总部位于中国杭州、主要从事汽车与智能出行的企业，成立于1986年。官网及公司公开资料将其核心业务概括为汽车、动力总成、商业航天和出行服务。其代表性产品、品牌或平台包括：吉利汽车、沃尔沃汽车、极氪、路特斯、领克。从企业经历核查角度看，吉利控股集团的项目通常可能涉及汽车与智能出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自通过多品牌和全球化投资布局汽车产业，覆盖传统动力、新能源、智能汽车和出行服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "吉利控股集团是一家专注于汽车与智能出行、以汽车等业务为核心的中国企业。",
+      "influence": "通过多品牌和全球化投资布局汽车产业，覆盖传统动力、新能源、智能汽车和出行服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "汽车、动力总成、商业航天和出行服务",
+      "representative_products": "吉利汽车、沃尔沃汽车、极氪、路特斯、领克",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "吉利控股集团官方公司介绍",
+        "url": "https://zgh.com/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-geely-holding-group"
+    },
+    {
+      "name": "长安汽车",
+      "english_name": "Changan Automobile",
+      "country_region": "中国",
+      "industry": "汽车制造与智能出行",
+      "founded_year": 1862,
+      "headquarters": "中国重庆",
+      "official_website": "https://www.changan.com.cn/about/",
+      "info": "长安汽车（Changan Automobile）是一家总部位于中国重庆、主要从事汽车制造与智能出行的企业，成立于1862年。官网及公司公开资料将其核心业务概括为乘用车、商用车、新能源和智能驾驶。其代表性产品、品牌或平台包括：长安、深蓝、阿维塔、启源。从企业经历核查角度看，长安汽车的项目通常可能涉及汽车制造与智能出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自拥有长期汽车制造历史，持续投入新能源、智能座舱和智能驾驶产品。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "长安汽车是一家专注于汽车制造与智能出行、以乘用车等业务为核心的中国企业。",
+      "influence": "拥有长期汽车制造历史，持续投入新能源、智能座舱和智能驾驶产品；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "乘用车、商用车、新能源和智能驾驶",
+      "representative_products": "长安、深蓝、阿维塔、启源",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "长安汽车官方公司介绍",
+        "url": "https://www.changan.com.cn/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-changan-automobile"
+    },
+    {
+      "name": "海尔集团",
+      "english_name": "Haier",
+      "country_region": "中国",
+      "industry": "家电与物联网",
+      "founded_year": 1984,
+      "headquarters": "中国青岛",
+      "official_website": "https://www.haier.com/global/about-haier/",
+      "info": "海尔集团（Haier）是一家总部位于中国青岛、主要从事家电与物联网的企业，成立于1984年。官网及公司公开资料将其核心业务概括为智慧家庭、家电、工业互联网和医疗健康。其代表性产品、品牌或平台包括：海尔智家、卡萨帝、海尔生物医疗、COSMOPlat。从企业经历核查角度看，海尔集团的项目通常可能涉及家电与物联网中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以家电品牌和物联网生态服务全球家庭，并把工业互联网能力用于企业数字化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "海尔集团是一家专注于家电与物联网、以智慧家庭等业务为核心的中国企业。",
+      "influence": "以家电品牌和物联网生态服务全球家庭，并把工业互联网能力用于企业数字化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智慧家庭、家电、工业互联网和医疗健康",
+      "representative_products": "海尔智家、卡萨帝、海尔生物医疗、COSMOPlat",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "海尔集团官方公司介绍",
+        "url": "https://www.haier.com/global/about-haier/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-haier"
+    },
+    {
+      "name": "美的集团",
+      "english_name": "Midea Group",
+      "country_region": "中国",
+      "industry": "家电、机器人与工业技术",
+      "founded_year": 1968,
+      "headquarters": "中国佛山",
+      "official_website": "https://www.midea-group.com/about-midea",
+      "info": "美的集团（Midea Group）是一家总部位于中国佛山、主要从事家电、机器人与工业技术的企业，成立于1968年。官网及公司公开资料将其核心业务概括为智能家居、楼宇科技、工业技术和机器人自动化。其代表性产品、品牌或平台包括：美的家电、库卡机器人、楼宇科技方案。从企业经历核查角度看，美的集团的项目通常可能涉及家电、机器人与工业技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自从家电制造拓展到机器人、楼宇和工业技术，在全球建立制造与销售网络。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "美的集团是一家专注于家电、机器人与工业技术、以智能家居等业务为核心的中国企业。",
+      "influence": "从家电制造拓展到机器人、楼宇和工业技术，在全球建立制造与销售网络；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智能家居、楼宇科技、工业技术和机器人自动化",
+      "representative_products": "美的家电、库卡机器人、楼宇科技方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "美的集团官方公司介绍",
+        "url": "https://www.midea-group.com/about-midea",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-midea-group"
+    },
+    {
+      "name": "格力电器",
+      "english_name": "Gree Electric Appliances",
+      "country_region": "中国",
+      "industry": "家用电器与暖通设备",
+      "founded_year": 1991,
+      "headquarters": "中国珠海",
+      "official_website": "https://www.gree.com/about",
+      "info": "格力电器（Gree Electric Appliances）是一家总部位于中国珠海、主要从事家用电器与暖通设备的企业，成立于1991年。官网及公司公开资料将其核心业务概括为空调、家电、装备制造和新能源。其代表性产品、品牌或平台包括：格力空调、生活电器、工业制品。从企业经历核查角度看，格力电器的项目通常可能涉及家用电器与暖通设备中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以空调和暖通设备为核心，具备研发、制造、渠道和售后服务体系。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "格力电器是一家专注于家用电器与暖通设备、以空调等业务为核心的中国企业。",
+      "influence": "以空调和暖通设备为核心，具备研发、制造、渠道和售后服务体系；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "空调、家电、装备制造和新能源",
+      "representative_products": "格力空调、生活电器、工业制品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "格力电器官方公司介绍",
+        "url": "https://www.gree.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-gree-electric-appliances"
+    },
+    {
+      "name": "中国石油化工集团",
+      "english_name": "Sinopec",
+      "country_region": "中国",
+      "industry": "能源与化工",
+      "founded_year": 2000,
+      "headquarters": "中国北京",
+      "official_website": "http://www.sinopecgroup.com/group/en/",
+      "info": "中国石油化工集团（Sinopec）是一家总部位于中国北京、主要从事能源与化工的企业，成立于2000年。官网及公司公开资料将其核心业务概括为石油天然气勘探、炼化、销售和化工。其代表性产品、品牌或平台包括：炼油、成品油、化工材料、加油站网络。从企业经历核查角度看，中国石油化工集团的项目通常可能涉及能源与化工中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自是中国综合能源和化工企业，连接上游资源、炼化生产、零售网络与化工材料。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国石油化工集团是一家专注于能源与化工、以石油天然气勘探等业务为核心的中国企业。",
+      "influence": "是中国综合能源和化工企业，连接上游资源、炼化生产、零售网络与化工材料；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "石油天然气勘探、炼化、销售和化工",
+      "representative_products": "炼油、成品油、化工材料、加油站网络",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国石油化工集团官方公司介绍",
+        "url": "http://www.sinopecgroup.com/group/en/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-sinopec"
+    },
+    {
+      "name": "中国石油天然气集团",
+      "english_name": "CNPC",
+      "country_region": "中国",
+      "industry": "石油天然气与综合能源",
+      "founded_year": 1988,
+      "headquarters": "中国北京",
+      "official_website": "https://www.cnpc.com.cn/en/aboutcnpc/aboutcnpc.shtml",
+      "info": "中国石油天然气集团（CNPC）是一家总部位于中国北京、主要从事石油天然气与综合能源的企业，成立于1988年。官网及公司公开资料将其核心业务概括为油气勘探开发、炼化、销售和工程技术。其代表性产品、品牌或平台包括：勘探开发、昆仑能源、炼化与成品油服务。从企业经历核查角度看，中国石油天然气集团的项目通常可能涉及石油天然气与综合能源中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自覆盖油气产业链多个环节，并参与国内外能源勘探、生产和工程服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国石油天然气集团是一家专注于石油天然气与综合能源、以油气勘探开发等业务为核心的中国企业。",
+      "influence": "覆盖油气产业链多个环节，并参与国内外能源勘探、生产和工程服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "油气勘探开发、炼化、销售和工程技术",
+      "representative_products": "勘探开发、昆仑能源、炼化与成品油服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国石油天然气集团官方公司介绍",
+        "url": "https://www.cnpc.com.cn/en/aboutcnpc/aboutcnpc.shtml",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-cnpc"
+    },
+    {
+      "name": "中国移动",
+      "english_name": "China Mobile",
+      "country_region": "中国",
+      "industry": "通信与数字基础设施",
+      "founded_year": 1997,
+      "headquarters": "中国北京",
+      "official_website": "https://www.chinamobileltd.com/en/about/",
+      "info": "中国移动（China Mobile）是一家总部位于中国北京、主要从事通信与数字基础设施的企业，成立于1997年。官网及公司公开资料将其核心业务概括为移动通信、宽带、云计算和物联网。其代表性产品、品牌或平台包括：移动通信网络、移动云、物联网、算力服务。从企业经历核查角度看，中国移动的项目通常可能涉及通信与数字基础设施中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自拥有大规模通信网络和用户服务体系，持续建设云、算力和产业数字化基础设施。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国移动是一家专注于通信与数字基础设施、以移动通信等业务为核心的中国企业。",
+      "influence": "拥有大规模通信网络和用户服务体系，持续建设云、算力和产业数字化基础设施；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "移动通信、宽带、云计算和物联网",
+      "representative_products": "移动通信网络、移动云、物联网、算力服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国移动官方公司介绍",
+        "url": "https://www.chinamobileltd.com/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-china-mobile"
+    },
+    {
+      "name": "中国电信",
+      "english_name": "China Telecom",
+      "country_region": "中国",
+      "industry": "通信、云计算与数字服务",
+      "founded_year": 2002,
+      "headquarters": "中国北京",
+      "official_website": "https://www.chinatelecom-h.com/en/about/overview.php",
+      "info": "中国电信（China Telecom）是一家总部位于中国北京、主要从事通信、云计算与数字服务的企业，成立于2002年。官网及公司公开资料将其核心业务概括为固定通信、移动通信、云计算和产业数字化。其代表性产品、品牌或平台包括：天翼云、5G、政企数字化服务。从企业经历核查角度看，中国电信的项目通常可能涉及通信、云计算与数字服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以通信网络和云服务连接个人、家庭、政府及企业客户，参与数字基础设施建设。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国电信是一家专注于通信、云计算与数字服务、以固定通信等业务为核心的中国企业。",
+      "influence": "以通信网络和云服务连接个人、家庭、政府及企业客户，参与数字基础设施建设；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "固定通信、移动通信、云计算和产业数字化",
+      "representative_products": "天翼云、5G、政企数字化服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国电信官方公司介绍",
+        "url": "https://www.chinatelecom-h.com/en/about/overview.php",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-china-telecom"
+    },
+    {
+      "name": "中国联通",
+      "english_name": "China Unicom",
+      "country_region": "中国",
+      "industry": "通信与数字经济服务",
+      "founded_year": 2000,
+      "headquarters": "中国北京",
+      "official_website": "https://www.chinaunicom.com.hk/en/about/",
+      "info": "中国联通（China Unicom）是一家总部位于中国北京、主要从事通信与数字经济服务的企业，成立于2000年。官网及公司公开资料将其核心业务概括为移动通信、宽带、云网融合和物联网。其代表性产品、品牌或平台包括：5G、联通云、工业互联网、物联网。从企业经历核查角度看，中国联通的项目通常可能涉及通信与数字经济服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自提供全国性通信服务，并将网络能力扩展到云计算、工业互联网与企业数字化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国联通是一家专注于通信与数字经济服务、以移动通信等业务为核心的中国企业。",
+      "influence": "提供全国性通信服务，并将网络能力扩展到云计算、工业互联网与企业数字化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "移动通信、宽带、云网融合和物联网",
+      "representative_products": "5G、联通云、工业互联网、物联网",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国联通官方公司介绍",
+        "url": "https://www.chinaunicom.com.hk/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-china-unicom"
+    },
+    {
+      "name": "中国工商银行",
+      "english_name": "ICBC",
+      "country_region": "中国",
+      "industry": "银行与金融服务",
+      "founded_year": 1984,
+      "headquarters": "中国北京",
+      "official_website": "https://www.icbc-ltd.com/icbc/en/about-us/",
+      "info": "中国工商银行（ICBC）是一家总部位于中国北京、主要从事银行与金融服务的企业，成立于1984年。官网及公司公开资料将其核心业务概括为公司金融、个人金融、投资银行和资产管理。其代表性产品、品牌或平台包括：商业银行、跨境金融、数字银行。从企业经历核查角度看，中国工商银行的项目通常可能涉及银行与金融服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自中国大型商业银行，服务个人、企业和机构客户，拥有广泛的分支与数字服务体系。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国工商银行是一家专注于银行与金融服务、以公司金融等业务为核心的中国企业。",
+      "influence": "中国大型商业银行，服务个人、企业和机构客户，拥有广泛的分支与数字服务体系；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "公司金融、个人金融、投资银行和资产管理",
+      "representative_products": "商业银行、跨境金融、数字银行",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国工商银行官方公司介绍",
+        "url": "https://www.icbc-ltd.com/icbc/en/about-us/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-icbc"
+    },
+    {
+      "name": "中国建设银行",
+      "english_name": "China Construction Bank",
+      "country_region": "中国",
+      "industry": "银行与金融服务",
+      "founded_year": 1954,
+      "headquarters": "中国北京",
+      "official_website": "https://www.ccb.com/en/about/",
+      "info": "中国建设银行（China Construction Bank）是一家总部位于中国北京、主要从事银行与金融服务的企业，成立于1954年。官网及公司公开资料将其核心业务概括为公司银行、个人银行、住房金融和资产管理。其代表性产品、品牌或平台包括：商业银行、住房金融、普惠金融、数字金融。从企业经历核查角度看，中国建设银行的项目通常可能涉及银行与金融服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自长期服务基础设施、房地产、企业和个人金融需求，并持续推进数字化转型。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国建设银行是一家专注于银行与金融服务、以公司银行等业务为核心的中国企业。",
+      "influence": "长期服务基础设施、房地产、企业和个人金融需求，并持续推进数字化转型；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "公司银行、个人银行、住房金融和资产管理",
+      "representative_products": "商业银行、住房金融、普惠金融、数字金融",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国建设银行官方公司介绍",
+        "url": "https://www.ccb.com/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-china-construction-bank"
+    },
+    {
+      "name": "中国农业银行",
+      "english_name": "Agricultural Bank of China",
+      "country_region": "中国",
+      "industry": "银行与普惠金融",
+      "founded_year": 1951,
+      "headquarters": "中国北京",
+      "official_website": "https://www.abchina.com/en/about-us/",
+      "info": "中国农业银行（Agricultural Bank of China）是一家总部位于中国北京、主要从事银行与普惠金融的企业，成立于1951年。官网及公司公开资料将其核心业务概括为公司金融、零售金融、县域金融和国际业务。其代表性产品、品牌或平台包括：商业银行、三农金融、数字银行。从企业经历核查角度看，中国农业银行的项目通常可能涉及银行与普惠金融中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自在服务农业、县域和广泛个人客户方面具有网络优势，同时提供综合商业银行服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国农业银行是一家专注于银行与普惠金融、以公司金融等业务为核心的中国企业。",
+      "influence": "在服务农业、县域和广泛个人客户方面具有网络优势，同时提供综合商业银行服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "公司金融、零售金融、县域金融和国际业务",
+      "representative_products": "商业银行、三农金融、数字银行",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国农业银行官方公司介绍",
+        "url": "https://www.abchina.com/en/about-us/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-agricultural-bank-of-china"
+    },
+    {
+      "name": "中国银行",
+      "english_name": "Bank of China",
+      "country_region": "中国",
+      "industry": "银行与国际金融",
+      "founded_year": 1912,
+      "headquarters": "中国北京",
+      "official_website": "https://www.boc.cn/en/aboutboc/",
+      "info": "中国银行（Bank of China）是一家总部位于中国北京、主要从事银行与国际金融的企业，成立于1912年。官网及公司公开资料将其核心业务概括为商业银行、跨境金融、投资银行和保险。其代表性产品、品牌或平台包括：公司金融、个人金融、全球服务网络。从企业经历核查角度看，中国银行的项目通常可能涉及银行与国际金融中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以国际化和跨境金融服务见长，为企业、个人和机构提供多元金融产品。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国银行是一家专注于银行与国际金融、以商业银行等业务为核心的中国企业。",
+      "influence": "以国际化和跨境金融服务见长，为企业、个人和机构提供多元金融产品；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "商业银行、跨境金融、投资银行和保险",
+      "representative_products": "公司金融、个人金融、全球服务网络",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国银行官方公司介绍",
+        "url": "https://www.boc.cn/en/aboutboc/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-bank-of-china"
+    },
+    {
+      "name": "中国平安",
+      "english_name": "Ping An",
+      "country_region": "中国",
+      "industry": "综合金融与医疗健康",
+      "founded_year": 1988,
+      "headquarters": "中国深圳",
+      "official_website": "https://group.pingan.com/about/",
+      "info": "中国平安（Ping An）是一家总部位于中国深圳、主要从事综合金融与医疗健康的企业，成立于1988年。官网及公司公开资料将其核心业务概括为保险、银行、资产管理、医疗健康和科技。其代表性产品、品牌或平台包括：平安保险、平安银行、平安健康、金融壹账通。从企业经历核查角度看，中国平安的项目通常可能涉及综合金融与医疗健康中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以金融综合服务和科技能力连接保险、银行、投资及医疗健康场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国平安是一家专注于综合金融与医疗健康、以保险等业务为核心的中国企业。",
+      "influence": "以金融综合服务和科技能力连接保险、银行、投资及医疗健康场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "保险、银行、资产管理、医疗健康和科技",
+      "representative_products": "平安保险、平安银行、平安健康、金融壹账通",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国平安官方公司介绍",
+        "url": "https://group.pingan.com/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-ping-an"
+    },
+    {
+      "name": "中国人寿",
+      "english_name": "China Life",
+      "country_region": "中国",
+      "industry": "保险与金融服务",
+      "founded_year": 1949,
+      "headquarters": "中国北京",
+      "official_website": "https://www.chinalife.com.cn/english/about/",
+      "info": "中国人寿（China Life）是一家总部位于中国北京、主要从事保险与金融服务的企业，成立于1949年。官网及公司公开资料将其核心业务概括为寿险、财险、养老、资产管理和健康服务。其代表性产品、品牌或平台包括：人寿保险、养老保险、资产管理。从企业经历核查角度看，中国人寿的项目通常可能涉及保险与金融服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自中国大型保险集团之一，为个人、家庭和机构提供长期风险保障与资产管理服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国人寿是一家专注于保险与金融服务、以寿险等业务为核心的中国企业。",
+      "influence": "中国大型保险集团之一，为个人、家庭和机构提供长期风险保障与资产管理服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "寿险、财险、养老、资产管理和健康服务",
+      "representative_products": "人寿保险、养老保险、资产管理",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国人寿官方公司介绍",
+        "url": "https://www.chinalife.com.cn/english/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-china-life"
+    },
+    {
+      "name": "中国远洋海运集团",
+      "english_name": "COSCO SHIPPING",
+      "country_region": "中国",
+      "industry": "航运、港口与物流",
+      "founded_year": 2016,
+      "headquarters": "中国上海",
+      "official_website": "https://www.coscoshipping.com/col/col6918/index.html",
+      "info": "中国远洋海运集团（COSCO SHIPPING）是一家总部位于中国上海、主要从事航运、港口与物流的企业，成立于2016年。官网及公司公开资料将其核心业务概括为集装箱航运、港口、物流、能源运输和金融。其代表性产品、品牌或平台包括：集装箱运输、港口运营、供应链服务。从企业经历核查角度看，中国远洋海运集团的项目通常可能涉及航运、港口与物流中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自连接全球港口、航线和供应链节点，为国际贸易提供海运与综合物流服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中国远洋海运集团是一家专注于航运、港口与物流、以集装箱航运等业务为核心的中国企业。",
+      "influence": "连接全球港口、航线和供应链节点，为国际贸易提供海运与综合物流服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "集装箱航运、港口、物流、能源运输和金融",
+      "representative_products": "集装箱运输、港口运营、供应链服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中国远洋海运集团官方公司介绍",
+        "url": "https://www.coscoshipping.com/col/col6918/index.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-cosco-shipping"
+    },
+    {
+      "name": "顺丰控股",
+      "english_name": "SF Holding",
+      "country_region": "中国",
+      "industry": "快递与供应链物流",
+      "founded_year": 1993,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.sf-express.com/chn/sc/about/",
+      "info": "顺丰控股（SF Holding）是一家总部位于中国深圳、主要从事快递与供应链物流的企业，成立于1993年。官网及公司公开资料将其核心业务概括为快递、航空货运、仓储和供应链服务。其代表性产品、品牌或平台包括：顺丰速运、顺丰航空、丰网、供应链解决方案。从企业经历核查角度看，顺丰控股的项目通常可能涉及快递与供应链物流中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以时效快递和航空网络为基础，服务个人、企业和复杂供应链场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "顺丰控股是一家专注于快递与供应链物流、以快递等业务为核心的中国企业。",
+      "influence": "以时效快递和航空网络为基础，服务个人、企业和复杂供应链场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "快递、航空货运、仓储和供应链服务",
+      "representative_products": "顺丰速运、顺丰航空、丰网、供应链解决方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "顺丰控股官方公司介绍",
+        "url": "https://www.sf-express.com/chn/sc/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-sf-holding"
+    },
+    {
+      "name": "大疆创新",
+      "english_name": "DJI",
+      "country_region": "中国",
+      "industry": "无人机与影像技术",
+      "founded_year": 2006,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.dji.com/company",
+      "info": "大疆创新（DJI）是一家总部位于中国深圳、主要从事无人机与影像技术的企业，成立于2006年。官网及公司公开资料将其核心业务概括为消费级与行业级无人机、稳定器和影像系统。其代表性产品、品牌或平台包括：Mavic、Phantom、Inspire、行业无人机、Ronin。从企业经历核查角度看，大疆创新的项目通常可能涉及无人机与影像技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自推动消费级航拍和行业无人机应用，在影像、测绘、农业、公共安全等场景形成产品影响力。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "大疆创新是一家专注于无人机与影像技术、以消费级与行业级无人机等业务为核心的中国企业。",
+      "influence": "推动消费级航拍和行业无人机应用，在影像、测绘、农业、公共安全等场景形成产品影响力；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "消费级与行业级无人机、稳定器和影像系统",
+      "representative_products": "Mavic、Phantom、Inspire、行业无人机、Ronin",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "大疆创新官方公司介绍",
+        "url": "https://www.dji.com/company",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-dji"
+    },
+    {
+      "name": "蔚来",
+      "english_name": "NIO",
+      "country_region": "中国",
+      "industry": "新能源汽车与智能出行",
+      "founded_year": 2014,
+      "headquarters": "中国上海",
+      "official_website": "https://www.nio.com/about",
+      "info": "蔚来（NIO）是一家总部位于中国上海、主要从事新能源汽车与智能出行的企业，成立于2014年。官网及公司公开资料将其核心业务概括为智能电动汽车、能源服务和数字化用户社区。其代表性产品、品牌或平台包括：蔚来汽车、换电站、NIO Power、NIO House。从企业经历核查角度看，蔚来的项目通常可能涉及新能源汽车与智能出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以智能电动汽车、换电体系和用户服务模式参与高端新能源汽车市场竞争。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "蔚来是一家专注于新能源汽车与智能出行、以智能电动汽车等业务为核心的中国企业。",
+      "influence": "以智能电动汽车、换电体系和用户服务模式参与高端新能源汽车市场竞争；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智能电动汽车、能源服务和数字化用户社区",
+      "representative_products": "蔚来汽车、换电站、NIO Power、NIO House",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "蔚来官方公司介绍",
+        "url": "https://www.nio.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-nio"
+    },
+    {
+      "name": "理想汽车",
+      "english_name": "Li Auto",
+      "country_region": "中国",
+      "industry": "新能源汽车与智能驾驶",
+      "founded_year": 2015,
+      "headquarters": "中国北京",
+      "official_website": "https://ir.lixiang.com/company-information",
+      "info": "理想汽车（Li Auto）是一家总部位于中国北京、主要从事新能源汽车与智能驾驶的企业，成立于2015年。官网及公司公开资料将其核心业务概括为智能电动汽车、增程技术和辅助驾驶。其代表性产品、品牌或平台包括：理想L系列、MEGA、理想智能系统。从企业经历核查角度看，理想汽车的项目通常可能涉及新能源汽车与智能驾驶中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自聚焦家庭用户和智能电动汽车，通过产品、补能和软件服务构建用户体验。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "理想汽车是一家专注于新能源汽车与智能驾驶、以智能电动汽车等业务为核心的中国企业。",
+      "influence": "聚焦家庭用户和智能电动汽车，通过产品、补能和软件服务构建用户体验；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智能电动汽车、增程技术和辅助驾驶",
+      "representative_products": "理想L系列、MEGA、理想智能系统",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "理想汽车官方公司介绍",
+        "url": "https://ir.lixiang.com/company-information",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-li-auto"
+    },
+    {
+      "name": "小鹏汽车",
+      "english_name": "XPENG",
+      "country_region": "中国",
+      "industry": "新能源汽车与智能驾驶",
+      "founded_year": 2014,
+      "headquarters": "中国广州",
+      "official_website": "https://ir.xiaopeng.com/company-profile",
+      "info": "小鹏汽车（XPENG）是一家总部位于中国广州、主要从事新能源汽车与智能驾驶的企业，成立于2014年。官网及公司公开资料将其核心业务概括为智能电动汽车、软件和智能驾驶。其代表性产品、品牌或平台包括：小鹏G系列、P系列、XNGP、飞行汽车探索。从企业经历核查角度看，小鹏汽车的项目通常可能涉及新能源汽车与智能驾驶中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自把智能座舱和辅助驾驶作为核心产品能力，面向消费者提供智能出行产品。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "小鹏汽车是一家专注于新能源汽车与智能驾驶、以智能电动汽车等业务为核心的中国企业。",
+      "influence": "把智能座舱和辅助驾驶作为核心产品能力，面向消费者提供智能出行产品；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智能电动汽车、软件和智能驾驶",
+      "representative_products": "小鹏G系列、P系列、XNGP、飞行汽车探索",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "小鹏汽车官方公司介绍",
+        "url": "https://ir.xiaopeng.com/company-profile",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-xpeng"
+    },
+    {
+      "name": "商汤科技",
+      "english_name": "SenseTime",
+      "country_region": "中国",
+      "industry": "人工智能软件",
+      "founded_year": 2014,
+      "headquarters": "中国上海",
+      "official_website": "https://www.sensetime.com/en/company",
+      "info": "商汤科技（SenseTime）是一家总部位于中国上海、主要从事人工智能软件的企业，成立于2014年。官网及公司公开资料将其核心业务概括为计算机视觉、生成式AI、智能汽车和城市智能化。其代表性产品、品牌或平台包括：SenseNova、SenseCore、智能驾驶与城市方案。从企业经历核查角度看，商汤科技的项目通常可能涉及人工智能软件中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自长期投入人工智能算法和算力平台，并将模型能力应用于企业、城市和汽车场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "商汤科技是一家专注于人工智能软件、以计算机视觉等业务为核心的中国企业。",
+      "influence": "长期投入人工智能算法和算力平台，并将模型能力应用于企业、城市和汽车场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "计算机视觉、生成式AI、智能汽车和城市智能化",
+      "representative_products": "SenseNova、SenseCore、智能驾驶与城市方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "商汤科技官方公司介绍",
+        "url": "https://www.sensetime.com/en/company",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-sensetime"
+    },
+    {
+      "name": "科大讯飞",
+      "english_name": "iFLYTEK",
+      "country_region": "中国",
+      "industry": "人工智能与语音技术",
+      "founded_year": 1999,
+      "headquarters": "中国合肥",
+      "official_website": "https://www.iflytek.com/en/about.html",
+      "info": "科大讯飞（iFLYTEK）是一家总部位于中国合肥、主要从事人工智能与语音技术的企业，成立于1999年。官网及公司公开资料将其核心业务概括为语音识别、自然语言处理、教育医疗和办公智能化。其代表性产品、品牌或平台包括：讯飞开放平台、星火大模型、教育与办公产品。从企业经历核查角度看，科大讯飞的项目通常可能涉及人工智能与语音技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以语音和语言技术为基础，服务教育、办公、医疗、汽车和公共服务等领域。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "科大讯飞是一家专注于人工智能与语音技术、以语音识别等业务为核心的中国企业。",
+      "influence": "以语音和语言技术为基础，服务教育、办公、医疗、汽车和公共服务等领域；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "语音识别、自然语言处理、教育医疗和办公智能化",
+      "representative_products": "讯飞开放平台、星火大模型、教育与办公产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "科大讯飞官方公司介绍",
+        "url": "https://www.iflytek.com/en/about.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-iflytek"
+    },
+    {
+      "name": "海康威视",
+      "english_name": "Hikvision",
+      "country_region": "中国",
+      "industry": "智能物联网与安防",
+      "founded_year": 2001,
+      "headquarters": "中国杭州",
+      "official_website": "https://www.hikvision.com/en/about-us/",
+      "info": "海康威视（Hikvision）是一家总部位于中国杭州、主要从事智能物联网与安防的企业，成立于2001年。官网及公司公开资料将其核心业务概括为视频技术、智能物联网、机器人和存储。其代表性产品、品牌或平台包括：摄像机、视频管理、机器视觉、机器人。从企业经历核查角度看，海康威视的项目通常可能涉及智能物联网与安防中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以视频和感知技术服务公共、商业和工业场景，并持续扩展到智能物联网领域。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "海康威视是一家专注于智能物联网与安防、以视频技术等业务为核心的中国企业。",
+      "influence": "以视频和感知技术服务公共、商业和工业场景，并持续扩展到智能物联网领域；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "视频技术、智能物联网、机器人和存储",
+      "representative_products": "摄像机、视频管理、机器视觉、机器人",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "海康威视官方公司介绍",
+        "url": "https://www.hikvision.com/en/about-us/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-hikvision"
+    },
+    {
+      "name": "金蝶",
+      "english_name": "Kingdee",
+      "country_region": "中国",
+      "industry": "企业管理软件与云服务",
+      "founded_year": 1993,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.kingdee.com/about",
+      "info": "金蝶（Kingdee）是一家总部位于中国深圳、主要从事企业管理软件与云服务的企业，成立于1993年。官网及公司公开资料将其核心业务概括为企业资源管理、财务、人力、供应链和云平台。其代表性产品、品牌或平台包括：金蝶云·苍穹、金蝶云·星空、财务云。从企业经历核查角度看，金蝶的项目通常可能涉及企业管理软件与云服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自服务企业数字化和管理信息化，覆盖财务、供应链、制造和人力资源场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "金蝶是一家专注于企业管理软件与云服务、以企业资源管理等业务为核心的中国企业。",
+      "influence": "服务企业数字化和管理信息化，覆盖财务、供应链、制造和人力资源场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "企业资源管理、财务、人力、供应链和云平台",
+      "representative_products": "金蝶云·苍穹、金蝶云·星空、财务云",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "金蝶官方公司介绍",
+        "url": "https://www.kingdee.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-kingdee"
+    },
+    {
+      "name": "携程集团",
+      "english_name": "Trip.com Group",
+      "country_region": "中国",
+      "industry": "在线旅行服务",
+      "founded_year": 1999,
+      "headquarters": "中国上海",
+      "official_website": "https://group.trip.com/about-us",
+      "info": "携程集团（Trip.com Group）是一家总部位于中国上海、主要从事在线旅行服务的企业，成立于1999年。官网及公司公开资料将其核心业务概括为住宿、交通、度假、商务旅行和在线旅游技术。其代表性产品、品牌或平台包括：携程、Trip.com、去哪儿、同程相关服务。从企业经历核查角度看，携程集团的项目通常可能涉及在线旅行服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自连接旅行者、酒店、航空和目的地服务商，提供多市场的在线旅行预订服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "携程集团是一家专注于在线旅行服务、以住宿等业务为核心的中国企业。",
+      "influence": "连接旅行者、酒店、航空和目的地服务商，提供多市场的在线旅行预订服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "住宿、交通、度假、商务旅行和在线旅游技术",
+      "representative_products": "携程、Trip.com、去哪儿、同程相关服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "携程集团官方公司介绍",
+        "url": "https://group.trip.com/about-us",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-trip-com-group"
+    },
+    {
+      "name": "蚂蚁集团",
+      "english_name": "Ant Group",
+      "country_region": "中国",
+      "industry": "金融科技与数字服务",
+      "founded_year": 2014,
+      "headquarters": "中国杭州",
+      "official_website": "https://www.antgroup.com/about",
+      "info": "蚂蚁集团（Ant Group）是一家总部位于中国杭州、主要从事金融科技与数字服务的企业，成立于2014年。官网及公司公开资料将其核心业务概括为支付、数字金融、商家服务和技术平台。其代表性产品、品牌或平台包括：支付宝、网商银行、蚂蚁云、数字普惠服务。从企业经历核查角度看，蚂蚁集团的项目通常可能涉及金融科技与数字服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以数字支付和平台技术连接消费者、商家及金融机构，推动金融服务数字化与普惠化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "蚂蚁集团是一家专注于金融科技与数字服务、以支付等业务为核心的中国企业。",
+      "influence": "以数字支付和平台技术连接消费者、商家及金融机构，推动金融服务数字化与普惠化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "支付、数字金融、商家服务和技术平台",
+      "representative_products": "支付宝、网商银行、蚂蚁云、数字普惠服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "蚂蚁集团官方公司介绍",
+        "url": "https://www.antgroup.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-ant-group"
+    },
+    {
+      "name": "腾讯音乐娱乐集团",
+      "english_name": "Tencent Music",
+      "country_region": "中国",
+      "industry": "在线音乐与音频娱乐",
+      "founded_year": 2016,
+      "headquarters": "中国深圳",
+      "official_website": "https://ir.tencentmusic.com/about-us",
+      "info": "腾讯音乐娱乐集团（Tencent Music）是一家总部位于中国深圳、主要从事在线音乐与音频娱乐的企业，成立于2016年。官网及公司公开资料将其核心业务概括为在线音乐、直播、音频和音乐服务。其代表性产品、品牌或平台包括：QQ音乐、酷狗、酷我、全民K歌。从企业经历核查角度看，腾讯音乐娱乐集团的项目通常可能涉及在线音乐与音频娱乐中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自运营中国主要在线音乐和音频产品，为音乐人、版权方和用户提供数字内容服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "腾讯音乐娱乐集团是一家专注于在线音乐与音频娱乐、以在线音乐等业务为核心的中国企业。",
+      "influence": "运营中国主要在线音乐和音频产品，为音乐人、版权方和用户提供数字内容服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "在线音乐、直播、音频和音乐服务",
+      "representative_products": "QQ音乐、酷狗、酷我、全民K歌",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "腾讯音乐娱乐集团官方公司介绍",
+        "url": "https://ir.tencentmusic.com/about-us",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-tencent-music"
+    },
+    {
+      "name": "快手",
+      "english_name": "Kuaishou",
+      "country_region": "中国",
+      "industry": "短视频与直播平台",
+      "founded_year": 2011,
+      "headquarters": "中国北京",
+      "official_website": "https://ir.kuaishou.com/about-us",
+      "info": "快手（Kuaishou）是一家总部位于中国北京、主要从事短视频与直播平台的企业，成立于2011年。官网及公司公开资料将其核心业务概括为短视频、直播、电商和内容社区。其代表性产品、品牌或平台包括：快手、快手电商、快手科技服务。从企业经历核查角度看，快手的项目通常可能涉及短视频与直播平台中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自以短视频和直播连接创作者、用户与商家，形成内容、社区和交易场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "快手是一家专注于短视频与直播平台、以短视频等业务为核心的中国企业。",
+      "influence": "以短视频和直播连接创作者、用户与商家，形成内容、社区和交易场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "短视频、直播、电商和内容社区",
+      "representative_products": "快手、快手电商、快手科技服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "快手官方公司介绍",
+        "url": "https://ir.kuaishou.com/about-us",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-kuaishou"
+    },
+    {
+      "name": "TCL科技",
+      "english_name": "TCL Technology",
+      "country_region": "中国",
+      "industry": "显示技术与半导体",
+      "founded_year": 1981,
+      "headquarters": "中国惠州",
+      "official_website": "https://www.tcl.com/global/en/about-tcl",
+      "info": "TCL科技（TCL Technology）是一家总部位于中国惠州、主要从事显示技术与半导体的企业，成立于1981年。官网及公司公开资料将其核心业务概括为显示面板、半导体、新能源光伏和智能终端。其代表性产品、品牌或平台包括：TCL华星、显示器件、电子消费产品。从企业经历核查角度看，TCL科技的项目通常可能涉及显示技术与半导体中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自在显示面板和电子制造产业链中拥有研发与制造能力，并向半导体和新能源拓展。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "TCL科技是一家专注于显示技术与半导体、以显示面板等业务为核心的中国企业。",
+      "influence": "在显示面板和电子制造产业链中拥有研发与制造能力，并向半导体和新能源拓展；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "显示面板、半导体、新能源光伏和智能终端",
+      "representative_products": "TCL华星、显示器件、电子消费产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "TCL科技官方公司介绍",
+        "url": "https://www.tcl.com/global/en/about-tcl",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-tcl-technology"
+    },
+    {
+      "name": "中兴通讯",
+      "english_name": "ZTE",
+      "country_region": "中国",
+      "industry": "通信设备与数字基础设施",
+      "founded_year": 1985,
+      "headquarters": "中国深圳",
+      "official_website": "https://www.zte.com.cn/global/about",
+      "info": "中兴通讯（ZTE）是一家总部位于中国深圳、主要从事通信设备与数字基础设施的企业，成立于1985年。官网及公司公开资料将其核心业务概括为无线、有线、云计算、终端和政企业务。其代表性产品、品牌或平台包括：5G网络、数据中心、服务器、智能终端。从企业经历核查角度看，中兴通讯的项目通常可能涉及通信设备与数字基础设施中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自参与全球通信网络和数字基础设施建设，为运营商、政府和企业提供技术方案。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "中兴通讯是一家专注于通信设备与数字基础设施、以无线等业务为核心的中国企业。",
+      "influence": "参与全球通信网络和数字基础设施建设，为运营商、政府和企业提供技术方案；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "无线、有线、云计算、终端和政企业务",
+      "representative_products": "5G网络、数据中心、服务器、智能终端",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "中兴通讯官方公司介绍",
+        "url": "https://www.zte.com.cn/global/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-zte"
+    },
+    {
+      "name": "浪潮信息",
+      "english_name": "Inspur",
+      "country_region": "中国",
+      "industry": "服务器与云计算基础设施",
+      "founded_year": 1993,
+      "headquarters": "中国济南",
+      "official_website": "https://en.inspur.com/en/about/",
+      "info": "浪潮信息（Inspur）是一家总部位于中国济南、主要从事服务器与云计算基础设施的企业，成立于1993年。官网及公司公开资料将其核心业务概括为服务器、存储、云计算、AI计算和软件。其代表性产品、品牌或平台包括：AI服务器、通用服务器、存储、云服务。从企业经历核查角度看，浪潮信息的项目通常可能涉及服务器与云计算基础设施中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自面向数据中心和人工智能计算提供基础设施产品，服务企业、科研和公共机构。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "浪潮信息是一家专注于服务器与云计算基础设施、以服务器等业务为核心的中国企业。",
+      "influence": "面向数据中心和人工智能计算提供基础设施产品，服务企业、科研和公共机构；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "服务器、存储、云计算、AI计算和软件",
+      "representative_products": "AI服务器、通用服务器、存储、云服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "浪潮信息官方公司介绍",
+        "url": "https://en.inspur.com/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-inspur"
+    },
+    {
+      "name": "才多对",
+      "english_name": "TTC / True Talents Connect",
+      "country_region": "中国",
+      "industry": "AI人才服务与招聘科技",
+      "founded_year": 2022,
+      "headquarters": "中国北京",
+      "official_website": "https://ttcadvisory.com/",
+      "info": "才多对（TTC / True Talents Connect）是一家总部位于中国北京、主要从事AI人才服务与招聘科技的企业，成立于2022年。官网及公司公开资料将其核心业务概括为AI原生招聘、科技人才寻访、人才数据与顾问服务。其代表性产品、品牌或平台包括：小麦招聘AI Agent、人才服务网络、岗位与人才匹配。从企业经历核查角度看，才多对的项目通常可能涉及AI人才服务与招聘科技中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在中国及国际市场的业务影响主要来自聚焦AI、芯片、新能源、先进制造等科技人才服务；官网披露已在多个城市形成服务网络并获得多项行业与创业类荣誉。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "才多对是一家专注于AI人才服务与招聘科技、以AI原生招聘等业务为核心的中国企业。",
+      "influence": "聚焦AI、芯片、新能源、先进制造等科技人才服务；官网披露已在多个城市形成服务网络并获得多项行业与创业类荣誉；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "AI原生招聘、科技人才寻访、人才数据与顾问服务",
+      "representative_products": "小麦招聘AI Agent、人才服务网络、岗位与人才匹配",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "才多对官方公司介绍",
+        "url": "https://ttcadvisory.com/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-ttc-true-talents-connect"
+    },
+    {
+      "name": "苹果",
+      "english_name": "Apple",
+      "country_region": "美国",
+      "industry": "消费电子与软件服务",
+      "founded_year": 1976,
+      "headquarters": "美国库比蒂诺",
+      "official_website": "https://www.apple.com/about/",
+      "info": "苹果（Apple）是一家总部位于美国库比蒂诺、主要从事消费电子与软件服务的企业，成立于1976年。官网及公司公开资料将其核心业务概括为智能手机、电脑、平板、可穿戴设备和数字服务。其代表性产品、品牌或平台包括：iPhone、Mac、iPad、Apple Watch、App Store。从企业经历核查角度看，苹果的项目通常可能涉及消费电子与软件服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以软硬件一体化产品和开发者生态形成全球消费科技影响力，并提供广泛数字服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "苹果是一家专注于消费电子与软件服务、以智能手机等业务为核心的美国企业。",
+      "influence": "以软硬件一体化产品和开发者生态形成全球消费科技影响力，并提供广泛数字服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "智能手机、电脑、平板、可穿戴设备和数字服务",
+      "representative_products": "iPhone、Mac、iPad、Apple Watch、App Store",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "苹果官方公司介绍",
+        "url": "https://www.apple.com/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-apple"
+    },
+    {
+      "name": "微软",
+      "english_name": "Microsoft",
+      "country_region": "美国",
+      "industry": "软件、云计算与AI",
+      "founded_year": 1975,
+      "headquarters": "美国雷德蒙德",
+      "official_website": "https://www.microsoft.com/en-us/about",
+      "info": "微软（Microsoft）是一家总部位于美国雷德蒙德、主要从事软件、云计算与AI的企业，成立于1975年。官网及公司公开资料将其核心业务概括为操作系统、生产力软件、云计算、游戏和人工智能。其代表性产品、品牌或平台包括：Windows、Microsoft 365、Azure、Xbox、Copilot。从企业经历核查角度看，微软的项目通常可能涉及软件、云计算与AI中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以企业软件和Azure云平台服务全球组织，并将AI能力嵌入开发、办公和个人产品。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "微软是一家专注于软件、云计算与AI、以操作系统等业务为核心的美国企业。",
+      "influence": "以企业软件和Azure云平台服务全球组织，并将AI能力嵌入开发、办公和个人产品；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "操作系统、生产力软件、云计算、游戏和人工智能",
+      "representative_products": "Windows、Microsoft 365、Azure、Xbox、Copilot",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "微软官方公司介绍",
+        "url": "https://www.microsoft.com/en-us/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-microsoft"
+    },
+    {
+      "name": "谷歌",
+      "english_name": "Google",
+      "country_region": "美国",
+      "industry": "互联网、广告与云计算",
+      "founded_year": 1998,
+      "headquarters": "美国山景城",
+      "official_website": "https://about.google/",
+      "info": "谷歌（Google）是一家总部位于美国山景城、主要从事互联网、广告与云计算的企业，成立于1998年。官网及公司公开资料将其核心业务概括为搜索、广告、云计算、移动系统和人工智能。其代表性产品、品牌或平台包括：Google Search、Android、YouTube、Google Cloud、Gemini。从企业经历核查角度看，谷歌的项目通常可能涉及互联网、广告与云计算中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自通过搜索、移动系统、视频和云平台影响全球信息获取、数字广告和开发者生态。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "谷歌是一家专注于互联网、广告与云计算、以搜索等业务为核心的美国企业。",
+      "influence": "通过搜索、移动系统、视频和云平台影响全球信息获取、数字广告和开发者生态；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "搜索、广告、云计算、移动系统和人工智能",
+      "representative_products": "Google Search、Android、YouTube、Google Cloud、Gemini",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "谷歌官方公司介绍",
+        "url": "https://about.google/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-google"
+    },
+    {
+      "name": "亚马逊",
+      "english_name": "Amazon",
+      "country_region": "美国",
+      "industry": "电子商务、云计算与物流",
+      "founded_year": 1994,
+      "headquarters": "美国西雅图",
+      "official_website": "https://www.aboutamazon.com/about-us",
+      "info": "亚马逊（Amazon）是一家总部位于美国西雅图、主要从事电子商务、云计算与物流的企业，成立于1994年。官网及公司公开资料将其核心业务概括为在线零售、AWS云服务、物流、数字内容和设备。其代表性产品、品牌或平台包括：Amazon、AWS、Prime、Kindle、Alexa。从企业经历核查角度看，亚马逊的项目通常可能涉及电子商务、云计算与物流中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以电商基础设施和AWS云服务服务消费者、商家与开发者，形成全球化平台网络。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "亚马逊是一家专注于电子商务、云计算与物流、以在线零售等业务为核心的美国企业。",
+      "influence": "以电商基础设施和AWS云服务服务消费者、商家与开发者，形成全球化平台网络；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "在线零售、AWS云服务、物流、数字内容和设备",
+      "representative_products": "Amazon、AWS、Prime、Kindle、Alexa",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "亚马逊官方公司介绍",
+        "url": "https://www.aboutamazon.com/about-us",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-amazon"
+    },
+    {
+      "name": "Meta",
+      "english_name": "Meta Platforms",
+      "country_region": "美国",
+      "industry": "社交网络、广告与虚拟现实",
+      "founded_year": 2004,
+      "headquarters": "美国门洛帕克",
+      "official_website": "https://about.meta.com/company-info/",
+      "info": "Meta（Meta Platforms）是一家总部位于美国门洛帕克、主要从事社交网络、广告与虚拟现实的企业，成立于2004年。官网及公司公开资料将其核心业务概括为社交平台、数字广告、消息通信和沉浸式计算。其代表性产品、品牌或平台包括：Facebook、Instagram、WhatsApp、Quest。从企业经历核查角度看，Meta的项目通常可能涉及社交网络、广告与虚拟现实中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自运营大型社交与通信平台，并投入虚拟现实、人工智能和下一代计算平台。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "Meta是一家专注于社交网络、广告与虚拟现实、以社交平台等业务为核心的美国企业。",
+      "influence": "运营大型社交与通信平台，并投入虚拟现实、人工智能和下一代计算平台；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "社交平台、数字广告、消息通信和沉浸式计算",
+      "representative_products": "Facebook、Instagram、WhatsApp、Quest",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "Meta官方公司介绍",
+        "url": "https://about.meta.com/company-info/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-meta-platforms"
+    },
+    {
+      "name": "英伟达",
+      "english_name": "NVIDIA",
+      "country_region": "美国",
+      "industry": "GPU、AI计算与软件",
+      "founded_year": 1993,
+      "headquarters": "美国圣克拉拉",
+      "official_website": "https://www.nvidia.com/en-us/about-nvidia/",
+      "info": "英伟达（NVIDIA）是一家总部位于美国圣克拉拉、主要从事GPU、AI计算与软件的企业，成立于1993年。官网及公司公开资料将其核心业务概括为GPU、数据中心、AI软件、游戏和自动驾驶。其代表性产品、品牌或平台包括：CUDA、数据中心GPU、GeForce、Omniverse。从企业经历核查角度看，英伟达的项目通常可能涉及GPU、AI计算与软件中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以GPU和软件平台推动图形计算、深度学习和生成式AI基础设施发展。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "英伟达是一家专注于GPU、AI计算与软件、以GPU等业务为核心的美国企业。",
+      "influence": "以GPU和软件平台推动图形计算、深度学习和生成式AI基础设施发展；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "GPU、数据中心、AI软件、游戏和自动驾驶",
+      "representative_products": "CUDA、数据中心GPU、GeForce、Omniverse",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "英伟达官方公司介绍",
+        "url": "https://www.nvidia.com/en-us/about-nvidia/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-nvidia"
+    },
+    {
+      "name": "特斯拉",
+      "english_name": "Tesla",
+      "country_region": "美国",
+      "industry": "新能源汽车与能源技术",
+      "founded_year": 2003,
+      "headquarters": "美国奥斯汀",
+      "official_website": "https://www.tesla.com/about",
+      "info": "特斯拉（Tesla）是一家总部位于美国奥斯汀、主要从事新能源汽车与能源技术的企业，成立于2003年。官网及公司公开资料将其核心业务概括为电动汽车、储能、充电和自动驾驶软件。其代表性产品、品牌或平台包括：Model 3/Y、Supercharger、Powerwall、Autopilot。从企业经历核查角度看，特斯拉的项目通常可能涉及新能源汽车与能源技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自推动电动汽车、储能和软件定义汽车的产业化，并建设跨地区销售和充电体系。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "特斯拉是一家专注于新能源汽车与能源技术、以电动汽车等业务为核心的美国企业。",
+      "influence": "推动电动汽车、储能和软件定义汽车的产业化，并建设跨地区销售和充电体系；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "电动汽车、储能、充电和自动驾驶软件",
+      "representative_products": "Model 3/Y、Supercharger、Powerwall、Autopilot",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "特斯拉官方公司介绍",
+        "url": "https://www.tesla.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-tesla"
+    },
+    {
+      "name": "三星电子",
+      "english_name": "Samsung Electronics",
+      "country_region": "韩国",
+      "industry": "电子、半导体与智能设备",
+      "founded_year": 1969,
+      "headquarters": "韩国水原",
+      "official_website": "https://www.samsung.com/global/ir/company-information/",
+      "info": "三星电子（Samsung Electronics）是一家总部位于韩国水原、主要从事电子、半导体与智能设备的企业，成立于1969年。官网及公司公开资料将其核心业务概括为半导体、显示、智能手机、家电和网络设备。其代表性产品、品牌或平台包括：Galaxy、Exynos、存储芯片、显示面板、智能家电。从企业经历核查角度看，三星电子的项目通常可能涉及电子、半导体与智能设备中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在韩国及国际市场的业务影响主要来自覆盖元器件、终端和家电的全球电子企业，在半导体和消费电子产业链具有重要地位。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "三星电子是一家专注于电子、半导体与智能设备、以半导体等业务为核心的韩国企业。",
+      "influence": "覆盖元器件、终端和家电的全球电子企业，在半导体和消费电子产业链具有重要地位；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "半导体、显示、智能手机、家电和网络设备",
+      "representative_products": "Galaxy、Exynos、存储芯片、显示面板、智能家电",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "三星电子官方公司介绍",
+        "url": "https://www.samsung.com/global/ir/company-information/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-samsung-electronics"
+    },
+    {
+      "name": "索尼集团",
+      "english_name": "Sony Group",
+      "country_region": "日本",
+      "industry": "电子、娱乐与金融",
+      "founded_year": 1946,
+      "headquarters": "日本东京",
+      "official_website": "https://www.sony.com/en/SonyInfo/CorporateInfo/",
+      "info": "索尼集团（Sony Group）是一家总部位于日本东京、主要从事电子、娱乐与金融的企业，成立于1946年。官网及公司公开资料将其核心业务概括为游戏、音乐、影视、电子产品和金融服务。其代表性产品、品牌或平台包括：PlayStation、Sony Music、Sony Pictures、影像产品。从企业经历核查角度看，索尼集团的项目通常可能涉及电子、娱乐与金融中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在日本及国际市场的业务影响主要来自将技术、内容和娱乐品牌结合，覆盖游戏、音乐、影视、影像和消费电子市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "索尼集团是一家专注于电子、娱乐与金融、以游戏等业务为核心的日本企业。",
+      "influence": "将技术、内容和娱乐品牌结合，覆盖游戏、音乐、影视、影像和消费电子市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "游戏、音乐、影视、电子产品和金融服务",
+      "representative_products": "PlayStation、Sony Music、Sony Pictures、影像产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "索尼集团官方公司介绍",
+        "url": "https://www.sony.com/en/SonyInfo/CorporateInfo/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-sony-group"
+    },
+    {
+      "name": "丰田汽车",
+      "english_name": "Toyota",
+      "country_region": "日本",
+      "industry": "汽车与移动出行",
+      "founded_year": 1937,
+      "headquarters": "日本丰田市",
+      "official_website": "https://global.toyota/en/company/profile/",
+      "info": "丰田汽车（Toyota）是一家总部位于日本丰田市、主要从事汽车与移动出行的企业，成立于1937年。官网及公司公开资料将其核心业务概括为汽车、混合动力、金融和移动服务。其代表性产品、品牌或平台包括：Toyota、Lexus、混合动力、氢能与移动方案。从企业经历核查角度看，丰田汽车的项目通常可能涉及汽车与移动出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在日本及国际市场的业务影响主要来自以全球汽车制造、精益生产和混合动力技术形成产业影响力，并推进电动化与智能化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "丰田汽车是一家专注于汽车与移动出行、以汽车等业务为核心的日本企业。",
+      "influence": "以全球汽车制造、精益生产和混合动力技术形成产业影响力，并推进电动化与智能化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "汽车、混合动力、金融和移动服务",
+      "representative_products": "Toyota、Lexus、混合动力、氢能与移动方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "丰田汽车官方公司介绍",
+        "url": "https://global.toyota/en/company/profile/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-toyota"
+    },
+    {
+      "name": "大众汽车集团",
+      "english_name": "Volkswagen Group",
+      "country_region": "德国",
+      "industry": "汽车与移动出行",
+      "founded_year": 1937,
+      "headquarters": "德国沃尔夫斯堡",
+      "official_website": "https://www.volkswagen-group.com/en/group-15765",
+      "info": "大众汽车集团（Volkswagen Group）是一家总部位于德国沃尔夫斯堡、主要从事汽车与移动出行的企业，成立于1937年。官网及公司公开资料将其核心业务概括为乘用车、商用车、金融和出行服务。其代表性产品、品牌或平台包括：大众、奥迪、保时捷、兰博基尼、斯柯达等品牌。从企业经历核查角度看，大众汽车集团的项目通常可能涉及汽车与移动出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自以多品牌和全球制造体系覆盖多层次汽车市场，推进电动汽车、软件和智能出行。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "大众汽车集团是一家专注于汽车与移动出行、以乘用车等业务为核心的德国企业。",
+      "influence": "以多品牌和全球制造体系覆盖多层次汽车市场，推进电动汽车、软件和智能出行；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "乘用车、商用车、金融和出行服务",
+      "representative_products": "大众、奥迪、保时捷、兰博基尼、斯柯达等品牌",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "大众汽车集团官方公司介绍",
+        "url": "https://www.volkswagen-group.com/en/group-15765",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-volkswagen-group"
+    },
+    {
+      "name": "梅赛德斯-奔驰集团",
+      "english_name": "Mercedes-Benz Group",
+      "country_region": "德国",
+      "industry": "豪华汽车与移动服务",
+      "founded_year": 1886,
+      "headquarters": "德国斯图加特",
+      "official_website": "https://group.mercedes-benz.com/company/",
+      "info": "梅赛德斯-奔驰集团（Mercedes-Benz Group）是一家总部位于德国斯图加特、主要从事豪华汽车与移动服务的企业，成立于1886年。官网及公司公开资料将其核心业务概括为豪华乘用车、商用车、金融和数字服务。其代表性产品、品牌或平台包括：Mercedes-Benz、AMG、Maybach、商用车。从企业经历核查角度看，梅赛德斯-奔驰集团的项目通常可能涉及豪华汽车与移动服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自以豪华汽车品牌、工程技术和全球服务网络形成高端汽车行业影响力。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "梅赛德斯-奔驰集团是一家专注于豪华汽车与移动服务、以豪华乘用车等业务为核心的德国企业。",
+      "influence": "以豪华汽车品牌、工程技术和全球服务网络形成高端汽车行业影响力；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "豪华乘用车、商用车、金融和数字服务",
+      "representative_products": "Mercedes-Benz、AMG、Maybach、商用车",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "梅赛德斯-奔驰集团官方公司介绍",
+        "url": "https://group.mercedes-benz.com/company/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-mercedes-benz-group"
+    },
+    {
+      "name": "宝马集团",
+      "english_name": "BMW Group",
+      "country_region": "德国",
+      "industry": "汽车与摩托车",
+      "founded_year": 1916,
+      "headquarters": "德国慕尼黑",
+      "official_website": "https://www.bmwgroup.com/en/company.html",
+      "info": "宝马集团（BMW Group）是一家总部位于德国慕尼黑、主要从事汽车与摩托车的企业，成立于1916年。官网及公司公开资料将其核心业务概括为豪华汽车、摩托车、金融和出行服务。其代表性产品、品牌或平台包括：BMW、MINI、Rolls-Royce、BMW Motorrad。从企业经历核查角度看，宝马集团的项目通常可能涉及汽车与摩托车中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自拥有全球化豪华汽车和摩托车品牌，持续投入电动化、数字化和可持续制造。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "宝马集团是一家专注于汽车与摩托车、以豪华汽车等业务为核心的德国企业。",
+      "influence": "拥有全球化豪华汽车和摩托车品牌，持续投入电动化、数字化和可持续制造；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "豪华汽车、摩托车、金融和出行服务",
+      "representative_products": "BMW、MINI、Rolls-Royce、BMW Motorrad",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "宝马集团官方公司介绍",
+        "url": "https://www.bmwgroup.com/en/company.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-bmw-group"
+    },
+    {
+      "name": "本田",
+      "english_name": "Honda Motor",
+      "country_region": "日本",
+      "industry": "汽车、摩托车与动力产品",
+      "founded_year": 1948,
+      "headquarters": "日本东京",
+      "official_website": "https://global.honda/en/about/",
+      "info": "本田（Honda Motor）是一家总部位于日本东京、主要从事汽车、摩托车与动力产品的企业，成立于1948年。官网及公司公开资料将其核心业务概括为汽车、摩托车、动力产品和移动机器人。其代表性产品、品牌或平台包括：Honda汽车、摩托车、发动机与移动技术。从企业经历核查角度看，本田的项目通常可能涉及汽车、摩托车与动力产品中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在日本及国际市场的业务影响主要来自以摩托车、汽车和动力产品服务全球用户，持续发展混合动力、电动化和机器人技术。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "本田是一家专注于汽车、摩托车与动力产品、以汽车等业务为核心的日本企业。",
+      "influence": "以摩托车、汽车和动力产品服务全球用户，持续发展混合动力、电动化和机器人技术；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "汽车、摩托车、动力产品和移动机器人",
+      "representative_products": "Honda汽车、摩托车、发动机与移动技术",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "本田官方公司介绍",
+        "url": "https://global.honda/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-honda-motor"
+    },
+    {
+      "name": "福特汽车",
+      "english_name": "Ford",
+      "country_region": "美国",
+      "industry": "汽车与移动出行",
+      "founded_year": 1903,
+      "headquarters": "美国迪尔伯恩",
+      "official_website": "https://corporate.ford.com/about.html",
+      "info": "福特汽车（Ford）是一家总部位于美国迪尔伯恩、主要从事汽车与移动出行的企业，成立于1903年。官网及公司公开资料将其核心业务概括为汽车、商用车、金融和电动汽车。其代表性产品、品牌或平台包括：Ford、Lincoln、商用车、Ford Pro。从企业经历核查角度看，福特汽车的项目通常可能涉及汽车与移动出行中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自拥有长期汽车制造传统和全球品牌，当前重点推进商用车、电动化与数字化服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "福特汽车是一家专注于汽车与移动出行、以汽车等业务为核心的美国企业。",
+      "influence": "拥有长期汽车制造传统和全球品牌，当前重点推进商用车、电动化与数字化服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "汽车、商用车、金融和电动汽车",
+      "representative_products": "Ford、Lincoln、商用车、Ford Pro",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "福特汽车官方公司介绍",
+        "url": "https://corporate.ford.com/about.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-ford"
+    },
+    {
+      "name": "通用汽车",
+      "english_name": "General Motors",
+      "country_region": "美国",
+      "industry": "汽车与移动技术",
+      "founded_year": 1908,
+      "headquarters": "美国底特律",
+      "official_website": "https://www.gm.com/company",
+      "info": "通用汽车（General Motors）是一家总部位于美国底特律、主要从事汽车与移动技术的企业，成立于1908年。官网及公司公开资料将其核心业务概括为汽车、电动汽车、软件和金融。其代表性产品、品牌或平台包括：Chevrolet、Cadillac、GMC、Cruise相关技术。从企业经历核查角度看，通用汽车的项目通常可能涉及汽车与移动技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自通过多品牌汽车、动力电池和软件平台服务全球市场，推进电动化与自动驾驶探索。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "通用汽车是一家专注于汽车与移动技术、以汽车等业务为核心的美国企业。",
+      "influence": "通过多品牌汽车、动力电池和软件平台服务全球市场，推进电动化与自动驾驶探索；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "汽车、电动汽车、软件和金融",
+      "representative_products": "Chevrolet、Cadillac、GMC、Cruise相关技术",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "通用汽车官方公司介绍",
+        "url": "https://www.gm.com/company",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-general-motors"
+    },
+    {
+      "name": "英特尔",
+      "english_name": "Intel",
+      "country_region": "美国",
+      "industry": "半导体与计算平台",
+      "founded_year": 1968,
+      "headquarters": "美国圣克拉拉",
+      "official_website": "https://www.intel.com/content/www/us/en/company-overview/company-overview.html",
+      "info": "英特尔（Intel）是一家总部位于美国圣克拉拉、主要从事半导体与计算平台的企业，成立于1968年。官网及公司公开资料将其核心业务概括为处理器、数据中心、AI、网络和晶圆制造。其代表性产品、品牌或平台包括：Xeon、Core、Gaudi、Intel Foundry。从企业经历核查角度看，英特尔的项目通常可能涉及半导体与计算平台中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自长期参与通用计算和数据中心产业，并通过处理器、制造和软件生态服务企业与个人。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "英特尔是一家专注于半导体与计算平台、以处理器等业务为核心的美国企业。",
+      "influence": "长期参与通用计算和数据中心产业，并通过处理器、制造和软件生态服务企业与个人；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "处理器、数据中心、AI、网络和晶圆制造",
+      "representative_products": "Xeon、Core、Gaudi、Intel Foundry",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "英特尔官方公司介绍",
+        "url": "https://www.intel.com/content/www/us/en/company-overview/company-overview.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-intel"
+    },
+    {
+      "name": "AMD",
+      "english_name": "Advanced Micro Devices",
+      "country_region": "美国",
+      "industry": "半导体与高性能计算",
+      "founded_year": 1969,
+      "headquarters": "美国圣克拉拉",
+      "official_website": "https://www.amd.com/en/corporate.html",
+      "info": "AMD（Advanced Micro Devices）是一家总部位于美国圣克拉拉、主要从事半导体与高性能计算的企业，成立于1969年。官网及公司公开资料将其核心业务概括为CPU、GPU、自适应计算和数据中心芯片。其代表性产品、品牌或平台包括：Ryzen、EPYC、Radeon、Instinct、Xilinx产品。从企业经历核查角度看，AMD的项目通常可能涉及半导体与高性能计算中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以高性能CPU、GPU和自适应计算产品参与个人电脑、游戏、嵌入式和数据中心市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "AMD是一家专注于半导体与高性能计算、以CPU等业务为核心的美国企业。",
+      "influence": "以高性能CPU、GPU和自适应计算产品参与个人电脑、游戏、嵌入式和数据中心市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "CPU、GPU、自适应计算和数据中心芯片",
+      "representative_products": "Ryzen、EPYC、Radeon、Instinct、Xilinx产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "AMD官方公司介绍",
+        "url": "https://www.amd.com/en/corporate.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-advanced-micro-devices"
+    },
+    {
+      "name": "IBM",
+      "english_name": "IBM",
+      "country_region": "美国",
+      "industry": "企业科技、云与AI",
+      "founded_year": 1911,
+      "headquarters": "美国阿蒙克",
+      "official_website": "https://www.ibm.com/about",
+      "info": "IBM（IBM）是一家总部位于美国阿蒙克、主要从事企业科技、云与AI的企业，成立于1911年。官网及公司公开资料将其核心业务概括为混合云、AI、咨询、基础设施和软件。其代表性产品、品牌或平台包括：watsonx、IBM Cloud、主机、企业软件。从企业经历核查角度看，IBM的项目通常可能涉及企业科技、云与AI中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自长期服务大型组织的信息技术和咨询需求，重点推进混合云、企业AI和基础设施现代化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "IBM是一家专注于企业科技、云与AI、以混合云等业务为核心的美国企业。",
+      "influence": "长期服务大型组织的信息技术和咨询需求，重点推进混合云、企业AI和基础设施现代化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "混合云、AI、咨询、基础设施和软件",
+      "representative_products": "watsonx、IBM Cloud、主机、企业软件",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "IBM官方公司介绍",
+        "url": "https://www.ibm.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-ibm"
+    },
+    {
+      "name": "甲骨文",
+      "english_name": "Oracle",
+      "country_region": "美国",
+      "industry": "数据库、云计算与企业软件",
+      "founded_year": 1977,
+      "headquarters": "美国奥斯汀",
+      "official_website": "https://www.oracle.com/corporate/",
+      "info": "甲骨文（Oracle）是一家总部位于美国奥斯汀、主要从事数据库、云计算与企业软件的企业，成立于1977年。官网及公司公开资料将其核心业务概括为数据库、云基础设施、企业应用和硬件。其代表性产品、品牌或平台包括：Oracle Database、OCI、Fusion Cloud Applications。从企业经历核查角度看，甲骨文的项目通常可能涉及数据库、云计算与企业软件中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以数据库和企业软件为基础服务全球组织，并将核心业务扩展到云基础设施与应用。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "甲骨文是一家专注于数据库、云计算与企业软件、以数据库等业务为核心的美国企业。",
+      "influence": "以数据库和企业软件为基础服务全球组织，并将核心业务扩展到云基础设施与应用；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "数据库、云基础设施、企业应用和硬件",
+      "representative_products": "Oracle Database、OCI、Fusion Cloud Applications",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "甲骨文官方公司介绍",
+        "url": "https://www.oracle.com/corporate/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-oracle"
+    },
+    {
+      "name": "Salesforce",
+      "english_name": "Salesforce",
+      "country_region": "美国",
+      "industry": "企业软件与CRM",
+      "founded_year": 1999,
+      "headquarters": "美国旧金山",
+      "official_website": "https://www.salesforce.com/company/",
+      "info": "Salesforce（Salesforce）是一家总部位于美国旧金山、主要从事企业软件与CRM的企业，成立于1999年。官网及公司公开资料将其核心业务概括为客户关系管理、营销、服务、数据和AI。其代表性产品、品牌或平台包括：Sales Cloud、Service Cloud、Data Cloud、Einstein。从企业经历核查角度看，Salesforce的项目通常可能涉及企业软件与CRM中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自推动软件即服务和客户关系管理普及，为销售、服务、营销和数据团队提供云平台。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "Salesforce是一家专注于企业软件与CRM、以客户关系管理等业务为核心的美国企业。",
+      "influence": "推动软件即服务和客户关系管理普及，为销售、服务、营销和数据团队提供云平台；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "客户关系管理、营销、服务、数据和AI",
+      "representative_products": "Sales Cloud、Service Cloud、Data Cloud、Einstein",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "Salesforce官方公司介绍",
+        "url": "https://www.salesforce.com/company/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-salesforce"
+    },
+    {
+      "name": "Adobe",
+      "english_name": "Adobe",
+      "country_region": "美国",
+      "industry": "创意软件与数字体验",
+      "founded_year": 1982,
+      "headquarters": "美国圣何塞",
+      "official_website": "https://www.adobe.com/about-adobe.html",
+      "info": "Adobe（Adobe）是一家总部位于美国圣何塞、主要从事创意软件与数字体验的企业，成立于1982年。官网及公司公开资料将其核心业务概括为创意工具、文档、数字营销和内容管理。其代表性产品、品牌或平台包括：Photoshop、Illustrator、Acrobat、Creative Cloud。从企业经历核查角度看，Adobe的项目通常可能涉及创意软件与数字体验中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以创意和文档软件服务设计师、企业和内容创作者，形成广泛的专业工具生态。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "Adobe是一家专注于创意软件与数字体验、以创意工具等业务为核心的美国企业。",
+      "influence": "以创意和文档软件服务设计师、企业和内容创作者，形成广泛的专业工具生态；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "创意工具、文档、数字营销和内容管理",
+      "representative_products": "Photoshop、Illustrator、Acrobat、Creative Cloud",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "Adobe官方公司介绍",
+        "url": "https://www.adobe.com/about-adobe.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-adobe"
+    },
+    {
+      "name": "SAP",
+      "english_name": "SAP",
+      "country_region": "德国",
+      "industry": "企业软件与云服务",
+      "founded_year": 1972,
+      "headquarters": "德国瓦尔多夫",
+      "official_website": "https://www.sap.com/about/company.html",
+      "info": "SAP（SAP）是一家总部位于德国瓦尔多夫、主要从事企业软件与云服务的企业，成立于1972年。官网及公司公开资料将其核心业务概括为ERP、供应链、人力、财务和企业云。其代表性产品、品牌或平台包括：SAP S/4HANA、SuccessFactors、SAP Business Technology Platform。从企业经历核查角度看，SAP的项目通常可能涉及企业软件与云服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自以企业资源计划软件和云平台支持组织运营、财务、供应链和人力管理数字化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "SAP是一家专注于企业软件与云服务、以ERP等业务为核心的德国企业。",
+      "influence": "以企业资源计划软件和云平台支持组织运营、财务、供应链和人力管理数字化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "ERP、供应链、人力、财务和企业云",
+      "representative_products": "SAP S/4HANA、SuccessFactors、SAP Business Technology Platform",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "SAP官方公司介绍",
+        "url": "https://www.sap.com/about/company.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-sap"
+    },
+    {
+      "name": "西门子",
+      "english_name": "Siemens",
+      "country_region": "德国",
+      "industry": "工业自动化、能源与基础设施",
+      "founded_year": 1847,
+      "headquarters": "德国慕尼黑/柏林",
+      "official_website": "https://www.siemens.com/global/en/company/about.html",
+      "info": "西门子（Siemens）是一家总部位于德国慕尼黑/柏林、主要从事工业自动化、能源与基础设施的企业，成立于1847年。官网及公司公开资料将其核心业务概括为工业软件、自动化、智能基础设施和交通。其代表性产品、品牌或平台包括：工业自动化、数字孪生、楼宇与交通解决方案。从企业经历核查角度看，西门子的项目通常可能涉及工业自动化、能源与基础设施中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自连接工业软件、自动化和基础设施，为制造、能源、交通和城市提供技术方案。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "西门子是一家专注于工业自动化、能源与基础设施、以工业软件等业务为核心的德国企业。",
+      "influence": "连接工业软件、自动化和基础设施，为制造、能源、交通和城市提供技术方案；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "工业软件、自动化、智能基础设施和交通",
+      "representative_products": "工业自动化、数字孪生、楼宇与交通解决方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "西门子官方公司介绍",
+        "url": "https://www.siemens.com/global/en/company/about.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-siemens"
+    },
+    {
+      "name": "博世",
+      "english_name": "Bosch",
+      "country_region": "德国",
+      "industry": "工业技术、汽车与家电",
+      "founded_year": 1886,
+      "headquarters": "德国斯图加特",
+      "official_website": "https://www.bosch.com/company/",
+      "info": "博世（Bosch）是一家总部位于德国斯图加特、主要从事工业技术、汽车与家电的企业，成立于1886年。官网及公司公开资料将其核心业务概括为汽车技术、工业技术、消费品和能源建筑技术。其代表性产品、品牌或平台包括：汽车电子、工具、家电、传感器与工业方案。从企业经历核查角度看，博世的项目通常可能涉及工业技术、汽车与家电中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自以工程技术和制造能力服务汽车、工业、家庭和建筑场景，并持续推进互联与电气化。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "博世是一家专注于工业技术、汽车与家电、以汽车技术等业务为核心的德国企业。",
+      "influence": "以工程技术和制造能力服务汽车、工业、家庭和建筑场景，并持续推进互联与电气化；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "汽车技术、工业技术、消费品和能源建筑技术",
+      "representative_products": "汽车电子、工具、家电、传感器与工业方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "博世官方公司介绍",
+        "url": "https://www.bosch.com/company/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-bosch"
+    },
+    {
+      "name": "飞利浦",
+      "english_name": "Philips",
+      "country_region": "荷兰",
+      "industry": "医疗健康技术",
+      "founded_year": 1891,
+      "headquarters": "荷兰阿姆斯特丹",
+      "official_website": "https://www.philips.com/a-w/about.html",
+      "info": "飞利浦（Philips）是一家总部位于荷兰阿姆斯特丹、主要从事医疗健康技术的企业，成立于1891年。官网及公司公开资料将其核心业务概括为影像诊断、患者监护、睡眠和个人健康。其代表性产品、品牌或平台包括：医疗影像、监护设备、医院解决方案、健康产品。从企业经历核查角度看，飞利浦的项目通常可能涉及医疗健康技术中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在荷兰及国际市场的业务影响主要来自从消费电子历史转向医疗健康技术，服务医院、医疗专业人员和家庭健康场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "飞利浦是一家专注于医疗健康技术、以影像诊断等业务为核心的荷兰企业。",
+      "influence": "从消费电子历史转向医疗健康技术，服务医院、医疗专业人员和家庭健康场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "影像诊断、患者监护、睡眠和个人健康",
+      "representative_products": "医疗影像、监护设备、医院解决方案、健康产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "飞利浦官方公司介绍",
+        "url": "https://www.philips.com/a-w/about.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-philips"
+    },
+    {
+      "name": "雀巢",
+      "english_name": "Nestle",
+      "country_region": "瑞士",
+      "industry": "食品饮料与营养健康",
+      "founded_year": 1866,
+      "headquarters": "瑞士沃韦",
+      "official_website": "https://www.nestle.com/about",
+      "info": "雀巢（Nestle）是一家总部位于瑞士沃韦、主要从事食品饮料与营养健康的企业，成立于1866年。官网及公司公开资料将其核心业务概括为食品、饮料、营养、咖啡和宠物护理。其代表性产品、品牌或平台包括：雀巢咖啡、KitKat、奶粉、宠物护理品牌。从企业经历核查角度看，雀巢的项目通常可能涉及食品饮料与营养健康中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在瑞士及国际市场的业务影响主要来自拥有跨地域食品和饮料品牌组合，覆盖日常消费、营养健康和宠物护理市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "雀巢是一家专注于食品饮料与营养健康、以食品等业务为核心的瑞士企业。",
+      "influence": "拥有跨地域食品和饮料品牌组合，覆盖日常消费、营养健康和宠物护理市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "食品、饮料、营养、咖啡和宠物护理",
+      "representative_products": "雀巢咖啡、KitKat、奶粉、宠物护理品牌",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "雀巢官方公司介绍",
+        "url": "https://www.nestle.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-nestle"
+    },
+    {
+      "name": "可口可乐公司",
+      "english_name": "The Coca-Cola Company",
+      "country_region": "美国",
+      "industry": "饮料与消费品",
+      "founded_year": 1886,
+      "headquarters": "美国亚特兰大",
+      "official_website": "https://www.coca-colacompany.com/company",
+      "info": "可口可乐公司（The Coca-Cola Company）是一家总部位于美国亚特兰大、主要从事饮料与消费品的企业，成立于1886年。官网及公司公开资料将其核心业务概括为碳酸饮料、水、运动饮料、咖啡和果汁。其代表性产品、品牌或平台包括：Coca-Cola、Sprite、Fanta、smartwater等品牌。从企业经历核查角度看，可口可乐公司的项目通常可能涉及饮料与消费品中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以全球化饮料品牌、装瓶伙伴和分销体系服务消费者，形成广泛的消费品影响力。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "可口可乐公司是一家专注于饮料与消费品、以碳酸饮料等业务为核心的美国企业。",
+      "influence": "以全球化饮料品牌、装瓶伙伴和分销体系服务消费者，形成广泛的消费品影响力；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "碳酸饮料、水、运动饮料、咖啡和果汁",
+      "representative_products": "Coca-Cola、Sprite、Fanta、smartwater等品牌",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "可口可乐公司官方公司介绍",
+        "url": "https://www.coca-colacompany.com/company",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-the-coca-cola-company"
+    },
+    {
+      "name": "百事公司",
+      "english_name": "PepsiCo",
+      "country_region": "美国",
+      "industry": "食品饮料与消费品",
+      "founded_year": 1965,
+      "headquarters": "美国纽约州哈里森",
+      "official_website": "https://www.pepsico.com/about",
+      "info": "百事公司（PepsiCo）是一家总部位于美国纽约州哈里森、主要从事食品饮料与消费品的企业，成立于1965年。官网及公司公开资料将其核心业务概括为饮料、零食、食品和营养产品。其代表性产品、品牌或平台包括：Pepsi、Lay's、Gatorade、Quaker、Doritos。从企业经历核查角度看，百事公司的项目通常可能涉及食品饮料与消费品中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自结合饮料与方便食品品牌，依托全球供应链、营销和渠道服务多个消费场景。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "百事公司是一家专注于食品饮料与消费品、以饮料等业务为核心的美国企业。",
+      "influence": "结合饮料与方便食品品牌，依托全球供应链、营销和渠道服务多个消费场景；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "饮料、零食、食品和营养产品",
+      "representative_products": "Pepsi、Lay's、Gatorade、Quaker、Doritos",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "百事公司官方公司介绍",
+        "url": "https://www.pepsico.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-pepsico"
+    },
+    {
+      "name": "麦当劳",
+      "english_name": "McDonald's",
+      "country_region": "美国",
+      "industry": "餐饮与特许经营",
+      "founded_year": 1940,
+      "headquarters": "美国芝加哥",
+      "official_website": "https://corporate.mcdonalds.com/corpmcd/our-company.html",
+      "info": "麦当劳（McDonald's）是一家总部位于美国芝加哥、主要从事餐饮与特许经营的企业，成立于1940年。官网及公司公开资料将其核心业务概括为快速服务餐饮、特许经营和数字点餐。其代表性产品、品牌或平台包括：汉堡、早餐、McCafé、数字会员与配送。从企业经历核查角度看，麦当劳的项目通常可能涉及餐饮与特许经营中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以标准化餐饮、加盟体系和全球门店网络形成广泛消费者认知与运营影响力。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "麦当劳是一家专注于餐饮与特许经营、以快速服务餐饮等业务为核心的美国企业。",
+      "influence": "以标准化餐饮、加盟体系和全球门店网络形成广泛消费者认知与运营影响力；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "快速服务餐饮、特许经营和数字点餐",
+      "representative_products": "汉堡、早餐、McCafé、数字会员与配送",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "麦当劳官方公司介绍",
+        "url": "https://corporate.mcdonalds.com/corpmcd/our-company.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-mcdonald-s"
+    },
+    {
+      "name": "耐克",
+      "english_name": "Nike",
+      "country_region": "美国",
+      "industry": "运动用品与品牌零售",
+      "founded_year": 1964,
+      "headquarters": "美国比弗顿",
+      "official_website": "https://about.nike.com/en/company",
+      "info": "耐克（Nike）是一家总部位于美国比弗顿、主要从事运动用品与品牌零售的企业，成立于1964年。官网及公司公开资料将其核心业务概括为运动鞋服、装备、数字服务和零售。其代表性产品、品牌或平台包括：Air、Jordan、Nike Running、Nike Training。从企业经历核查角度看，耐克的项目通常可能涉及运动用品与品牌零售中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自通过运动产品、运动员合作、品牌文化和数字社区影响全球运动消费市场。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "耐克是一家专注于运动用品与品牌零售、以运动鞋服等业务为核心的美国企业。",
+      "influence": "通过运动产品、运动员合作、品牌文化和数字社区影响全球运动消费市场；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "运动鞋服、装备、数字服务和零售",
+      "representative_products": "Air、Jordan、Nike Running、Nike Training",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "耐克官方公司介绍",
+        "url": "https://about.nike.com/en/company",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-nike"
+    },
+    {
+      "name": "阿迪达斯",
+      "english_name": "adidas",
+      "country_region": "德国",
+      "industry": "运动用品与品牌零售",
+      "founded_year": 1949,
+      "headquarters": "德国黑措根奥拉赫",
+      "official_website": "https://www.adidas-group.com/en/about/",
+      "info": "阿迪达斯（adidas）是一家总部位于德国黑措根奥拉赫、主要从事运动用品与品牌零售的企业，成立于1949年。官网及公司公开资料将其核心业务概括为运动鞋服、装备、零售和数字体验。其代表性产品、品牌或平台包括：Performance、Originals、足球与篮球产品。从企业经历核查角度看，阿迪达斯的项目通常可能涉及运动用品与品牌零售中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在德国及国际市场的业务影响主要来自以运动产品研发、赛事合作和全球品牌渠道服务运动员与消费者。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "阿迪达斯是一家专注于运动用品与品牌零售、以运动鞋服等业务为核心的德国企业。",
+      "influence": "以运动产品研发、赛事合作和全球品牌渠道服务运动员与消费者；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "运动鞋服、装备、零售和数字体验",
+      "representative_products": "Performance、Originals、足球与篮球产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "阿迪达斯官方公司介绍",
+        "url": "https://www.adidas-group.com/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-adidas"
+    },
+    {
+      "name": "宝洁",
+      "english_name": "Procter & Gamble",
+      "country_region": "美国",
+      "industry": "日用消费品",
+      "founded_year": 1837,
+      "headquarters": "美国辛辛那提",
+      "official_website": "https://us.pg.com/",
+      "info": "宝洁（Procter & Gamble）是一家总部位于美国辛辛那提、主要从事日用消费品的企业，成立于1837年。官网及公司公开资料将其核心业务概括为美容、家庭护理、健康和个人护理。其代表性产品、品牌或平台包括：Pampers、Ariel、Gillette、Oral-B、Pantene。从企业经历核查角度看，宝洁的项目通常可能涉及日用消费品中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自通过多品类品牌、研发和全球分销服务家庭日常消费，拥有长期品牌和供应链积累。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "宝洁是一家专注于日用消费品、以美容等业务为核心的美国企业。",
+      "influence": "通过多品类品牌、研发和全球分销服务家庭日常消费，拥有长期品牌和供应链积累；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "美容、家庭护理、健康和个人护理",
+      "representative_products": "Pampers、Ariel、Gillette、Oral-B、Pantene",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "宝洁官方公司介绍",
+        "url": "https://us.pg.com/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-procter-gamble"
+    },
+    {
+      "name": "强生",
+      "english_name": "Johnson & Johnson",
+      "country_region": "美国",
+      "industry": "医疗健康与制药",
+      "founded_year": 1886,
+      "headquarters": "美国新不伦瑞克",
+      "official_website": "https://www.jnj.com/about-jnj",
+      "info": "强生（Johnson & Johnson）是一家总部位于美国新不伦瑞克、主要从事医疗健康与制药的企业，成立于1886年。官网及公司公开资料将其核心业务概括为制药、医疗器械和消费者健康。其代表性产品、品牌或平台包括：创新药物、外科与介入产品、健康护理。从企业经历核查角度看，强生的项目通常可能涉及医疗健康与制药中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自在药品和医疗技术领域服务患者、医护人员和医疗机构，拥有跨地区研发与商业网络。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "强生是一家专注于医疗健康与制药、以制药等业务为核心的美国企业。",
+      "influence": "在药品和医疗技术领域服务患者、医护人员和医疗机构，拥有跨地区研发与商业网络；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "制药、医疗器械和消费者健康",
+      "representative_products": "创新药物、外科与介入产品、健康护理",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "强生官方公司介绍",
+        "url": "https://www.jnj.com/about-jnj",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-johnson-johnson"
+    },
+    {
+      "name": "辉瑞",
+      "english_name": "Pfizer",
+      "country_region": "美国",
+      "industry": "生物制药",
+      "founded_year": 1849,
+      "headquarters": "美国纽约",
+      "official_website": "https://www.pfizer.com/about",
+      "info": "辉瑞（Pfizer）是一家总部位于美国纽约、主要从事生物制药的企业，成立于1849年。官网及公司公开资料将其核心业务概括为处方药、疫苗和生物制药研发。其代表性产品、品牌或平台包括：疫苗、抗感染、肿瘤和免疫领域产品。从企业经历核查角度看，辉瑞的项目通常可能涉及生物制药中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自以药物和疫苗研发、临床开发及全球供应体系参与公共健康和疾病治疗。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "辉瑞是一家专注于生物制药、以处方药等业务为核心的美国企业。",
+      "influence": "以药物和疫苗研发、临床开发及全球供应体系参与公共健康和疾病治疗；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "处方药、疫苗和生物制药研发",
+      "representative_products": "疫苗、抗感染、肿瘤和免疫领域产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "辉瑞官方公司介绍",
+        "url": "https://www.pfizer.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-pfizer"
+    },
+    {
+      "name": "罗氏",
+      "english_name": "Roche",
+      "country_region": "瑞士",
+      "industry": "制药与诊断",
+      "founded_year": 1896,
+      "headquarters": "瑞士巴塞尔",
+      "official_website": "https://www.roche.com/about",
+      "info": "罗氏（Roche）是一家总部位于瑞士巴塞尔、主要从事制药与诊断的企业，成立于1896年。官网及公司公开资料将其核心业务概括为创新药物、体外诊断和数字健康。其代表性产品、品牌或平台包括：肿瘤、免疫、神经科学药物与诊断系统。从企业经历核查角度看，罗氏的项目通常可能涉及制药与诊断中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在瑞士及国际市场的业务影响主要来自将制药与诊断结合，服务疾病发现、治疗和患者管理，在精准医疗方向具有长期积累。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "罗氏是一家专注于制药与诊断、以创新药物等业务为核心的瑞士企业。",
+      "influence": "将制药与诊断结合，服务疾病发现、治疗和患者管理，在精准医疗方向具有长期积累；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "创新药物、体外诊断和数字健康",
+      "representative_products": "肿瘤、免疫、神经科学药物与诊断系统",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "罗氏官方公司介绍",
+        "url": "https://www.roche.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-roche"
+    },
+    {
+      "name": "诺华",
+      "english_name": "Novartis",
+      "country_region": "瑞士",
+      "industry": "创新制药",
+      "founded_year": 1996,
+      "headquarters": "瑞士巴塞尔",
+      "official_website": "https://www.novartis.com/about",
+      "info": "诺华（Novartis）是一家总部位于瑞士巴塞尔、主要从事创新制药的企业，成立于1996年。官网及公司公开资料将其核心业务概括为处方药、临床研发和数字化医学。其代表性产品、品牌或平台包括：心血管、免疫、神经科学、肿瘤等创新药物。从企业经历核查角度看，诺华的项目通常可能涉及创新制药中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在瑞士及国际市场的业务影响主要来自以研发驱动的创新制药企业，围绕重大疾病开展全球临床研究和药品供应。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "诺华是一家专注于创新制药、以处方药等业务为核心的瑞士企业。",
+      "influence": "以研发驱动的创新制药企业，围绕重大疾病开展全球临床研究和药品供应；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "处方药、临床研发和数字化医学",
+      "representative_products": "心血管、免疫、神经科学、肿瘤等创新药物",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "诺华官方公司介绍",
+        "url": "https://www.novartis.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-novartis"
+    },
+    {
+      "name": "阿斯利康",
+      "english_name": "AstraZeneca",
+      "country_region": "英国/瑞典",
+      "industry": "生物制药",
+      "founded_year": 1999,
+      "headquarters": "英国剑桥",
+      "official_website": "https://www.astrazeneca.com/what-science-can-do.html",
+      "info": "阿斯利康（AstraZeneca）是一家总部位于英国剑桥、主要从事生物制药的企业，成立于1999年。官网及公司公开资料将其核心业务概括为处方药、疫苗和生物制药研发。其代表性产品、品牌或平台包括：肿瘤、心血管、呼吸、肾脏和代谢领域药物。从企业经历核查角度看，阿斯利康的项目通常可能涉及生物制药中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在英国/瑞典及国际市场的业务影响主要来自开展跨国研发和药品供应，重点覆盖慢病、肿瘤和呼吸等公共健康领域。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "阿斯利康是一家专注于生物制药、以处方药等业务为核心的英国/瑞典企业。",
+      "influence": "开展跨国研发和药品供应，重点覆盖慢病、肿瘤和呼吸等公共健康领域；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "处方药、疫苗和生物制药研发",
+      "representative_products": "肿瘤、心血管、呼吸、肾脏和代谢领域药物",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "阿斯利康官方公司介绍",
+        "url": "https://www.astrazeneca.com/what-science-can-do.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-astrazeneca"
+    },
+    {
+      "name": "壳牌",
+      "english_name": "Shell",
+      "country_region": "英国",
+      "industry": "能源与化工",
+      "founded_year": 1907,
+      "headquarters": "英国伦敦",
+      "official_website": "https://www.shell.com/about-us.html",
+      "info": "壳牌（Shell）是一家总部位于英国伦敦、主要从事能源与化工的企业，成立于1907年。官网及公司公开资料将其核心业务概括为油气、LNG、化工、能源交易和低碳能源。其代表性产品、品牌或平台包括：能源供应、润滑油、化工和新能源方案。从企业经历核查角度看，壳牌的项目通常可能涉及能源与化工中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在英国及国际市场的业务影响主要来自覆盖能源生产、加工、贸易和终端服务，并逐步布局低碳能源与能源转型技术。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "壳牌是一家专注于能源与化工、以油气等业务为核心的英国企业。",
+      "influence": "覆盖能源生产、加工、贸易和终端服务，并逐步布局低碳能源与能源转型技术；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "油气、LNG、化工、能源交易和低碳能源",
+      "representative_products": "能源供应、润滑油、化工和新能源方案",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "壳牌官方公司介绍",
+        "url": "https://www.shell.com/about-us.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-shell"
+    },
+    {
+      "name": "英国石油",
+      "english_name": "bp",
+      "country_region": "英国",
+      "industry": "能源与综合能源",
+      "founded_year": 1909,
+      "headquarters": "英国伦敦",
+      "official_website": "https://www.bp.com/en/global/corporate/who-we-are.html",
+      "info": "英国石油（bp）是一家总部位于英国伦敦、主要从事能源与综合能源的企业，成立于1909年。官网及公司公开资料将其核心业务概括为油气、炼化、零售和低碳能源。其代表性产品、品牌或平台包括：油气生产、燃料零售、充电与低碳项目。从企业经历核查角度看，英国石油的项目通常可能涉及能源与综合能源中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在英国及国际市场的业务影响主要来自拥有全球能源生产和销售网络，正以多元能源和低碳投资应对能源转型。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "英国石油是一家专注于能源与综合能源、以油气等业务为核心的英国企业。",
+      "influence": "拥有全球能源生产和销售网络，正以多元能源和低碳投资应对能源转型；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "油气、炼化、零售和低碳能源",
+      "representative_products": "油气生产、燃料零售、充电与低碳项目",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "英国石油官方公司介绍",
+        "url": "https://www.bp.com/en/global/corporate/who-we-are.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-bp"
+    },
+    {
+      "name": "埃克森美孚",
+      "english_name": "ExxonMobil",
+      "country_region": "美国",
+      "industry": "能源与化工",
+      "founded_year": 1999,
+      "headquarters": "美国斯普林",
+      "official_website": "https://corporate.exxonmobil.com/about-us",
+      "info": "埃克森美孚（ExxonMobil）是一家总部位于美国斯普林、主要从事能源与化工的企业，成立于1999年。官网及公司公开资料将其核心业务概括为油气勘探、炼化、化工和低碳技术。其代表性产品、品牌或平台包括：上游油气、燃料、化工产品与碳减排技术。从企业经历核查角度看，埃克森美孚的项目通常可能涉及能源与化工中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自覆盖能源和化工产业链多个环节，并投资碳捕集、生物燃料等低碳技术方向。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "埃克森美孚是一家专注于能源与化工、以油气勘探等业务为核心的美国企业。",
+      "influence": "覆盖能源和化工产业链多个环节，并投资碳捕集、生物燃料等低碳技术方向；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "油气勘探、炼化、化工和低碳技术",
+      "representative_products": "上游油气、燃料、化工产品与碳减排技术",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "埃克森美孚官方公司介绍",
+        "url": "https://corporate.exxonmobil.com/about-us",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-exxonmobil"
+    },
+    {
+      "name": "Visa",
+      "english_name": "Visa",
+      "country_region": "美国",
+      "industry": "支付网络与金融科技",
+      "founded_year": 1958,
+      "headquarters": "美国旧金山",
+      "official_website": "https://usa.visa.com/about-visa.html",
+      "info": "Visa（Visa）是一家总部位于美国旧金山、主要从事支付网络与金融科技的企业，成立于1958年。官网及公司公开资料将其核心业务概括为银行卡支付网络、数字支付和商户服务。其代表性产品、品牌或平台包括：Visa支付网络、Token服务、风险与数据产品。从企业经历核查角度看，Visa的项目通常可能涉及支付网络与金融科技中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自连接消费者、商户、银行和政府机构，提供跨地区的电子支付网络和安全能力。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "Visa是一家专注于支付网络与金融科技、以银行卡支付网络等业务为核心的美国企业。",
+      "influence": "连接消费者、商户、银行和政府机构，提供跨地区的电子支付网络和安全能力；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "银行卡支付网络、数字支付和商户服务",
+      "representative_products": "Visa支付网络、Token服务、风险与数据产品",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "Visa官方公司介绍",
+        "url": "https://usa.visa.com/about-visa.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-visa"
+    },
+    {
+      "name": "万事达卡",
+      "english_name": "Mastercard",
+      "country_region": "美国",
+      "industry": "支付网络与金融科技",
+      "founded_year": 1966,
+      "headquarters": "美国纽约州购买",
+      "official_website": "https://www.mastercard.com/global/en/vision/corp-overview.html",
+      "info": "万事达卡（Mastercard）是一家总部位于美国纽约州购买、主要从事支付网络与金融科技的企业，成立于1966年。官网及公司公开资料将其核心业务概括为支付网络、身份认证、数据和金融包容服务。其代表性产品、品牌或平台包括：Mastercard网络、数字支付、网络安全和数据服务。从企业经历核查角度看，万事达卡的项目通常可能涉及支付网络与金融科技中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自为金融机构、商户和消费者提供支付处理、数字身份和风险管理基础设施。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "万事达卡是一家专注于支付网络与金融科技、以支付网络等业务为核心的美国企业。",
+      "influence": "为金融机构、商户和消费者提供支付处理、数字身份和风险管理基础设施；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "支付网络、身份认证、数据和金融包容服务",
+      "representative_products": "Mastercard网络、数字支付、网络安全和数据服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "万事达卡官方公司介绍",
+        "url": "https://www.mastercard.com/global/en/vision/corp-overview.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-mastercard"
+    },
+    {
+      "name": "摩根大通",
+      "english_name": "JPMorgan Chase",
+      "country_region": "美国",
+      "industry": "银行与金融服务",
+      "founded_year": 1799,
+      "headquarters": "美国纽约",
+      "official_website": "https://www.jpmorganchase.com/about",
+      "info": "摩根大通（JPMorgan Chase）是一家总部位于美国纽约、主要从事银行与金融服务的企业，成立于1799年。官网及公司公开资料将其核心业务概括为消费金融、商业银行、投资银行和资产管理。其代表性产品、品牌或平台包括：J.P. Morgan、Chase、支付与市场服务。从企业经历核查角度看，摩根大通的项目通常可能涉及银行与金融服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自服务个人、企业、政府和机构投资者，覆盖零售金融、资本市场、支付及资产管理。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "摩根大通是一家专注于银行与金融服务、以消费金融等业务为核心的美国企业。",
+      "influence": "服务个人、企业、政府和机构投资者，覆盖零售金融、资本市场、支付及资产管理；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "消费金融、商业银行、投资银行和资产管理",
+      "representative_products": "J.P. Morgan、Chase、支付与市场服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "摩根大通官方公司介绍",
+        "url": "https://www.jpmorganchase.com/about",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-jpmorgan-chase"
+    },
+    {
+      "name": "高盛",
+      "english_name": "Goldman Sachs",
+      "country_region": "美国",
+      "industry": "投资银行与资产管理",
+      "founded_year": 1869,
+      "headquarters": "美国纽约",
+      "official_website": "https://www.goldmansachs.com/what-we-do",
+      "info": "高盛（Goldman Sachs）是一家总部位于美国纽约、主要从事投资银行与资产管理的企业，成立于1869年。官网及公司公开资料将其核心业务概括为投资银行、全球市场、资产管理和消费者金融。其代表性产品、品牌或平台包括：并购与融资顾问、交易、投资管理。从企业经历核查角度看，高盛的项目通常可能涉及投资银行与资产管理中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自为企业、政府和机构客户提供资本市场、并购、交易和资产管理服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "高盛是一家专注于投资银行与资产管理、以投资银行等业务为核心的美国企业。",
+      "influence": "为企业、政府和机构客户提供资本市场、并购、交易和资产管理服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "投资银行、全球市场、资产管理和消费者金融",
+      "representative_products": "并购与融资顾问、交易、投资管理",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "高盛官方公司介绍",
+        "url": "https://www.goldmansachs.com/what-we-do",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-goldman-sachs"
+    },
+    {
+      "name": "摩根士丹利",
+      "english_name": "Morgan Stanley",
+      "country_region": "美国",
+      "industry": "投资银行与财富管理",
+      "founded_year": 1935,
+      "headquarters": "美国纽约",
+      "official_website": "https://www.morganstanley.com/about-us",
+      "info": "摩根士丹利（Morgan Stanley）是一家总部位于美国纽约、主要从事投资银行与财富管理的企业，成立于1935年。官网及公司公开资料将其核心业务概括为投资银行、证券、财富管理和投资管理。其代表性产品、品牌或平台包括：财富管理、机构证券、投资管理。从企业经历核查角度看，摩根士丹利的项目通常可能涉及投资银行与财富管理中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自连接资本市场、企业和个人投资者，提供融资顾问、交易、财富与资产管理服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "摩根士丹利是一家专注于投资银行与财富管理、以投资银行等业务为核心的美国企业。",
+      "influence": "连接资本市场、企业和个人投资者，提供融资顾问、交易、财富与资产管理服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "投资银行、证券、财富管理和投资管理",
+      "representative_products": "财富管理、机构证券、投资管理",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "摩根士丹利官方公司介绍",
+        "url": "https://www.morganstanley.com/about-us",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-morgan-stanley"
+    },
+    {
+      "name": "德勤",
+      "english_name": "Deloitte",
+      "country_region": "英国/全球网络",
+      "industry": "专业服务与咨询",
+      "founded_year": 1845,
+      "headquarters": "英国伦敦（全球网络）",
+      "official_website": "https://www.deloitte.com/global/en/about.html",
+      "info": "德勤（Deloitte）是一家总部位于英国伦敦（全球网络）、主要从事专业服务与咨询的企业，成立于1845年。官网及公司公开资料将其核心业务概括为审计、税务、咨询、风险和财务顾问。其代表性产品、品牌或平台包括：审计与鉴证、管理咨询、技术与风险服务。从企业经历核查角度看，德勤的项目通常可能涉及专业服务与咨询中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在英国/全球网络及国际市场的业务影响主要来自通过全球专业服务网络服务企业、政府和机构客户，覆盖审计、咨询和风险管理。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "德勤是一家专注于专业服务与咨询、以审计等业务为核心的英国/全球网络企业。",
+      "influence": "通过全球专业服务网络服务企业、政府和机构客户，覆盖审计、咨询和风险管理；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "审计、税务、咨询、风险和财务顾问",
+      "representative_products": "审计与鉴证、管理咨询、技术与风险服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "德勤官方公司介绍",
+        "url": "https://www.deloitte.com/global/en/about.html",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-deloitte"
+    },
+    {
+      "name": "埃森哲",
+      "english_name": "Accenture",
+      "country_region": "爱尔兰",
+      "industry": "管理咨询与技术服务",
+      "founded_year": 1989,
+      "headquarters": "爱尔兰都柏林",
+      "official_website": "https://www.accenture.com/us-en/about/company",
+      "info": "埃森哲（Accenture）是一家总部位于爱尔兰都柏林、主要从事管理咨询与技术服务的企业，成立于1989年。官网及公司公开资料将其核心业务概括为战略咨询、技术服务、云、数据和运营服务。其代表性产品、品牌或平台包括：数字工程、云迁移、AI、业务流程服务。从企业经历核查角度看，埃森哲的项目通常可能涉及管理咨询与技术服务中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在爱尔兰及国际市场的业务影响主要来自帮助组织进行技术和业务转型，连接咨询、工程、云和运营能力服务全球客户。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "埃森哲是一家专注于管理咨询与技术服务、以战略咨询等业务为核心的爱尔兰企业。",
+      "influence": "帮助组织进行技术和业务转型，连接咨询、工程、云和运营能力服务全球客户；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "战略咨询、技术服务、云、数据和运营服务",
+      "representative_products": "数字工程、云迁移、AI、业务流程服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "埃森哲官方公司介绍",
+        "url": "https://www.accenture.com/us-en/about/company",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-accenture"
+    },
+    {
+      "name": "优步",
+      "english_name": "Uber",
+      "country_region": "美国",
+      "industry": "出行与配送平台",
+      "founded_year": 2009,
+      "headquarters": "美国旧金山",
+      "official_website": "https://www.uber.com/us/en/about/",
+      "info": "优步（Uber）是一家总部位于美国旧金山、主要从事出行与配送平台的企业，成立于2009年。官网及公司公开资料将其核心业务概括为网约车、外卖、货运和平台技术。其代表性产品、品牌或平台包括：Uber出行、Uber Eats、Uber Freight。从企业经历核查角度看，优步的项目通常可能涉及出行与配送平台中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自连接乘客、司机、商户和配送网络，形成跨地区的数字出行与即时服务平台。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "优步是一家专注于出行与配送平台、以网约车等业务为核心的美国企业。",
+      "influence": "连接乘客、司机、商户和配送网络，形成跨地区的数字出行与即时服务平台；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "网约车、外卖、货运和平台技术",
+      "representative_products": "Uber出行、Uber Eats、Uber Freight",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "优步官方公司介绍",
+        "url": "https://www.uber.com/us/en/about/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-uber"
+    },
+    {
+      "name": "爱彼迎",
+      "english_name": "Airbnb",
+      "country_region": "美国",
+      "industry": "在线住宿与旅行平台",
+      "founded_year": 2008,
+      "headquarters": "美国旧金山",
+      "official_website": "https://news.airbnb.com/about-us/",
+      "info": "爱彼迎（Airbnb）是一家总部位于美国旧金山、主要从事在线住宿与旅行平台的企业，成立于2008年。官网及公司公开资料将其核心业务概括为短租住宿、体验和旅行社区。其代表性产品、品牌或平台包括：Airbnb房源、体验、房东工具与信任体系。从企业经历核查角度看，爱彼迎的项目通常可能涉及在线住宿与旅行平台中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自连接房东和旅行者，提供跨地区住宿及旅行体验预订，并以社区和平台治理维持服务。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "爱彼迎是一家专注于在线住宿与旅行平台、以短租住宿等业务为核心的美国企业。",
+      "influence": "连接房东和旅行者，提供跨地区住宿及旅行体验预订，并以社区和平台治理维持服务；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "短租住宿、体验和旅行社区",
+      "representative_products": "Airbnb房源、体验、房东工具与信任体系",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "爱彼迎官方公司介绍",
+        "url": "https://news.airbnb.com/about-us/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-airbnb"
+    },
+    {
+      "name": "奈飞",
+      "english_name": "Netflix",
+      "country_region": "美国",
+      "industry": "流媒体与影视内容",
+      "founded_year": 1997,
+      "headquarters": "美国洛斯盖托斯",
+      "official_website": "https://about.netflix.com/en",
+      "info": "奈飞（Netflix）是一家总部位于美国洛斯盖托斯、主要从事流媒体与影视内容的企业，成立于1997年。官网及公司公开资料将其核心业务概括为影视流媒体、原创内容和内容技术。其代表性产品、品牌或平台包括：Netflix订阅服务、原创电影与剧集、推荐系统。从企业经历核查角度看，奈飞的项目通常可能涉及流媒体与影视内容中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在美国及国际市场的业务影响主要来自通过订阅制流媒体和全球内容制作改变影视分发方式，服务多个国家和地区观众。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "奈飞是一家专注于流媒体与影视内容、以影视流媒体等业务为核心的美国企业。",
+      "influence": "通过订阅制流媒体和全球内容制作改变影视分发方式，服务多个国家和地区观众；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "影视流媒体、原创内容和内容技术",
+      "representative_products": "Netflix订阅服务、原创电影与剧集、推荐系统",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "奈飞官方公司介绍",
+        "url": "https://about.netflix.com/en",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-netflix"
+    },
+    {
+      "name": "Spotify",
+      "english_name": "Spotify",
+      "country_region": "瑞典",
+      "industry": "音乐流媒体与音频",
+      "founded_year": 2006,
+      "headquarters": "瑞典斯德哥尔摩",
+      "official_website": "https://newsroom.spotify.com/company-info/",
+      "info": "Spotify（Spotify）是一家总部位于瑞典斯德哥尔摩、主要从事音乐流媒体与音频的企业，成立于2006年。官网及公司公开资料将其核心业务概括为音乐、播客、有声内容和创作者服务。其代表性产品、品牌或平台包括：Spotify音乐与播客平台、创作者工具和广告服务。从企业经历核查角度看，Spotify的项目通常可能涉及音乐流媒体与音频中的产品研发、平台运营、供应链、客户服务或组织管理等环节；具体项目的规模和个人贡献仍需以项目材料核实。该公司在瑞典及国际市场的业务影响主要来自连接听众、音乐人、播客创作者和版权方，推动数字音频订阅与分发模式。本条只整理相对稳定的企业背景，不将市值、排名或单一奖项当作永久结论。",
+      "short_info": "Spotify是一家专注于音乐流媒体与音频、以音乐等业务为核心的瑞典企业。",
+      "influence": "连接听众、音乐人、播客创作者和版权方，推动数字音频订阅与分发模式；影响力判断以官网披露的业务范围、产品应用和服务对象为主要线索，不等同于独立排名。",
+      "business_scope": "音乐、播客、有声内容和创作者服务",
+      "representative_products": "Spotify音乐与播客平台、创作者工具和广告服务",
+      "public_signals": [
+        "官网公司介绍或 About/Company 页面",
+        "公开的产品、业务和服务对象信息"
+      ],
+      "source": {
+        "title": "Spotify官方公司介绍",
+        "url": "https://newsroom.spotify.com/company-info/",
+        "source_type": "official_website",
+        "accessed_at": "2026-11-14"
+      },
+      "notes": "企业官网内容和业务规模会更新；用于简历项目本地检索时，应结合项目年份、具体部门和个人角色进一步核实。",
+      "id": "company-catalog-spotify"
+    }
+  ]
+}

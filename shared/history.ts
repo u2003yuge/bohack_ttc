@@ -9,6 +9,9 @@ export type HistoricalCandidate = {
   source?: "demo" | "local";
 };
 
+/** Supported recruiting benchmark years. Records are created only from reviewed or authorized samples. */
+export const historicalYears = [2024, 2025] as const;
+
 export const historicalScoreBands = [
   { key: "0-19", label: "0–19", min: 0, max: 19 },
   { key: "20-39", label: "20–39", min: 20, max: 39 },
@@ -64,7 +67,7 @@ export function matchesHistoricalFilters(candidate: HistoricalCandidate, scoreBa
   return scoreMatches && outcomeMatches;
 }
 
-export function normalizeHistoricalCandidate(input: unknown, id: string, fallbackIndex: number, currentYear = new Date().getFullYear()): HistoricalCandidate | { error: string } {
+export function normalizeHistoricalCandidate(input: unknown, id: string, fallbackIndex: number, _currentYear = new Date().getFullYear()): HistoricalCandidate | { error: string } {
   const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
   const name = typeof value.name === "string" ? value.name.trim().slice(0, 80) : "";
   const role = typeof value.role === "string" ? value.role.trim().slice(0, 120) : "";
@@ -73,29 +76,14 @@ export function normalizeHistoricalCandidate(input: unknown, id: string, fallbac
   const screened = value.screened === true;
   const hired = value.hired === true;
   if (!role) return { error: "请填写岗位名称。" };
-  if (!Number.isInteger(year) || year < 1980 || year > currentYear + 1) return { error: "请填写有效的招聘年份。" };
+  if (!Number.isInteger(year) || !historicalYears.includes(year as (typeof historicalYears)[number])) return { error: "招聘年份只能选择 2024 或 2025。" };
   if (!Number.isFinite(composite) || composite < 0 || composite > 100) return { error: "综合分需要在 0 到 100 之间。" };
   if (hired && !screened) return { error: "最终录取样本必须标记为通过首轮。" };
   return { id, name: name || `匿名样本 ${fallbackIndex}`, role, year, screened, hired, composite: Math.round(composite * 10) / 10 };
 }
 
 // Seed data for the local recruiting benchmark. Replace with approved historical records in production.
-export const historicalCandidates: HistoricalCandidate[] = [
-  { id: "hist-product-2024-01", name: "候选人 A", role: "产品经理", year: 2024, screened: true, hired: true, composite: 88 },
-  { id: "hist-product-2024-02", name: "候选人 B", role: "产品经理", year: 2024, screened: true, hired: false, composite: 79 },
-  { id: "hist-product-2024-03", name: "候选人 C", role: "产品经理", year: 2024, screened: false, hired: false, composite: 62 },
-  { id: "hist-product-2025-01", name: "候选人 D", role: "产品经理", year: 2025, screened: true, hired: true, composite: 91 },
-  { id: "hist-product-2025-02", name: "候选人 E", role: "产品经理", year: 2025, screened: true, hired: false, composite: 74 },
-  { id: "hist-product-2025-03", name: "候选人 F", role: "产品经理", year: 2025, screened: false, hired: false, composite: 58 },
-  { id: "hist-data-2024-01", name: "候选人 G", role: "数据分析师", year: 2024, screened: true, hired: true, composite: 86 },
-  { id: "hist-data-2024-02", name: "候选人 H", role: "数据分析师", year: 2024, screened: true, hired: false, composite: 71 },
-  { id: "hist-data-2025-01", name: "候选人 I", role: "数据分析师", year: 2025, screened: true, hired: true, composite: 93 },
-  { id: "hist-frontend-2024-01", name: "候选人 J", role: "前端工程师", year: 2024, screened: true, hired: true, composite: 89 },
-  { id: "hist-frontend-2024-02", name: "候选人 K", role: "前端工程师", year: 2024, screened: false, hired: false, composite: 65 },
-  { id: "hist-frontend-2025-01", name: "候选人 L", role: "前端工程师", year: 2025, screened: true, hired: false, composite: 77 },
-  { id: "hist-engineering-2025-01", name: "候选人 M", role: "软件工程师", year: 2025, screened: true, hired: true, composite: 87 },
-  { id: "hist-engineering-2025-02", name: "候选人 N", role: "软件工程师", year: 2025, screened: false, hired: false, composite: 60 },
-];
+export const historicalCandidates: HistoricalCandidate[] = [];
 
 export type Benchmark = {
   roleGroup: string;
@@ -128,7 +116,7 @@ export function calculateBenchmark(role: string, score: number, year: number | n
   const group = roleGroup(role);
   const candidates = records.filter((candidate) => roleGroup(candidate.role) === group);
   const roleSample = candidates.length ? candidates : records;
-  const availableYears = [...new Set(roleSample.map((candidate) => candidate.year))].sort((a, b) => b - a);
+  const availableYears = [...new Set([...historicalYears, ...roleSample.map((candidate) => candidate.year)])].sort((a, b) => b - a);
   const yearSample = year === null ? roleSample : roleSample.filter((candidate) => candidate.year === year);
   const sample = yearSample.length ? yearSample : roleSample;
   const activeYear = yearSample.length ? year : null;

@@ -1,8 +1,46 @@
 import { mergeCompetitionCatalog, normalizeCompetitionProfile, type CompetitionProfile } from "./competitions.js";
+import { mergeCompanyCatalog } from "./companies.js";
 import { findVenueMatch, mergeVenueCatalog } from "./venues.js";
 import { normalizeVenueProfile, type VenueProfile } from "./venue-profile.js";
 
 export type KnowledgeKind = "competition" | "journal" | "company";
+export type CompanyProfile = {
+  englishName: string;
+  countryRegion: string;
+  industry: string;
+  foundedYear: number | null;
+  headquarters: string;
+  info: string;
+  shortInfo: string;
+  influence: string;
+  businessScope: string;
+  representativeProducts: string;
+  publicSignals: string[];
+  notes: string;
+  source: { title: string; url: string; sourceType: string; accessedAt: string };
+};
+
+function normalizeCompanyProfile(input: unknown): CompanyProfile | undefined {
+  if (!input || typeof input !== "object") return undefined;
+  const value = input as Record<string, unknown>;
+  const source = value.source && typeof value.source === "object" ? value.source as Record<string, unknown> : {};
+  const text = (key: string, max: number) => typeof value[key] === "string" ? (value[key] as string).trim().slice(0, max) : "";
+  const year = typeof value.foundedYear === "number" && Number.isInteger(value.foundedYear) && value.foundedYear > 0 ? value.foundedYear : null;
+  return {
+    englishName: text("englishName", 160), countryRegion: text("countryRegion", 100), industry: text("industry", 160),
+    foundedYear: year, headquarters: text("headquarters", 160), info: text("info", 4000), shortInfo: text("shortInfo", 800),
+    influence: text("influence", 1200), businessScope: text("businessScope", 500), representativeProducts: text("representativeProducts", 500),
+    publicSignals: Array.isArray(value.publicSignals) ? value.publicSignals.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 200)).filter(Boolean).slice(0, 12) : [],
+    notes: text("notes", 1200),
+    source: {
+      title: typeof source.title === "string" ? source.title.trim().slice(0, 200) : "",
+      url: typeof source.url === "string" ? source.url.trim().slice(0, 500) : "",
+      sourceType: typeof source.sourceType === "string" ? source.sourceType.trim().slice(0, 80) : "",
+      accessedAt: typeof source.accessedAt === "string" ? source.accessedAt.trim().slice(0, 40) : "",
+    },
+  };
+}
+
 export type KnowledgeReviewEntry = {
   id: string;
   significanceScore: number;
@@ -126,6 +164,7 @@ export type KnowledgeRecord = {
   reviewHistory?: KnowledgeReviewEntry[];
   competition?: CompetitionProfile;
   venue?: VenueProfile;
+  company?: CompanyProfile;
   origin?: { type: "discovered"; collectedAt: string };
 };
 
@@ -205,6 +244,7 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       evidenceSources: sources,
       ...(kind === "competition" && normalizeCompetitionProfile(record.competition) ? { competition: normalizeCompetitionProfile(record.competition) } : {}),
       ...(venue ? { venue } : {}),
+      ...(kind === "company" && normalizeCompanyProfile(record.company) ? { company: normalizeCompanyProfile(record.company) } : {}),
       ...(record.origin && typeof record.origin === "object" && (record.origin as Record<string, unknown>).type === "discovered"
         && typeof (record.origin as Record<string, unknown>).collectedAt === "string"
         ? { origin: { type: "discovered" as const, collectedAt: String((record.origin as Record<string, unknown>).collectedAt).slice(0, 40) } } : {}),
@@ -405,4 +445,4 @@ export const demoKnowledgeRecords: KnowledgeRecord[] = [
   { id: "company-ttc", kind: "company", title: "TTC", aliases: ["TTC 公司", "TTC 人才科技"], field: "AI 招聘 / 人才科技 / 企业效率", organizer: "TTC", region: "中国", summary: "本项目关注的 AI 招聘与人才挖掘方向公司资料入口，用于记录其岗位背景、业务语境和候选人经历线索。", signals: ["招聘流程智能化", "简历量化评阅", "Agent 工作流", "企业效率工具"], officialUrl: "", significanceScore: 70, scoreRationale: "TTC 条目用于项目内资料整理与岗位语境参考；未登记官方入口，不能据此推断候选人与公司的真实关系。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
 ];
 
-export const knowledgeRecords: KnowledgeRecord[] = mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords));
+export const knowledgeRecords: KnowledgeRecord[] = mergeCompanyCatalog(mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords)));

@@ -34,14 +34,17 @@
 .competition-list-heading small { color: #a2a7ad; }
 .competition-list-heading button { padding: 0; border: 0; color: #718095; background: transparent; cursor: pointer; font-size: 10px; }
 .competition-items { min-height: 0; overflow: auto; padding: 1px 4px 28px 1px; }
-.competition-item { display: flex; flex-direction: column; width: 100%; margin-bottom: 9px; padding: 16px; text-align: left; border: 1px solid #e3e5e9; border-radius: 7px; background: #fff; color: #3e4753; cursor: pointer; }
+.competition-item { position: relative; display: flex; flex-direction: column; width: 100%; margin-bottom: 9px; padding: 16px 116px 16px 16px; text-align: left; border: 1px solid #e3e5e9; border-radius: 7px; background: #fff; color: #3e4753; cursor: pointer; }
 .competition-item:hover { border-color: #b6c0cd; }
 .competition-item.selected { border-color: #8796ac; background: #f0f3f7; box-shadow: inset 3px 0 #577092; }
 .competition-item-top { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px; color: #8c95a1; }
 .competition-item-top small { color: #778291; font-size: 9px; }
 .competition-item > strong { margin-bottom: 7px; font-size: 13px; font-weight: 600; line-height: 1.6; }
 .competition-item > span:not(.competition-item-top) { display: -webkit-box; overflow: hidden; color: #8c9199; font-size: 10px; line-height: 1.8; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.competition-item footer { display: flex; justify-content: space-between; gap: 8px; width: 100%; margin-top: 13px; padding-top: 10px; border-top: 1px solid #ebedf0; color: #9a9fa7; font-size: 9px; }
+.competition-item footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: 13px; padding-top: 10px; border-top: 1px solid #ebedf0; color: #9a9fa7; font-size: 9px; }
+.venue-item-impact { position: absolute; top: 50%; right: 16px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 3px; transform: translateY(-50%); text-align: right; white-space: nowrap; }
+.venue-item-impact span { color: #829080; font-size: 8px; }
+.venue-item-impact b { min-width: 34px; color: #3f6044; font-size: 18px; line-height: 1; font-variant-numeric: tabular-nums; font-weight: 800; text-align: right; }
 .competition-detail { min-width: 0; min-height: 0; overflow: auto; padding: 25px 27px 32px; border: 1px solid #e1e4e8; border-radius: 8px 8px 0 0; background: #fff; }
 .competition-detail-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: #9197a0; font-size: 10px; }
 .competition-detail-top > span { display: flex; align-items: center; gap: 6px; color: #6d7c92; }
@@ -53,6 +56,22 @@
 .competition-facts a { display: inline-flex; align-items: center; gap: 6px; color: #4b6385; text-decoration: none; }
 .competition-detail h3 { margin: 0 0 11px; font-size: 13px; font-weight: 600; color: #404c5d; }
 .competition-copy p, .competition-dimensions p, .competition-notes p { margin: 0; color: #7b828b; font-size: 11px; line-height: 2; white-space: pre-wrap; }
+.competition-year-history { margin: 24px 0; padding: 17px; border: 1px solid #dfe5ed; border-radius: 7px; background: #fafbfd; }
+.competition-year-history > header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.competition-year-history > header small { color: #929aa5; font-size: 10px; }
+.competition-year-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.competition-year-buttons button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 36px; padding: 7px 14px; border: 1px solid #d8e0eb; border-radius: 5px; background: #fff; color: #52647e; font: inherit; font-size: 12px; cursor: pointer; }
+.competition-year-buttons button:hover, .competition-year-buttons button[aria-expanded="true"] { border-color: #7f95b4; background: #eaf0f7; color: #2e4c76; }
+.competition-year-buttons button:focus-visible { outline: 2px solid #5878a6; outline-offset: 3px; }
+.competition-year-buttons button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.competition-year-panel { padding-top: 17px; }
+.competition-year-panel h4 { margin: 0; color: #3b4e69; font-size: 13px; font-weight: 600; }
+.competition-year-panel .competition-facts { margin: 12px 0; background: #f0f3f7; }
+.competition-year-panel .competition-facts > div { grid-template-columns: 75px minmax(0, 1fr); }
+.competition-year-panel dd { overflow-wrap: anywhere; }
+.competition-year-panel dd small { display: block; margin-top: 4px; font-size: 10px; color: #8993a0; }
+.competition-year-hint, .competition-year-notes { margin: 12px 0 0; font-size: 10px; color: #8993a0; line-height: 1.9; white-space: pre-wrap; }
+.competition-year-panel .competition-sources { margin-top: 18px; }
 .competition-dimensions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 23px 0; }
 .competition-dimensions > section { padding: 15px; border: 1px solid #e5e8ec; border-radius: 6px; }
 .competition-dimensions > section > span { display: block; margin-bottom: 8px; color: #9fa5ae; font-size: 8px; letter-spacing: 1px; }

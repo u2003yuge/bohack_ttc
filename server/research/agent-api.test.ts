@@ -40,7 +40,7 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
   await new Promise<void>((resolve) => reservation.close(() => resolve()));
   const child = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     cwd: fileURLToPath(new URL("../../", import.meta.url)),
-    env: { ...process.env, PORT: String(appAddress.port), OPENAI_API_KEY: "local-test", OPENAI_BASE_URL: `http://127.0.0.1:${modelAddress.port}/v1`, TAVILY_API_KEY: "", MODEL_REQUEST_TIMEOUT_MS: "3000", ANALYSIS_TIMEOUT_MS: "600", AGENT_TIMEOUT_MS: "5000" },
+    env: { ...process.env, PORT: String(appAddress.port), OPENAI_API_KEY: "local-test", OPENAI_BASE_URL: `http://127.0.0.1:${modelAddress.port}/v1`, TAVILY_API_KEY: "local-test", MODEL_REQUEST_TIMEOUT_MS: "3000", ANALYSIS_TIMEOUT_MS: "600", AGENT_TIMEOUT_MS: "5000" },
     stdio: ["ignore", "pipe", "pipe"], windowsHide: true,
   });
   let stderr = "";
@@ -56,6 +56,8 @@ test("分析接口立即推送进度，兼容 JSON，超时和客户端取消会
       child.once("error", (error) => { clearTimeout(timeout); reject(error); });
       child.once("exit", () => { clearTimeout(timeout); reject(new Error(stderr || "API exited during startup")); });
     });
+    const health = await fetch(`http://127.0.0.1:${appAddress.port}/api/health`).then((response) => response.json()) as { webSearch: boolean };
+    assert.equal(health.webSearch, true);
     const response = await post();
     assert.ok(response.headers.get("Content-Type")?.includes("application/x-ndjson"));
     const events: AnalysisEvent[] = [];

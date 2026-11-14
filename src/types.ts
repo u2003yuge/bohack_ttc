@@ -31,6 +31,7 @@ export type Resume = {
   fileName?: string;
   pages?: number;
   size?: number;
+  reviewStatus?: "pending" | "passed" | "rejected";
 };
 import type { ScoreCard, ScoreHistoryEntry } from "../shared/scoring.js";
 import type { Benchmark } from "../shared/history.js";

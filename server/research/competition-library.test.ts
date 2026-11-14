@@ -36,6 +36,8 @@ test("catalog API loads offline, separates categories and preserves competition 
     assert.deepEqual(competitions.map((record) => record.id).sort(), knowledgeRecords.filter((record) => record.kind === "competition").map((record) => record.id).sort());
     assert.equal(competitions.filter((record) => record.competition).length, competitionCatalog.length);
     assert.ok(competitions.every((record) => record.kind === "competition"));
+    assert.equal(competitions.filter((record) => record.competition?.history).length, 118);
+    assert.equal(competitions.find((record) => record.competition?.id === "2023-01")?.competition?.history?.years["2024"].participants?.unit, "队");
     const venues = (await json("?kind=journal")).records as KnowledgeRecord[];
     assert.equal(venues.length, 100);
     assert.equal(venues.filter((record) => record.venue?.type === "会议").length, 55);

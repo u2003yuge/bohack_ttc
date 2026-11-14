@@ -17,7 +17,7 @@ app.use("/api/scoring", scoring);
 
 app.get("/api/health", (_request, response) => response.json({
   agent: Boolean(process.env.OPENAI_API_KEY),
-  webSearch: false,
+  webSearch: Boolean(process.env.TAVILY_API_KEY),
   model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
 }));
 

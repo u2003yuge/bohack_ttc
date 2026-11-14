@@ -10,7 +10,7 @@ import { resumeAnalysisAgentIds, runResumeAgents, type AgentArtifact, type Resum
 import { respondWithAnalysis } from "./analysis-response.js";
 import { interruptible } from "./operations.js";
 import { defaultScoreWeights, normalizeComparisonRankDraft, normalizeWeights, type ComparisonRankDraft, type ScoreCard, type ScoreHistoryEntry, type ScoreWeights } from "../shared/scoring.js";
-import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
+import { historicalYears, normalizeHistoricalCandidate, roleGroup, type HistoricalCandidate, type HistoricalFilterOptions } from "../shared/history.js";
 import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
@@ -44,6 +44,7 @@ type ResumeRecord = {
   pages: number;
   size: number;
   extractionVersion: number;
+  reviewStatus?: "pending" | "passed" | "rejected";
 };
 
 const directory = path.resolve(process.env.RESUME_DIR || ".data/resumes");
@@ -60,17 +61,17 @@ const assessmentSaves = new Map<string, Promise<ResumeRecord>>();
 router.get("/history", async (_request, response, next) => {
   try {
     const local = await readHistoryCandidates();
-    response.json({ candidates: [...historicalCandidates.map((candidate) => ({ ...candidate, source: "demo" as const })), ...local.map((candidate) => ({ ...candidate, source: "local" as const }))], description: "本地历史招聘基准样本" });
+    response.json({ candidates: local.map((candidate) => ({ ...candidate, source: "local" as const })), description: "本地历史招聘基准样本" });
   } catch (error) { next(error); }
 });
 
 router.post("/history/filter-draft", async (request, response, next) => {
   try {
     const instruction = typeof request.body?.instruction === "string" ? request.body.instruction.trim().slice(0, 500) : "";
-    const records = [...historicalCandidates, ...await readHistoryCandidates()];
+    const records = await readHistoryCandidates();
     const options: HistoricalFilterOptions = {
       roleGroups: [...new Set(records.map((candidate) => roleGroup(candidate.role)))].slice(0, 20),
-      years: [...new Set(records.map((candidate) => candidate.year))].sort((left, right) => right - left).slice(0, 30),
+      years: [...new Set([...historicalYears, ...records.map((candidate) => candidate.year)])].sort((left, right) => right - left).slice(0, 30),
     };
     if (!instruction) { response.status(400).json({ error: "请描述希望查看的历史样本。" }); return; }
     if (!process.env.OPENAI_API_KEY) { response.status(503).json({ error: "尚未配置模型服务，无法生成筛选草案。" }); return; }
@@ -122,6 +123,24 @@ router.delete("/history/:id", async (request, response, next) => {
     if (nextRecords.length === local.length) { response.status(404).json({ error: "找不到本地历史样本。" }); return; }
     await writeHistoryCandidates(nextRecords);
     response.json({ deleted: true });
+  } catch (error) { next(error); }
+});
+
+router.put("/:id/decision", async (request, response, next) => {
+  try {
+    const decision = request.body?.decision;
+    if (decision !== "passed" && decision !== "rejected") {
+      response.status(400).json({ error: "请选择通过或拒绝。" });
+      return;
+    }
+    const record = await readRecord(request.params.id);
+    if (!record) {
+      response.status(404).json({ error: "找不到这份简历。" });
+      return;
+    }
+    const updated = { ...record, reviewStatus: decision };
+    await writeRecord(updated);
+    response.json({ resume: updated });
   } catch (error) { next(error); }
 });
 
@@ -863,7 +882,13 @@ async function saveWeights(weights: ScoreWeights): Promise<void> {
 }
 
 async function readHistoryCandidates(): Promise<HistoricalCandidate[]> {
-  try { return JSON.parse(await readFile(historyCandidatesPath, "utf8")) as HistoricalCandidate[]; }
+  try {
+    const parsed = JSON.parse(await readFile(historyCandidatesPath, "utf8"));
+    if (!Array.isArray(parsed)) return [];
+    // Keep the on-disk store aligned with the years exposed by the history UI.
+    // This also removes stale records from years no longer supported by the UI.
+    return parsed.filter((candidate): candidate is HistoricalCandidate => candidate && typeof candidate === "object" && historicalYears.includes(Number((candidate as { year?: unknown }).year) as (typeof historicalYears)[number]));
+  }
   catch { return []; }
 }
 
