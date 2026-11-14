@@ -99,7 +99,14 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     assert.equal(saved.scoreHistory.length, 0);
 
     const previousCount = requests.length;
-    const jsonResponse = await post({});
+    const cachedCount = requests.length;
+    const cachedEvents: AnalysisEvent[] = [];
+    await readAnalysisEvents(await post({ force: false, streamProgress: true }), (event) => cachedEvents.push(event));
+    const cachedComplete = cachedEvents.find((event) => event.type === "complete");
+    assert.ok(cachedComplete?.type === "complete" && cachedComplete.cached);
+    assert.equal(requests.length, cachedCount, "非强制请求应直接返回缓存，不调用模型。");
+
+    const jsonResponse = await post({ force: true });
     const result = await jsonResponse.json();
     assert.equal(jsonResponse.status, 200);
     assert.deepEqual(result.research.items, []);
@@ -109,13 +116,13 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     saved = JSON.parse(await readFile(metadata, "utf8"));
     failReport = true;
     const failed: AnalysisEvent[] = [];
-    await readAnalysisEvents(await post({ streamProgress: true }), (event) => failed.push(event));
+    await readAnalysisEvents(await post({ streamProgress: true, force: false }), (event) => failed.push(event));
     assert.ok(failed.some((event) => event.type === "complete"), "已有 Agent 缓存可复用，报告仍应完成。");
 
     const scoreOnly = await fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, ocrText: "合成项目：我独立负责开发服务，完成上线交付。" }) });
     assert.equal(scoreOnly.status, 200);
     const scored = await scoreOnly.json();
-    assert.equal(scored.resume.assessmentHistory.length, 4);
+    assert.equal(scored.resume.assessmentHistory.length, 3);
     assert.equal(scored.resume.text, "Original PDF text");
     assert.ok((scored.assessment.abilities.professional_execution.score ?? 0) >= 0);
     assert.equal(scored.assessment.version, scoringVersion);
@@ -135,14 +142,14 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     const concurrent = await Promise.all([0, 1].map(() => fetch(`${baseUrl}/api/resumes/merge-test/assessment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ useModel: false, ocrText: "合成项目：我负责开发接口并完成交付。" }) })));
     assert.ok(concurrent.every((result) => result.status === 200));
     saved = JSON.parse(await readFile(metadata, "utf8"));
-    assert.equal(saved.assessmentHistory.length, 6, "并发复评不能丢失历史记录。");
-    assert.equal(new Set(saved.assessmentHistory.map((entry: { assessment: { id: string } }) => entry.assessment.id)).size, 6);
+    assert.equal(saved.assessmentHistory.length, 5, "并发复评不能丢失历史记录。");
+    assert.equal(new Set(saved.assessmentHistory.map((entry: { assessment: { id: string } }) => entry.assessment.id)).size, 5);
     assert.deepEqual(saved.scoreCard, compatibilityCard);
 
     failReport = false; hangReport = true;
     const ready = new Promise<void>((resolve) => { reportStarted = resolve; });
     const abort = new AbortController();
-    const pending = await fetch(`${baseUrl}/api/resumes/merge-test/analyze`, { method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.signal, body: JSON.stringify({ roleRequirements: "工程岗", question: "分析", ocrText, streamProgress: true }) });
+    const pending = await fetch(`${baseUrl}/api/resumes/merge-test/analyze`, { method: "POST", headers: { "Content-Type": "application/json" }, signal: abort.signal, body: JSON.stringify({ roleRequirements: "工程岗", question: "分析", ocrText, streamProgress: true, force: true }) });
     const reading = readAnalysisEvents(pending, () => {}).catch((error: unknown) => error);
     await ready;
     abort.abort();

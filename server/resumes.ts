@@ -15,6 +15,7 @@ import { findKnowledgeDuplicate, knowledgeRecords, normalizeKnowledgeEvidenceSou
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
+import { loadTrackedResumeReport, saveTrackedResumeReport } from "./tracked-resume-cache.js";
 import { scoringVersion, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
 import type { AgentDebug, AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
@@ -476,8 +477,8 @@ router.use(async (_request, _response, next) => {
 
 router.get("/", async (_request, response, next) => {
   try {
-    const records = await readDirectory();
-    response.json({ directory, resumes: records });
+    const result = await readDirectory();
+    response.json({ directory, resumes: result.records, skippedFiles: result.skippedFiles });
   } catch (error) {
     next(error);
   }
@@ -689,12 +690,20 @@ router.post("/:id/analyze", async (request, response, next) => {
       response.status(400).json({ error: "候选人成果真实性核查与联网查找功能已移除。" });
       return;
     }
-    if (typeof question !== "string" || typeof roleRequirements !== "string") {
+    if (typeof question !== "string" || typeof roleRequirements !== "string" || typeof request.body?.force !== "undefined" && typeof request.body.force !== "boolean") {
       response.status(400).json({ error: "请提供分析任务和职位要求文本。" });
       return;
     }
     if (typeof streamProgress !== "boolean" || typeof ocrText !== "string" || ocrText.length > 100_000) {
       response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本不得超过 100000 字符。" });
+      return;
+    }
+    if (request.body.force !== true && record.analysisStatus === "complete" && record.analysisReport?.trim()) {
+      await respondWithAnalysis(request, response, async ({ emit }) => {
+        emit({ type: "progress", progress: { stage: "analyzing", message: "已加载保存的分析报告，无需重新调用 Agent。" } });
+        return { answer: record.analysisReport, assessment: record.assessment, resume: record,
+          research: { items: [], notes: [] }, researchStatus: "not-requested", cached: true };
+      });
       return;
     }
     if (!process.env.OPENAI_API_KEY) {
@@ -712,6 +721,7 @@ router.post("/:id/analyze", async (request, response, next) => {
         context: { resumeText, fileName: record.fileName, roleRequirements, question },
         requested: [...resumeAnalysisAgentIds],
         artifacts: record.agentArtifacts,
+        force: request.body.force === true,
         signal,
         onAgentComplete: ({ id, label, markdown: section, reused, completed, total, output, timing }) => {
           if (section) {
@@ -745,10 +755,11 @@ router.post("/:id/analyze", async (request, response, next) => {
   }
 });
 
-async function readDirectory(): Promise<ResumeRecord[]> {
+async function readDirectory(): Promise<{ records: ResumeRecord[]; skippedFiles: Array<{ fileName: string; reason: string }> }> {
   const names = await readdir(directory);
   const pdfNames = names.filter((name) => name.toLowerCase().endsWith(".pdf"));
   const records: ResumeRecord[] = [];
+  const skippedFiles: Array<{ fileName: string; reason: string }> = [];
   for (let offset = 0; offset < pdfNames.length; offset += 3) {
     const batch = await Promise.all(pdfNames.slice(offset, offset + 3).map(async (name) => {
       const id = path.basename(name, path.extname(name));
@@ -758,14 +769,22 @@ async function readDirectory(): Promise<ResumeRecord[]> {
       // Score migrations belong to explicit analysis, not a page-load GET.
       // Re-indexing here can block the list on hundreds of model calls and
       // replace existing reports/history. Newly discovered files are indexed offline.
-      if (existing) return existing;
-      const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
-      await writeRecord(record);
-      return record;
+      if (existing) return loadTrackedResumeReport(existing, path.join(directory, existing.fileName));
+      try {
+        const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
+        const restored = await loadTrackedResumeReport(record, path.join(directory, name));
+        await writeRecord(restored);
+        return restored;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!/invalid pdf|pdf structure|xref|endstream/i.test(message)) throw error;
+        skippedFiles.push({ fileName: name, reason: "PDF 文件结构损坏或不完整" });
+        return null;
+      }
     }));
-    records.push(...batch);
+    records.push(...batch.filter((record): record is ResumeRecord => record !== null));
   }
-  return records.sort(sortRecords);
+  return { records: records.sort(sortRecords), skippedFiles: skippedFiles.sort((left, right) => left.fileName.localeCompare(right.fileName, "zh-CN")) };
 }
 
 export async function indexPdf(filePath: string, id: string, fileName: string, options: { analyze?: boolean } = {}): Promise<ResumeRecord> {
@@ -911,6 +930,8 @@ export async function writeRecord(record: ResumeRecord, signal?: AbortSignal): P
     await writeFile(temporary, JSON.stringify(record, null, 2), { encoding: "utf8", signal });
     signal?.throwIfAborted();
     await rename(temporary, destination);
+    try { await saveTrackedResumeReport(record, path.join(directory, record.fileName)); }
+    catch (error) { console.warn(`[resume-cache] Could not update tracked report cache for ${record.id}:`, error); }
   } catch (error) { await rm(temporary, { force: true }); throw error; }
 }
 
@@ -936,7 +957,8 @@ async function saveAssessment(id: string, assessment: Assessment, report: string
 
 export async function readRecord(id: string): Promise<ResumeRecord | null> {
   try {
-    return JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
+    const record = JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
+    return await loadTrackedResumeReport(record, path.join(directory, record.fileName));
   } catch {
     return null;
   }

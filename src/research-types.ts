@@ -37,6 +37,7 @@ export type ResearchBatch = { items: ResearchResult[]; notes: string[]; catalog?
 
 export type AnalysisResult = {
   answer: string;
+  cached?: boolean;
   research: ResearchBatch;
   assessment?: Assessment;
   resume?: Resume;

@@ -14,6 +14,8 @@ type Props = {
 };
 
 function companyLogoUrl(record?: KnowledgeRecord): string | null {
+  if (record?.logoPath) return record.logoPath;
+  if (record?.logoUrl) return record.logoUrl;
   if (!record?.officialUrl) return null;
   try {
     const host = new URL(record.officialUrl).hostname;
@@ -27,7 +29,7 @@ function CompanyLogo({ record, large = false }: { record?: KnowledgeRecord; larg
   useEffect(() => setFailed(false), [src]);
   const initials = (record?.title ?? "公司").replace(/[（）()]/g, "").trim().slice(0, 2);
   return <span className={`company-logo ${large ? "company-logo-large" : ""}`}>
-    {src && !failed ? <img src={src} alt={`${record?.title ?? "公司"}官网图标`} loading={large ? "eager" : "lazy"} onError={() => setFailed(true)} /> : <><Building2 size={large ? 26 : 19} /><b>{initials}</b></>}
+    {src && !failed ? <img src={src} alt={`${record?.title ?? "公司"} Logo`} loading={large ? "eager" : "lazy"} referrerPolicy="no-referrer" onError={() => setFailed(true)} /> : <><Building2 size={large ? 26 : 19} /><b>{initials}</b></>}
   </span>;
 }
 
@@ -62,7 +64,7 @@ export function CompanyLibrary({ records, resumes, initialId, onClose, onReview,
     <div className="competition-stats" aria-label="公司库概况">
       <div><Building2 size={17} /><span><strong>{records.length}</strong> 家公司</span></div>
       <div><span><strong>{new Set(records.flatMap((record) => record.region ? [record.region] : [])).size}</strong> 个地区范围</span></div>
-      <div><span><strong>{records.filter((record) => record.officialUrl).length}</strong> 个官网入口</span><small>图标按官网域名获取</small></div>
+      <div><span><strong>{records.filter((record) => record.logoPath || record.logoUrl || record.officialUrl).length}</strong> 个 Logo</span><small>优先使用本地品牌资产</small></div>
     </div>
     <section className="competition-tools company-tools" aria-label="筛选公司">
       <label className="competition-search"><Search size={17} /><input aria-label="搜索公司资料" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索公司、别名、业务或能力…" />{query && <button onClick={() => setQuery("")} aria-label="清除搜索"><X size={14} /></button>}</label>
@@ -83,7 +85,7 @@ export function CompanyLibrary({ records, resumes, initialId, onClose, onReview,
           <div className="competition-detail-top"><span><Building2 size={14} />{selected.field || "公司资料"}</span><small>{selected.reviewHistory?.length ? `人工评估 ${selected.significanceScore} 分` : "待人工评估"}</small></div>
           <div className="company-detail-identity"><CompanyLogo record={selected} large /><div><h2>{selected.title}</h2><p className="competition-intro">{selected.summary}</p></div></div>
           <div className="venue-tags">{[selected.field, selected.region, ...selected.aliases].filter(Boolean).slice(0, 8).map((value) => <span key={value}>{value}</span>)}</div>
-          <dl className="competition-facts"><div><dt>所属 / 主体</dt><dd>{selected.organizer || "待补充"}</dd></div><div><dt>官方网站</dt><dd>{selected.officialUrl ? <a href={selected.officialUrl} target="_blank" rel="noreferrer">访问官网<ArrowUpRight size={13} /></a> : "暂无可确认的官网"}</dd></div><div><dt>图标来源</dt><dd>{selected.officialUrl ? "官网 favicon · 按域名自动获取" : "暂无官网入口，使用文字图标"}</dd></div></dl>
+          <dl className="competition-facts"><div><dt>所属 / 主体</dt><dd>{selected.organizer || "待补充"}</dd></div><div><dt>官方网站</dt><dd>{selected.officialUrl ? <a href={selected.officialUrl} target="_blank" rel="noreferrer">访问官网<ArrowUpRight size={13} /></a> : "暂无可确认的官网"}</dd></div><div><dt>Logo 来源</dt><dd>{selected.logoPath ? "本地品牌资产 · 已随项目版本保存" : selected.logoUrl ? "资料条目提供的 Logo 地址" : selected.officialUrl ? "官网 favicon · 自动回退" : "暂无 Logo，使用文字图标"}</dd></div></dl>
           <section className="competition-copy"><h3>公司背景</h3><p>{selected.summary || "详细介绍待补充。"}</p></section>
           <div className="competition-dimensions"><section><span>BUSINESS CONTEXT</span><h3>业务背景</h3><p>{selected.field || "业务领域待补充。"} · {selected.region || "地区待补充。"}</p></section><section><span>REVIEW BOUNDARY</span><h3>审核边界</h3><p>公司名称只提供组织背景，需结合候选人的团队、职责、项目结果和个人贡献判断。</p></section></div>
           <section className="competition-abilities"><section><h3>可观察的信号</h3><div>{selected.signals.length ? selected.signals.map((signal) => <span key={signal}>{signal}</span>) : <p>观察点待补充。</p>}</div></section></section>

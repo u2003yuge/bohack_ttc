@@ -63,6 +63,7 @@ test("startup lists 160 legacy PDFs without re-parsing, model calls or overwriti
     await writeFile(path.join(directory, `${id}.pdf`), "Cached PDF must not be opened by listing");
     await writeFile(path.join(directory, ".metadata", `${id}.json`), raw);
   }));
+  await writeFile(path.join(directory, "damaged.pdf"), "not a PDF");
   const child = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     cwd: fileURLToPath(new URL("../../", import.meta.url)),
     env: { ...process.env, PORT: String(address.port), RESUME_DIR: directory,
@@ -84,6 +85,7 @@ test("startup lists 160 legacy PDFs without re-parsing, model calls or overwriti
     assert.equal(response.status, 200);
     const payload = await response.json();
     assert.equal(payload.resumes.length, 160);
+    assert.deepEqual(payload.skippedFiles, [{ fileName: "damaged.pdf", reason: "PDF 文件结构损坏或不完整" }]);
     assert.equal(modelCalls, 0);
     for (const record of payload.resumes) assert.deepEqual(record, JSON.parse(originals.get(record.id)!));
     await writeFile(path.join(directory, "new-offline.pdf"), textPdf());

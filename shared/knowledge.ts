@@ -118,6 +118,10 @@ export type KnowledgeRecord = {
   summary: string;
   signals: string[];
   officialUrl: string;
+  /** Local, versioned brand asset used before any remote favicon fallback. */
+  logoPath?: string;
+  /** Optional remote logo URL for imported records. */
+  logoUrl?: string;
   significanceScore: number;
   scoreRationale: string;
   verificationStatus: "示例资料，待核验" | "已核验";
@@ -188,6 +192,16 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       if (url.protocol === "http:" || url.protocol === "https:") safeOfficialUrl = url.toString();
     } catch { /* Ignore malformed import URLs. */ }
     const verificationStatus = record.verificationStatus === "已核验" ? "已核验" : "示例资料，待核验";
+    const logoPath = typeof record.logoPath === "string" && /^\/company_logos\/[a-zA-Z0-9_-]+\.(?:svg|png|webp)$/i.test(record.logoPath.trim())
+      ? record.logoPath.trim().slice(0, 240)
+      : "";
+    let logoUrl = "";
+    if (typeof record.logoUrl === "string") {
+      try {
+        const url = new URL(record.logoUrl.trim());
+        if (url.protocol === "http:" || url.protocol === "https:") logoUrl = url.toString().slice(0, 500);
+      } catch { /* Ignore malformed imported logo URLs. */ }
+    }
     const venue = kind === "journal" ? normalizeVenueProfile(record.venue) : undefined;
     records.push({
       id, kind: kind as KnowledgeKind, title,
@@ -198,6 +212,8 @@ export function normalizeKnowledgeImport(input: unknown): KnowledgeImportBundle 
       summary: typeof record.summary === "string" ? record.summary.trim().slice(0, 1200) : "",
       signals: Array.isArray(record.signals) ? record.signals.filter((signal): signal is string => typeof signal === "string").map((signal) => signal.trim().slice(0, 100)).filter(Boolean).slice(0, 10) : [],
       officialUrl: safeOfficialUrl,
+      ...(logoPath ? { logoPath } : {}),
+      ...(logoUrl ? { logoUrl } : {}),
       significanceScore: Math.round(score),
       scoreRationale: typeof record.scoreRationale === "string" ? record.scoreRationale.trim().slice(0, 500) : "",
       verificationStatus,
@@ -405,4 +421,22 @@ export const demoKnowledgeRecords: KnowledgeRecord[] = [
   { id: "company-ttc", kind: "company", title: "TTC", aliases: ["TTC 公司", "TTC 人才科技"], field: "AI 招聘 / 人才科技 / 企业效率", organizer: "TTC", region: "中国", summary: "本项目关注的 AI 招聘与人才挖掘方向公司资料入口，用于记录其岗位背景、业务语境和候选人经历线索。", signals: ["招聘流程智能化", "简历量化评阅", "Agent 工作流", "企业效率工具"], officialUrl: "", significanceScore: 70, scoreRationale: "TTC 条目用于项目内资料整理与岗位语境参考；未登记官方入口，不能据此推断候选人与公司的真实关系。", verificationStatus: "示例资料，待核验", updatedAt: "2026-11-14" },
 ];
 
-export const knowledgeRecords: KnowledgeRecord[] = mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords));
+const companyLogoPaths: Record<string, string> = {
+  "company-alibaba": "/company_logos/alibaba.svg",
+  "company-tencent": "/company_logos/tencent.svg",
+  "company-huawei": "/company_logos/huawei.svg",
+  "company-startup-example": "/company_logos/starbridge.svg",
+  "company-bytedance": "/company_logos/bytedance.svg",
+  "company-microsoft": "/company_logos/microsoft.svg",
+  "company-dji": "/company_logos/dji.svg",
+  "company-catl": "/company_logos/catl.svg",
+  "company-baidu": "/company_logos/baidu.svg",
+  "company-jd": "/company_logos/jd.svg",
+  "company-xiaomi": "/company_logos/xiaomi.svg",
+  "company-openai": "/company_logos/openai.svg",
+  "company-anthropic": "/company_logos/anthropic.svg",
+  "company-ttc": "/company_logos/ttc.svg",
+};
+
+export const knowledgeRecords: KnowledgeRecord[] = mergeVenueCatalog(mergeCompetitionCatalog(demoKnowledgeRecords))
+  .map((record) => companyLogoPaths[record.id] ? { ...record, logoPath: companyLogoPaths[record.id] } : record);
