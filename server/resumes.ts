@@ -30,6 +30,8 @@ type ResumeRecord = {
   source: "pdf";
   text: string;
   education: string;
+  identity: string;
+  keywords: string[];
   skills: string[];
   summary: string;
   analysisReport: string;
@@ -39,7 +41,7 @@ type ResumeRecord = {
   assessmentHistory?: AssessmentHistoryEntry[];
   agentArtifacts?: AgentArtifact[];
   analysisDebug?: AgentDebug;
-  analysisStatus: "complete" | "unavailable" | "failed";
+  analysisStatus: "complete" | "processing" | "unavailable" | "failed";
   analysisError: string;
   analyzedAt: string;
   pages: number;
@@ -516,6 +518,44 @@ router.post("/open-folder", (_request, response) => {
   });
 });
 
+async function finishImportedAnalysis(id: string): Promise<void> {
+  const record = await readRecord(id);
+  if (!record || record.analysisStatus !== "processing") return;
+  try {
+    const run = await runResumeAgents({
+      context: { resumeText: record.text, fileName: record.fileName, useModel: true },
+      requested: [...resumeAnalysisAgentIds],
+      artifacts: record.agentArtifacts,
+    });
+    const assessment = run.outputs["score-calculation"] as Assessment | undefined;
+    const reportOutput = run.outputs["analysis-report"];
+    const reportText = reportOutput && typeof reportOutput === "object" && typeof (reportOutput as { answer?: unknown }).answer === "string"
+      ? (reportOutput as { answer: string }).answer
+      : typeof reportOutput === "string" ? reportOutput : "";
+    const current = await readRecord(id);
+    if (!current) return;
+    await writeRecord({
+      ...current,
+      assessment: assessment ?? current.assessment,
+      assessmentHistory: assessment ? [{ reason: "import", assessment }] : current.assessmentHistory,
+      analysisReport: reportText || (assessment ? assessmentReport(assessment) : current.analysisReport),
+      analysisStatus: "complete",
+      analysisError: "",
+      analyzedAt: new Date().toISOString(),
+      analysisDebug: run.debug,
+      agentArtifacts: run.artifacts,
+    });
+  } catch (error) {
+    const current = await readRecord(id);
+    if (!current) return;
+    await writeRecord({
+      ...current,
+      analysisStatus: "failed",
+      analysisError: error instanceof Error ? error.message : "后台分析失败，请重试。",
+    });
+  }
+}
+
 router.post("/", async (request, response, next) => {
   try {
     const buffer = request.body;
@@ -541,9 +581,36 @@ router.post("/", async (request, response, next) => {
     await writeFile(filePath, buffer, { flag: "wx" });
 
     try {
-      const record = await indexPdf(filePath, id, fileName);
+      let record = await indexPdf(filePath, id, fileName, { analyze: false });
+      if (record.text && process.env.OPENAI_API_KEY) {
+        const profileRun = await runResumeAgents({
+          context: { resumeText: record.text, fileName, useModel: true },
+          requested: ["candidate-profile"],
+        });
+        const profile = profileRun.outputs["candidate-profile"] as {
+          name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
+        } | null | undefined;
+        if (profile) {
+          record = {
+            ...record,
+            name: profile.name?.trim() || record.name,
+            identity: profile.identity?.trim() || "待提取身份",
+            keywords: stringList(profile.keywords, 5, 24),
+            role: profile.role?.trim() || record.role,
+            location: profile.location?.trim() || record.location,
+            education: profile.education?.trim() || record.education,
+            skills: stringList(profile.skills, 10, 60),
+            summary: profile.summary?.trim() || "",
+            initials: (profile.name?.trim() || record.name).split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+            analysisStatus: "processing",
+            analysisError: "候选人画像已完成，评分与分析报告正在后台生成。",
+            agentArtifacts: profileRun.artifacts,
+          };
+        }
+      }
       await writeRecord(record);
       response.status(201).json(record);
+      if (record.analysisStatus === "processing") void finishImportedAnalysis(id).catch(() => undefined);
     } catch (error) {
       await rm(filePath, { force: true });
       throw error;
@@ -622,8 +689,10 @@ router.post("/:id/agents/run", async (request, response, next) => {
       const candidate = run.outputs["candidate-profile"];
       const nextRecord: ResumeRecord = { ...record, agentArtifacts: run.artifacts };
       if (run.executed.includes("candidate-profile") && candidate && typeof candidate === "object") {
-        const fields = candidate as { name?: unknown; role?: unknown; location?: unknown; education?: unknown; skills?: unknown; summary?: unknown };
+        const fields = candidate as { name?: unknown; identity?: unknown; keywords?: unknown; role?: unknown; location?: unknown; education?: unknown; skills?: unknown; summary?: unknown };
         if (typeof fields.name === "string" && fields.name.trim()) nextRecord.name = fields.name.trim();
+        if (typeof fields.identity === "string") nextRecord.identity = fields.identity.trim();
+        if (Array.isArray(fields.keywords)) nextRecord.keywords = stringList(fields.keywords, 5, 24);
         if (typeof fields.role === "string" && fields.role.trim()) nextRecord.role = fields.role.trim();
         if (typeof fields.location === "string" && fields.location.trim()) nextRecord.location = fields.location.trim();
         if (typeof fields.education === "string" && fields.education.trim()) nextRecord.education = fields.education.trim();
@@ -811,7 +880,7 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
     ? await runResumeAgents({ context: initialContext, requested: [...resumeAnalysisAgentIds] })
     : null;
   const ai = initialAgents?.outputs["candidate-profile"] as {
-    name?: string; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
+    name?: string; identity?: string; keywords?: string[]; role?: string; location?: string; education?: string; skills?: string[]; summary?: string;
   } | null | undefined;
   const fallbackName = path.basename(fileName, path.extname(fileName)).replace(/[-_]+/g, " ").trim();
   const name = ai?.name?.trim() || fallbackName || "未命名候选人";
@@ -827,6 +896,8 @@ export async function indexPdf(filePath: string, id: string, fileName: string, o
     source: "pdf",
     text,
     education: ai?.education?.trim() || "待确认",
+    identity: ai?.identity?.trim() || "待提取身份",
+    keywords: Array.isArray(ai?.keywords) ? ai.keywords.filter((value): value is string => typeof value === "string").slice(0, 5) : [],
     skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
     analysisReport: "",

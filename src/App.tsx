@@ -1721,6 +1721,25 @@ export default function App() {
       setSelectedId(latest.id);
       setAnswer(latest.analysisReport ?? "");
       setAgentError(latest.analysisStatus === "failed" && !latest.assessment ? latest.analysisError ?? "自动分析未完成，可手动重试。" : "");
+      const pendingIds = imported.filter((resume) => resume.analysisStatus === "processing").map((resume) => resume.id);
+      if (pendingIds.length) {
+        void (async () => {
+          for (let attempt = 0; attempt < 120; attempt += 1) {
+            await new Promise((resolve) => window.setTimeout(resolve, 1500));
+            try {
+              const response = await fetch("/api/resumes");
+              if (!response.ok) return;
+              const payload = await response.json() as ResumeListResponse;
+              if (!Array.isArray(payload.resumes)) return;
+              const selectedUpdate = payload.resumes.find((resume) => resume.id === selectedId && pendingIds.includes(resume.id));
+              if (selectedUpdate?.analysisStatus === "complete") setAnswer(selectedUpdate.analysisReport ?? "");
+              if (selectedUpdate?.analysisStatus === "failed") setAgentError(selectedUpdate.analysisError ?? "后台分析失败，可重新分析。");
+              setResumes((current) => current.map((resume) => payload.resumes.find((next) => next.id === resume.id) ?? resume));
+              if (payload.resumes.filter((resume) => pendingIds.includes(resume.id)).every((resume) => resume.analysisStatus !== "processing")) return;
+            } catch { return; }
+          }
+        })();
+      }
     }
     setImportError(errors.join("\n"));
     setImportProgress("");
@@ -2012,7 +2031,7 @@ export default function App() {
                 {selectionMode && <input className="candidate-checkbox" type="checkbox" checked={selectedResumeIds.includes(resume.id)} onChange={() => toggleResumeSelection(resume.id)} disabled={batchBusy} aria-label={`选择${resume.name}`} />}
                 <button className="candidate-row-main" type="button" onClick={() => selectResume(resume.id)} disabled={batchBusy}>
                 <span className={`candidate-avatar avatar-${index % 4}`}>{resume.initials}</span>
-                <span className="candidate-copy"><strong>{resume.name}</strong><span>{resume.role}</span></span>
+                <span className="candidate-copy"><strong>{resume.name}</strong><span>{resume.identity || resume.role}</span>{resume.keywords?.length ? <small className="candidate-keywords">{resume.keywords.slice(0, 3).join(" · ")}</small> : null}</span>
                 <span className="candidate-date">{resume.received}</span>
                 </button>
               </div>
@@ -2033,9 +2052,9 @@ export default function App() {
             </div>
             <div className="document-actions">
               {selected.source === "pdf" && pdfUrl && <a className="icon-button" href={pdfUrl} download={`${selected.name}.pdf`} title="下载原始 PDF" aria-label="下载原始 PDF"><ArrowDownToLine size={17} /></a>}
-              <button className="analyze-button" onClick={() => void analyze()} disabled={busy || batchBusy || !health?.agent} title={!health?.agent ? "请先在 .env 配置模型服务" : "使用 Agent 分析这份简历"}>
-                {busy ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}
-                {busy ? "分析中" : selected.analysisStatus === "failed" ? "重试分析" : "重新分析"}
+              <button className="analyze-button" onClick={() => void analyze()} disabled={busy || batchBusy || selected.analysisStatus === "processing" || !health?.agent} title={!health?.agent ? "请先在 .env 配置模型服务" : "使用 Agent 分析这份简历"}>
+                {busy || selected.analysisStatus === "processing" ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}
+                {busy ? "分析中" : selected.analysisStatus === "processing" ? "后台分析中" : selected.analysisStatus === "failed" ? "重试分析" : "重新分析"}
               </button>
             </div>
           </div>
@@ -2064,9 +2083,9 @@ export default function App() {
         </main>
 
         <aside className="report-column">
-          <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
+          <div className="analysis-header"><div><span className="eyebrow">CANDIDATE REPORT</span><h2>分析文档</h2></div><span className={`report-status ${selected.analysisStatus === "complete" ? "complete" : selected.analysisStatus === "failed" ? "failed" : ""}`}>{selected.analysisStatus === "complete" ? "已生成" : selected.analysisStatus === "processing" ? "分析中" : selected.analysisStatus === "failed" ? "待重试" : answer ? "已生成" : "待生成"}</span></div>
           <div className="result-heading"><div><MessageSquareText size={16} /><h3>分析报告</h3></div>{answer && <button className="clear-result" onClick={() => setAnswer("")} title="清除分析文档" aria-label="清除分析文档"><X size={15} /></button>}</div>
-          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onOpenScoring={() => { setScoringRulesOpen(false); setScoringOpen(true); }} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
+          <AnalysisDocument answer={answer} sections={analysisSections} busy={busy || selected.analysisStatus === "processing"} error={agentError} candidate={selected} roleRequirements={roleRequirements} scoreCard={demoScoreCard(selected, Math.max(0, resumes.indexOf(selected)), weights)} knowledgeRecords={knowledgeRecords} historyCandidates={historyCandidates} onOpenKnowledge={openKnowledge} onOpenHistory={openHistory} onOpenScoring={() => { setScoringRulesOpen(false); setScoringOpen(true); }} agentAvailable={Boolean(health?.agent)} onEvidence={locateEvidence} />
           {evidenceLocation && <div className={`evidence-location ${evidenceLocation.page ? "found" : "missing"}`}><ShieldCheck size={12} /><span>{evidenceLocation.page ? `已在简历第 ${evidenceLocation.page} 页定位依据` : "这条依据尚未在 PDF 原文中精确定位"}</span><button onClick={() => { setEvidenceTarget(""); setEvidenceLocation(null); }} aria-label="关闭证据定位提示"><X size={12} /></button></div>}
            <div className="analysis-footer"><ShieldCheck size={14} /><span>分析基于当前简历文本和已生成的规则评分。</span></div>
         </aside>
