@@ -44,6 +44,7 @@ test("已完成的 Agent 输入未变时复用缓存，文本变化时只重跑�
 
 test("已移除候选人成果真实性核查 Agent", async () => {
   await assert.rejects(
+    // @ts-expect-error Exercise runtime rejection of an agent removed from the public type.
     runResumeAgents({ context: context("2025 年获得全国数学建模竞赛一等奖。"), requested: ["achievement-research"] }),
     /核查 Agent 已移除/,
   );

@@ -16,7 +16,7 @@ import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
 import { scoringVersion, type Assessment, type AssessmentHistoryEntry } from "../shared/material-scoring.js";
-import type { AnalysisResult, ResearchBatch } from "../src/research-types.js";
+import type { AgentDebug, AnalysisResult, ResearchBatch } from "../src/research-types.js";
 
 type ResumeRecord = {
   id: string;
@@ -37,6 +37,7 @@ type ResumeRecord = {
   assessment?: Assessment;
   assessmentHistory?: AssessmentHistoryEntry[];
   agentArtifacts?: AgentArtifact[];
+  analysisDebug?: AgentDebug;
   analysisStatus: "complete" | "unavailable" | "failed";
   analysisError: string;
   analyzedAt: string;
@@ -586,7 +587,6 @@ router.post("/:id/agents/run", async (request, response, next) => {
           question: typeof body.question === "string" ? body.question.slice(0, 2_000) : "",
           reviewerFocus: typeof body.reviewerFocus === "string" ? body.reviewerFocus.slice(0, 500) : "",
           useModel: body.useModel !== false,
-          includeResearch: false,
         },
         requested: requested as typeof resumeAnalysisAgentIds[number][],
         artifacts: record.agentArtifacts,
@@ -643,7 +643,7 @@ router.post("/:id/assessment", async (request, response, next) => {
       response.status(400).json({ error: "进度开关必须为布尔值，OCR 文本最多 100000 字符。" }); return;
     }
     await respondWithAnalysis(request, response, async (options) => {
-      const result = await evaluateResume(ocrText.trim() ? ocrText : record.text, { ...options, includeResearch: false, useModel: true });
+      const result = await evaluateResume(ocrText.trim() ? ocrText : record.text, { ...options, useModel: true });
       options.signal.throwIfAborted();
       const updated = await saveAssessment(record.id, result.assessment, assessmentReport(result.assessment), options.signal);
       return { ...result, assessment: updated.assessment ?? result.assessment, resume: updated, answer: assessmentReport(updated.assessment ?? result.assessment) };
@@ -683,7 +683,7 @@ router.post("/:id/analyze", async (request, response, next) => {
     await respondWithAnalysis(request, response, async ({ signal, emit }) => {
       const markdown: string[] = [];
       const run = await runResumeAgents({
-        context: { resumeText, fileName: record.fileName, roleRequirements, question, includeResearch: false, webResearchEnabled: false },
+        context: { resumeText, fileName: record.fileName, roleRequirements, question },
         requested: [...resumeAnalysisAgentIds],
         artifacts: record.agentArtifacts,
         signal,
@@ -729,15 +729,11 @@ async function readDirectory(): Promise<ResumeRecord[]> {
       const existing = await readRecord(id);
       // Startup listing must stay responsive. Existing metadata is returned as-is;
       // explicit scan/retry endpoints can rebuild stale records in the background.
-      // Older records may have been created before the scoring stage derived
-      // action observations. Re-index those records once so the current
-      // assessment agent can populate ability scores instead of leaving every
-      // radar dimension as NA.
-      const staleAssessment = !existing?.assessment || existing.assessment.version !== scoringVersion ||
-        !existing.agentArtifacts?.some((artifact) => artifact.id === "score-calculation" && artifact.inputHash) ||
-        Object.values(existing.assessment.abilities).every((ability) => ability.score === null);
-      if (existing && !staleAssessment) return existing;
-      const record = await indexPdf(path.join(directory, name), id, name);
+      // Score migrations belong to explicit analysis, not a page-load GET.
+      // Re-indexing here can block the list on hundreds of model calls and
+      // replace existing reports/history. Newly discovered files are indexed offline.
+      if (existing) return existing;
+      const record = await indexPdf(path.join(directory, name), id, name, { analyze: false });
       await writeRecord(record);
       return record;
     }));
@@ -746,7 +742,7 @@ async function readDirectory(): Promise<ResumeRecord[]> {
   return records.sort(sortRecords);
 }
 
-async function indexPdf(filePath: string, id: string, fileName: string): Promise<ResumeRecord> {
+export async function indexPdf(filePath: string, id: string, fileName: string, options: { analyze?: boolean } = {}): Promise<ResumeRecord> {
   const buffer = await readFile(filePath);
   const pdf = await getDocument({
     data: new Uint8Array(buffer),
@@ -764,8 +760,9 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
   }
   await pdf.destroy();
   const text = pages.join("\n\n").trim();
-  const initialContext = { resumeText: text, fileName, useModel: true, includeResearch: false };
-  const initialAgents = text
+  const analyze = options.analyze !== false;
+  const initialContext = { resumeText: text, fileName, useModel: true };
+  const initialAgents = text && analyze
     ? await runResumeAgents({ context: initialContext, requested: [...resumeAnalysisAgentIds] })
     : null;
   const ai = initialAgents?.outputs["candidate-profile"] as {
@@ -788,8 +785,8 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
     skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
     analysisReport: "",
-    analysisStatus: process.env.OPENAI_API_KEY ? "failed" : "unavailable",
-    analysisError: process.env.OPENAI_API_KEY ? "" : "未配置模型服务，无法生成初始分析报告。",
+    analysisStatus: analyze && process.env.OPENAI_API_KEY ? "failed" : "unavailable",
+    analysisError: !analyze ? "已完成离线文本索引，尚未运行 AI 分析。" : process.env.OPENAI_API_KEY ? "" : "未配置模型服务，无法生成初始分析报告。",
     analyzedAt: "",
     pages: pages.length,
     size: fileStats.size,
@@ -797,7 +794,7 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
     agentArtifacts: initialAgents?.artifacts ?? [],
   };
 
-  if (text) {
+  if (text && analyze) {
   try {
       const assessment = initialAgents?.outputs["score-calculation"] as Assessment;
       record.assessment = assessment;
@@ -880,7 +877,7 @@ function safeHttpUrl(value: unknown): string {
   catch { return ""; }
 }
 
-async function writeRecord(record: ResumeRecord, signal?: AbortSignal): Promise<void> {
+export async function writeRecord(record: ResumeRecord, signal?: AbortSignal): Promise<void> {
   await mkdir(path.join(directory, ".metadata"), { recursive: true });
   const destination = metadataPath(record.id);
   const temporary = `${destination}.${randomUUID()}.tmp`;
@@ -911,7 +908,7 @@ async function saveAssessment(id: string, assessment: Assessment, report: string
   return pending;
 }
 
-async function readRecord(id: string): Promise<ResumeRecord | null> {
+export async function readRecord(id: string): Promise<ResumeRecord | null> {
   try {
     return JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
   } catch {

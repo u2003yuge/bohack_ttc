@@ -9,11 +9,10 @@ type AnalysisOperation = (options: { signal: AbortSignal; emit: (event: Analysis
 export async function respondWithAnalysis(request: Request, response: Response, operation: AnalysisOperation) {
   const streamProgress = request.body?.streamProgress === true;
   const scope = deadline(undefined, limit("AGENT_TIMEOUT_MS", 300_000), "分析已达到总时限，请查看已完成资料或缩小问题范围后重试。");
-  let research: ResearchBatch = { items: [], notes: [] };
+  const research: ResearchBatch = { items: [], notes: [] };
   const disconnected = () => { if (!response.writableEnded) scope.abort(new Error("用户已取消分析或关闭页面。")); };
   response.once("close", disconnected);
   const emit = (event: AnalysisEvent) => {
-    if (event.type === "research") research = event.research;
     if (streamProgress && !response.writableEnded && !response.destroyed) response.write(`${JSON.stringify(event)}\n`);
   };
   let heartbeat: ReturnType<typeof setInterval> | undefined;

@@ -50,7 +50,6 @@ router.post("/run", async (request, response) => {
         question: typeof body.question === "string" ? body.question.slice(0, 2_000) : "",
         reviewerFocus: typeof body.reviewerFocus === "string" ? body.reviewerFocus.slice(0, 500) : "",
         useModel: body.useModel !== false,
-        includeResearch: false,
       },
       requested: requested as typeof resumeAnalysisAgentIds[number][],
       artifacts,
