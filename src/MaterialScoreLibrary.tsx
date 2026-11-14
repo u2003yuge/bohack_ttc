@@ -47,7 +47,7 @@ export default function MaterialScoreLibrary({
         <details key={`${entry.candidateId}:${entry.materialId}`} className="catalog-material-score-entry">
           <summary>
             <span>
-              <strong>{entry.candidateName}</strong>
+              <strong>{entry.candidateId === "__catalog__" ? "资料库背景" : entry.candidateName}</strong>
               <small>
                 {materialTypeLabels[entry.materialType]} · {entry.year ?? "年份待核实"} ·{" "}
                 {entry.materialTitle}
@@ -62,12 +62,16 @@ export default function MaterialScoreLibrary({
           </summary>
           <div className="catalog-material-score-body">
             <blockquote>{entry.resumeClaim}</blockquote>
-            <button
-              className="catalog-material-evidence"
-              onClick={() => onSelectEvidence(entry.candidateId, entry.resumeClaim)}
-            >
-              打开简历并定位原文
-            </button>
+            {entry.candidateId === "__catalog__" ? (
+              <small className="catalog-material-evidence">公开资料背景证据；不对应候选人简历。</small>
+            ) : (
+              <button
+                className="catalog-material-evidence"
+                onClick={() => onSelectEvidence(entry.candidateId, entry.resumeClaim)}
+              >
+                打开简历并定位原文
+              </button>
+            )}
             <h4>个人能力贡献</h4>
             <div className="catalog-dimension-contributions">
               <div className="catalog-dimension-heading">

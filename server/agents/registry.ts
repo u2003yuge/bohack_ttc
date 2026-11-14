@@ -27,7 +27,7 @@ const agentVersions: Record<ResumeAgentId, number> = {
   // Bump both stages so older artifacts without the current action evidence
   // shape are recalculated instead of reusing all-NA ability scores.
   "material-extraction": 2,
-  "score-calculation": 3,
+  "score-calculation": 4,
   "analysis-report": 2,
   "plain-language-breakdown": 2,
 };

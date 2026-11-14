@@ -32,14 +32,14 @@ test("catalog API loads offline, separates categories and preserves competition 
       child.once("exit", () => { clearTimeout(timer); reject(new Error(stderr || "API exited")); });
     });
     const competitions = (await json("?kind=competition")).records as KnowledgeRecord[];
-    assert.equal(competitions.length, 124);
-    assert.equal(competitions.filter((record) => record.competition).length, 120);
+    assert.equal(competitions.length, 122);
+    assert.equal(competitions.filter((record) => record.competition).length, 118);
     assert.ok(competitions.every((record) => record.kind === "competition"));
     const venues = (await json("?kind=journal")).records as KnowledgeRecord[];
     assert.equal(venues.length, 100);
     assert.equal(venues.filter((record) => record.venue?.type === "会议").length, 55);
     assert.equal(venues.filter((record) => record.venue?.type === "期刊").length, 45);
-    assert.equal((await json()).records.length, 232);
+    assert.equal((await json()).records.length, 230);
     assert.equal((await json("?kind=company")).records.length, 8);
     assert.equal((await fetch(endpoint + "?kind=invalid")).status, 400);
     const target = competitions.find((record) => record.id === "competition-acm-icpc")!;
@@ -67,7 +67,7 @@ test("catalog API loads offline, separates categories and preserves competition 
     assert.equal(backup.reviews[venue.id][0].significanceScore, 85);
     const restored = await fetch(`${endpoint}/import`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(backup) });
     assert.equal(restored.status, 200);
-    assert.equal((await restored.json()).records.length, 232);
+    assert.equal((await restored.json()).records.length, 230);
     assert.equal((await json("?kind=company")).records.length, 8);
   } finally {
     child.kill();

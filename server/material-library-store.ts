@@ -9,6 +9,7 @@ import {
   type AssessmentHistoryEntry,
   type LibraryMaterialScore,
 } from "../shared/material-scoring.js";
+import { catalogCandidateId, catalogCandidateName } from "./scoring/catalog.js";
 
 export type MaterialLibraryDocument = {
   format: "bohack-material-library";
@@ -114,6 +115,34 @@ export class MaterialLibraryStore {
         knowledgeIds: matchMaterialKnowledge(entry, records),
       })),
     );
+  }
+
+  saveCatalog(assessment: Assessment, records: KnowledgeRecord[], signal?: AbortSignal): Promise<void> {
+    const job = this.pending
+      .catch(() => undefined)
+      .then(async () => {
+        signal?.throwIfAborted();
+        const document = await this.read();
+        const entries = materialLibraryEntries(
+          { id: catalogCandidateId, name: catalogCandidateName },
+          withMaterialContributions(assessment),
+        );
+        for (const entry of entries) entry.knowledgeIds = matchMaterialKnowledge(entry, records);
+        const fingerprintEntries = entries.map(({ assessmentId: _assessmentId, evaluatedAt: _evaluatedAt, ...entry }) => entry);
+        const fingerprint = createHash("sha256")
+          .update(JSON.stringify(fingerprintEntries))
+          .digest("hex");
+        if (document.candidates[catalogCandidateId]?.fingerprint === fingerprint) return;
+        document.candidates[catalogCandidateId] = {
+          assessmentId: assessment.id,
+          fingerprint,
+          entries,
+          history: [],
+        };
+        await this.commit(document, signal);
+      });
+    this.pending = job;
+    return job;
   }
 }
 

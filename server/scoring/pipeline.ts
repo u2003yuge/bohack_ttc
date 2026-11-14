@@ -4,6 +4,7 @@ import {
   actionLevels,
   calibrationStatus,
   decayRatio,
+  decayRatios,
   factorDefinitions,
   scoreMaterials,
   scoringVersion,
@@ -75,11 +76,16 @@ export function createAssessment(
     extraction: options.extraction ?? "rules",
     calibration: calibrationStatus,
     rho,
-    ...scoreMaterials(inputs, rho),
+    rhoByType: decayRatios,
+    ...(
+      options.rho === undefined
+        ? scoreMaterials(inputs)
+        : scoreMaterials(inputs, rho)
+    ),
     notes: options.notes ?? [],
     inputSnapshot: text,
     researchSnapshot: options.research ?? null,
-    rulesSnapshot: { factorDefinitions, typeAdaptation, actionLevels, rho },
+    rulesSnapshot: { factorDefinitions, typeAdaptation, actionLevels, rho, rhoByType: decayRatios },
   });
 }
 

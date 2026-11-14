@@ -47,6 +47,7 @@ import {
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
 import { materialLibraryStore } from "./material-library-store.js";
+import { buildCatalogAssessment } from "./scoring/catalog.js";
 import { assessmentReport, evaluateResume } from "./scoring/pipeline.js";
 import {
   scoringVersion,
@@ -1360,6 +1361,7 @@ async function synchronizeMaterialLibrary(): Promise<void> {
       const record = await readRecord(file.slice(0, -5));
       if (record?.source === "pdf" && record.assessment) await materialLibraryStore.save(record, records);
     }
+    await materialLibraryStore.saveCatalog(buildCatalogAssessment(records), records);
   })();
   materialLibrarySync = operation;
   try {
