@@ -1525,8 +1525,6 @@ export default function App() {
     setBusy(true);
     setAgentError("");
     setAnswer("");
-    setResearchSources([]);
-    setResearchStatus(null);
     setAnalysisProgress({ stage: "extracting", message: "正在连接分析服务。" });
     setAnalysisElapsed(0);
     const applyResult = (result: AnalysisResult) => {
