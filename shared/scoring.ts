@@ -33,6 +33,87 @@ export type ScoreHistoryEntry = {
   scoreCard: ScoreCard;
 };
 
+export type GrowthTimelineInput = {
+  text: string;
+  experiences?: Array<{ role: string; period: string; detail: string }>;
+  evaluatedAt?: string;
+};
+
+export type GrowthTimelinePoint = {
+  year: number;
+  score: number;
+  annualContribution: number;
+  rollingContribution: number;
+  windowYears: number;
+  evidence: string[];
+};
+
+/**
+ * Builds a transparent annual growth curve. Each point is the score at the
+ * end of that year, based on the contribution in that year and the preceding
+ * two years. The final point is scaled to the model's current growth score so
+ * the chart and score card remain consistent.
+ */
+export function calculateGrowthTimeline(input: GrowthTimelineInput, targetScore: number, windowYears = 3): GrowthTimelinePoint[] {
+  const safeWindow = Math.max(1, Math.round(windowYears));
+  const currentYear = Number.isFinite(Date.parse(input.evaluatedAt ?? ""))
+    ? new Date(input.evaluatedAt as string).getFullYear()
+    : new Date().getFullYear();
+  const text = input.text ?? "";
+  const years = new Set<number>();
+  const contributions = new Map<number, { points: number; evidence: string[] }>();
+  const add = (year: number, points: number, evidence: string) => {
+    if (!Number.isFinite(year) || year < 1970 || year > currentYear + 1) return;
+    years.add(year);
+    const current = contributions.get(year) ?? { points: 0, evidence: [] };
+    current.points += points;
+    if (evidence && !current.evidence.includes(evidence)) current.evidence.push(evidence.slice(0, 180));
+    contributions.set(year, current);
+  };
+  const parseYears = (value: string) => [...value.matchAll(/(?:19|20)\d{2}/g)].map((match) => Number(match[0]));
+  const experiences = input.experiences ?? [];
+  for (const experience of experiences) {
+    const parsed = parseYears(experience.period);
+    const start = parsed[0];
+    if (!start) continue;
+    const end = parsed[1] ?? currentYear;
+    const detail = experience.detail.trim();
+    const metricCount = (detail.match(/\d+(?:\.\d+)?\s*%?|\d+\s*(?:人|个|项|家|次|天)/g) ?? []).length;
+    const outcomePoints = Math.min(12, metricCount * 3);
+    const roleProgression = /(负责人|经理|高级|主管|主导|带领|负责)/.test(experience.role + detail) ? 5 : 2;
+    for (let year = start; year <= Math.min(end, currentYear); year += 1) {
+      add(year, 8 + outcomePoints + (year === start ? 10 : 0) + roleProgression, `${year}：${experience.role} · ${detail}`);
+    }
+  }
+  const awardPattern = /(奖|获奖|award|acm|icpc|ccpc|kaggle|竞赛|比赛|金牌|银牌|铜牌|一等奖|二等奖|三等奖|优胜|冠军|亚军|季军)/i;
+  for (const sentence of text.split(/[。；;\n]/).map((item) => item.trim()).filter(Boolean)) {
+    if (!awardPattern.test(sentence)) continue;
+    const mentionedYears = parseYears(sentence);
+    if (mentionedYears.length) {
+      for (const year of mentionedYears) add(year, 15, `奖项：${sentence}`);
+    } else if (years.size) {
+      add(Math.max(...years), 15, `奖项（年份待核实）：${sentence}`);
+    }
+  }
+  if (!years.size) {
+    add(currentYear, Math.max(1, Number(targetScore) || 0), "简历未提取到可解析的年份，当前分数仅作参考");
+  }
+  const sortedYears = [...years].sort((left, right) => left - right);
+  const rawPoints = sortedYears.map((_year, index) => {
+    const from = Math.max(0, index - safeWindow + 1);
+    return sortedYears.slice(from, index + 1).reduce((sum, item) => sum + (contributions.get(item)?.points ?? 0), 0);
+  });
+  const latestRaw = rawPoints.at(-1) ?? 0;
+  const finalScore = Math.max(0, Math.min(100, Number(targetScore) || 0));
+  return sortedYears.map((year, index) => {
+    const annual = contributions.get(year)?.points ?? 0;
+    const rolling = rawPoints[index];
+    const score = latestRaw > 0 ? Math.round(Math.min(100, rolling / latestRaw * finalScore) * 10) / 10 : finalScore;
+    const evidence = [...(contributions.get(year)?.evidence ?? [])].slice(0, 4);
+    return { year, score, annualContribution: annual, rollingContribution: rolling, windowYears: safeWindow, evidence };
+  });
+}
+
 export const defaultScoreWeights: ScoreWeights = {
   leadership: 18,
   expertise: 24,

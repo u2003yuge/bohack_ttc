@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { comparisonMapQuadrants, matchesComparisonMapRegion, normalizeComparisonRankDraft } from "./scoring.js";
+import { calculateGrowthTimeline, comparisonMapQuadrants, matchesComparisonMapRegion, normalizeComparisonRankDraft } from "./scoring.js";
+
+test("growth timeline uses year-end rolling accumulation and scales latest point to growth score", () => {
+  const timeline = calculateGrowthTimeline({
+    text: "2019 入职。2021 获得一等奖。2023 获得 ICPC 奖项。",
+    experiences: [{ role: "工程师", period: "2019 - 2023", detail: "负责平台建设，性能提升 20%。" }],
+    evaluatedAt: "2023-12-31T00:00:00.000Z",
+  }, 80, 3);
+  assert.deepEqual(timeline.map((point) => point.year), [2019, 2020, 2021, 2022, 2023]);
+  assert.equal(timeline.at(-1)?.score, 80);
+  assert.ok((timeline.find((point) => point.year === 2021)?.rollingContribution ?? 0) > (timeline.find((point) => point.year === 2020)?.rollingContribution ?? 0));
+  assert.ok((timeline.find((point) => point.year === 2021)?.evidence.join(" ") ?? "").includes("一等奖"));
+});
 
 test("comparison rank drafts accept supported dimensions and source filters", () => {
   const draft = normalizeComparisonRankDraft({ criterion: "expertise", direction: "desc", ratingFilter: "scored", rationale: "x".repeat(300) });

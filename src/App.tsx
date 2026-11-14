@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import {
   ArrowDownToLine,
   ArrowDown,
@@ -30,7 +31,7 @@ import {
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
-import { calculateComposite, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
+import { calculateComposite, calculateGrowthTimeline, comparisonMapQuadrants, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
@@ -46,6 +47,34 @@ type WeightImpact = { currentScore: number; proposedScore: number; currentRank: 
 type ResumeListResponse = { resumes: Resume[]; directory: string };
 type PdfTextLine = { id: string; page: number; text: string; x: number; y: number; width: number; height: number; angle: number };
 const awardPattern = /(奖|获奖|award|acm|icpc|ccf|竞赛|比赛|金牌|银牌|铜牌|一等奖|二等奖|三等奖|优胜奖|冠军|亚军|季军|csp)/i;
+const paperPattern = /(论文|发表|期刊|会议|SCI|EI|DOI|学术|publication|paper|conference|journal)/i;
+const educationPattern = /(教育背景|教育经历|学历|学士|硕士|博士|本科|研究生|大学|学院|毕业|GPA|专业排名)/i;
+const projectPattern = /(项目|工作经历|工作经验|任职|实习|负责|主导|搭建|开发|设计|优化|交付|提升|降低|工程师|经理|主管|负责人|公司|企业)/i;
+type PdfMaskCategory = "award" | "project" | "paper" | "education";
+type PdfMaskAnnotation = { category: PdfMaskCategory; record?: KnowledgeRecord; score?: number };
+const pdfMaskLabels: Record<PdfMaskCategory, string> = { award: "竞赛 / 奖项", project: "项目 / 工作", paper: "论文 / 期刊", education: "教育背景" };
+function awardHeatColor(score: number): string {
+  const normalized = Math.max(0, Math.min(100, score));
+  const green = Math.round(224 - normalized * 1.55);
+  const blue = Math.round(78 - normalized * 0.7);
+  return `rgb(255 ${green} ${blue} / ${Math.round(30 + normalized * 0.3)}%)`;
+}
+function classifyPdfLine(text: string, records: KnowledgeRecord[]): PdfMaskAnnotation | null {
+  const value = text.trim();
+  if (!value) return null;
+  const match = records.map((record) => ({ record, match: findKnowledgeMatch(value, record) })).filter((item): item is { record: KnowledgeRecord; match: string } => item.match !== null).sort((left, right) => right.match.length - left.match.length)[0];
+  const score = match?.record.significanceScore ?? 0;
+  if (match?.record.kind === "competition") return { category: "award", record: match.record, score };
+  if (match?.record.kind === "journal") return { category: "paper", record: match.record, score };
+  if (match?.record.kind === "company") return { category: "project", record: match.record, score };
+  if (value.length < 4) return null;
+  const sectionHeading = /^(教育背景|教育经历|工作经历|工作经验|项目经历|项目经验|论文|发表论文|科研成果|获奖经历|竞赛经历|荣誉奖项|教育情况)$/i.test(value);
+  if (awardPattern.test(value) && (value.length >= 5 || sectionHeading)) return { category: "award", record: match?.record, score };
+  if (paperPattern.test(value) && (value.length >= 6 || /(?:DOI|SCI|EI)/i.test(value))) return { category: "paper", record: match?.record, score };
+  if (educationPattern.test(value) && (value.length >= 5 || sectionHeading)) return { category: "education", record: match?.record, score };
+  if ((projectPattern.test(value) && (value.length >= 8 || sectionHeading) && /(?:负责|主导|搭建|开发|设计|优化|交付|提升|降低|工程师|经理|主管|负责人)/.test(value))) return { category: "project", record: match?.record, score };
+  return null;
+}
 function normalizeEvidence(value: string): string { return value.toLocaleLowerCase().replace(/[\s\u3000]+/g, "").replace(/[，。；：、“”‘’（）()【】[\],.:;!?！？]/g, ""); }
 function renderEvidenceText(value: string, query: string) {
   const target = query.trim();
@@ -54,7 +83,7 @@ function renderEvidenceText(value: string, query: string) {
   return <>{value.slice(0, index)}<mark className="sample-evidence-hit">{value.slice(index, index + target.length)}</mark>{value.slice(index + target.length)}</>;
 }
 
-function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
+function PdfReader({ url, title, evidenceTarget, knowledgeRecords, onEvidenceResult }: { url: string; title: string; evidenceTarget: string; knowledgeRecords: KnowledgeRecord[]; onEvidenceResult: (result: { query: string; page: number | null }) => void }) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
@@ -66,6 +95,7 @@ function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: stri
   const [awardLines, setAwardLines] = useState<PdfTextLine[]>([]);
   const [showAwardMask, setShowAwardMask] = useState(true);
   const [evidenceLineIds, setEvidenceLineIds] = useState<string[]>([]);
+  const [openKnowledge, setOpenKnowledge] = useState<{ record: KnowledgeRecord; lineId: string; x: number; y: number; page: number } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,6 +106,7 @@ function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: stri
     setTextLines([]);
     setAwardLines([]);
     setEvidenceLineIds([]);
+    setOpenKnowledge(null);
     setLoading(true);
     setError("");
     void (async () => {
@@ -155,7 +186,7 @@ function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: stri
             };
             textLines.push(line);
             pageTextLines.push(line);
-            if (awardPattern.test(text)) detected.push(line);
+            if (classifyPdfLine(text, knowledgeRecords)) detected.push(line);
           }
           const pageContent = pageElement?.querySelector<HTMLElement>(".pdf-page-content");
           if (pageContent) {
@@ -262,13 +293,14 @@ function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: stri
         </div>
         <a className="reader-button download-link" href={url} download={title} title="下载 PDF" aria-label="下载 PDF"><ArrowDownToLine size={15} /></a>
       </div>
-      <label className="award-mask-toggle" title="显示或隐藏当前 PDF 中全部奖项标注">
+      <label className="award-mask-toggle" title="显示或隐藏当前 PDF 中全部证据分类遮罩">
         <span className="award-swatch" />
-        <span>奖项标注</span>
+        <span>证据热力图</span>
         <span className="award-count">{awardLines.length}</span>
-        <input className="switch-input" type="checkbox" role="switch" aria-label="显示奖项标注" checked={showAwardMask} onChange={(event) => setShowAwardMask(event.target.checked)} />
+        <input className="switch-input" type="checkbox" role="switch" aria-label="显示证据热力图遮罩" checked={showAwardMask} onChange={(event) => setShowAwardMask(event.target.checked)} />
         <span className="switch-track" aria-hidden="true"><span className="switch-thumb" /></span>
       </label>
+      <div className="pdf-mask-legend" aria-label="统一含金量热力图图例"><span>统一含金量</span><i className="mask-legend-gradient" /><span>低</span><span>高</span><small>竞赛 · 项目 / 工作 · 论文 / 期刊 · 教育背景</small></div>
       <div ref={viewerRef} className="pdf-canvas-wrap" onScroll={handleScroll}>
         {loading && <div className="reader-message"><LoaderCircle className="spin" size={18} />正在打开 PDF</div>}
         {error && <div className="reader-error">{error}</div>}
@@ -277,9 +309,16 @@ function PdfReader({ url, title, evidenceTarget, onEvidenceResult }: { url: stri
             <div className="pdf-page-label">第 {index + 1} 页</div>
             <div className="pdf-page-content">
               <canvas className="pdf-canvas" aria-label={`${title} 第 ${index + 1} 页`} />
-              <div className={`pdf-text-layer ${showAwardMask ? "awards-visible" : ""}`} aria-label="奖项文字标注覆盖层">
-                {textLines.filter((line) => line.page === index + 1).map((line) => <span id={`pdf-text-${line.id}`} data-evidence-hit={evidenceLineIds.includes(line.id) || undefined} className={`pdf-text-item ${showAwardMask && awardPattern.test(line.text) ? "award-hit" : ""}`} key={line.id} style={{ left: line.x, top: line.y, width: line.width, height: line.height, fontSize: line.height, transform: `rotate(${line.angle}rad)` }}>{line.text}</span>)}
+              <div className={`pdf-text-layer ${showAwardMask ? "awards-visible" : ""}`} aria-label="简历证据分类热力图覆盖层">
+                {textLines.filter((line) => line.page === index + 1).map((line) => {
+                  const annotation = showAwardMask ? classifyPdfLine(line.text, knowledgeRecords) : null;
+                  const match = annotation?.record;
+                  const maskStyle: CSSProperties = annotation ? { "--mask-color": awardHeatColor(annotation.score ?? 0) } as CSSProperties : {};
+                  const annotationLabel = annotation ? `${pdfMaskLabels[annotation.category]} · ${match ? `资料库含金量 ${annotation.score ?? 0}/100` : "暂未匹配资料库，分值待核验"}` : "";
+                  return <span id={`pdf-text-${line.id}`} data-evidence-hit={evidenceLineIds.includes(line.id) || undefined} className={`pdf-text-item ${annotation ? `pdf-mask-hit pdf-mask-${annotation.category}` : ""} ${match ? "award-linked" : ""}`} key={line.id} style={{ left: line.x, top: line.y, width: line.width, height: line.height, fontSize: line.height, transform: `rotate(${line.angle}rad)`, ...maskStyle }} role={match ? "button" : undefined} tabIndex={match ? 0 : undefined} aria-label={match ? `查看${match.title}资料` : annotationLabel || undefined} title={match ? `点击查看${match.title}资料` : annotationLabel || undefined} onClick={match ? () => setOpenKnowledge({ record: match, lineId: line.id, x: line.x, y: line.y + line.height + 8, page: line.page }) : undefined} onKeyDown={match ? (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setOpenKnowledge({ record: match, lineId: line.id, x: line.x, y: line.y + line.height + 8, page: line.page }); } } : undefined}>{line.text}</span>;
+                })}
               </div>
+              {openKnowledge?.page === index + 1 && <aside className="pdf-knowledge-card" style={{ left: Math.max(8, Math.min(openKnowledge.x, (pageRefs.current[index]?.querySelector("canvas")?.clientWidth ?? 650) - 292)), top: openKnowledge.y }} aria-label={`${openKnowledge.record.title}资料`}><button type="button" className="pdf-knowledge-close" onClick={() => setOpenKnowledge(null)} aria-label="关闭资料卡"><X size={13} /></button><span className={`knowledge-type ${openKnowledge.record.kind}`}>{knowledgeKindLabels[openKnowledge.record.kind]}</span><strong>{openKnowledge.record.title}</strong><small>{openKnowledge.record.field || "领域待补充"} · {openKnowledge.record.region || "地区待补充"}</small><p>{openKnowledge.record.summary}</p><div className="pdf-knowledge-meta"><span>主办 / 所属</span><b>{openKnowledge.record.organizer || "待补充"}</b><span>资料库参考分</span><b>{openKnowledge.record.significanceScore} / 100</b><span>核验状态</span><b>{openKnowledge.record.verificationStatus === "已核验" ? "已核验" : "待核验"}</b></div><small className="pdf-knowledge-caveat">仅供背景参考，候选人的参赛经历、个人贡献或任职情况仍需单独核实。</small>{openKnowledge.record.officialUrl && <a href={openKnowledge.record.officialUrl} target="_blank" rel="noreferrer">查看官方网站 <ExternalLink size={11} /></a>}</aside>}
             </div>
           </div>
         ))}
@@ -332,45 +371,36 @@ function ScoreContribution({ card, selectedKey, onSelect }: { card: ScoreCard; s
   return <section className="score-contribution"><div className="insight-section-head"><div><span className="eyebrow">SCORE DECOMPOSITION</span><h4>综合分贡献拆解</h4></div><span className="score-formula">按当前权重</span></div><div className="contribution-list">{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; const contribution = criterion.score * card.weights[key] / totalWeight; return <button type="button" className={`contribution-row ${selectedKey === key ? "selected" : ""}`} key={key} aria-pressed={selectedKey === key} onClick={() => onSelect(key)} aria-label={`${label}，单项 ${criterion.score.toFixed(0)} 分，贡献 ${contribution.toFixed(1)} 分，点击查看评分依据`}><div className="contribution-row-head"><span>{label}</span><strong>{contribution.toFixed(1)} 分</strong><small>权重 {card.weights[key]}% · 置信度 {Math.round(criterion.confidence * 100)}%</small></div><div className="contribution-track"><i style={{ width: `${criterion.score}%` }} /><b style={{ left: `${criterion.score}%` }} /></div></button>; })}</div><p className="contribution-note">条形长度表示单项评分，右侧贡献值表示该项进入综合分后的实际影响；两者不要混为同一个分数。</p></section>;
 }
 
-function ScoreTrend({ card, candidate, onEvidence }: { card: ScoreCard; candidate: Resume; onEvidence: (evidence: string) => void }) {
-  const history = candidate.scoreHistory?.length ? candidate.scoreHistory : candidate.scoreCard ? [{ id: `legacy-${candidate.scoreCard.evaluatedAt}`, evaluatedAt: candidate.scoreCard.evaluatedAt, reason: "import" as const, scoreCard: candidate.scoreCard }] : [];
-  const [selectedId, setSelectedId] = useState(history.at(-1)?.id ?? "");
-  const [focusedCriterion, setFocusedCriterion] = useState<ScoreKey | null>(null);
-  const selected = history.find((entry) => entry.id === selectedId) ?? history.at(-1);
-  const selectedIndex = selected ? history.findIndex((entry) => entry.id === selected.id) : -1;
-  const previous = selectedIndex > 0 ? history[selectedIndex - 1] : null;
-  useEffect(() => { setSelectedId(history.at(-1)?.id ?? ""); setFocusedCriterion(null); }, [candidate.id, history.length]);
-  const chartWidth = Math.max(260, history.length * 48 + 24);
-  const x = (index: number) => history.length < 2 ? chartWidth / 2 : 34 + (index / (history.length - 1)) * (chartWidth - 52);
+function ScoreTrend({ card, candidate }: { card: ScoreCard; candidate: Resume }) {
+  const timeline = useMemo(() => calculateGrowthTimeline({ text: candidate.text, experiences: candidate.experiences, evaluatedAt: card.evaluatedAt }, card.criteria.growth.score), [candidate.text, candidate.experiences, card.criteria.growth.score, card.evaluatedAt]);
+  const [selectedYear, setSelectedYear] = useState(timeline.at(-1)?.year ?? new Date().getFullYear());
+  const selected = timeline.find((entry) => entry.year === selectedYear) ?? timeline.at(-1);
+  useEffect(() => { setSelectedYear(timeline.at(-1)?.year ?? new Date().getFullYear()); }, [candidate.id, timeline]);
+  const chartWidth = Math.max(260, timeline.length * 58 + 24);
+  const x = (index: number) => timeline.length < 2 ? chartWidth / 2 : 34 + (index / (timeline.length - 1)) * (chartWidth - 52);
   const y = (score: number) => 104 - (score / 100) * 72;
-  const points = history.map((entry, index) => `${x(index)},${y(entry.scoreCard.composite)}`).join(" ");
-  const focus = focusedCriterion && selected ? selected.scoreCard.criteria[focusedCriterion] : null;
+  const points = timeline.map((entry, index) => `${x(index)},${y(entry.score)}`).join(" ");
   return <div className="score-trend">
-    <div className="trend-legend"><span>综合分复评记录</span><small>当前综合分 {card.composite.toFixed(1)} · 历史点按当时权重保存</small></div>
-    {history.length ? <>
-      <div className="trend-chart-scroll"><svg viewBox={`0 0 ${chartWidth} 142`} style={{ width: `${chartWidth}px` }} role="img" aria-label="按实际评估时间排列的综合分历史折线图">
+    <div className="trend-legend"><span>进步分年度累计曲线</span><small>当前进步分 {card.criteria.growth.score.toFixed(1)} · 每年年末回看前 3 年累计</small></div>
+    {timeline.length ? <>
+      <div className="trend-chart-scroll"><svg viewBox={`0 0 ${chartWidth} 142`} style={{ width: `${chartWidth}px` }} role="img" aria-label="按年份累计计算的进步分增长曲线">
         {[0, 50, 100].map((tick) => <g key={tick}><line x1="28" y1={y(tick)} x2={chartWidth - 12} y2={y(tick)} className="trend-grid" /><text x="23" y={y(tick) + 3} textAnchor="end" className="trend-label">{tick}</text></g>)}
         <line x1="28" y1="104" x2={chartWidth - 12} y2="104" className="trend-axis" />
-        {history.length > 1 && <polyline points={points} className="trend-line" />}
-        {history.map((entry, index) => {
-          const date = new Date(entry.evaluatedAt);
-          const label = Number.isNaN(date.getTime()) ? "未知日期" : date.toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" });
-          const score = entry.scoreCard.composite;
-          const active = entry.id === selected?.id;
-          return <g key={entry.id} className={`trend-point ${active ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${label}，${entry.reason === "import" ? "导入初评" : "复评"}，综合分 ${score.toFixed(1)}`} aria-pressed={active} onClick={() => { setSelectedId(entry.id); setFocusedCriterion(null); }} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedId(entry.id); setFocusedCriterion(null); } }}>
-            <title>{`${label} · ${entry.reason === "import" ? "导入初评" : "复评"} · 综合分 ${score.toFixed(1)}`}</title>
-            <circle cx={x(index)} cy={y(score)} r={active ? 5 : 4} className="trend-dot" />
-            <text x={x(index)} y="124" textAnchor="middle" className="trend-label">{label}</text>
+        {timeline.length > 1 && <polyline points={points} className="trend-line" />}
+        {timeline.map((entry, index) => {
+          const active = entry.year === selected?.year;
+          return <g key={entry.year} className={`trend-point ${active ? "active" : ""}`} role="button" tabIndex={0} aria-label={`${entry.year} 年末，进步分 ${entry.score.toFixed(1)}`} aria-pressed={active} onClick={() => setSelectedYear(entry.year)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedYear(entry.year); } }}>
+            <title>{`${entry.year} 年末 · 进步分 ${entry.score.toFixed(1)} · 近${entry.windowYears}年累计 ${entry.rollingContribution}`}</title>
+            <circle cx={x(index)} cy={y(entry.score)} r={active ? 5 : 4} className="trend-dot" />
+            <text x={x(index)} y="124" textAnchor="middle" className="trend-label">{entry.year}</text>
           </g>;
         })}
       </svg></div>
-      {selected && <div className="trend-selection"><div className="trend-selection-head"><span>{selected.reason === "import" ? "导入初评" : "复评"} · {new Date(selected.evaluatedAt).toLocaleString("zh-CN", { dateStyle: "medium", timeStyle: "short" })}</span><strong>{selected.scoreCard.composite.toFixed(1)} 分{previous && selectedIndex >= 0 ? <small className={selected.scoreCard.composite >= previous.scoreCard.composite ? "trend-up" : "trend-down"}>{selected.scoreCard.composite >= previous.scoreCard.composite ? "+" : ""}{(selected.scoreCard.composite - previous.scoreCard.composite).toFixed(1)}</small> : null}</strong></div>
-        <div className="trend-criteria">{scoreCriteria.map(({ key, label }) => { const criterion = selected.scoreCard.criteria[key]; return <button key={key} className={focusedCriterion === key ? "focused" : ""} onClick={() => setFocusedCriterion(focusedCriterion === key ? null : key)}><span>{label}</span><i><b style={{ width: `${criterion.score}%` }} /></i><strong>{criterion.score.toFixed(0)}</strong></button>; })}</div>
-        {selected.roleRequirements && <div className="trend-role-context"><strong>当时的岗位要求</strong><span>{selected.roleRequirements}</span></div>}
-        {focus && focusedCriterion && <div className="trend-evidence"><strong>{scoreCriteria.find((item) => item.key === focusedCriterion)?.label} · 评分依据</strong>{focus.evidence.length ? focus.evidence.map((item, index) => <button key={`${index}-${item}`} onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={10} /></button>) : <span>本次评估未提取到明确证据</span>}</div>}
-        <small className="trend-weight-note">按该次评估保存的权重计算，旧记录不会随当前权重变化而重算。</small>
+      {selected && <div className="trend-selection"><div className="trend-selection-head"><span>{selected.year} 年末 · 近 {selected.windowYears} 年滚动累计</span><strong>{selected.score.toFixed(1)} 分</strong></div>
+        <div className="trend-criteria"><div className="trend-growth-summary"><span>本年度新增贡献</span><strong>{selected.annualContribution}</strong><small>累计贡献 {selected.rollingContribution}</small></div></div>
+        <small className="trend-weight-note">计算口径：每年年末汇总该年及前 2 年的经历成果与奖项贡献，再将最新年度累计值校准到当前进步分。</small>
       </div>}
-    </> : <div className="trend-empty"><strong>{candidate.source === "demo" ? "示例简历没有真实评估历史" : "尚无评分记录"}</strong><span>{candidate.source === "demo" ? "导入 PDF 并完成分析后，这里会显示实际评估结果。" : "导入初评会记录第一个分数；后续复评后形成真实趋势。"}</span></div>}
+    </> : <div className="trend-empty"><strong>尚无可解析的成长时间线</strong><span>需要简历中的工作年份、项目年份或奖项年份才能生成进步分曲线。</span></div>}
   </div>;
 }
 
@@ -555,7 +585,7 @@ function ScoreInsights({ card, candidate, records, historyCandidates: historyRec
   const selected = selectedCriterion ? card.criteria[selectedCriterion] : null;
   const selectedLabel = scoreCriteria.find((criterion) => criterion.key === selectedCriterion)?.label;
   useEffect(() => { setSelectedCriterion(null); }, [candidate.id]);
-  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} onEvidence={onEvidence} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView key={candidate.id} candidate={candidate} agentAvailable={agentAvailable} onEvidence={onEvidence} /></div>;
+  return <div className="score-insights"><BenchmarkBadge role={candidate.role} score={card.composite} candidates={historyRecords} onOpenHistory={onOpenHistory} /><KnowledgeReferenceBar candidate={candidate} records={records} onOpen={onOpenKnowledge} /><section className="score-visuals"><div className="insight-section-head"><div><span className="eyebrow">CAPABILITY PROFILE</span><h4>能力画像</h4></div><span className="score-formula">综合分 {card.composite.toFixed(1)}</span></div><div className="score-visual-grid"><ScoreRadar card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} /><ScoreTrend card={card} candidate={candidate} /></div></section><ScoreContribution card={card} selectedKey={selectedCriterion} onSelect={setSelectedCriterion} />{selected && selectedCriterion && <section className="score-evidence-panel" aria-live="polite"><div><span className="eyebrow">SCORE EVIDENCE</span><strong>{selectedLabel} · {selected.score.toFixed(0)} 分</strong><small>评分置信度 {Math.round(selected.confidence * 100)}% · 点击依据回到 PDF 定位</small></div>{selected.evidence.length ? <ul>{selected.evidence.map((item, index) => <li key={`${index}-${item}`}><button type="button" onClick={() => onEvidence(item)} title="在简历原文中定位这条依据">{item}<ExternalLink size={11} /></button></li>)}</ul> : <p>本项没有提取到明确依据，建议结合简历原文人工复核。</p>}</section>}<ProjectBreakdownView key={candidate.id} candidate={candidate} agentAvailable={agentAvailable} onEvidence={onEvidence} /></div>;
 }
 
 function depthScore(card: ScoreCard): number {
@@ -1532,7 +1562,7 @@ export default function App() {
 
           <section className="reader-area" aria-label="简历阅读区">
             {selected.source === "pdf" && pdfUrl ? (
-              <PdfReader key={selected.id} url={pdfUrl} title={selected.fileName ?? `${selected.name}.pdf`} evidenceTarget={evidenceTarget} onEvidenceResult={handleEvidenceResult} />
+              <PdfReader key={selected.id} url={pdfUrl} title={selected.fileName ?? `${selected.name}.pdf`} evidenceTarget={evidenceTarget} knowledgeRecords={knowledgeRecords} onEvidenceResult={handleEvidenceResult} />
             ) : (
               <div className="sample-page">
                 <div className="sample-document-label"><span>BOHACK SAMPLE</span><span>简历资料 · 示例</span></div>
