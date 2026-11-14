@@ -3,24 +3,24 @@
   "version": 1,
   "resumeSha256": "82156813bfad35c72c46d2af17e537111c0c9dce5f135e0e1057b7b960dd6d3b",
   "id": "10",
-  "analysisReport": "### 候选人信息\n\n| 项目 | 提取结果 |\n| --- | --- |\n| 姓名 | 茜特菈莉 |\n| 岗位 | 云原生开发工程师 |\n| 地点 | 长沙 |\n| 教育 | 北京交通大学本科，网络工程，2022.09-2026.06 |\n| 技能关键词 | Go、Linux、容器、进程、网络、文件系统、Kubernetes、边缘设备接入、离线自治、消息队列 |\n\n具备云原生、Kubernetes及边缘计算项目经验，参与云边协同、监控部署与故障恢复实践。\n\n### 简历材料提取\n\n- **项目｜KubeEdge 云边协同框架：** 1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge\n- **项目｜校园边缘计算集群：** 2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。\n- **论文 / 研究｜Ray: A Distributed Framework for Emerging AI Applications：** 1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。\n- **奖项 / 竞赛｜华为ICT大赛：** 华为ICT大赛  2025｜ 全国三等奖 ｜团队成员\n- **奖项 / 竞赛｜“大唐杯”全国大学生新一代信息通信技术大赛：** “大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长\n\n### 五维能力评分\n\n| 能力维度 | 规则得分 |\n| --- | ---: |\n| 专业执行 | 30.325 |\n| 问题解决 | NA |\n| 责任与交付 | NA |\n| 协作与组织 | NA |\n| 学习与研究 | NA |\n\n得分按已提取材料和个人行动证据计算。\n\n### 项目经历人话拆解\n\n#### 验证边缘节点故障后的恢复情况\n\n- **要解决什么：** 具体项目目标未说明，需进一步核实。\n- **具体做了什么：** 模拟断网、重启和重连，检查工作负载状态及设备消息是否恢复；整理了边缘节点恢复相关的验证场景、问题记录、复现步骤和交接说明。\n- **带来什么结果：** 简历说明整理并输出了 26 组验证场景、问题记录、复现步骤和交接说明；未说明其他结果。\n- **简历原文：** 整理 26 组验证场景，输出问题记录\n\n#### 搭建并测试校园边缘计算集群\n\n- **要解决什么：** 具体项目目标未说明，需进一步核实。\n- **具体做了什么：** 搭建容器化服务、资源监控和自动部署流程；通过故障注入检查重试、回滚和数据恢复，并整理运维手册及监控、故障恢复记录。\n- **带来什么结果：** 简历说明搭建了 5 节点演示环境，并汇总了监控与故障恢复记录；未说明其他结果。\n- **简历原文：** 覆盖 节点 失联 、服务重启和 升级 回滚\n\n### 综合分析\n\n## 结论\n按简历所述经历，候选人的证据主要指向云原生、边缘计算与故障恢复，和 AI 应用研发岗位的核心技术栈存在明显错位。系统运行与验证方面有一定相关经验，但简历未展示 LLM 应用开发、RAG、Agent、文档智能或完整业务交付的证据，当前岗位匹配依据不足。简历明确声明人物、获奖和任职经历均为虚构，因此所列经历不能视为已核实的个人履历。\n\n## 证据匹配\n- **大模型应用、RAG、Agent、文档智能系统设计开发：未见证据。** 简历提到研读并复现 Ray 调度实验，但未描述 LLM API、提示词、检索增强、向量数据库、Agent 框架或文档分析功能。\n- **模型调用、工具调用、评测、监控和数据闭环：部分支持。** 简历描述了云边服务监控、故障注入、恢复验证和运维记录；未涉及模型调用与工具调用、模型效果评测或 AI 数据闭环。\n- **跨团队协作并落地业务：未见充分证据。** 有团队项目、实习和竞赛团队经历，但没有与产品、算法、前端或业务团队协作，也没有 AI 能力进入实际业务的描述。\n- **3 年以上软件或 AI 应用研发经验：未见支持。** 简历提供的项目及实习时间不足以证明 3 年以上研发经验；且任职经历被简历声明为虚构。\n- **Python 或 TypeScript：未见支持。** 技能部分仅提到 Go、Linux、Shell，未列出 Python 或 TypeScript。\n- **LLM API、Prompt、RAG、向量数据库或 Agent 框架：未见支持。**\n- **完整项目交付经验：部分支持。** 有部署、监控、故障恢复、运维手册等交付环节描述；未说明需求、验收、上线运行及业务效果，且项目经历未经本人履历核实。\n- **招聘、文档解析、知识库、企业效率工具：未见支持。**\n- **模型评测、数据治理、搜索增强、多 Agent 编排：未见支持。**\n- **量化成果、开源项目或论文竞赛：有限支持。** 有竞赛奖项、场景组数和节点数等陈述，但履历与获奖明确标为虚构；论文和公开项目引用真实来源，并不能证明候选人的个人贡献。\n\n## 待核实信息\n- AI 应用开发的实际经历、代码或可演示成果，以及 Python/TypeScript 熟练度。\n- 简历注明人物、任职和获奖经历为虚构。公开项目背景不能证明候选人曾在相关组织任职或对项目有个人贡献；论文来源真实也不能证明个人完成了所述复现。\n- “已毕业”与教育时间、实习和项目日期之间的时间关系需核实；现有信息不足以确认实际工作年限。\n- 项目是否面向真实用户或业务上线，候选人承担的职责、验收标准与可量化结果均不清楚。\n\n## 建议追问\n- 请现场设计一个文档问答 RAG 系统，说明解析、切分、索引、检索、重排、生成、引用和评测方案，并指出关键取舍。\n- 请提供一个本人实际完成的 LLM 应用代码或演示，解释模型 API、提示词、工具调用、异常处理和安全边界。\n- 是否使用过向量数据库或 Agent 框架？请描述具体任务、架构、失败处理方式及效果评估。\n- 请用一个真实项目说明从需求到上线的完整交付过程，包括本人负责范围、协作对象、验收和运行指标。\n- 请说明所列云边项目、论文复现、公开项目及竞赛经历中哪些是实际个人经历，哪些是示例或模拟材料；可提供与个人贡献对应的可核验证据。\n\n## 评分依据与覆盖情况\n以下仅转述既有规则评分，不重新计算或推导岗位匹配分：专业执行为 **30.325（暂定）**，基于两项材料；问题解决、归属与交付、协作组织、学习研究均为 **NA（暂定）**，各缺少 5 项材料。评分可覆盖一般工程执行的有限证据，不能替代对 LLM/RAG/Agent 技能、业务落地或岗位匹配度的判断。",
+  "analysisReport": "### 候选人信息\n\n| 项目 | 提取结果 |\n| --- | --- |\n| 姓名 | 茜特菈莉 |\n| 岗位 | 云原生开发工程师 · 云计算与边缘基础设施 |\n| 地点 | 长沙 |\n| 教育 | 北京交通大学，本科，网络工程（2022.09-2026.06） |\n| 技能关键词 | Go、Linux、容器、进程、网络、文件系统、Kubernetes、边缘设备接入、离线自治、消息队列 |\n\n具备云原生、Kubernetes、边缘计算、监控与自动部署实践经验。\n\n### 简历材料提取\n\n- **工作 / 实习｜KubeEdge 云边协同框架：** 1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge\n- **项目｜校园边缘计算集群：** 2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。\n- **论文 / 研究｜Ray: A Distributed Framework for Emerging AI Applications：** 1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。\n- **奖项 / 竞赛｜华为ICT大赛：** 华为ICT大赛  2025｜ 全国三等奖 ｜团队成员\n- **奖项 / 竞赛｜“大唐杯”全国大学生新一代信息通信技术大赛：** “大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长\n\n### 五维能力评分\n\n| 能力维度 | 规则得分 |\n| --- | ---: |\n| 专业执行 | 30.325 |\n| 问题解决 | NA |\n| 责任与交付 | NA |\n| 协作与组织 | NA |\n| 学习与研究 | NA |\n\n得分按已提取材料和个人行动证据计算。\n\n### 项目经历人话拆解\n\n#### 检查云边框架在边缘节点故障后的恢复情况\n\n- **要解决什么：** 目标是检查模拟断网、重启和重连后，工作负载状态及设备消息能否恢复。\n- **具体做了什么：** 模拟断网、重启与重连，检查工作负载状态和设备消息恢复；整理了26组边缘节点恢复验证场景，并输出问题记录、复现步骤和交接说明。\n- **带来什么结果：** 简历未说明验证结果或问题是否已解决。\n- **简历原文：** 整理 26 组验证场景\n\n#### 搭建校园边缘计算集群并验证故障恢复\n\n- **要解决什么：** 简历未明确说明项目要解决的问题或目标，建议进一步核实。\n- **具体做了什么：** 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，并整理运维手册；搭建5节点演示环境，覆盖节点失联、服务重启和升级回滚，并汇总监控与故障恢复记录。\n- **带来什么结果：** 简历说明搭建了5节点演示环境，并汇总了监控与故障恢复记录；未说明验证结果或恢复效果。\n- **简历原文：** 通过故障注入检查重试、回滚和数据恢复\n\n### 综合分析\n\n## 结论\n\n候选人当前与“AI 应用研发工程师”岗位的匹配度偏低，主要证据集中在云原生、边缘计算、故障恢复和分布式调度实验，尚未形成大模型应用研发所需的直接证据。\n\n- **AI 工程落地能力：不足以证明**。未见 LLM API、Prompt、RAG、向量数据库、Agent 工作流、文档智能分析或模型评测系统的实际开发记录。\n- **系统设计能力：部分匹配**。具备容器化部署、监控、服务恢复、任务调度和故障注入经验，说明有基础设施与分布式系统实践，但与 AI 应用系统设计的关联仍较间接。\n- **项目交付能力：部分支持**。有课程/团队项目、验证场景、运维手册和演示环境交付证据，但缺少生产环境、真实业务目标、用户规模和上线结果。\n- **问题解决能力：部分支持**。有断网、重启、重连、失败重试、回滚和数据恢复等测试与排障经历；尚未证明其能解决检索质量、幻觉、工具调用失败、数据治理或模型成本等 AI 特有问题。\n- **岗位契合度：偏低，建议谨慎进入面试**。除非候选人能在面试中补充未写入简历的 AI 应用项目，否则不满足多数核心必备条件。\n\n## 证据匹配\n\n| 岗位要求 | 判断 | 简历证据与限制 |\n|---|---|---|\n| 负责大模型应用、RAG、Agent、文档智能分析系统 | 未支持 | 简历未出现 LLM、RAG、Embedding、向量数据库、Agent、Prompt 或文档解析系统开发经历。 |\n| 搭建模型调用、工具调用、评测、监控和数据闭环 | 部分支持 | 有 Prometheus、Grafana、部署脚本、监控和故障恢复实践；但这些是云边基础设施监控，不能替代模型调用、评测集、质量指标、数据反馈闭环等 AI 工程证据。 |\n| 与产品、算法、前端、业务团队协作并落地 AI 能力 | 未支持 | 有“团队项目”“核心开发成员”“队长”等表述，但未明确跨职能协作、业务目标、用户场景或上线成果。 |\n| 3 年以上软件或 AI 应用研发经验 | 未支持 | 简历显示教育和项目经历集中在 2024 至 2026 年，未明确证明 3 年以上软件或 AI 应用研发经验；课程项目和短期实习是否计入岗位要求也需核实。 |\n| 熟悉 Python 或 TypeScript | 未支持 | 技能部分明确写的是 Go、Linux、Shell，未出现 Python 或 TypeScript。 |\n| 熟悉 LLM API、Prompt、RAG、向量数据库或 Agent 框架 | 未支持 | 没有对应技术栈、代码、项目结果或部署说明。 |\n| 具备完整项目交付经验 | 部分支持 | “校园边缘计算集群”包含容器化服务、监控、自动部署、故障注入、回滚、数据恢复和运维手册，具备一定端到端交付特征；但尚未证明真实业务交付、长期运行、用户验收或线上维护。 |\n| 招聘、文档解析、知识库、企业效率工具经验 | 未支持 | 未见相关业务场景。 |\n| 模型评测、数据治理、搜索增强、多 Agent 编排 | 未支持 | 未见相关实践。 |\n| 量化成果、开源项目或论文竞赛经历 | 部分支持 | 有 Ray 论文研读与复现实验、KubeEdge 公开项目引用、竞赛获奖表述；但论文和公开项目本身不能证明候选人的原创贡献或核心代码贡献，竞赛具体分工和成果也未说明。 |\n\n## 待核实信息\n\n- **技术栈真实性与熟练度**：是否实际使用过 Python 或 TypeScript，以及是否能独立完成 API 服务、异步任务、测试和部署。\n- **AI 应用经历缺口**：是否有未写入简历的 LLM、RAG、Agent、文档解析或知识库项目。\n- **项目角色边界**：在 KubeEdge、校园集群和竞赛中具体负责哪些模块，代码量、设计决策和独立完成部分是什么。\n- **交付范围**：项目是否有真实用户、验收标准、线上/长期运行环境、故障指标和迭代记录。\n- **经历时间线**：简历中的教育和实习日期存在时间安排需要澄清之处，应核对实际入学、毕业、实习起止时间及当前可入职时间。\n- **材料真实性风险**：简历明确说明人物、获奖和任职经历为虚构，因此其中的实习、竞赛、任职和项目参与不能直接作为已验证事实。公开论文或开源项目的真实存在，也不能证明候选人对论文或项目有个人贡献。\n- **地点与工作方式**：简历所在地与岗位 Base 地不一致，是否接受上海、北京、深圳或部分远程需要确认。\n\n## 建议追问\n\n1. 请现场用 Python 或 TypeScript 设计一个“企业文档问答”服务：说明文档切分、Embedding、向量检索、重排、Prompt、引用生成和权限控制如何实现。\n2. 你是否实际调用过 OpenAI、通义、文心或其他 LLM API？请说明请求封装、流式输出、超时、限流、重试、成本控制和敏感信息处理。\n3. 如果 RAG 系统回答出现幻觉，你会如何定位是解析、切分、召回、重排、Prompt 还是生成阶段的问题？会使用哪些评测指标和测试集？\n4. 请给出一个 Agent 工作流设计，包含工具注册、参数校验、状态管理、失败重试、人工接管和执行审计。\n5. 在“校园边缘计算集群”中，哪部分是你独立设计和实现的？请展示架构图、代码结构、部署配置或故障注入记录。\n6. 你在 KubeEdge 相关工作中是否修改过源代码？具体修改了哪些模块、解决了什么问题、如何验证？\n7. 竞赛中作为队长具体承担哪些技术和组织职责？队伍最终成果中哪些部分由你完成？\n8. 如果模型服务延迟升高、调用成本超预算且回答质量下降，你会如何设计监控面板和数据闭环？\n9. 请说明最近一次从需求澄清到交付验收的完整项目流程，包括需求、里程碑、测试、上线和复盘。\n10. 是否能接受岗位要求的城市和全职工作安排？实习/教育时间线是否与入职时间冲突？\n\n## 评分依据与覆盖情况\n\n本判断仅采用简历明示内容和用户提供的既有核查摘要，不重新计算或扩展评分。\n\n- 已有规则结果中，**professional_execution 为 30.325，且为 provisional**。其证据主要来自校园边缘计算集群的容器化、监控、自动部署、故障注入、回滚和数据恢复，以及 Ray 调度实验；这些结果支持基础工程执行能力，但不能直接转换为 AI 应用研发能力。\n- 既有结果中，**problem_solving、ownership_delivery、collaboration_organization、learning_research 均为 NA**，对应材料不足，不能据此补足岗位要求。\n- 对岗位核心要求的覆盖情况：  \n  - 大模型应用 / RAG / Agent / 文档智能：**未覆盖**。  \n  - 模型调用、评测与数据闭环：**未覆盖，基础设施监控仅构成间接证据**。  \n  - Python / TypeScript：**未覆盖**。  \n  - 3 年以上相关研发经验：**未充分覆盖**。  \n  - 完整项目交付：**部分覆盖**。  \n  - 分布式系统、监控、故障恢复：**部分覆盖，属于可迁移基础能力**。  \n  - 业务落地和跨职能协作：**未充分覆盖**。  \n  - 论文、开源、竞赛：**有表述，但个人贡献和真实性待核实**。",
   "analysisStatus": "complete",
   "analysisError": "",
-  "analyzedAt": "2026-11-14T13:04:29.410Z",
+  "analyzedAt": "2026-11-14T14:15:22.616Z",
   "assessment": {
-    "id": "c46ba08f-7fa6-4575-9109-217cd503a00a",
+    "id": "bccf222c-e0dd-453b-bb0a-4106b2ae2938",
     "version": "material-derived-v1.1.0",
-    "evaluatedAt": "2026-11-14T13:04:29.410Z",
-    "inputHash": "f722dc97f10cc9e1934ac373b0b02b39acae7e6e36af51d56e68018f77c63c61",
+    "evaluatedAt": "2026-11-14T14:15:22.616Z",
+    "inputHash": "511b054b60503174ff108b199fed5a05b5e88a0b349f6e6387c3ed946675f274",
     "extraction": "model",
     "calibration": "初版规则参数，待双人标注校准",
     "rho": 0.5,
     "materials": [
       {
-        "material_id": "m-40576ff6089bcfe8",
-        "material_type": "project",
+        "material_id": "m-b5ed8f561842ad3c",
+        "material_type": "work",
         "title": "KubeEdge 云边协同框架",
-        "year": 2026,
+        "year": "2026.03 - 2026.08",
         "organization": "华为云",
         "stage": null,
         "result": null,
@@ -55,14 +55,14 @@
           "简历自述"
         ],
         "merged_from": [
-          "m-40576ff6089bcfe8"
+          "m-b5ed8f561842ad3c"
         ],
         "material_score": null,
         "score_breakdown": [
           {
             "key": "complexity",
-            "label": "问题复杂度",
-            "weight": 0.3,
+            "label": "任务复杂度",
+            "weight": 0.25,
             "value": null,
             "evidence": null,
             "points": null,
@@ -70,8 +70,8 @@
             "reason": "没有符合规则的事实依据，保持 NA。"
           },
           {
-            "key": "constraints",
-            "label": "技术 / 业务约束",
+            "key": "scope",
+            "label": "具体责任范围",
             "weight": 0.2,
             "value": null,
             "evidence": null,
@@ -81,8 +81,8 @@
           },
           {
             "key": "delivery",
-            "label": "交付阶段",
-            "weight": 0.2,
+            "label": "实际交付",
+            "weight": 0.25,
             "value": null,
             "evidence": null,
             "points": null,
@@ -90,19 +90,9 @@
             "reason": "没有符合规则的事实依据，保持 NA。"
           },
           {
-            "key": "adoption",
-            "label": "部署 / 采用",
-            "weight": 0.15,
-            "value": null,
-            "evidence": null,
-            "points": null,
-            "contribution": null,
-            "reason": "没有符合规则的事实依据，保持 NA。"
-          },
-          {
-            "key": "outcome",
-            "label": "结果质量",
-            "weight": 0.15,
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
             "value": null,
             "evidence": null,
             "points": null,
@@ -112,11 +102,10 @@
         ],
         "score_coverage": 0,
         "missing_factors": [
-          "问题复杂度",
-          "技术 / 业务约束",
-          "交付阶段",
-          "部署 / 采用",
-          "结果质量"
+          "任务复杂度",
+          "具体责任范围",
+          "实际交付",
+          "结果影响"
         ],
         "provisional": true,
         "dimension_mapping": {
@@ -139,7 +128,7 @@
                 "source": "简历原文"
               }
             ],
-            "type_coefficient": 1,
+            "type_coefficient": 0.85,
             "derived_contribution": null
           },
           "ownership_delivery": {
@@ -147,7 +136,7 @@
             "rule": null,
             "mapping_reason": "未找到支持该维度的个人行动证据。",
             "supporting_evidence": [],
-            "type_coefficient": 0.95,
+            "type_coefficient": 1,
             "derived_contribution": null
           },
           "collaboration_organization": {
@@ -155,7 +144,7 @@
             "rule": null,
             "mapping_reason": "未找到支持该维度的个人行动证据。",
             "supporting_evidence": [],
-            "type_coefficient": 0.75,
+            "type_coefficient": 0.8,
             "derived_contribution": null
           },
           "learning_research": {
@@ -169,16 +158,16 @@
                 "source": "简历原文"
               }
             ],
-            "type_coefficient": 0.65,
+            "type_coefficient": 0.6,
             "derived_contribution": null
           }
         }
       },
       {
-        "material_id": "m-6aa10eb0f1de8536",
+        "material_id": "m-805e7950b8bd48d6",
         "material_type": "project",
         "title": "校园边缘计算集群",
-        "year": 2025,
+        "year": "2025.09 - 2026.02",
         "organization": null,
         "stage": null,
         "result": null,
@@ -238,7 +227,7 @@
           "简历自述"
         ],
         "merged_from": [
-          "m-6aa10eb0f1de8536"
+          "m-805e7950b8bd48d6"
         ],
         "material_score": 41.75,
         "score_breakdown": [
@@ -364,7 +353,7 @@
         "material_id": "m-25bf1e49829fda9f",
         "material_type": "research",
         "title": "Ray: A Distributed Framework for Emerging AI Applications",
-        "year": 2026,
+        "year": 2017,
         "organization": null,
         "stage": null,
         "result": null,
@@ -389,7 +378,8 @@
         "external_facts": {
           "input_role": null,
           "input_context": {
-            "arxiv_id": "arXiv:1712.05889"
+            "arxiv_id": "arXiv:1712.05889",
+            "year": "2017"
           }
         },
         "factor_observations": {
@@ -565,7 +555,9 @@
         ],
         "external_facts": {
           "input_role": "团队成员",
-          "input_context": {}
+          "input_context": {
+            "region": "全国"
+          }
         },
         "factor_observations": {
           "tier": {
@@ -701,7 +693,9 @@
         ],
         "external_facts": {
           "input_role": "队长",
-          "input_context": {}
+          "input_context": {
+            "region": "全国"
+          }
         },
         "factor_observations": {
           "tier": {
@@ -843,7 +837,7 @@
             ]
           },
           {
-            "material_id": "m-6aa10eb0f1de8536",
+            "material_id": "m-805e7950b8bd48d6",
             "title": "校园边缘计算集群",
             "material_type": "project",
             "material_score": 41.75,
@@ -902,12 +896,12 @@
       },
       {
         "type": "project",
-        "count": 2,
+        "count": 1,
         "score": 41.75
       },
       {
         "type": "work",
-        "count": 0,
+        "count": 1,
         "score": null
       },
       {
@@ -3678,231 +3672,23 @@
           "rho": 0.5
         }
       }
-    }
-  ],
-  "agentArtifacts": [
-    {
-      "id": "candidate-profile",
-      "inputHash": "e64b40ee312c2356c12563177c659064b56db70dd8b01b30ddc044881582d61b",
-      "output": {
-        "name": "茜特菈莉",
-        "role": "云原生开发工程师",
-        "location": "长沙",
-        "education": "北京交通大学本科，网络工程，2022.09-2026.06",
-        "skills": [
-          "Go",
-          "Linux",
-          "容器",
-          "进程",
-          "网络",
-          "文件系统",
-          "Kubernetes",
-          "边缘设备接入",
-          "离线自治",
-          "消息队列"
-        ],
-        "summary": "具备云原生、Kubernetes及边缘计算项目经验，参与云边协同、监控部署与故障恢复实践。"
-      }
     },
     {
-      "id": "material-extraction",
-      "inputHash": "8075c9a9e5277de210005ac27e4a81bb66764217448b085e2f7d160e84b8de40",
-      "output": {
-        "materials": [
-          {
-            "material_id": "m-40576ff6089bcfe8",
-            "material_type": "project",
-            "title": "KubeEdge 云边协同框架",
-            "year": 2026,
-            "organization": "华为云",
-            "stage": null,
-            "result": null,
-            "identifiers": [],
-            "resume_claim": "1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge",
-            "personal_action_evidence": [
-              {
-                "origin": "resume",
-                "quote": "模拟断网、重启与重连，检查工作负载状态和设备消息恢复。",
-                "source": "简历原文"
-              },
-              {
-                "origin": "resume",
-                "quote": "围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。",
-                "source": "简历原文"
-              }
-            ],
-            "sources": [
-              {
-                "origin": "resume",
-                "quote": "1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge",
-                "source": "简历原文"
-              }
-            ],
-            "external_facts": {
-              "input_role": "研发实习生",
-              "input_context": {}
-            },
-            "factor_observations": {},
-            "notes": [],
-            "evidence_states": [
-              "简历自述"
-            ]
-          },
-          {
-            "material_id": "m-6aa10eb0f1de8536",
-            "material_type": "project",
-            "title": "校园边缘计算集群",
-            "year": 2025,
-            "organization": null,
-            "stage": null,
-            "result": null,
-            "identifiers": [],
-            "resume_claim": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
-            "personal_action_evidence": [
-              {
-                "origin": "resume",
-                "quote": "搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。",
-                "source": "简历原文"
-              },
-              {
-                "origin": "resume",
-                "quote": "搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
-                "source": "简历原文"
-              }
-            ],
-            "sources": [
-              {
-                "origin": "resume",
-                "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
-                "source": "简历原文"
-              }
-            ],
-            "external_facts": {
-              "input_role": "核心开发成员",
-              "input_context": {}
-            },
-            "factor_observations": {},
-            "notes": [],
-            "evidence_states": [
-              "简历自述"
-            ]
-          },
-          {
-            "material_id": "m-25bf1e49829fda9f",
-            "material_type": "research",
-            "title": "Ray: A Distributed Framework for Emerging AI Applications",
-            "year": 2026,
-            "organization": null,
-            "stage": null,
-            "result": null,
-            "identifiers": [
-              "arxiv:1712.05889"
-            ],
-            "resume_claim": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
-            "personal_action_evidence": [
-              {
-                "origin": "resume",
-                "quote": "搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
-                "source": "简历原文"
-              }
-            ],
-            "sources": [
-              {
-                "origin": "resume",
-                "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
-                "source": "简历原文"
-              }
-            ],
-            "external_facts": {
-              "input_role": null,
-              "input_context": {
-                "arxiv_id": "arXiv:1712.05889"
-              }
-            },
-            "factor_observations": {},
-            "notes": [],
-            "evidence_states": [
-              "简历自述"
-            ]
-          },
-          {
-            "material_id": "m-dbb5f0887fee876e",
-            "material_type": "award",
-            "title": "华为ICT大赛",
-            "year": 2025,
-            "organization": null,
-            "stage": null,
-            "result": "全国三等奖",
-            "identifiers": [],
-            "resume_claim": "华为ICT大赛  2025｜ 全国三等奖 ｜团队成员",
-            "personal_action_evidence": [],
-            "sources": [
-              {
-                "origin": "resume",
-                "quote": "华为ICT大赛  2025｜ 全国三等奖 ｜团队成员",
-                "source": "简历原文"
-              }
-            ],
-            "external_facts": {
-              "input_role": "团队成员",
-              "input_context": {}
-            },
-            "factor_observations": {},
-            "notes": [],
-            "evidence_states": [
-              "简历自述"
-            ]
-          },
-          {
-            "material_id": "m-6cdf1f9c9ada64ba",
-            "material_type": "award",
-            "title": "“大唐杯”全国大学生新一代信息通信技术大赛",
-            "year": 2024,
-            "organization": null,
-            "stage": null,
-            "result": "全国二等奖",
-            "identifiers": [],
-            "resume_claim": "“大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长",
-            "personal_action_evidence": [],
-            "sources": [
-              {
-                "origin": "resume",
-                "quote": "“大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长",
-                "source": "简历原文"
-              }
-            ],
-            "external_facts": {
-              "input_role": "队长",
-              "input_context": {}
-            },
-            "factor_observations": {},
-            "notes": [],
-            "evidence_states": [
-              "简历自述"
-            ]
-          }
-        ],
-        "notes": [],
-        "mode": "model"
-      }
-    },
-    {
-      "id": "score-calculation",
-      "inputHash": "fa996f9eccc78f436fdd2948fd802222e9e0d3f52af570bd79f11ceea88ceaac",
-      "output": {
-        "id": "c46ba08f-7fa6-4575-9109-217cd503a00a",
+      "reason": "review",
+      "assessment": {
+        "id": "bccf222c-e0dd-453b-bb0a-4106b2ae2938",
         "version": "material-derived-v1.1.0",
-        "evaluatedAt": "2026-11-14T13:04:29.410Z",
-        "inputHash": "f722dc97f10cc9e1934ac373b0b02b39acae7e6e36af51d56e68018f77c63c61",
+        "evaluatedAt": "2026-11-14T14:15:22.616Z",
+        "inputHash": "511b054b60503174ff108b199fed5a05b5e88a0b349f6e6387c3ed946675f274",
         "extraction": "model",
         "calibration": "初版规则参数，待双人标注校准",
         "rho": 0.5,
         "materials": [
           {
-            "material_id": "m-40576ff6089bcfe8",
-            "material_type": "project",
+            "material_id": "m-b5ed8f561842ad3c",
+            "material_type": "work",
             "title": "KubeEdge 云边协同框架",
-            "year": 2026,
+            "year": "2026.03 - 2026.08",
             "organization": "华为云",
             "stage": null,
             "result": null,
@@ -3937,14 +3723,14 @@
               "简历自述"
             ],
             "merged_from": [
-              "m-40576ff6089bcfe8"
+              "m-b5ed8f561842ad3c"
             ],
             "material_score": null,
             "score_breakdown": [
               {
                 "key": "complexity",
-                "label": "问题复杂度",
-                "weight": 0.3,
+                "label": "任务复杂度",
+                "weight": 0.25,
                 "value": null,
                 "evidence": null,
                 "points": null,
@@ -3952,8 +3738,8 @@
                 "reason": "没有符合规则的事实依据，保持 NA。"
               },
               {
-                "key": "constraints",
-                "label": "技术 / 业务约束",
+                "key": "scope",
+                "label": "具体责任范围",
                 "weight": 0.2,
                 "value": null,
                 "evidence": null,
@@ -3963,8 +3749,8 @@
               },
               {
                 "key": "delivery",
-                "label": "交付阶段",
-                "weight": 0.2,
+                "label": "实际交付",
+                "weight": 0.25,
                 "value": null,
                 "evidence": null,
                 "points": null,
@@ -3972,19 +3758,9 @@
                 "reason": "没有符合规则的事实依据，保持 NA。"
               },
               {
-                "key": "adoption",
-                "label": "部署 / 采用",
-                "weight": 0.15,
-                "value": null,
-                "evidence": null,
-                "points": null,
-                "contribution": null,
-                "reason": "没有符合规则的事实依据，保持 NA。"
-              },
-              {
-                "key": "outcome",
-                "label": "结果质量",
-                "weight": 0.15,
+                "key": "impact",
+                "label": "结果影响",
+                "weight": 0.3,
                 "value": null,
                 "evidence": null,
                 "points": null,
@@ -3994,11 +3770,10 @@
             ],
             "score_coverage": 0,
             "missing_factors": [
-              "问题复杂度",
-              "技术 / 业务约束",
-              "交付阶段",
-              "部署 / 采用",
-              "结果质量"
+              "任务复杂度",
+              "具体责任范围",
+              "实际交付",
+              "结果影响"
             ],
             "provisional": true,
             "dimension_mapping": {
@@ -4021,7 +3796,7 @@
                     "source": "简历原文"
                   }
                 ],
-                "type_coefficient": 1,
+                "type_coefficient": 0.85,
                 "derived_contribution": null
               },
               "ownership_delivery": {
@@ -4029,7 +3804,7 @@
                 "rule": null,
                 "mapping_reason": "未找到支持该维度的个人行动证据。",
                 "supporting_evidence": [],
-                "type_coefficient": 0.95,
+                "type_coefficient": 1,
                 "derived_contribution": null
               },
               "collaboration_organization": {
@@ -4037,7 +3812,7 @@
                 "rule": null,
                 "mapping_reason": "未找到支持该维度的个人行动证据。",
                 "supporting_evidence": [],
-                "type_coefficient": 0.75,
+                "type_coefficient": 0.8,
                 "derived_contribution": null
               },
               "learning_research": {
@@ -4051,16 +3826,16 @@
                     "source": "简历原文"
                   }
                 ],
-                "type_coefficient": 0.65,
+                "type_coefficient": 0.6,
                 "derived_contribution": null
               }
             }
           },
           {
-            "material_id": "m-6aa10eb0f1de8536",
+            "material_id": "m-805e7950b8bd48d6",
             "material_type": "project",
             "title": "校园边缘计算集群",
-            "year": 2025,
+            "year": "2025.09 - 2026.02",
             "organization": null,
             "stage": null,
             "result": null,
@@ -4120,7 +3895,7 @@
               "简历自述"
             ],
             "merged_from": [
-              "m-6aa10eb0f1de8536"
+              "m-805e7950b8bd48d6"
             ],
             "material_score": 41.75,
             "score_breakdown": [
@@ -4246,7 +4021,7 @@
             "material_id": "m-25bf1e49829fda9f",
             "material_type": "research",
             "title": "Ray: A Distributed Framework for Emerging AI Applications",
-            "year": 2026,
+            "year": 2017,
             "organization": null,
             "stage": null,
             "result": null,
@@ -4271,7 +4046,8 @@
             "external_facts": {
               "input_role": null,
               "input_context": {
-                "arxiv_id": "arXiv:1712.05889"
+                "arxiv_id": "arXiv:1712.05889",
+                "year": "2017"
               }
             },
             "factor_observations": {
@@ -4447,7 +4223,9 @@
             ],
             "external_facts": {
               "input_role": "团队成员",
-              "input_context": {}
+              "input_context": {
+                "region": "全国"
+              }
             },
             "factor_observations": {
               "tier": {
@@ -4583,7 +4361,9 @@
             ],
             "external_facts": {
               "input_role": "队长",
-              "input_context": {}
+              "input_context": {
+                "region": "全国"
+              }
             },
             "factor_observations": {
               "tier": {
@@ -4725,7 +4505,7 @@
                 ]
               },
               {
-                "material_id": "m-6aa10eb0f1de8536",
+                "material_id": "m-805e7950b8bd48d6",
                 "title": "校园边缘计算集群",
                 "material_type": "project",
                 "material_score": 41.75,
@@ -4784,12 +4564,2056 @@
           },
           {
             "type": "project",
-            "count": 2,
+            "count": 1,
             "score": 41.75
           },
           {
             "type": "work",
+            "count": 1,
+            "score": null
+          },
+          {
+            "type": "patent",
             "count": 0,
+            "score": null
+          },
+          {
+            "type": "opensource",
+            "count": 0,
+            "score": null
+          },
+          {
+            "type": "certificate",
+            "count": 0,
+            "score": null
+          }
+        ],
+        "notes": [],
+        "inputSnapshot": "茜特菈莉  云原生开发工程师 · 云计算与边缘基础设施  年龄：22岁 所在地：长沙 学历：本科（已毕业）  教育背景  北京交通大学   · 本科  网络工程 2022.09 - 2026.06  相关课程：计算机网络、云计算、操作系统、分布式计算  专业技能  • 使用 Go 与 Linux，理解容器、进程、网络和文件系统基础。  • 熟悉 Kubernetes 资源对象、部署与服务发现，能排查常见故障。  • 了解边缘设备接入、离线自治、消息队列和状态同步。  • 使用 Prometheus、Grafana 与 Shell，能够搭建监控和部署脚本。  项目经历  1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge  2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。  论文  1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。  竞赛  华为ICT大赛  2025｜ 全国三等奖 ｜团队成员  “大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长  合 成 简 历｜ 人物 、 获奖 和 任职经 历 均 为 虚构；论 文 标 题与公开项目 引 用 真 实 来 源。   MOCK 10 / 70",
+        "researchSnapshot": null,
+        "rulesSnapshot": {
+          "factorDefinitions": {
+            "award": [
+              {
+                "key": "participants",
+                "label": "有效参赛规模",
+                "weight": 0.2,
+                "kind": "size",
+                "choices": []
+              },
+              {
+                "key": "award_rate",
+                "label": "官方目标奖项比例",
+                "weight": 0.35,
+                "kind": "selectivity",
+                "choices": []
+              },
+              {
+                "key": "tier",
+                "label": "本赛事奖项层级",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "top",
+                    "label": "本赛事最高奖",
+                    "points": 160,
+                    "pattern": "特等奖|冠军|金奖|金牌|grand prize|champion|gold"
+                  },
+                  {
+                    "key": "first",
+                    "label": "一等奖 / 一等层级",
+                    "points": 120,
+                    "pattern": "一等奖|first prize"
+                  },
+                  {
+                    "key": "second",
+                    "label": "二等奖 / 银奖",
+                    "points": 80,
+                    "pattern": "二等奖|银奖|银牌|second prize|silver"
+                  },
+                  {
+                    "key": "third",
+                    "label": "三等奖 / 铜奖",
+                    "points": 50,
+                    "pattern": "三等奖|铜奖|铜牌|third prize|bronze"
+                  },
+                  {
+                    "key": "finalist",
+                    "label": "有明确结果的入围或优胜",
+                    "points": 25,
+                    "pattern": "入围|优胜|finalist|honorable mention"
+                  }
+                ]
+              },
+              {
+                "key": "judging",
+                "label": "赛制与评审规则",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "reproducible",
+                    "label": "可复核测试 / 盲评和答辩",
+                    "points": 160,
+                    "pattern": "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review"
+                  },
+                  {
+                    "key": "rubric",
+                    "label": "明确评分规则和专家评审",
+                    "points": 100,
+                    "pattern": "评分标准|评审标准|专家评审|scoring rubric|judging criteria"
+                  },
+                  {
+                    "key": "specified",
+                    "label": "有明确赛制或评审方式",
+                    "points": 60,
+                    "pattern": "限时|答辩|评审|比赛规则|timed|judged|defense"
+                  }
+                ]
+              }
+            ],
+            "research": [
+              {
+                "key": "question",
+                "label": "研究问题",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "rigor",
+                "label": "方法严谨度",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "validated",
+                    "label": "对照、消融及统计验证",
+                    "points": 160,
+                    "pattern": "消融|统计显著|置信区间|ablation|statistical significance|confidence interval"
+                  },
+                  {
+                    "key": "controlled",
+                    "label": "对照或基线实验",
+                    "points": 100,
+                    "pattern": "对照|基线|baseline|controlled experiment"
+                  },
+                  {
+                    "key": "method",
+                    "label": "明确研究方法",
+                    "points": 60,
+                    "pattern": "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"
+                  }
+                ]
+              },
+              {
+                "key": "experiments",
+                "label": "实验质量",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "robust",
+                    "label": "多数据集、误差或鲁棒性分析",
+                    "points": 160,
+                    "pattern": "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness"
+                  },
+                  {
+                    "key": "comparison",
+                    "label": "明确实验比较",
+                    "points": 100,
+                    "pattern": "对比实验|基线|baseline|comparative experiment"
+                  },
+                  {
+                    "key": "specified",
+                    "label": "有实验设置",
+                    "points": 60,
+                    "pattern": "实验设置|实验结果|experimental setup|experimental results"
+                  }
+                ]
+              },
+              {
+                "key": "reproducibility",
+                "label": "可复现性",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "reproduced",
+                    "label": "明确的独立复现记录",
+                    "points": 160,
+                    "pattern": "独立复现成功|第三方复现|independently reproduced"
+                  },
+                  {
+                    "key": "complete",
+                    "label": "代码、数据和运行说明齐全",
+                    "points": 100,
+                    "pattern": "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)"
+                  },
+                  {
+                    "key": "available",
+                    "label": "提供开放材料",
+                    "points": 50,
+                    "pattern": "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code"
+                  }
+                ]
+              },
+              {
+                "key": "status",
+                "label": "成果状态",
+                "weight": 0.1,
+                "choices": [
+                  {
+                    "key": "published",
+                    "label": "已正式发表",
+                    "points": 120,
+                    "pattern": "已发表|正式发表|已在线发表|published|online publication"
+                  },
+                  {
+                    "key": "accepted",
+                    "label": "已录用未发表",
+                    "points": 80,
+                    "pattern": "已录用|accepted"
+                  },
+                  {
+                    "key": "preprint",
+                    "label": "预印本",
+                    "points": 30,
+                    "pattern": "预印本|preprint|arxiv"
+                  }
+                ]
+              },
+              {
+                "key": "content",
+                "label": "研究内容与验证结果",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "project": [
+              {
+                "key": "complexity",
+                "label": "问题复杂度",
+                "weight": 0.3,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "constraints",
+                "label": "技术 / 业务约束",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "multiple",
+                    "label": "多重约束与权衡",
+                    "points": 160,
+                    "pattern": "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency"
+                  },
+                  {
+                    "key": "explicit",
+                    "label": "明确性能或业务约束",
+                    "points": 100,
+                    "pattern": "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确任务边界",
+                    "points": 50,
+                    "pattern": "需求|约束|任务|requirement|constraint|task"
+                  }
+                ]
+              },
+              {
+                "key": "delivery",
+                "label": "交付阶段",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "adoption",
+                "label": "部署 / 采用",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              },
+              {
+                "key": "outcome",
+                "label": "结果质量",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "work": [
+              {
+                "key": "complexity",
+                "label": "任务复杂度",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "scope",
+                "label": "具体责任范围",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "end_to_end",
+                    "label": "明确的端到端责任",
+                    "points": 160,
+                    "pattern": "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"
+                  },
+                  {
+                    "key": "owned",
+                    "label": "独立负责具体范围",
+                    "points": 100,
+                    "pattern": "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "明确执行任务",
+                    "points": 50,
+                    "pattern": "开发|设计|测试|分析|implemented|developed|tested|analyzed"
+                  }
+                ]
+              },
+              {
+                "key": "delivery",
+                "label": "实际交付",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "impact",
+                "label": "结果影响",
+                "weight": 0.3,
+                "choices": [
+                  {
+                    "key": "measured",
+                    "label": "有明确指标与比较结果",
+                    "points": 160,
+                    "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+                  },
+                  {
+                    "key": "adopted",
+                    "label": "有实际采用或验收结果",
+                    "points": 100,
+                    "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+                  },
+                  {
+                    "key": "delivered",
+                    "label": "有明确交付成果",
+                    "points": 60,
+                    "pattern": "交付|完成|实现|delivered|completed|implemented"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "形成可检查的文档或作品",
+                    "points": 25,
+                    "pattern": "报告|文档|作品|report|documentation|artifact"
+                  }
+                ]
+              }
+            ],
+            "patent": [
+              {
+                "key": "status",
+                "label": "公开 / 授权状态",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "granted",
+                    "label": "已授权",
+                    "points": 120,
+                    "pattern": "已授权|授权公告|granted"
+                  },
+                  {
+                    "key": "published",
+                    "label": "已公开",
+                    "points": 60,
+                    "pattern": "已公开|公开公告|published application"
+                  },
+                  {
+                    "key": "filed",
+                    "label": "有申请记录",
+                    "points": 25,
+                    "pattern": "申请号|已申请|application number|filed"
+                  }
+                ]
+              },
+              {
+                "key": "technical",
+                "label": "技术问题与方法",
+                "weight": 0.35,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "多重约束或跨系统复杂问题",
+                    "points": 160,
+                    "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+                  },
+                  {
+                    "key": "complex",
+                    "label": "明确的系统或方法复杂度",
+                    "points": 100,
+                    "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+                  },
+                  {
+                    "key": "bounded",
+                    "label": "明确的模块或任务",
+                    "points": 60,
+                    "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+                  },
+                  {
+                    "key": "basic",
+                    "label": "有明确对象的基础实现",
+                    "points": 25,
+                    "pattern": "脚本|页面|表单|script|page|form"
+                  }
+                ]
+              },
+              {
+                "key": "claims",
+                "label": "权利要求",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "validated",
+                    "label": "明确权利要求及实现验证",
+                    "points": 160,
+                    "pattern": "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "有具体权利要求",
+                    "points": 90,
+                    "pattern": "权利要求|patent claims"
+                  },
+                  {
+                    "key": "description",
+                    "label": "有技术方案说明",
+                    "points": 40,
+                    "pattern": "技术方案|technical solution"
+                  }
+                ]
+              },
+              {
+                "key": "application",
+                "label": "应用情况",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              }
+            ],
+            "opensource": [
+              {
+                "key": "runnable",
+                "label": "可运行性",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "quality",
+                "label": "代码质量",
+                "weight": 0.25,
+                "choices": [
+                  {
+                    "key": "engineering",
+                    "label": "测试、CI 与接口文档",
+                    "points": 160,
+                    "pattern": "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "自动测试或持续集成",
+                    "points": 100,
+                    "pattern": "单元测试|集成测试|持续集成|unit test|integration test|CI/CD"
+                  },
+                  {
+                    "key": "documented",
+                    "label": "有使用说明",
+                    "points": 50,
+                    "pattern": "README|使用说明|接口文档|documentation"
+                  }
+                ]
+              },
+              {
+                "key": "maintenance",
+                "label": "维护持续性",
+                "weight": 0.15,
+                "choices": [
+                  {
+                    "key": "sustained",
+                    "label": "持续发布并处理问题",
+                    "points": 160,
+                    "pattern": "持续维护|定期发布|持续发布|sustained maintenance|regular releases"
+                  },
+                  {
+                    "key": "responded",
+                    "label": "有问题处理或版本维护",
+                    "points": 90,
+                    "pattern": "修复|版本发布|issue|bug fix|release"
+                  },
+                  {
+                    "key": "changes",
+                    "label": "有可定位提交",
+                    "points": 40,
+                    "pattern": "提交|pull request|commit"
+                  }
+                ]
+              },
+              {
+                "key": "contribution",
+                "label": "具体贡献",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "core",
+                    "label": "核心功能与维护责任",
+                    "points": 160,
+                    "pattern": "维护者|核心模块|核心功能|maintainer|core module"
+                  },
+                  {
+                    "key": "implemented",
+                    "label": "明确的代码或文档贡献",
+                    "points": 90,
+                    "pattern": "实现|开发|修复|编写|implemented|developed|fixed|authored"
+                  },
+                  {
+                    "key": "reviewed",
+                    "label": "明确评审或测试贡献",
+                    "points": 40,
+                    "pattern": "代码评审|测试|code review|tested"
+                  }
+                ]
+              },
+              {
+                "key": "adoption",
+                "label": "使用 / 采用",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "wide",
+                    "label": "有多单位或公开采用证据",
+                    "points": 160,
+                    "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+                  },
+                  {
+                    "key": "production",
+                    "label": "实际部署或应用",
+                    "points": 100,
+                    "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+                  },
+                  {
+                    "key": "pilot",
+                    "label": "试点或测试使用",
+                    "points": 60,
+                    "pattern": "试点|试用|pilot|trial"
+                  },
+                  {
+                    "key": "demo",
+                    "label": "可访问或演示",
+                    "points": 25,
+                    "pattern": "演示|可访问|demo|accessible"
+                  }
+                ]
+              }
+            ],
+            "certificate": [
+              {
+                "key": "assessment",
+                "label": "考核方式",
+                "weight": 0.45,
+                "choices": [
+                  {
+                    "key": "practical",
+                    "label": "实操考核",
+                    "points": 140,
+                    "pattern": "实操考核|实验考核|practical exam|hands.on assessment"
+                  },
+                  {
+                    "key": "exam",
+                    "label": "明确考试",
+                    "points": 90,
+                    "pattern": "通过考试|认证考试|passed.{0,20}exam|certification exam"
+                  },
+                  {
+                    "key": "coursework",
+                    "label": "课程考核",
+                    "points": 40,
+                    "pattern": "课程作业|结课考核|coursework|course assessment"
+                  }
+                ]
+              },
+              {
+                "key": "practice",
+                "label": "实际练习与作品",
+                "weight": 0.35,
+                "choices": [
+                  {
+                    "key": "accepted",
+                    "label": "验收或持续生产交付",
+                    "points": 160,
+                    "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+                  },
+                  {
+                    "key": "released",
+                    "label": "已上线或部署",
+                    "points": 100,
+                    "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+                  },
+                  {
+                    "key": "tested",
+                    "label": "完成测试或可运行原型",
+                    "points": 60,
+                    "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+                  },
+                  {
+                    "key": "designed",
+                    "label": "形成明确方案或设计",
+                    "points": 25,
+                    "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+                  }
+                ]
+              },
+              {
+                "key": "curriculum",
+                "label": "课程内容深度",
+                "weight": 0.2,
+                "choices": [
+                  {
+                    "key": "advanced",
+                    "label": "有明确高级专题",
+                    "points": 140,
+                    "pattern": "高级|进阶|专题|advanced|specialized"
+                  },
+                  {
+                    "key": "specific",
+                    "label": "有明确方法与实践内容",
+                    "points": 80,
+                    "pattern": "实验|项目|算法|系统|experiment|project|algorithm|system"
+                  },
+                  {
+                    "key": "foundation",
+                    "label": "基础课程内容",
+                    "points": 30,
+                    "pattern": "基础|入门|foundation|introductory"
+                  }
+                ]
+              }
+            ]
+          },
+          "typeAdaptation": {
+            "award": {
+              "professional_execution": 0.65,
+              "problem_solving": 0.7,
+              "ownership_delivery": 0.45,
+              "collaboration_organization": 0.35,
+              "learning_research": 0.55
+            },
+            "research": {
+              "professional_execution": 0.7,
+              "problem_solving": 0.9,
+              "ownership_delivery": 0.6,
+              "collaboration_organization": 0.35,
+              "learning_research": 1
+            },
+            "project": {
+              "professional_execution": 1,
+              "problem_solving": 1,
+              "ownership_delivery": 0.95,
+              "collaboration_organization": 0.75,
+              "learning_research": 0.65
+            },
+            "work": {
+              "professional_execution": 1,
+              "problem_solving": 0.85,
+              "ownership_delivery": 1,
+              "collaboration_organization": 0.8,
+              "learning_research": 0.6
+            },
+            "patent": {
+              "professional_execution": 0.6,
+              "problem_solving": 0.85,
+              "ownership_delivery": 0.5,
+              "collaboration_organization": 0.3,
+              "learning_research": 0.8
+            },
+            "opensource": {
+              "professional_execution": 1,
+              "problem_solving": 0.85,
+              "ownership_delivery": 0.85,
+              "collaboration_organization": 0.6,
+              "learning_research": 0.7
+            },
+            "certificate": {
+              "professional_execution": 0.45,
+              "problem_solving": 0.4,
+              "ownership_delivery": 0.25,
+              "collaboration_organization": 0.15,
+              "learning_research": 0.7
+            }
+          },
+          "actionLevels": {
+            "guided": 0.25,
+            "concrete": 0.5,
+            "owned": 0.75,
+            "validated": 1
+          },
+          "rho": 0.5
+        }
+      }
+    }
+  ],
+  "agentArtifacts": [
+    {
+      "id": "candidate-profile",
+      "inputHash": "e64b40ee312c2356c12563177c659064b56db70dd8b01b30ddc044881582d61b",
+      "output": {
+        "name": "茜特菈莉",
+        "role": "云原生开发工程师 · 云计算与边缘基础设施",
+        "location": "长沙",
+        "education": "北京交通大学，本科，网络工程（2022.09-2026.06）",
+        "skills": [
+          "Go",
+          "Linux",
+          "容器",
+          "进程",
+          "网络",
+          "文件系统",
+          "Kubernetes",
+          "边缘设备接入",
+          "离线自治",
+          "消息队列"
+        ],
+        "summary": "具备云原生、Kubernetes、边缘计算、监控与自动部署实践经验。"
+      }
+    },
+    {
+      "id": "material-extraction",
+      "inputHash": "8075c9a9e5277de210005ac27e4a81bb66764217448b085e2f7d160e84b8de40",
+      "output": {
+        "materials": [
+          {
+            "material_id": "m-b5ed8f561842ad3c",
+            "material_type": "work",
+            "title": "KubeEdge 云边协同框架",
+            "year": "2026.03 - 2026.08",
+            "organization": "华为云",
+            "stage": null,
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "模拟断网、重启与重连，检查工作负载状态和设备消息恢复。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "研发实习生",
+              "input_context": {}
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ]
+          },
+          {
+            "material_id": "m-805e7950b8bd48d6",
+            "material_type": "project",
+            "title": "校园边缘计算集群",
+            "year": "2025.09 - 2026.02",
+            "organization": null,
+            "stage": null,
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "核心开发成员",
+              "input_context": {}
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ]
+          },
+          {
+            "material_id": "m-25bf1e49829fda9f",
+            "material_type": "research",
+            "title": "Ray: A Distributed Framework for Emerging AI Applications",
+            "year": 2017,
+            "organization": null,
+            "stage": null,
+            "result": null,
+            "identifiers": [
+              "arxiv:1712.05889"
+            ],
+            "resume_claim": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": null,
+              "input_context": {
+                "arxiv_id": "arXiv:1712.05889",
+                "year": "2017"
+              }
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ]
+          },
+          {
+            "material_id": "m-dbb5f0887fee876e",
+            "material_type": "award",
+            "title": "华为ICT大赛",
+            "year": 2025,
+            "organization": null,
+            "stage": null,
+            "result": "全国三等奖",
+            "identifiers": [],
+            "resume_claim": "华为ICT大赛  2025｜ 全国三等奖 ｜团队成员",
+            "personal_action_evidence": [],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "华为ICT大赛  2025｜ 全国三等奖 ｜团队成员",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "团队成员",
+              "input_context": {
+                "region": "全国"
+              }
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ]
+          },
+          {
+            "material_id": "m-6cdf1f9c9ada64ba",
+            "material_type": "award",
+            "title": "“大唐杯”全国大学生新一代信息通信技术大赛",
+            "year": 2024,
+            "organization": null,
+            "stage": null,
+            "result": "全国二等奖",
+            "identifiers": [],
+            "resume_claim": "“大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长",
+            "personal_action_evidence": [],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "“大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "队长",
+              "input_context": {
+                "region": "全国"
+              }
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ]
+          }
+        ],
+        "notes": [],
+        "mode": "model"
+      }
+    },
+    {
+      "id": "score-calculation",
+      "inputHash": "6955791b3cf95ef5b37fa215d66338f229c06c92d9a189f341e77286d93c446e",
+      "output": {
+        "id": "bccf222c-e0dd-453b-bb0a-4106b2ae2938",
+        "version": "material-derived-v1.1.0",
+        "evaluatedAt": "2026-11-14T14:15:22.616Z",
+        "inputHash": "511b054b60503174ff108b199fed5a05b5e88a0b349f6e6387c3ed946675f274",
+        "extraction": "model",
+        "calibration": "初版规则参数，待双人标注校准",
+        "rho": 0.5,
+        "materials": [
+          {
+            "material_id": "m-b5ed8f561842ad3c",
+            "material_type": "work",
+            "title": "KubeEdge 云边协同框架",
+            "year": "2026.03 - 2026.08",
+            "organization": "华为云",
+            "stage": null,
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "模拟断网、重启与重连，检查工作负载状态和设备消息恢复。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. KubeEdge 云边协同框架  华为云 · 研发实习生｜2026.03 - 2026.08  • 模拟断网、重启与重连，检查工作负载状态和设备消息恢复。  • 围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。  公开项目：github.com/kubeedge/kubeedge",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "研发实习生",
+              "input_context": {}
+            },
+            "factor_observations": {},
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-b5ed8f561842ad3c"
+            ],
+            "material_score": null,
+            "score_breakdown": [
+              {
+                "key": "complexity",
+                "label": "任务复杂度",
+                "weight": 0.25,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "scope",
+                "label": "具体责任范围",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "delivery",
+                "label": "实际交付",
+                "weight": 0.25,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "impact",
+                "label": "结果影响",
+                "weight": 0.3,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0,
+            "missing_factors": [
+              "任务复杂度",
+              "具体责任范围",
+              "实际交付",
+              "结果影响"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 1,
+                "derived_contribution": null
+              },
+              "problem_solving": {
+                "mapping_coefficient": 0.5,
+                "rule": "concrete",
+                "mapping_reason": "有对象和动作的具体个人行动",
+                "supporting_evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。",
+                    "source": "简历原文"
+                  }
+                ],
+                "type_coefficient": 0.85,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 1,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.8,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": 0.5,
+                "rule": "concrete",
+                "mapping_reason": "有对象和动作的具体个人行动",
+                "supporting_evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "围绕边缘节点恢复整理 26 组验证场景，输出问题记录、复现步骤和交接说明。",
+                    "source": "简历原文"
+                  }
+                ],
+                "type_coefficient": 0.6,
+                "derived_contribution": null
+              }
+            }
+          },
+          {
+            "material_id": "m-805e7950b8bd48d6",
+            "material_type": "project",
+            "title": "校园边缘计算集群",
+            "year": "2025.09 - 2026.02",
+            "organization": null,
+            "stage": null,
+            "result": null,
+            "identifiers": [],
+            "resume_claim": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。",
+                "source": "简历原文"
+              },
+              {
+                "origin": "resume",
+                "quote": "搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。  • 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录。",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "核心开发成员",
+              "input_context": {}
+            },
+            "factor_observations": {
+              "complexity": {
+                "value": "bounded",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册",
+                  "source": "简历原文"
+                }
+              },
+              "delivery": {
+                "value": "released",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册",
+                  "source": "简历原文"
+                }
+              },
+              "adoption": {
+                "value": "demo",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "• 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录",
+                  "source": "简历原文"
+                }
+              }
+            },
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-805e7950b8bd48d6"
+            ],
+            "material_score": 41.75,
+            "score_breakdown": [
+              {
+                "key": "complexity",
+                "label": "问题复杂度",
+                "weight": 0.3,
+                "value": "bounded",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册",
+                  "source": "简历原文"
+                },
+                "points": 60,
+                "contribution": 18,
+                "reason": "明确的模块或任务"
+              },
+              {
+                "key": "constraints",
+                "label": "技术 / 业务约束",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "delivery",
+                "label": "交付阶段",
+                "weight": 0.2,
+                "value": "released",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "2. 校园边缘计算集群  课程与团队项目 · 核心开发成员｜2025.09 - 2026.02  • 搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册",
+                  "source": "简历原文"
+                },
+                "points": 100,
+                "contribution": 20,
+                "reason": "已上线或部署"
+              },
+              {
+                "key": "adoption",
+                "label": "部署 / 采用",
+                "weight": 0.15,
+                "value": "demo",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "• 搭建 5 节点 演示环境 ， 覆盖 节点 失联 、服务重启和 升级 回滚， 汇总 监控与故障恢复记录",
+                  "source": "简历原文"
+                },
+                "points": 25,
+                "contribution": 3.75,
+                "reason": "可访问或演示"
+              },
+              {
+                "key": "outcome",
+                "label": "结果质量",
+                "weight": 0.15,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0.65,
+            "missing_factors": [
+              "技术 / 业务约束",
+              "结果质量"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": 0.5,
+                "rule": "concrete",
+                "mapping_reason": "有对象和动作的具体个人行动",
+                "supporting_evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。",
+                    "source": "简历原文"
+                  }
+                ],
+                "type_coefficient": 1,
+                "derived_contribution": 20.875
+              },
+              "problem_solving": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 1,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.95,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.75,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.65,
+                "derived_contribution": null
+              }
+            }
+          },
+          {
+            "material_id": "m-25bf1e49829fda9f",
+            "material_type": "research",
+            "title": "Ray: A Distributed Framework for Emerging AI Applications",
+            "year": 2017,
+            "organization": null,
+            "stage": null,
+            "result": null,
+            "identifiers": [
+              "arxiv:1712.05889"
+            ],
+            "resume_claim": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+            "personal_action_evidence": [
+              {
+                "origin": "resume",
+                "quote": "搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+                "source": "简历原文"
+              }
+            ],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": null,
+              "input_context": {
+                "arxiv_id": "arXiv:1712.05889",
+                "year": "2017"
+              }
+            },
+            "factor_observations": {
+              "question": {
+                "value": "advanced",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响",
+                  "source": "简历原文"
+                }
+              },
+              "status": {
+                "value": "preprint",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响",
+                  "source": "简历原文"
+                }
+              }
+            },
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-25bf1e49829fda9f"
+            ],
+            "material_score": 27,
+            "score_breakdown": [
+              {
+                "key": "question",
+                "label": "研究问题",
+                "weight": 0.15,
+                "value": "advanced",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响",
+                  "source": "简历原文"
+                },
+                "points": 160,
+                "contribution": 24,
+                "reason": "多重约束或跨系统复杂问题"
+              },
+              {
+                "key": "rigor",
+                "label": "方法严谨度",
+                "weight": 0.25,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "experiments",
+                "label": "实验质量",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "reproducibility",
+                "label": "可复现性",
+                "weight": 0.15,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "status",
+                "label": "成果状态",
+                "weight": 0.1,
+                "value": "preprint",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "1. Ray: A Distributed Framework for Emerging AI Applications  Philipp Moritz et al. · arXiv:1712.05889 · 2017  2026｜研 读 与复现：搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响",
+                  "source": "简历原文"
+                },
+                "points": 30,
+                "contribution": 3,
+                "reason": "预印本"
+              },
+              {
+                "key": "content",
+                "label": "研究内容与验证结果",
+                "weight": 0.15,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0.25,
+            "missing_factors": [
+              "方法严谨度",
+              "实验质量",
+              "可复现性",
+              "研究内容与验证结果"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": 0.5,
+                "rule": "concrete",
+                "mapping_reason": "有对象和动作的具体个人行动",
+                "supporting_evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+                    "source": "简历原文"
+                  }
+                ],
+                "type_coefficient": 0.7,
+                "derived_contribution": 9.45
+              },
+              "problem_solving": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.9,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.6,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.35,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 1,
+                "derived_contribution": null
+              }
+            }
+          },
+          {
+            "material_id": "m-dbb5f0887fee876e",
+            "material_type": "award",
+            "title": "华为ICT大赛",
+            "year": 2025,
+            "organization": null,
+            "stage": null,
+            "result": "全国三等奖",
+            "identifiers": [],
+            "resume_claim": "华为ICT大赛  2025｜ 全国三等奖 ｜团队成员",
+            "personal_action_evidence": [],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "华为ICT大赛  2025｜ 全国三等奖 ｜团队成员",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "团队成员",
+              "input_context": {
+                "region": "全国"
+              }
+            },
+            "factor_observations": {
+              "tier": {
+                "value": "third",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "全国三等奖",
+                  "source": "简历原文"
+                }
+              }
+            },
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-dbb5f0887fee876e"
+            ],
+            "material_score": 12.5,
+            "score_breakdown": [
+              {
+                "key": "participants",
+                "label": "有效参赛规模",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "award_rate",
+                "label": "官方目标奖项比例",
+                "weight": 0.35,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "tier",
+                "label": "本赛事奖项层级",
+                "weight": 0.25,
+                "value": "third",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "全国三等奖",
+                  "source": "简历原文"
+                },
+                "points": 50,
+                "contribution": 12.5,
+                "reason": "三等奖 / 铜奖"
+              },
+              {
+                "key": "judging",
+                "label": "赛制与评审规则",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0.25,
+            "missing_factors": [
+              "有效参赛规模",
+              "官方目标奖项比例",
+              "赛制与评审规则"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.65,
+                "derived_contribution": null
+              },
+              "problem_solving": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.7,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.45,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.35,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.55,
+                "derived_contribution": null
+              }
+            }
+          },
+          {
+            "material_id": "m-6cdf1f9c9ada64ba",
+            "material_type": "award",
+            "title": "“大唐杯”全国大学生新一代信息通信技术大赛",
+            "year": 2024,
+            "organization": null,
+            "stage": null,
+            "result": "全国二等奖",
+            "identifiers": [],
+            "resume_claim": "“大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长",
+            "personal_action_evidence": [],
+            "sources": [
+              {
+                "origin": "resume",
+                "quote": "“大唐杯”全国大学生新一代信息通信技术大赛  2024｜ 全国二等奖 ｜队长",
+                "source": "简历原文"
+              }
+            ],
+            "external_facts": {
+              "input_role": "队长",
+              "input_context": {
+                "region": "全国"
+              }
+            },
+            "factor_observations": {
+              "tier": {
+                "value": "second",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "全国二等奖",
+                  "source": "简历原文"
+                }
+              }
+            },
+            "notes": [],
+            "evidence_states": [
+              "简历自述"
+            ],
+            "merged_from": [
+              "m-6cdf1f9c9ada64ba"
+            ],
+            "material_score": 20,
+            "score_breakdown": [
+              {
+                "key": "participants",
+                "label": "有效参赛规模",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "award_rate",
+                "label": "官方目标奖项比例",
+                "weight": 0.35,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              },
+              {
+                "key": "tier",
+                "label": "本赛事奖项层级",
+                "weight": 0.25,
+                "value": "second",
+                "evidence": {
+                  "origin": "resume",
+                  "quote": "全国二等奖",
+                  "source": "简历原文"
+                },
+                "points": 80,
+                "contribution": 20,
+                "reason": "二等奖 / 银奖"
+              },
+              {
+                "key": "judging",
+                "label": "赛制与评审规则",
+                "weight": 0.2,
+                "value": null,
+                "evidence": null,
+                "points": null,
+                "contribution": null,
+                "reason": "没有符合规则的事实依据，保持 NA。"
+              }
+            ],
+            "score_coverage": 0.25,
+            "missing_factors": [
+              "有效参赛规模",
+              "官方目标奖项比例",
+              "赛制与评审规则"
+            ],
+            "provisional": true,
+            "dimension_mapping": {
+              "professional_execution": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.65,
+                "derived_contribution": null
+              },
+              "problem_solving": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.7,
+                "derived_contribution": null
+              },
+              "ownership_delivery": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.45,
+                "derived_contribution": null
+              },
+              "collaboration_organization": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.35,
+                "derived_contribution": null
+              },
+              "learning_research": {
+                "mapping_coefficient": null,
+                "rule": null,
+                "mapping_reason": "未找到支持该维度的个人行动证据。",
+                "supporting_evidence": [],
+                "type_coefficient": 0.55,
+                "derived_contribution": null
+              }
+            }
+          }
+        ],
+        "abilities": {
+          "professional_execution": {
+            "score": 30.325,
+            "provisional": true,
+            "terms": [
+              {
+                "material_id": "m-25bf1e49829fda9f",
+                "title": "Ray: A Distributed Framework for Emerging AI Applications",
+                "material_type": "research",
+                "material_score": 27,
+                "type_coefficient": 0.7,
+                "mapping_coefficient": 0.5,
+                "derived_contribution": 9.45,
+                "rank": 1,
+                "decay": 1,
+                "contribution": 9.45,
+                "evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "搭建 任 务与 Actor   调度 实验，分 析任 务 粒度 、对象 传 输和 失败 重试对 吞吐的影响 。",
+                    "source": "简历原文"
+                  }
+                ]
+              },
+              {
+                "material_id": "m-805e7950b8bd48d6",
+                "title": "校园边缘计算集群",
+                "material_type": "project",
+                "material_score": 41.75,
+                "type_coefficient": 1,
+                "mapping_coefficient": 0.5,
+                "derived_contribution": 20.875,
+                "rank": 1,
+                "decay": 1,
+                "contribution": 20.875,
+                "evidence": [
+                  {
+                    "origin": "resume",
+                    "quote": "搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，整理 运维手册 。",
+                    "source": "简历原文"
+                  }
+                ]
+              }
+            ],
+            "missing_materials": 3
+          },
+          "problem_solving": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 5
+          },
+          "ownership_delivery": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 5
+          },
+          "collaboration_organization": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 5
+          },
+          "learning_research": {
+            "score": null,
+            "provisional": true,
+            "terms": [],
+            "missing_materials": 5
+          }
+        },
+        "type_summaries": [
+          {
+            "type": "award",
+            "count": 2,
+            "score": 26.25
+          },
+          {
+            "type": "research",
+            "count": 1,
+            "score": 27
+          },
+          {
+            "type": "project",
+            "count": 1,
+            "score": 41.75
+          },
+          {
+            "type": "work",
+            "count": 1,
             "score": null
           },
           {
@@ -5726,42 +7550,42 @@
     },
     {
       "id": "plain-language-breakdown",
-      "inputHash": "4e02f535cab7b5acd85eea348e2c8bad3ab2f927fcba475632d475168bf54ef9",
+      "inputHash": "2a33637ecd6d987ae2e1adfc96056b4098d4ea54efe791b47b569e1cd214f3d3",
       "output": {
         "projects": [
           {
             "sourceIndex": 0,
             "title": "KubeEdge 云边协同框架",
-            "plainTitle": "验证边缘节点故障后的恢复情况",
-            "goal": "具体项目目标未说明，需进一步核实。",
-            "actions": "模拟断网、重启和重连，检查工作负载状态及设备消息是否恢复；整理了边缘节点恢复相关的验证场景、问题记录、复现步骤和交接说明。",
-            "outcome": "简历说明整理并输出了 26 组验证场景、问题记录、复现步骤和交接说明；未说明其他结果。",
-            "evidence": "整理 26 组验证场景，输出问题记录"
+            "plainTitle": "检查云边框架在边缘节点故障后的恢复情况",
+            "goal": "目标是检查模拟断网、重启和重连后，工作负载状态及设备消息能否恢复。",
+            "actions": "模拟断网、重启与重连，检查工作负载状态和设备消息恢复；整理了26组边缘节点恢复验证场景，并输出问题记录、复现步骤和交接说明。",
+            "outcome": "简历未说明验证结果或问题是否已解决。",
+            "evidence": "整理 26 组验证场景"
           },
           {
             "sourceIndex": 1,
             "title": "校园边缘计算集群",
-            "plainTitle": "搭建并测试校园边缘计算集群",
-            "goal": "具体项目目标未说明，需进一步核实。",
-            "actions": "搭建容器化服务、资源监控和自动部署流程；通过故障注入检查重试、回滚和数据恢复，并整理运维手册及监控、故障恢复记录。",
-            "outcome": "简历说明搭建了 5 节点演示环境，并汇总了监控与故障恢复记录；未说明其他结果。",
-            "evidence": "覆盖 节点 失联 、服务重启和 升级 回滚"
+            "plainTitle": "搭建校园边缘计算集群并验证故障恢复",
+            "goal": "简历未明确说明项目要解决的问题或目标，建议进一步核实。",
+            "actions": "搭建容器化服务、资源监控和自动部署流程，通过故障注入检查重试、回滚和数据恢复，并整理运维手册；搭建5节点演示环境，覆盖节点失联、服务重启和升级回滚，并汇总监控与故障恢复记录。",
+            "outcome": "简历说明搭建了5节点演示环境，并汇总了监控与故障恢复记录；未说明验证结果或恢复效果。",
+            "evidence": "通过故障注入检查重试、回滚和数据恢复"
           }
         ]
       }
     },
     {
       "id": "analysis-report",
-      "inputHash": "d6c38ca36e0590b286d8229de5c44ab4c7da82ca07c3393a248d705cb41308da",
+      "inputHash": "865b86312acf6fd0e555df74f0640c9ad7263dc36af3ae170a268de9c716dbcf",
       "output": {
-        "answer": "## 结论\n按简历所述经历，候选人的证据主要指向云原生、边缘计算与故障恢复，和 AI 应用研发岗位的核心技术栈存在明显错位。系统运行与验证方面有一定相关经验，但简历未展示 LLM 应用开发、RAG、Agent、文档智能或完整业务交付的证据，当前岗位匹配依据不足。简历明确声明人物、获奖和任职经历均为虚构，因此所列经历不能视为已核实的个人履历。\n\n## 证据匹配\n- **大模型应用、RAG、Agent、文档智能系统设计开发：未见证据。** 简历提到研读并复现 Ray 调度实验，但未描述 LLM API、提示词、检索增强、向量数据库、Agent 框架或文档分析功能。\n- **模型调用、工具调用、评测、监控和数据闭环：部分支持。** 简历描述了云边服务监控、故障注入、恢复验证和运维记录；未涉及模型调用与工具调用、模型效果评测或 AI 数据闭环。\n- **跨团队协作并落地业务：未见充分证据。** 有团队项目、实习和竞赛团队经历，但没有与产品、算法、前端或业务团队协作，也没有 AI 能力进入实际业务的描述。\n- **3 年以上软件或 AI 应用研发经验：未见支持。** 简历提供的项目及实习时间不足以证明 3 年以上研发经验；且任职经历被简历声明为虚构。\n- **Python 或 TypeScript：未见支持。** 技能部分仅提到 Go、Linux、Shell，未列出 Python 或 TypeScript。\n- **LLM API、Prompt、RAG、向量数据库或 Agent 框架：未见支持。**\n- **完整项目交付经验：部分支持。** 有部署、监控、故障恢复、运维手册等交付环节描述；未说明需求、验收、上线运行及业务效果，且项目经历未经本人履历核实。\n- **招聘、文档解析、知识库、企业效率工具：未见支持。**\n- **模型评测、数据治理、搜索增强、多 Agent 编排：未见支持。**\n- **量化成果、开源项目或论文竞赛：有限支持。** 有竞赛奖项、场景组数和节点数等陈述，但履历与获奖明确标为虚构；论文和公开项目引用真实来源，并不能证明候选人的个人贡献。\n\n## 待核实信息\n- AI 应用开发的实际经历、代码或可演示成果，以及 Python/TypeScript 熟练度。\n- 简历注明人物、任职和获奖经历为虚构。公开项目背景不能证明候选人曾在相关组织任职或对项目有个人贡献；论文来源真实也不能证明个人完成了所述复现。\n- “已毕业”与教育时间、实习和项目日期之间的时间关系需核实；现有信息不足以确认实际工作年限。\n- 项目是否面向真实用户或业务上线，候选人承担的职责、验收标准与可量化结果均不清楚。\n\n## 建议追问\n- 请现场设计一个文档问答 RAG 系统，说明解析、切分、索引、检索、重排、生成、引用和评测方案，并指出关键取舍。\n- 请提供一个本人实际完成的 LLM 应用代码或演示，解释模型 API、提示词、工具调用、异常处理和安全边界。\n- 是否使用过向量数据库或 Agent 框架？请描述具体任务、架构、失败处理方式及效果评估。\n- 请用一个真实项目说明从需求到上线的完整交付过程，包括本人负责范围、协作对象、验收和运行指标。\n- 请说明所列云边项目、论文复现、公开项目及竞赛经历中哪些是实际个人经历，哪些是示例或模拟材料；可提供与个人贡献对应的可核验证据。\n\n## 评分依据与覆盖情况\n以下仅转述既有规则评分，不重新计算或推导岗位匹配分：专业执行为 **30.325（暂定）**，基于两项材料；问题解决、归属与交付、协作组织、学习研究均为 **NA（暂定）**，各缺少 5 项材料。评分可覆盖一般工程执行的有限证据，不能替代对 LLM/RAG/Agent 技能、业务落地或岗位匹配度的判断。",
+        "answer": "## 结论\n\n候选人当前与“AI 应用研发工程师”岗位的匹配度偏低，主要证据集中在云原生、边缘计算、故障恢复和分布式调度实验，尚未形成大模型应用研发所需的直接证据。\n\n- **AI 工程落地能力：不足以证明**。未见 LLM API、Prompt、RAG、向量数据库、Agent 工作流、文档智能分析或模型评测系统的实际开发记录。\n- **系统设计能力：部分匹配**。具备容器化部署、监控、服务恢复、任务调度和故障注入经验，说明有基础设施与分布式系统实践，但与 AI 应用系统设计的关联仍较间接。\n- **项目交付能力：部分支持**。有课程/团队项目、验证场景、运维手册和演示环境交付证据，但缺少生产环境、真实业务目标、用户规模和上线结果。\n- **问题解决能力：部分支持**。有断网、重启、重连、失败重试、回滚和数据恢复等测试与排障经历；尚未证明其能解决检索质量、幻觉、工具调用失败、数据治理或模型成本等 AI 特有问题。\n- **岗位契合度：偏低，建议谨慎进入面试**。除非候选人能在面试中补充未写入简历的 AI 应用项目，否则不满足多数核心必备条件。\n\n## 证据匹配\n\n| 岗位要求 | 判断 | 简历证据与限制 |\n|---|---|---|\n| 负责大模型应用、RAG、Agent、文档智能分析系统 | 未支持 | 简历未出现 LLM、RAG、Embedding、向量数据库、Agent、Prompt 或文档解析系统开发经历。 |\n| 搭建模型调用、工具调用、评测、监控和数据闭环 | 部分支持 | 有 Prometheus、Grafana、部署脚本、监控和故障恢复实践；但这些是云边基础设施监控，不能替代模型调用、评测集、质量指标、数据反馈闭环等 AI 工程证据。 |\n| 与产品、算法、前端、业务团队协作并落地 AI 能力 | 未支持 | 有“团队项目”“核心开发成员”“队长”等表述，但未明确跨职能协作、业务目标、用户场景或上线成果。 |\n| 3 年以上软件或 AI 应用研发经验 | 未支持 | 简历显示教育和项目经历集中在 2024 至 2026 年，未明确证明 3 年以上软件或 AI 应用研发经验；课程项目和短期实习是否计入岗位要求也需核实。 |\n| 熟悉 Python 或 TypeScript | 未支持 | 技能部分明确写的是 Go、Linux、Shell，未出现 Python 或 TypeScript。 |\n| 熟悉 LLM API、Prompt、RAG、向量数据库或 Agent 框架 | 未支持 | 没有对应技术栈、代码、项目结果或部署说明。 |\n| 具备完整项目交付经验 | 部分支持 | “校园边缘计算集群”包含容器化服务、监控、自动部署、故障注入、回滚、数据恢复和运维手册，具备一定端到端交付特征；但尚未证明真实业务交付、长期运行、用户验收或线上维护。 |\n| 招聘、文档解析、知识库、企业效率工具经验 | 未支持 | 未见相关业务场景。 |\n| 模型评测、数据治理、搜索增强、多 Agent 编排 | 未支持 | 未见相关实践。 |\n| 量化成果、开源项目或论文竞赛经历 | 部分支持 | 有 Ray 论文研读与复现实验、KubeEdge 公开项目引用、竞赛获奖表述；但论文和公开项目本身不能证明候选人的原创贡献或核心代码贡献，竞赛具体分工和成果也未说明。 |\n\n## 待核实信息\n\n- **技术栈真实性与熟练度**：是否实际使用过 Python 或 TypeScript，以及是否能独立完成 API 服务、异步任务、测试和部署。\n- **AI 应用经历缺口**：是否有未写入简历的 LLM、RAG、Agent、文档解析或知识库项目。\n- **项目角色边界**：在 KubeEdge、校园集群和竞赛中具体负责哪些模块，代码量、设计决策和独立完成部分是什么。\n- **交付范围**：项目是否有真实用户、验收标准、线上/长期运行环境、故障指标和迭代记录。\n- **经历时间线**：简历中的教育和实习日期存在时间安排需要澄清之处，应核对实际入学、毕业、实习起止时间及当前可入职时间。\n- **材料真实性风险**：简历明确说明人物、获奖和任职经历为虚构，因此其中的实习、竞赛、任职和项目参与不能直接作为已验证事实。公开论文或开源项目的真实存在，也不能证明候选人对论文或项目有个人贡献。\n- **地点与工作方式**：简历所在地与岗位 Base 地不一致，是否接受上海、北京、深圳或部分远程需要确认。\n\n## 建议追问\n\n1. 请现场用 Python 或 TypeScript 设计一个“企业文档问答”服务：说明文档切分、Embedding、向量检索、重排、Prompt、引用生成和权限控制如何实现。\n2. 你是否实际调用过 OpenAI、通义、文心或其他 LLM API？请说明请求封装、流式输出、超时、限流、重试、成本控制和敏感信息处理。\n3. 如果 RAG 系统回答出现幻觉，你会如何定位是解析、切分、召回、重排、Prompt 还是生成阶段的问题？会使用哪些评测指标和测试集？\n4. 请给出一个 Agent 工作流设计，包含工具注册、参数校验、状态管理、失败重试、人工接管和执行审计。\n5. 在“校园边缘计算集群”中，哪部分是你独立设计和实现的？请展示架构图、代码结构、部署配置或故障注入记录。\n6. 你在 KubeEdge 相关工作中是否修改过源代码？具体修改了哪些模块、解决了什么问题、如何验证？\n7. 竞赛中作为队长具体承担哪些技术和组织职责？队伍最终成果中哪些部分由你完成？\n8. 如果模型服务延迟升高、调用成本超预算且回答质量下降，你会如何设计监控面板和数据闭环？\n9. 请说明最近一次从需求澄清到交付验收的完整项目流程，包括需求、里程碑、测试、上线和复盘。\n10. 是否能接受岗位要求的城市和全职工作安排？实习/教育时间线是否与入职时间冲突？\n\n## 评分依据与覆盖情况\n\n本判断仅采用简历明示内容和用户提供的既有核查摘要，不重新计算或扩展评分。\n\n- 已有规则结果中，**professional_execution 为 30.325，且为 provisional**。其证据主要来自校园边缘计算集群的容器化、监控、自动部署、故障注入、回滚和数据恢复，以及 Ray 调度实验；这些结果支持基础工程执行能力，但不能直接转换为 AI 应用研发能力。\n- 既有结果中，**problem_solving、ownership_delivery、collaboration_organization、learning_research 均为 NA**，对应材料不足，不能据此补足岗位要求。\n- 对岗位核心要求的覆盖情况：  \n  - 大模型应用 / RAG / Agent / 文档智能：**未覆盖**。  \n  - 模型调用、评测与数据闭环：**未覆盖，基础设施监控仅构成间接证据**。  \n  - Python / TypeScript：**未覆盖**。  \n  - 3 年以上相关研发经验：**未充分覆盖**。  \n  - 完整项目交付：**部分覆盖**。  \n  - 分布式系统、监控、故障恢复：**部分覆盖，属于可迁移基础能力**。  \n  - 业务落地和跨职能协作：**未充分覆盖**。  \n  - 论文、开源、竞赛：**有表述，但个人贡献和真实性待核实**。",
         "researchSources": [],
         "researchStatus": "not-requested"
       }
     }
   ],
   "analysisDebug": {
-    "totalDurationMs": 57183,
+    "totalDurationMs": 79120,
     "maxParallel": 2,
     "timings": [
       {
@@ -5769,7 +7593,7 @@
         "label": "候选人基本信息提取",
         "stage": 0,
         "startedAtMs": 0,
-        "durationMs": 8014,
+        "durationMs": 8269,
         "reused": false,
         "parallelWith": [
           "material-extraction"
@@ -5779,8 +7603,8 @@
         "id": "material-extraction",
         "label": "简历材料抽取",
         "stage": 0,
-        "startedAtMs": 9,
-        "durationMs": 25771,
+        "startedAtMs": 0,
+        "durationMs": 26630,
         "reused": false,
         "parallelWith": [
           "candidate-profile"
@@ -5790,8 +7614,8 @@
         "id": "score-calculation",
         "label": "材料与能力规则评分",
         "stage": 1,
-        "startedAtMs": 25780,
-        "durationMs": 7,
+        "startedAtMs": 26630,
+        "durationMs": 12,
         "reused": false,
         "parallelWith": [
           "plain-language-breakdown"
@@ -5801,8 +7625,8 @@
         "id": "plain-language-breakdown",
         "label": "项目经历人话拆解",
         "stage": 1,
-        "startedAtMs": 25787,
-        "durationMs": 8954,
+        "startedAtMs": 26642,
+        "durationMs": 8272,
         "reused": false,
         "parallelWith": [
           "score-calculation"
@@ -5812,8 +7636,8 @@
         "id": "analysis-report",
         "label": "分析报告生成",
         "stage": 2,
-        "startedAtMs": 34741,
-        "durationMs": 22442,
+        "startedAtMs": 34914,
+        "durationMs": 44206,
         "reused": false,
         "parallelWith": []
       }
