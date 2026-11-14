@@ -95,6 +95,8 @@ REPORT_DIR=.data/reports
 
 默认目录为项目根目录下的 `.data/resumes/`。每个导入的 PDF 会复制到此目录，候选人元数据保存在其 `.metadata/` 子目录。`.data/` 已加入 `.gitignore`，简历文件不会被 Git 跟踪或推送到 GitHub。
 
+开发阶段共享的 161 份 mock PDF 单独存放在 [`dev-data/mock-resumes/`](dev-data/mock-resumes/README.md)，该固定样本池随 Git 仓库保存，并附文件大小及 SHA-256 清单。首次拉取后运行 `npm run seed:resumes`，将全部样本准备到 `.data/resumes/`（或配置的 `RESUME_DIR`），再运行 `npm run dev`。准备命令只复制和校验 PDF，不调用 AI；重复运行会跳过相同文件，遇到同名但内容不同的文件会停止。运行时的元数据、报告和人工评估继续保存在被忽略的 `.data/` 中。
+
 编号简历可运行 `npm run import:resumes -- "C:\Users\20743\Desktop\resumes" 1 160` 批量复制并离线索引。导入前检查全部源文件与同名冲突，复制后核对 SHA-256，不覆盖不同内容的文件；此命令只提取 PDF 文本，不调用 AI。没有 AI 提取姓名时暂以文件编号显示，扫描件仍需 OCR。
 
 每次成功生成的初始、岗位或成果核查分析报告都会归档到 `.data/reports/<简历ID>/<时间戳>-<唯一ID>.json`，包含报告正文、分析任务、职位要求、生成时间、模型及适用的核查资料/评分卡。重新分析会保留历史文件；最新报告同步写回简历元数据，刷新或重启后可继续查看。演示或未关联 PDF 的分析使用文本摘要分组。中断、失败或空报告不会被保存为成功报告；删除简历不会自动清除历史报告。此目录同样由 `.data/` 忽略，不提交到 Git。

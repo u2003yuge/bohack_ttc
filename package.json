@@ -16,7 +16,8 @@
     "start": "tsx server/index.ts",
     "import:competitions": "node scripts/import-competitions.mjs",
     "import:papers": "tsx scripts/import-papers.ts",
-    "import:resumes": "tsx scripts/import-resumes.ts"
+    "import:resumes": "tsx scripts/import-resumes.ts",
+    "seed:resumes": "node scripts/seed-mock-resumes.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
