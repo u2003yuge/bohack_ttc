@@ -12,6 +12,7 @@ test("comparison rank drafts accept supported dimensions and source filters", ()
   assert.equal(draft.mapX, "perspective");
   assert.equal(draft.mapY, "depth");
   assert.equal(draft.mapRegion, "all");
+  assert.equal(draft.mapThreshold, 50);
   assert.equal(draft.rationale.length, 240);
 });
 
@@ -23,19 +24,21 @@ test("comparison rank drafts default to all rating sources for older agent respo
   assert.equal(draft.mapX, "perspective");
   assert.equal(draft.mapY, "depth");
   assert.equal(draft.mapRegion, "all");
+  assert.equal(draft.mapThreshold, 50);
 });
 
 test("comparison rank drafts accept distinct custom quality-map axes", () => {
-  const draft = normalizeComparisonRankDraft({ criterion: "roleFit", direction: "desc", mapX: "experience", mapY: "expertise", mapRegion: "high-high" });
+  const draft = normalizeComparisonRankDraft({ criterion: "roleFit", direction: "desc", mapX: "experience", mapY: "expertise", mapRegion: "high-high", mapThreshold: 65 });
   assert.equal("error" in draft, false);
   if ("error" in draft) return;
   assert.equal(draft.mapX, "experience");
   assert.equal(draft.mapY, "expertise");
   assert.equal(draft.mapRegion, "high-high");
+  assert.equal(draft.mapThreshold, 65);
 });
 
 test("comparison rank drafts retain current settings when a model response omits fields", () => {
-  const current = { criterion: "expertise" as const, direction: "asc" as const, ratingFilter: "scored" as const, mapX: "experience" as const, mapY: "roleFit" as const, mapRegion: "low-high" as const, rationale: "" };
+  const current = { criterion: "expertise" as const, direction: "asc" as const, ratingFilter: "scored" as const, mapX: "experience" as const, mapY: "roleFit" as const, mapRegion: "low-high" as const, mapThreshold: 62, rationale: "" };
   const draft = normalizeComparisonRankDraft({}, current);
   assert.equal("error" in draft, false);
   if ("error" in draft) return;
@@ -47,6 +50,8 @@ test("quality-map quadrant filters use a stable 50-point threshold on each axis"
   assert.equal(matchesComparisonMapRegion(80, 49, "high-low"), true);
   assert.equal(matchesComparisonMapRegion(49, 80, "low-high"), true);
   assert.equal(matchesComparisonMapRegion(49, 49, "low-low"), true);
+  assert.equal(matchesComparisonMapRegion(65, 66, "high-high", 65), true);
+  assert.equal(matchesComparisonMapRegion(64, 66, "low-high", 65), true);
   assert.equal(matchesComparisonMapRegion(50, 49, "high-high"), false);
   assert.equal(matchesComparisonMapRegion(25, 95, "all"), true);
 });
@@ -59,4 +64,5 @@ test("comparison rank drafts reject invented dimensions and directions", () => {
   assert.ok("error" in normalizeComparisonRankDraft({ criterion: "composite", direction: "desc", mapX: "unknown", mapY: "depth" }));
   assert.ok("error" in normalizeComparisonRankDraft({ criterion: "composite", direction: "desc", mapX: "expertise", mapY: "expertise" }));
   assert.ok("error" in normalizeComparisonRankDraft({ criterion: "composite", direction: "desc", mapRegion: "top-performer" }));
+  assert.ok("error" in normalizeComparisonRankDraft({ criterion: "composite", direction: "desc", mapThreshold: 81 }));
 });
