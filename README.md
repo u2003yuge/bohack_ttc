@@ -132,14 +132,14 @@ RESUME_DIR=.data/resumes
 
 资料库概览新增“审核准备度”流程统计，可点击“待补来源 / 待核来源 / 待人工评估 / 已完成”直接筛选资料。该指标描述资料是否具备审核条件，不代表资料含金量；AI 也能识别这四种状态，预览精确匹配数量后应用同一阶段筛选。
 
-资料库 API 为 `GET /api/resumes/knowledge`、`POST /api/resumes/knowledge`、`POST /api/resumes/knowledge/enrich`、`POST /api/resumes/knowledge/filter-draft`、`PUT /api/resumes/knowledge/:id`、`PUT /api/resumes/knowledge/:id/review` 和 `POST /api/resumes/knowledge/:id/suggest`。资料草案、评分建议和列表筛选分别使用 `server/skills/knowledge-enrichment.md`、`server/skills/knowledge-assessment.md`、`server/skills/knowledge-filter-assistant.md` 约束；资料草案只填充未保存表单，评分建议等待人工确认，自然语言筛选只返回经校验的列表条件。Tavily 返回的网页摘要只是检索线索，系统不宣称已独立核实网页内容。通用 Agent 与资料核验共用搜索适配器，对相同查询短时缓存、合并并发请求；失败不缓存。分析报告和资料详情支持双向跳转；引用仅由简历中出现的资料名称或别名确定性匹配，不代表已核实。示例评分只用于演示界面和审核流程，使用真实招聘时应核对官方来源、具体名次、作者贡献、岗位职责和项目结果。
+资料库 API 为 `GET /api/resumes/knowledge`、`POST /api/resumes/knowledge`、`POST /api/resumes/knowledge/filter-draft`、`PUT /api/resumes/knowledge/:id` 和 `PUT /api/resumes/knowledge/:id/review`。资料库支持人工录入、编辑、筛选和评分；联网整理与候选人成果核查接口已移除。分析报告和资料详情支持双向跳转；引用仅由简历中出现的资料名称或别名确定性匹配，不代表已核实。
 
 ## 数据与隐私
 
 - `.env`、`.env.*`、`.env.example` 和 `.data/` 均被 Git 忽略。项目不会提供可提交的密钥模板；请在本机创建 `.env`。
 - 简历 PDF 和提取文本保存在本机 `RESUME_DIR`，不会因为导入操作自动上传到 GitHub。
 - 导入 PDF 时，提取出的简历文本会发送给 `.env` 中配置的模型，用于整理候选人基本信息。用户主动运行分析时，简历文本、职位要求和提问也会发送给模型服务。
-- 若 Agent 调用 Tavily，发送给搜索服务的是搜索查询和搜索请求，不会自动上传整份 PDF。
+- 候选人分析不调用 Tavily 或其它搜索服务。
 - 候选人分析只将简历文本发送给配置的模型，用于提取候选人信息、结构化材料和生成报告；不会调用 Tavily 或其它联网服务核查竞赛、论文和项目。
 - 请确认你的模型和搜索服务的数据处理方式符合组织的招聘、隐私和数据保留要求。
 
@@ -214,7 +214,7 @@ Content-Type: application/json
 
 项目根目录的 `competitions.md` 已导入 `db/competitions.json`，包含 118 条完整赛事背景。更新文档后运行 `npm run import:competitions`；导入会检查全部字段、重复项和网址并保留源文件校验值。资料库默认显示独立竞赛板块，支持学科、目录年份、关键词与简历引用筛选，并展示赛事介绍、影响力、难度、能力要求、素质和来源。期刊 / 会议与企业位于独立分类。现有 4 条同赛事资料保留原 ID 合并，竞赛总计 122 条。
 
-简历报告可直接使用匹配的本地赛事背景；获奖年份、组别、奖项及个人贡献仍需另行核查。详见 [资料库说明](docs/KNOWLEDGE_DATABASE.md)。
+资料库只作为独立的人工查询入口，不会写入简历报告或参与候选人评分。详见 [资料库说明](docs/KNOWLEDGE_DATABASE.md)。
 
 ## 期刊会议目录数据
 
@@ -224,4 +224,4 @@ Content-Type: application/json
 
 分级保留各自体系和适用年份，不换算 A/B/C 与 T1/T2/T3，不将当前目录套用于历史论文；主会、Workshop、Findings 及文种需另行核验。年度指标和完整收录信息保持 `null`（未核验）。渠道名称命中不证明论文正式发表或候选人贡献，也不替代按论文标题查证的研究报告。
 
-简历核查发现目录中没有的赛事或期刊会议时，系统会在联网核查完成后用已读取的公开来源生成标准资料条目，写入 `db/library/` 并在分析结果中提示“已整理为标准条目”。同名条目会去重；来源只读到搜索摘要、主体无法确认或字段不足时不会写入，只显示待补充。自动条目仍是待人工核验资料，不会自动给出含金量分；刷新资料库即可查看。
+系统不会根据简历内容自动联网补充或生成赛事、期刊会议资料条目。

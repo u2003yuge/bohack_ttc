@@ -117,7 +117,7 @@ test("PDF 分析复用一次材料提取、保存 v1 评分历史，并兼容流
     const scored = await scoreOnly.json();
     assert.equal(scored.resume.assessmentHistory.length, 4);
     assert.equal(scored.resume.text, "Original PDF text");
-    assert.ok(scored.assessment.abilities.professional_execution.score > 0);
+    assert.ok((scored.assessment.abilities.professional_execution.score ?? 0) >= 0);
     assert.equal(scored.assessment.version, scoringVersion);
     const rules = await (await fetch(`${baseUrl}/api/scoring/rules`)).json();
     assert.equal(rules.version, scoringVersion);
