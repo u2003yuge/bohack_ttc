@@ -9,7 +9,7 @@ test("composite score preserves real values above the visual 100-point scale", (
   assert.equal(calculateComposite(negativeCriteria, defaultScoreWeights), 0);
 });
 
-test("growth timeline uses year-end rolling accumulation and scales latest point to growth score", () => {
+test("growth timeline uses year-end cumulative accumulation and scales latest point to growth score", () => {
   const timeline = calculateGrowthTimeline({
     text: "2019 入职。2021 获得一等奖。2023 获得 ICPC 奖项。",
     experiences: [{ role: "工程师", period: "2019 - 2023", detail: "负责平台建设，性能提升 20%。" }],
@@ -18,6 +18,8 @@ test("growth timeline uses year-end rolling accumulation and scales latest point
   assert.deepEqual(timeline.map((point) => point.year), [2019, 2020, 2021, 2022, 2023]);
   assert.equal(timeline.at(-1)?.score, 80);
   assert.ok((timeline.find((point) => point.year === 2021)?.rollingContribution ?? 0) > (timeline.find((point) => point.year === 2020)?.rollingContribution ?? 0));
+  assert.ok(timeline.every((point, index) => index === 0 || point.score >= timeline[index - 1].score));
+  assert.ok(timeline.every((point, index) => index === 0 || point.rollingContribution >= timeline[index - 1].rollingContribution));
   assert.ok((timeline.find((point) => point.year === 2021)?.evidence.join(" ") ?? "").includes("一等奖"));
 });
 

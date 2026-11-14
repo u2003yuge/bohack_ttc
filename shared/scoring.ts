@@ -50,9 +50,10 @@ export type GrowthTimelinePoint = {
 
 /**
  * Builds a transparent annual growth curve. Each point is the score at the
- * end of that year, based on the contribution in that year and the preceding
- * two years. The final point is scaled to the model's current growth score so
- * the chart and score card remain consistent.
+ * end of that year, based on every contribution observed up to that year.
+ * Contributions never leave the curve, so the annual cumulative line cannot
+ * fall between two years. The final point is scaled to the model's current
+ * growth score so the chart and score card remain consistent.
  */
 export function calculateGrowthTimeline(input: GrowthTimelineInput, targetScore: number, windowYears = 3): GrowthTimelinePoint[] {
   const safeWindow = Math.max(1, Math.round(windowYears));
@@ -98,11 +99,22 @@ export function calculateGrowthTimeline(input: GrowthTimelineInput, targetScore:
   if (!years.size) {
     add(currentYear, Math.max(1, Number(targetScore) || 0), "简历未提取到可解析的年份，当前分数仅作参考");
   }
-  const sortedYears = [...years].sort((left, right) => left - right);
-  const rawPoints = sortedYears.map((_year, index) => {
-    const from = Math.max(0, index - safeWindow + 1);
-    return sortedYears.slice(from, index + 1).reduce((sum, item) => sum + (contributions.get(item)?.points ?? 0), 0);
-  });
+  const observedYears = [...years].sort((left, right) => left - right);
+  // Keep the curve continuous: a year without a newly extracted item still
+  // gets a point so the reader can compare the score at every year-end.
+  const firstYear = observedYears[0];
+  const lastYear = observedYears.at(-1);
+  const sortedYears = firstYear !== undefined && lastYear !== undefined
+    ? Array.from({ length: lastYear - firstYear + 1 }, (_, index) => firstYear + index)
+    : observedYears;
+  // This chart is explicitly an annual cumulative curve. A rolling window
+  // would drop older contributions and create visually misleading declines.
+  const rawPoints: number[] = [];
+  let cumulative = 0;
+  for (const year of sortedYears) {
+    cumulative += contributions.get(year)?.points ?? 0;
+    rawPoints.push(cumulative);
+  }
   const latestRaw = rawPoints.at(-1) ?? 0;
   const finalScore = Math.max(0, Number(targetScore) || 0);
   return sortedYears.map((year, index) => {
