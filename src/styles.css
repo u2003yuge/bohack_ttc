@@ -3131,10 +3131,19 @@ button:active { transform: translateY(1px); }
   transform: translateY(-50%);
   transition: right .24s ease, transform .24s ease;
 }
-.comparison-side-panel-toggle > span {
+.comparison-side-panel-toggle-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 0 auto;
+}
+.comparison-side-panel-toggle-content > span {
   display: block;
   writing-mode: vertical-rl;
   text-orientation: upright;
+  text-align: center;
   white-space: nowrap;
 }
 .comparison-side-panel-toggle:hover {
@@ -3633,5 +3642,50 @@ button:active { transform: translateY(1px); }
   }
   .analysis-visual-card {
     min-height: 258px;
+  }
+}
+
+/* The benchmark is a primary visual, so give its chart and summary room to breathe. */
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) {
+  min-height: 320px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) > .benchmark-card {
+  min-height: 292px;
+  padding: 18px 20px 16px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-percentile strong {
+  font-size: 18px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-percentile span {
+  font-size: 10px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-distribution {
+  margin-top: 18px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-lane {
+  min-height: 36px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-lane-track {
+  height: 34px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-axis {
+  height: 25px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-stats {
+  margin-top: 13px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-stats strong {
+  font-size: 14px;
+}
+.analysis-visuals-top > .analysis-visual-card:nth-child(3) .benchmark-database-link {
+  margin-top: 11px;
+}
+@media (max-width: 760px) {
+  .analysis-visuals-top > .analysis-visual-card:nth-child(3) {
+    min-height: 300px;
+  }
+  .analysis-visuals-top > .analysis-visual-card:nth-child(3) > .benchmark-card {
+    min-height: 272px;
+    padding: 15px 13px 14px;
   }
 }

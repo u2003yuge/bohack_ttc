@@ -577,30 +577,22 @@ function BenchmarkBadge({ role, score, candidates, onOpenHistory }: { role: stri
     { key: "screened", label: "首轮通过未录取", candidates: benchmark.candidates.filter((candidate) => candidate.screened && !candidate.hired) },
     { key: "rejected", label: "未过首轮", candidates: benchmark.candidates.filter((candidate) => !candidate.screened) },
   ];
-  const screenedSampleCount = benchmark.candidates.filter((candidate) => candidate.screened).length;
-  const hiredSampleCount = benchmark.candidates.filter((candidate) => candidate.hired).length;
   const selectCandidate = (candidate: (typeof benchmark.candidates)[number]) => setSelectedHistoryId(candidate.id);
-  const benchmarkCaveat = benchmark.sampleCount === 0
-    ? "当前岗位族暂无历史样本，无法计算百分位或录用参考线。"
-    : benchmark.sampleCount < 10
-      ? `当前仅有 ${benchmark.sampleCount} 份历史样本，百分位和参考线容易受单条记录影响。`
-      : "历史样本来自授权记录；参考线只用于辅助比较，不是录用规则。";
   const cohortLabel = benchmark.sampleRoleGroup === "all"
     ? "全部岗位族（当前岗位暂无样本）"
     : `${roleGroupLabel(benchmark.sampleRoleGroup)}岗位族`;
   return <section className="benchmark-card">
-    <div className="benchmark-head"><div><span className="eyebrow">HISTORICAL BENCHMARK</span><div className="benchmark-percentile"><strong>{benchmark.percentile === null ? "暂无可比较样本" : `超过历史样本 ${benchmark.percentile}%`}</strong><span>{cohortLabel} · {benchmark.sampleCount} 份</span></div></div><div className="benchmark-year-filter" role="group" aria-label="筛选历史样本年份"><button className={year === null ? "active" : ""} onClick={() => { setYear(null); setSelectedHistoryId(null); }}>全部</button>{benchmark.availableYears.map((value) => <button className={year === value ? "active" : ""} key={value} onClick={() => { setYear(value); setSelectedHistoryId(null); }}>{value}</button>)}</div></div>
+    <div className="benchmark-head"><div><div className="benchmark-percentile"><strong>{benchmark.percentile === null ? "暂无可比较样本" : `超过历史样本 ${benchmark.percentile}%`}</strong><span>{cohortLabel} · {benchmark.sampleCount} 份</span></div></div><div className="benchmark-year-filter" role="group" aria-label="筛选历史样本年份"><button className={year === null ? "active" : ""} onClick={() => { setYear(null); setSelectedHistoryId(null); }}>全部</button>{benchmark.availableYears.map((value) => <button className={year === value ? "active" : ""} key={value} onClick={() => { setYear(value); setSelectedHistoryId(null); }}>{value}</button>)}</div></div>
     <div className="benchmark-distribution" role="group" aria-label="历史候选人综合分分布图">
       {benchmark.sampleCount > 0 && <div className="benchmark-overlay" aria-hidden="true"><i className={`benchmark-current-line ${score >= 100 ? "score-at-limit" : ""}`} style={{ left: `${safeScore}%` }}><b>当前 {actualScore(score).toFixed(1)}</b></i>{benchmark.screenCutoff !== null && <i className="benchmark-screen-line" style={{ left: `${boundedScore(benchmark.screenCutoff)}%` }} />}{benchmark.hireCutoff !== null && <i className="benchmark-hire-line" style={{ left: `${boundedScore(benchmark.hireCutoff)}%` }} />}</div>}
       {lanes.map((lane) => <div className="benchmark-lane" key={lane.key}><span className="benchmark-lane-label"><span>{lane.label}</span><small>n={lane.candidates.length}</small></span><div className={`benchmark-lane-track ${lane.key}`}>{lane.candidates.map((candidate) => <button key={candidate.id} className={`benchmark-dot ${selectedHistoryId === candidate.id ? "selected" : ""}`} style={{ left: `${candidate.composite}%` }} title={`${candidate.year} · ${candidate.name} · ${candidate.composite} 分`} aria-label={`${candidate.year} ${candidate.name}，综合分 ${candidate.composite}，${candidate.screened ? "通过首轮" : "未通过首轮"}${candidate.hired ? "，最终录取" : ""}`} aria-pressed={selectedHistoryId === candidate.id} onClick={() => selectCandidate(candidate)} />)}</div></div>)}
-      {benchmark.sampleCount === 0 && <div className="benchmark-no-samples">暂无历史样本，无法计算百分位或结果参考线。</div>}
+      {benchmark.sampleCount === 0 && <div className="benchmark-no-samples">暂无历史样本</div>}
       <div className="benchmark-axis"><span /><div><i>0</i><i>25</i><i>50</i><i>75</i><i>100</i></div></div>
     </div>
-    <div className="benchmark-legend">{benchmark.sampleCount > 0 && <span><i className="legend-current" />当前候选人</span>}<span>{benchmark.screenCutoff !== null && <i className="legend-screen" />}{benchmark.screenCutoff === null ? "首轮参考线：暂无通过样本" : `首轮参考线 ${benchmark.screenCutoff} · n=${screenedSampleCount}`}</span><span>{benchmark.hireCutoff !== null && <i className="legend-hire" />}{benchmark.hireCutoff === null ? "录取参考线：暂无录取样本" : `录取参考线 ${benchmark.hireCutoff} · n=${hiredSampleCount}`}</span>{benchmark.sampleCount > 0 && <span><i className="legend-sample" />历史记录</span>}</div>
+    <div className="benchmark-legend">{benchmark.sampleCount > 0 && <span><i className="legend-current" />当前</span>}<span>{benchmark.screenCutoff !== null && <i className="legend-screen" />}{benchmark.screenCutoff === null ? "首轮线" : `首轮线 ${benchmark.screenCutoff}`}</span><span>{benchmark.hireCutoff !== null && <i className="legend-hire" />}{benchmark.hireCutoff === null ? "录取线" : `录取线 ${benchmark.hireCutoff}`}</span>{benchmark.sampleCount > 0 && <span><i className="legend-sample" />历史</span>}</div>
     {selectedHistory && <div className="benchmark-selected"><strong>{selectedHistory.name}</strong><span>{selectedHistory.year} 年 · {selectedHistory.composite} 分 · {selectedHistory.screened ? "通过首轮" : "未通过首轮"} · {selectedHistory.hired ? "最终录取" : "未录取"}</span><button onClick={() => setSelectedHistoryId(null)} aria-label="关闭历史样本详情"><X size={12} /></button></div>}
     <div className="benchmark-stats"><div><span>历史首轮通过率</span><strong>{benchmark.screenedRate}%</strong></div><div><span>历史录取率</span><strong>{benchmark.hiredRate}%</strong></div><div><span>首轮参考分数</span><strong>{benchmark.screenCutoff ?? "无该类样本"}</strong></div><div><span>录取参考分数</span><strong>{benchmark.hireCutoff ?? "无该类样本"}</strong></div></div>
-    <p>{benchmarkCaveat} 百分位和参考线仅作辅助比较。</p>
-    <button type="button" className="benchmark-database-link" onClick={() => onOpenHistory(benchmark.sampleRoleGroup, benchmark.year, selectedHistoryId ?? undefined)}><Database size={12} />查看当前样本库</button>
+    <button type="button" className="benchmark-database-link" onClick={() => onOpenHistory(benchmark.sampleRoleGroup, benchmark.year, selectedHistoryId ?? undefined)}><Database size={12} />样本库</button>
   </section>;
 }
 
@@ -1287,7 +1279,7 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, weightCo
     <div className="comparison-side-panel-settings">{weightControl}</div>
     <ChinaCandidateMap resumes={resumes} weights={weights} selectedId={selected?.resume.id ?? selectedId} onSelectResume={onSelectResume} />
   </aside>
-  <button type="button" className={`comparison-side-panel-toggle ${sidePanelOpen ? "is-open" : ""}`} onClick={() => setSidePanelOpen((open) => !open)} aria-expanded={sidePanelOpen} aria-controls="comparison-side-panel" title={sidePanelOpen ? "收起侧栏" : "打开排序参数与地区地图"}>{sidePanelOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}<span>{sidePanelOpen ? "收起" : "地区与排序"}</span></button>
+  <button type="button" className={`comparison-side-panel-toggle ${sidePanelOpen ? "is-open" : ""}`} onClick={() => setSidePanelOpen((open) => !open)} aria-expanded={sidePanelOpen} aria-controls="comparison-side-panel" title={sidePanelOpen ? "收起侧栏" : "打开排序参数与地区地图"}><span className="comparison-side-panel-toggle-content">{sidePanelOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}<span>{sidePanelOpen ? "收起" : "地区与排序"}</span></span></button>
   </>;
 }
 
