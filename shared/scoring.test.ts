@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { matchesComparisonMapRegion, normalizeComparisonRankDraft } from "./scoring.js";
+import { comparisonMapQuadrants, matchesComparisonMapRegion, normalizeComparisonRankDraft } from "./scoring.js";
 
 test("comparison rank drafts accept supported dimensions and source filters", () => {
   const draft = normalizeComparisonRankDraft({ criterion: "expertise", direction: "desc", ratingFilter: "scored", rationale: "x".repeat(300) });
@@ -54,6 +54,22 @@ test("quality-map quadrant filters use a stable 50-point threshold on each axis"
   assert.equal(matchesComparisonMapRegion(64, 66, "low-high", 65), true);
   assert.equal(matchesComparisonMapRegion(50, 49, "high-high"), false);
   assert.equal(matchesComparisonMapRegion(25, 95, "all"), true);
+});
+
+test("quality-map quadrant labels stay centered in regions when the threshold changes", () => {
+  for (const threshold of [20, 50, 80]) {
+    const [lowHigh, highHigh, lowLow, highLow] = comparisonMapQuadrants(10, 20, 600, 300, threshold);
+    assert.equal(lowHigh.x, 10);
+    assert.equal(lowHigh.y, 20);
+    assert.ok(Math.abs(lowHigh.width - 600 * threshold / 100) < 1e-10);
+    assert.ok(Math.abs(highHigh.x - (10 + 600 * threshold / 100)) < 1e-10);
+    assert.ok(Math.abs(lowLow.y - (20 + 300 * (1 - threshold / 100))) < 1e-10);
+    assert.ok(Math.abs(highLow.x + highLow.width - 610) < 1e-10);
+    for (const quadrant of [lowHigh, highHigh, lowLow, highLow]) {
+      assert.ok(Math.abs(quadrant.centerX - (quadrant.x + quadrant.width / 2)) < 1e-10);
+      assert.ok(Math.abs(quadrant.centerY - (quadrant.y + quadrant.height / 2)) < 1e-10);
+    }
+  }
 });
 
 test("comparison rank drafts reject invented dimensions and directions", () => {

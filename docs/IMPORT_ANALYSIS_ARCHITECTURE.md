@@ -280,3 +280,4 @@ AI 资料评估由 `server/skills/knowledge-assessment.md` 约束。配置 Tavil
 - PDF 阅读器的奖项标注开关可以一次性显示或隐藏当前 PDF 的全部命中项。
 - `.env`、`.data/` 和生成的 PDF.js 静态资源不进入 Git。
 - `npm test` 验证搜索缓存的并发去重、返回结果隔离和失败重试行为。
+- `shared/scoring.test.ts` 验证不同分界值下质量图象限的坐标、尺寸和标签中心一致。

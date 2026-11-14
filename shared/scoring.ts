@@ -11,6 +11,7 @@ export type ScoreKey = (typeof scoreCriteria)[number]["key"];
 export type ComparisonRankCriterion = ScoreKey | "composite";
 export type ComparisonMapAxis = ScoreKey | "depth";
 export type ComparisonMapRegion = "all" | "high-high" | "high-low" | "low-high" | "low-low";
+export type ComparisonMapQuadrant = { key: Exclude<ComparisonMapRegion, "all">; x: number; y: number; width: number; height: number; centerX: number; centerY: number };
 export type ComparisonRatingFilter = "all" | "scored" | "demo";
 export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; mapX: ComparisonMapAxis; mapY: ComparisonMapAxis; mapRegion: ComparisonMapRegion; mapThreshold: number; rationale: string };
 export type ScoreWeights = Record<ScoreKey, number>;
@@ -49,6 +50,21 @@ export function matchesComparisonMapRegion(xScore: number, yScore: number, regio
     : region === "high-low" ? highX && !highY
     : region === "low-high" ? !highX && highY
     : !highX && !highY;
+}
+
+export function comparisonMapQuadrants(left: number, top: number, width: number, height: number, threshold: number): ComparisonMapQuadrant[] {
+  const lowWidth = width * threshold / 100;
+  const highWidth = width - lowWidth;
+  const highHeight = height * threshold / 100;
+  const lowHeight = height - highHeight;
+  const rightX = left + lowWidth;
+  const bottomY = top + lowHeight;
+  return [
+    { key: "low-high", x: left, y: top, width: lowWidth, height: lowHeight, centerX: left + lowWidth / 2, centerY: top + lowHeight / 2 },
+    { key: "high-high", x: rightX, y: top, width: highWidth, height: lowHeight, centerX: rightX + highWidth / 2, centerY: top + lowHeight / 2 },
+    { key: "low-low", x: left, y: bottomY, width: lowWidth, height: highHeight, centerX: left + lowWidth / 2, centerY: bottomY + highHeight / 2 },
+    { key: "high-low", x: rightX, y: bottomY, width: highWidth, height: highHeight, centerX: rightX + highWidth / 2, centerY: bottomY + highHeight / 2 },
+  ];
 }
 
 export function normalizeComparisonRankDraft(input: unknown, defaults: Partial<ComparisonRankDraft> = {}): ComparisonRankDraft | { error: string } {
