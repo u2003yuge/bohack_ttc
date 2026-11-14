@@ -568,22 +568,35 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, initialFilter,
   const [selectedId, setSelectedId] = useState(initialSelectedId);
   const [editingId, setEditingId] = useState("");
   const [formOpen, setFormOpen] = useState(false);
+  const [formClosing, setFormClosing] = useState(false);
+  const formOpener = useRef<HTMLButtonElement | null>(null);
   const [draft, setDraft] = useState<HistoricalDraft>(emptyHistoricalDraft());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [deleteTargetId, setDeleteTargetId] = useState("");
+  useEffect(() => {
+    if (!formClosing) return;
+    // Also finish when a quick cancel prevents the CSS transition from starting.
+    const timeout = window.setTimeout(() => { setFormOpen(false); setFormClosing(false); setEditingId(""); setError(""); }, 260);
+    return () => window.clearTimeout(timeout);
+  }, [formClosing]);
   const years = [...new Set([...historicalYears, ...candidates.map((candidate) => candidate.year)])].sort((a, b) => a - b);
   const activeYear = yearFilter ?? candidates.find((candidate) => candidate.id === initialSelectedId)?.year ?? (candidates.length ? Math.max(...candidates.map((candidate) => candidate.year)) : years[0]);
   const filtered = candidates.filter((candidate) => candidate.year === activeYear).sort((a, b) => (b.composite ?? -1) - (a.composite ?? -1) || (a.fileName && b.fileName ? a.fileName.localeCompare(b.fileName, "zh-CN", { numeric: true }) : a.name.localeCompare(b.name, "zh-CN")));
 
   function switchYear(year: number) {
     if (year === activeYear) return;
-    setYearFilter(year); setSelectedId(""); setDeleteTargetId(""); setFormOpen(false); setEditingId(""); setError("");
+    setYearFilter(year); setSelectedId(""); setDeleteTargetId(""); setFormOpen(false); setFormClosing(false); setEditingId(""); setError("");
   }
-  function beginAdd() { setEditingId(""); setDraft(emptyHistoricalDraft(activeYear)); setError(""); setDeleteTargetId(""); setFormOpen(true); }
-  function beginEdit(candidate: HistoricalCandidate) {
+  function beginAdd(opener: HTMLButtonElement) { formOpener.current = opener; setEditingId(""); setDraft(emptyHistoricalDraft(activeYear)); setError(""); setDeleteTargetId(""); setFormClosing(false); setFormOpen(true); }
+  function beginEdit(candidate: HistoricalCandidate, opener: HTMLButtonElement) {
     if (candidate.source !== "local") return;
-    setEditingId(candidate.id); setDraft({ role: candidate.role, year: candidate.year, composite: candidate.composite, screened: candidate.screened, hired: candidate.hired }); setError(""); setDeleteTargetId(""); setFormOpen(true);
+    formOpener.current = opener;
+    setEditingId(candidate.id); setDraft({ role: candidate.role, year: candidate.year, composite: candidate.composite, screened: candidate.screened, hired: candidate.hired }); setError(""); setDeleteTargetId(""); setFormClosing(false); setFormOpen(true);
+  }
+  function closeForm() {
+    setFormClosing(true);
+    formOpener.current?.focus({ preventScroll: true });
   }
   async function save() {
     setBusy(true); setError("");
@@ -618,8 +631,11 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, initialFilter,
           <label>综合分<input type="number" min="0" max="100" step="0.1" value={draft.composite ?? ""} onChange={(event) => setDraft({ ...draft, composite: event.target.value === "" ? null : Number(event.target.value) })} placeholder="未评分" disabled={busy} /></label>
           <label>招聘结果<select value={historicalResult(draft)} onChange={(event) => { const result = event.target.value as HistoricalResult; setDraft({ ...draft, screened: result !== "rejected", hired: result === "hired" }); }} disabled={busy}>{(Object.keys(historicalResultLabels) as HistoricalResult[]).map((result) => <option key={result} value={result}>{historicalResultLabels[result]}</option>)}</select></label>
           {error && <div className="inline-error" role="alert">{error}</div>}
-          <div className="history-form-actions"><button type="button" disabled={busy} onClick={() => { setFormOpen(false); setEditingId(""); setError(""); }}>取消</button><button type="submit" disabled={busy || !draft.role.trim()}>{busy ? "保存中" : editingId ? "保存" : "保存样本"}</button></div>
+          <div className="history-form-actions"><button type="button" disabled={busy} onClick={closeForm}>取消</button><button type="submit" disabled={busy || !draft.role.trim()}>{busy ? "保存中" : editingId ? "保存" : "保存样本"}</button></div>
         </form>;
+  const formDisclosure = <div id="history-sample-form" className={`history-form-reveal ${formClosing ? "" : "is-open"}`} aria-hidden={formClosing || undefined} ref={(node) => { if (node) node.inert = formClosing; }} onTransitionEnd={(event) => {
+    if (event.target === event.currentTarget && event.propertyName === "grid-template-rows" && formClosing) { setFormOpen(false); setFormClosing(false); setEditingId(""); setError(""); }
+  }}><div className="history-form-clip">{sampleForm}</div></div>;
 
   return <main className="history-database-main history-list-page">
     <div className="history-database-shell">
@@ -635,9 +651,9 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, initialFilter,
       <section id="history-year-panel" role="tabpanel" aria-labelledby={`history-year-${activeYear}`} className="history-samples-panel">
         <div className="history-list-toolbar">
           <span className="history-list-count">{filtered.length} 份样本</span>
-          <button type="button" className="history-add-button" onClick={beginAdd} disabled={busy}><Plus size={16} />新增样本</button>
+          <button type="button" className="history-add-button" onClick={(event) => beginAdd(event.currentTarget)} disabled={busy} aria-expanded={formOpen && !editingId && !formClosing} aria-controls={formOpen && !editingId ? "history-sample-form" : undefined}><Plus size={16} />新增样本</button>
         </div>
-        {formOpen && !editingId && sampleForm}
+        {formOpen && !editingId && formDisclosure}
         {error && !formOpen && <div className="inline-error" role="alert">{error}</div>}
         <div className="comparison-table-wrap">
           <table className="comparison-table history-samples-table" aria-label={`${activeYear} 年历史样本`}>
@@ -651,10 +667,10 @@ function HistoricalDatabaseView({ candidates, onCandidatesChange, initialFilter,
                 <td className="history-composite">{candidate.composite === null ? "未评分" : <strong>{candidate.composite.toFixed(1)}</strong>}</td>
                 <td><span className={`history-result-badge ${result}`}>{historicalResultLabels[result]}</span></td>
                 <td>{candidate.source === "local" ? <div className="history-record-actions">
-                  <button type="button" onClick={() => beginEdit(candidate)} disabled={busy} aria-label={`编辑${candidate.name}`}><Pencil size={14} />编辑</button>
-                  {deleteTargetId === candidate.id ? <><button type="button" onClick={() => void remove(candidate)} disabled={busy} aria-label={`确认删除${candidate.name}`}>确认删除</button><button type="button" onClick={() => setDeleteTargetId("")} disabled={busy}>取消</button></> : <button type="button" onClick={() => setDeleteTargetId(candidate.id)} disabled={busy} aria-label={`删除${candidate.name}`}>删除</button>}
+                  <button type="button" onClick={(event) => beginEdit(candidate, event.currentTarget)} disabled={busy} aria-label={`编辑${candidate.name}`} aria-expanded={formOpen && editingId === candidate.id && !formClosing} aria-controls={formOpen && editingId === candidate.id ? "history-sample-form" : undefined}><Pencil size={14} />编辑</button>
+                  {deleteTargetId === candidate.id ? <><button type="button" className="history-delete-confirm" onClick={() => void remove(candidate)} disabled={busy} aria-label={`确认删除${candidate.name}`}>确认删除</button><button type="button" onClick={() => setDeleteTargetId("")} disabled={busy}>取消</button></> : <button type="button" className="history-delete" onClick={() => setDeleteTargetId(candidate.id)} disabled={busy} aria-label={`删除${candidate.name}`}>删除</button>}
                 </div> : <span className="history-readonly">只读</span>}</td>
-              </tr>{formOpen && editingId === candidate.id && <tr className="history-inline-editor"><td colSpan={6}>{sampleForm}</td></tr>}</Fragment>;
+              </tr>{formOpen && editingId === candidate.id && <tr className="history-inline-editor"><td colSpan={6}>{formDisclosure}</td></tr>}</Fragment>;
             })}</tbody>
           </table>
           {!filtered.length && <div className="history-list-empty">{activeYear} 年暂无历史样本</div>}

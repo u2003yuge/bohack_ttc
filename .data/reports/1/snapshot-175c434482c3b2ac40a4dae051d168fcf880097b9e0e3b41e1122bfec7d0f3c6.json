@@ -1,0 +1,2084 @@
+{
+  "format": "bohack-analysis-report",
+  "version": 1,
+  "id": "snapshot-175c434482c3b2ac40a4dae051d168fcf880097b9e0e3b41e1122bfec7d0f3c6",
+  "createdAt": "2026-11-14T18:52:01.873Z",
+  "model": "gpt-6-astra",
+  "resumeSha256": "e765ddba4e56cd46e480608ca2a77a48421d1f311cae26945bd7825e6da659a6",
+  "kind": "initial",
+  "resumeId": "1",
+  "resumeName": "桑多涅",
+  "fileName": "1.pdf",
+  "answer": "### 候选人信息\n\n| 项目 | 提取结果 |\n| --- | --- |\n| 姓名 | 桑多涅 |\n| 身份 | AI应用研发工程师 |\n| 关键词 | 多轮对话、知识检索、智能客服、异常处理、模型应用评测 |\n| 岗位 | AI应用研发工程师 / 智能客服与对话应用 |\n| 地点 | 深圳 |\n| 教育 | 杭州电子科技大学，人工智能本科，2022.09-2026.06 |\n| 技能 | 多轮对话接口、会话上下文管理、知识检索与引用返回、输入校验、敏感信息过滤、异常兜底、模型调用、文档解析、回归测试、运行日志与指标分析 |\n\n具备智能客服、知识检索和多轮对话应用研发经历，关注异常处理、评测指标与业务流程稳定性。\n\n### 简历材料提取\n\n- **论文 / 研究｜Deep Residual Learning for Image Recognition：** Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。\n- **项目｜智能客服与知识检索助手：知识接入与检索：** 1. 智能客服与知识检索助手：知识接入与检索  百 度 飞桨   · 研发实 习生 ｜2026.03 - 2026.08  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 知识接入与检索整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding\n- **项目｜智能客服与知识检索助手：多轮交互与异常处理：** 2. 智能客服与知识检索助手：多轮交互与异常处理  课程与 团队项目   ·   核心开 发 成员 ｜2025.09 - 2026.02  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding\n- **奖项 / 竞赛｜中国大学生计算机设计大赛：** 中国大学生计算机设计大赛  2025｜ 省级二等奖 ｜ 队长\n- **奖项 / 竞赛｜中国机器人及人工智能大赛：** 中国机器人及人工智能大赛  2024｜ 全国三等奖 ｜ 团队成员\n\n### 五维能力评分\n\n| 能力维度 | 规则得分 |\n| --- | ---: |\n| 专业执行 | 2.72375 |\n| 问题解决 | 3.00375 |\n| 责任与交付 | 2.496563 |\n| 协作与组织 | 1.797813 |\n| 学习与研究 | 7.433438 |\n\n得分按已提取材料和个人行动证据计算。\n\n### 项目经历人话拆解\n\n#### 接入文档并优化知识检索流程\n\n- **要解决什么：** 目标是完成知识接入与检索，并关注召回质量、回答可用性和接口耗时；具体业务目标未完全说明，建议核实。\n- **具体做了什么：** 接入文档解析、模型调用和业务接口；补充空输入、长文本及服务超时的处理分支；整理评测样例和运行日志，并根据召回质量、回答可用性和接口耗时跟踪问题。\n- **带来什么结果：** 简历未说明明确的项目结果。\n- **简历原文：** 围绕 知识接入与检索整理 评测样 例\n\n#### 支持多轮对话并处理异常情况\n\n- **要解决什么：** 目标是支持多轮交互和异常处理，并关注召回质量、回答可用性和接口耗时；具体业务目标未完全说明，建议核实。\n- **具体做了什么：** 接入文档解析、模型调用和业务接口；补充空输入、长文本及服务超时的处理分支；整理评测样例和运行日志，并根据召回质量、回答可用性和接口耗时跟踪问题。\n- **带来什么结果：** 简历未说明明确的项目结果。\n- **简历原文：** 围绕 多轮 交互 与异常处理整理 评测样 例\n\n### 综合分析\n\n## 结论\n\n**与 AI 应用开发方向相关，但现有证据不足以支持“中高级、可独立负责系统设计与完整交付”的岗位定位。** 可安排技术初筛，重点核实实际编码、架构决策和上线责任；若“3 年以上研发经验”为硬性门槛，目前材料未体现满足条件。\n\n- **AI 工程能力：**有模型调用、文档解析、知识检索、多轮会话、异常兜底和回归评测的实践描述，覆盖应用开发中的若干关键环节；缺少语言、框架、检索链路和部署细节。\n- **项目交付能力：**体现模块开发和问题跟踪，但没有上线验收、生产运行、发布回滚或独立负责完整交付的明确证据。\n- **技术深度与系统设计：**能看到对超时、长文本、低置信度等问题的关注，尚无法判断架构设计、复杂问题定位及性能优化能力。\n- **业务落地能力：**关注解决率、转人工比例和时延，具备业务指标意识；未给出指标数值、使用规模或实际收益。\n\n## 证据匹配\n\n“未体现”表示简历证据不足，不等同于候选人不具备该能力。\n\n| 岗位要求 | 判断 | 简历依据及局限 |\n|---|---|---|\n| 大模型应用、RAG、Agent 工作流与文档智能系统设计开发 | 部分支持 | 有模型调用、文档解析、知识检索和引用返回；未说明 RAG 完整架构、Agent 编排或系统设计责任。 |\n| 模型调用、工具调用、评测、监控与数据闭环 | 部分支持 | 有模型及业务接口接入、评测样例、运行日志和指标跟踪；工具调用机制、线上告警及数据回流闭环未体现。 |\n| 与产品、算法、前端和业务团队协作落地 | 部分支持 | 有团队项目和业务接口经历；跨职能协作对象、需求取舍及验收过程不明确。 |\n| 3 年以上软件或 AI 应用研发经验 | 未体现 | 已列实习及课程团队项目经历不足以证明达到年限要求。 |\n| 熟悉 Python 或 TypeScript | 未体现 | 未明确编程语言、编码职责或代码证据。 |\n| 熟悉 LLM API、Prompt、RAG、向量数据库或 Agent 框架 | 部分支持 | 模型调用、知识检索和上下文维护与岗位相关；API、Prompt 策略、向量数据库及框架细节缺失。 |\n| 具备完整项目交付经验 | 未体现 | 没有从需求、设计、开发到部署、验收和维护的完整责任链证据。 |\n| 招聘、文档解析、知识库或企业效率工具经验 | 支持 | 明确描述文档解析、知识接入与检索；实际使用范围和生产成熟度仍待核实。 |\n| 模型评测、数据治理、搜索增强或多 Agent 编排经验 | 部分支持 | 有脱敏问题集、回归评测、召回质量跟踪及知识检索；评测方法深度、数据治理体系和多 Agent 编排未体现。 |\n| 清晰量化成果、开源项目或论文竞赛经历 | 部分支持 | 简历列出竞赛奖项及论文研读复现；没有量化改善结果，仓库链接也不能证明个人开源贡献。论文条目属于研读复现描述，不能视为论文发表。 |\n\n## 待核实信息\n\n1. **中高级岗位的核心证据缺口：**独立架构设计、技术选型、容量规划、生产稳定性及完整交付责任均不清楚。\n2. **经历区分度不足：**两段项目使用高度相似的职责表述，并指向同一公开仓库；需确认是否为同一系统延续，以及各阶段独立完成的工作。\n3. **成果缺少可检验口径：**提及解决率、转人工比例、召回质量和时延，但没有基线、样本规模、目标值及改进结果。\n4. **贡献归属不明确：**公开项目背景不能建立候选人的个人贡献，需通过代码、设计文档或具体改动说明核实。竞赛奖项也需区分团队成绩与本人工作。\n5. **岗位安排尚不完整：**全职到岗时间及工作安排未明确。\n\n以上仅依据简历及已提供的证据摘要，未进行联网核验。\n\n## 建议追问\n\n1. **工程实现：**主要使用什么语言和框架？选一段本人编写的代码，解释模型调用、会话状态、错误处理和测试方式。\n2. **RAG 与系统设计：**画出实际系统的数据流，说明解析、切分、索引、检索、重排和引用生成中做了哪些环节；每项技术选择受什么约束？\n3. **可靠性与问题解决：**举一个实际发生的超时、错误检索或多轮状态异常，说明如何复现、定位根因、修复并验证，是否处理重试、幂等和降级。\n4. **评测与业务效果：**回归集如何构建、标注和划分？解决率与召回质量如何计算？提供一次改动前后的数据及样本量。\n5. **交付责任：**最近一次交付由谁部署、验收和维护？本人负责哪些里程碑，出现过什么阻塞，如何推进解决？\n6. **个人贡献与协作：**两段经历分别新增了什么？提供可说明贡献的提交、设计记录或任务记录，并讲清与其他成员的接口和分工。\n\n## 评分依据与覆盖情况\n\n沿用已提供的规则结果，不重新评分，也不生成岗位匹配总分。原结果均为暂定，五维各有材料缺失；其中学习研究维度有明确的论文研读复现引文，其余多项计分项未附直接引文，解释范围应保持审慎。\n\n**规则结果不替代岗位硬条件判断。** 已有材料分不能直接证明研发年限、语言熟练度或完整交付能力；个人贡献尚待核实也不应导致既有规则结果被归零。本次判断主要覆盖应用开发环节与问题处理意识，对中高级系统设计及生产交付能力仍缺乏直接证据。",
+  "analyzedAt": "2026-11-14T18:51:11.082Z",
+  "assessment": {
+    "id": "01885ef8-fe76-4791-958e-0c43a75ecd61",
+    "version": "material-derived-v1.4.0",
+    "evaluatedAt": "2026-11-14T18:51:11.082Z",
+    "inputHash": "e47ee1f2d2f061a53910d3529ad85b40775a3cb3ecd74219848a6a73aa96691f",
+    "extraction": "model",
+    "calibration": "v1.4 赛事质量与表现分离、行动系数设最低归因值，待双人标注校准",
+    "rho": 0.55,
+    "rhoByType": {
+      "award": 0.45,
+      "research": 0.6,
+      "project": 0.55,
+      "work": 0.7,
+      "patent": 0.55,
+      "opensource": 0.6,
+      "certificate": 0.45
+    },
+    "materials": [
+      {
+        "material_id": "m-c22fe534c43a03dc",
+        "material_type": "research",
+        "title": "Deep Residual Learning for Image Recognition",
+        "year": 2015,
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [
+          "arxiv:1512.03385"
+        ],
+        "resume_claim": "Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": null,
+          "input_context": {
+            "arxiv_id": "arXiv:1512.03385"
+          }
+        },
+        "factor_observations": {
+          "question": {
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束",
+              "source": "简历原文"
+            }
+          },
+          "status": {
+            "value": "preprint",
+            "evidence": {
+              "origin": "resume",
+              "quote": "Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-c22fe534c43a03dc"
+        ],
+        "material_score": 14,
+        "event_score": null,
+        "performance_ratio": null,
+        "performance_breakdown": null,
+        "score_breakdown": [
+          {
+            "key": "question",
+            "label": "研究问题",
+            "weight": 0.15,
+            "value": "complex",
+            "evidence": {
+              "origin": "resume",
+              "quote": "Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束",
+              "source": "简历原文"
+            },
+            "points": 80,
+            "contribution": 12,
+            "reason": "明确的系统或方法复杂度"
+          },
+          {
+            "key": "rigor",
+            "label": "方法严谨度",
+            "weight": 0.25,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "experiments",
+            "label": "实验质量",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "reproducibility",
+            "label": "可复现性",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "status",
+            "label": "成果状态",
+            "weight": 0.1,
+            "value": "preprint",
+            "evidence": {
+              "origin": "resume",
+              "quote": "Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束",
+              "source": "简历原文"
+            },
+            "points": 20,
+            "contribution": 2,
+            "reason": "预印本"
+          },
+          {
+            "key": "content",
+            "label": "研究内容与验证结果",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.25,
+        "missing_factors": [
+          "方法严谨度",
+          "实验质量",
+          "可复现性",
+          "研究内容与验证结果"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": 0.98
+          },
+          "problem_solving": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.9,
+            "derived_contribution": 1.26
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.6,
+            "derived_contribution": 0.84
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.35,
+            "derived_contribution": 0.49
+          },
+          "learning_research": {
+            "mapping_coefficient": 0.45,
+            "rule": "concrete",
+            "mapping_reason": "有对象和动作的具体个人行动",
+            "supporting_evidence": [
+              {
+                "origin": "resume",
+                "quote": "2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。",
+                "source": "简历原文"
+              }
+            ],
+            "type_coefficient": 1,
+            "derived_contribution": 6.3
+          }
+        }
+      },
+      {
+        "material_id": "m-32aae5d2fa126c88",
+        "material_type": "project",
+        "title": "智能客服与知识检索助手：知识接入与检索",
+        "year": "2026.03 - 2026.08",
+        "organization": "百 度 飞桨",
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "1. 智能客服与知识检索助手：知识接入与检索  百 度 飞桨   · 研发实 习生 ｜2026.03 - 2026.08  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 知识接入与检索整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。",
+            "source": "简历原文"
+          },
+          {
+            "origin": "resume",
+            "quote": "围绕 知识接入与检索整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "1. 智能客服与知识检索助手：知识接入与检索  百 度 飞桨   · 研发实 习生 ｜2026.03 - 2026.08  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 知识接入与检索整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "研发实 习生",
+          "input_context": {}
+        },
+        "factor_observations": {
+          "complexity": {
+            "value": "bounded",
+            "evidence": {
+              "origin": "resume",
+              "quote": "1. 智能客服与知识检索助手：知识接入与检索  百 度 飞桨   · 研发实 习生 ｜2026.03 - 2026.08  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-32aae5d2fa126c88"
+        ],
+        "material_score": 11.25,
+        "event_score": null,
+        "performance_ratio": null,
+        "performance_breakdown": null,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.25,
+            "value": "bounded",
+            "evidence": {
+              "origin": "resume",
+              "quote": "1. 智能客服与知识检索助手：知识接入与检索  百 度 飞桨   · 研发实 习生 ｜2026.03 - 2026.08  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支",
+              "source": "简历原文"
+            },
+            "points": 45,
+            "contribution": 11.25,
+            "reason": "明确的模块或任务"
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.25,
+        "missing_factors": [
+          "技术 / 业务约束",
+          "交付阶段",
+          "部署 / 采用",
+          "结果质量"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": 1.125
+          },
+          "problem_solving": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": 1.125
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.95,
+            "derived_contribution": 1.06875
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.75,
+            "derived_contribution": 0.84375
+          },
+          "learning_research": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": 0.73125
+          }
+        }
+      },
+      {
+        "material_id": "m-8615084c46b8d25e",
+        "material_type": "project",
+        "title": "智能客服与知识检索助手：多轮交互与异常处理",
+        "year": "2025.09 - 2026.02",
+        "organization": null,
+        "stage": null,
+        "result": null,
+        "identifiers": [],
+        "resume_claim": "2. 智能客服与知识检索助手：多轮交互与异常处理  课程与 团队项目   ·   核心开 发 成员 ｜2025.09 - 2026.02  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding",
+        "personal_action_evidence": [
+          {
+            "origin": "resume",
+            "quote": "接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。",
+            "source": "简历原文"
+          },
+          {
+            "origin": "resume",
+            "quote": "围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。",
+            "source": "简历原文"
+          }
+        ],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "2. 智能客服与知识检索助手：多轮交互与异常处理  课程与 团队项目   ·   核心开 发 成员 ｜2025.09 - 2026.02  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "核心开 发 成员",
+          "input_context": {}
+        },
+        "factor_observations": {
+          "complexity": {
+            "value": "bounded",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2. 智能客服与知识检索助手：多轮交互与异常处理  课程与 团队项目   ·   核心开 发 成员 ｜2025.09 - 2026.02  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-8615084c46b8d25e"
+        ],
+        "material_score": 11.25,
+        "event_score": null,
+        "performance_ratio": null,
+        "performance_breakdown": null,
+        "score_breakdown": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.25,
+            "value": "bounded",
+            "evidence": {
+              "origin": "resume",
+              "quote": "2. 智能客服与知识检索助手：多轮交互与异常处理  课程与 团队项目   ·   核心开 发 成员 ｜2025.09 - 2026.02  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding",
+              "source": "简历原文"
+            },
+            "points": 45,
+            "contribution": 11.25,
+            "reason": "明确的模块或任务"
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.2,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0.25,
+        "missing_factors": [
+          "技术 / 业务约束",
+          "交付阶段",
+          "部署 / 采用",
+          "结果质量"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": 1.125
+          },
+          "problem_solving": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 1,
+            "derived_contribution": 1.125
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.95,
+            "derived_contribution": 1.06875
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.75,
+            "derived_contribution": 0.84375
+          },
+          "learning_research": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": 0.73125
+          }
+        }
+      },
+      {
+        "material_id": "m-7057949730a30fc9",
+        "material_type": "award",
+        "title": "中国大学生计算机设计大赛",
+        "year": 2025,
+        "organization": null,
+        "stage": "省级",
+        "result": "省级二等奖",
+        "identifiers": [],
+        "resume_claim": "中国大学生计算机设计大赛  2025｜ 省级二等奖 ｜ 队长",
+        "personal_action_evidence": [],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "中国大学生计算机设计大赛  2025｜ 省级二等奖 ｜ 队长",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "队长",
+          "input_context": {
+            "stage": "省级"
+          }
+        },
+        "factor_observations": {
+          "tier": {
+            "value": "second",
+            "evidence": {
+              "origin": "resume",
+              "quote": "省级二等奖",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-7057949730a30fc9"
+        ],
+        "material_score": null,
+        "event_score": null,
+        "performance_ratio": null,
+        "performance_breakdown": {
+          "award_rate": null,
+          "selectivity_multiplier": null,
+          "tier_multiplier": 0.65,
+          "reason": "官方目标奖项比例或实际获奖层级不足，无法形成候选人表现比例。"
+        },
+        "score_breakdown": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.5,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例（表现比例）",
+            "weight": 0,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "该因素进入候选人表现比例，不直接进入赛事质量分。"
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级（表现比例）",
+            "weight": 0,
+            "value": "second",
+            "evidence": {
+              "origin": "resume",
+              "quote": "省级二等奖",
+              "source": "简历原文"
+            },
+            "points": 50,
+            "contribution": null,
+            "reason": "该因素进入候选人表现比例，不直接进入赛事质量分。"
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.5,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "有效参赛规模",
+          "官方目标奖项比例（表现比例）",
+          "赛制与评审规则"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.45,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.35,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.55,
+            "derived_contribution": null
+          }
+        }
+      },
+      {
+        "material_id": "m-5b17cab0578e5c9a",
+        "material_type": "award",
+        "title": "中国机器人及人工智能大赛",
+        "year": 2024,
+        "organization": null,
+        "stage": "全国",
+        "result": "全国三等奖",
+        "identifiers": [],
+        "resume_claim": "中国机器人及人工智能大赛  2024｜ 全国三等奖 ｜ 团队成员",
+        "personal_action_evidence": [],
+        "sources": [
+          {
+            "origin": "resume",
+            "quote": "中国机器人及人工智能大赛  2024｜ 全国三等奖 ｜ 团队成员",
+            "source": "简历原文"
+          }
+        ],
+        "external_facts": {
+          "input_role": "团队成员",
+          "input_context": {
+            "stage": "全国"
+          }
+        },
+        "factor_observations": {
+          "tier": {
+            "value": "third",
+            "evidence": {
+              "origin": "resume",
+              "quote": "全国三等奖",
+              "source": "简历原文"
+            }
+          }
+        },
+        "notes": [],
+        "evidence_states": [
+          "简历自述"
+        ],
+        "merged_from": [
+          "m-5b17cab0578e5c9a"
+        ],
+        "material_score": null,
+        "event_score": null,
+        "performance_ratio": null,
+        "performance_breakdown": {
+          "award_rate": null,
+          "selectivity_multiplier": null,
+          "tier_multiplier": 0.45,
+          "reason": "官方目标奖项比例或实际获奖层级不足，无法形成候选人表现比例。"
+        },
+        "score_breakdown": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.5,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例（表现比例）",
+            "weight": 0,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "该因素进入候选人表现比例，不直接进入赛事质量分。"
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级（表现比例）",
+            "weight": 0,
+            "value": "third",
+            "evidence": {
+              "origin": "resume",
+              "quote": "全国三等奖",
+              "source": "简历原文"
+            },
+            "points": 30,
+            "contribution": null,
+            "reason": "该因素进入候选人表现比例，不直接进入赛事质量分。"
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.5,
+            "value": null,
+            "evidence": null,
+            "points": null,
+            "contribution": null,
+            "reason": "没有符合规则的事实依据，保持 NA。"
+          }
+        ],
+        "score_coverage": 0,
+        "missing_factors": [
+          "有效参赛规模",
+          "官方目标奖项比例（表现比例）",
+          "赛制与评审规则"
+        ],
+        "provisional": true,
+        "dimension_mapping": {
+          "professional_execution": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.65,
+            "derived_contribution": null
+          },
+          "problem_solving": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.7,
+            "derived_contribution": null
+          },
+          "ownership_delivery": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.45,
+            "derived_contribution": null
+          },
+          "collaboration_organization": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.35,
+            "derived_contribution": null
+          },
+          "learning_research": {
+            "mapping_coefficient": 0.1,
+            "rule": null,
+            "mapping_reason": "未找到直接行动证据，使用最低归因系数 0.1，结果标记为暂定。",
+            "supporting_evidence": [],
+            "type_coefficient": 0.55,
+            "derived_contribution": null
+          }
+        }
+      }
+    ],
+    "abilities": {
+      "professional_execution": {
+        "score": 2.72375,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-c22fe534c43a03dc",
+            "title": "Deep Residual Learning for Image Recognition",
+            "material_type": "research",
+            "material_score": 14,
+            "type_coefficient": 0.7,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.98,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 0.98,
+            "evidence": []
+          },
+          {
+            "material_id": "m-32aae5d2fa126c88",
+            "title": "智能客服与知识检索助手：知识接入与检索",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.125,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 1.125,
+            "evidence": []
+          },
+          {
+            "material_id": "m-8615084c46b8d25e",
+            "title": "智能客服与知识检索助手：多轮交互与异常处理",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.125,
+            "rank": 2,
+            "decay": 0.55,
+            "contribution": 0.61875,
+            "evidence": []
+          }
+        ],
+        "missing_materials": 5
+      },
+      "problem_solving": {
+        "score": 3.00375,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-c22fe534c43a03dc",
+            "title": "Deep Residual Learning for Image Recognition",
+            "material_type": "research",
+            "material_score": 14,
+            "type_coefficient": 0.9,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.26,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 1.26,
+            "evidence": []
+          },
+          {
+            "material_id": "m-32aae5d2fa126c88",
+            "title": "智能客服与知识检索助手：知识接入与检索",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.125,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 1.125,
+            "evidence": []
+          },
+          {
+            "material_id": "m-8615084c46b8d25e",
+            "title": "智能客服与知识检索助手：多轮交互与异常处理",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.125,
+            "rank": 2,
+            "decay": 0.55,
+            "contribution": 0.61875,
+            "evidence": []
+          }
+        ],
+        "missing_materials": 5
+      },
+      "ownership_delivery": {
+        "score": 2.496563,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-c22fe534c43a03dc",
+            "title": "Deep Residual Learning for Image Recognition",
+            "material_type": "research",
+            "material_score": 14,
+            "type_coefficient": 0.6,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.84,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 0.84,
+            "evidence": []
+          },
+          {
+            "material_id": "m-32aae5d2fa126c88",
+            "title": "智能客服与知识检索助手：知识接入与检索",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 0.95,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.06875,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 1.06875,
+            "evidence": []
+          },
+          {
+            "material_id": "m-8615084c46b8d25e",
+            "title": "智能客服与知识检索助手：多轮交互与异常处理",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 0.95,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 1.06875,
+            "rank": 2,
+            "decay": 0.55,
+            "contribution": 0.587813,
+            "evidence": []
+          }
+        ],
+        "missing_materials": 5
+      },
+      "collaboration_organization": {
+        "score": 1.797813,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-c22fe534c43a03dc",
+            "title": "Deep Residual Learning for Image Recognition",
+            "material_type": "research",
+            "material_score": 14,
+            "type_coefficient": 0.35,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.49,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 0.49,
+            "evidence": []
+          },
+          {
+            "material_id": "m-32aae5d2fa126c88",
+            "title": "智能客服与知识检索助手：知识接入与检索",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 0.75,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.84375,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 0.84375,
+            "evidence": []
+          },
+          {
+            "material_id": "m-8615084c46b8d25e",
+            "title": "智能客服与知识检索助手：多轮交互与异常处理",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 0.75,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.84375,
+            "rank": 2,
+            "decay": 0.55,
+            "contribution": 0.464063,
+            "evidence": []
+          }
+        ],
+        "missing_materials": 5
+      },
+      "learning_research": {
+        "score": 7.433438,
+        "provisional": true,
+        "terms": [
+          {
+            "material_id": "m-c22fe534c43a03dc",
+            "title": "Deep Residual Learning for Image Recognition",
+            "material_type": "research",
+            "material_score": 14,
+            "type_coefficient": 1,
+            "mapping_coefficient": 0.45,
+            "derived_contribution": 6.3,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 6.3,
+            "evidence": [
+              {
+                "origin": "resume",
+                "quote": "2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。",
+                "source": "简历原文"
+              }
+            ]
+          },
+          {
+            "material_id": "m-32aae5d2fa126c88",
+            "title": "智能客服与知识检索助手：知识接入与检索",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 0.65,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.73125,
+            "rank": 1,
+            "decay": 1,
+            "contribution": 0.73125,
+            "evidence": []
+          },
+          {
+            "material_id": "m-8615084c46b8d25e",
+            "title": "智能客服与知识检索助手：多轮交互与异常处理",
+            "material_type": "project",
+            "material_score": 11.25,
+            "type_coefficient": 0.65,
+            "mapping_coefficient": 0.1,
+            "derived_contribution": 0.73125,
+            "rank": 2,
+            "decay": 0.55,
+            "contribution": 0.402188,
+            "evidence": []
+          }
+        ],
+        "missing_materials": 4
+      }
+    },
+    "type_summaries": [
+      {
+        "type": "award",
+        "count": 2,
+        "score": null
+      },
+      {
+        "type": "research",
+        "count": 1,
+        "score": 14
+      },
+      {
+        "type": "project",
+        "count": 2,
+        "score": 17.4375
+      },
+      {
+        "type": "work",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "patent",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "opensource",
+        "count": 0,
+        "score": null
+      },
+      {
+        "type": "certificate",
+        "count": 0,
+        "score": null
+      }
+    ],
+    "notes": [],
+    "inputSnapshot": "桑多涅  AI应用研发工程师 / 智能客服与对话应用  年龄：22岁 所在地：深圳 学历：本科（已毕业）  教育背景  杭州电子科技大学   · 本科  人工智能 2022.09 - 2026.06  相关课程：自然语言处理、数据库、计算机网络、软件工程、信息检索  专业技能  • 实现多轮对话接口，维护会话上下文、用户状态和必要的业务字段。  • 接入知识检索和引用返回，针对低置信度问题设计转人工或澄清路径。  • 完善输入校验、敏感信息过滤和异常兜底，避免错误调用扩散到业务流程。  • 使用脱敏问题集回归常见意图，记录解决率、转人工比例和接口时延。  论文  1. Deep Residual Learning for Image Recognition  Kaiming He et al. · arXiv:1512.03385 · 2015  2026｜研读与复现：结合大模型应用场景整理方法要点，关注数据准备、模型行为 评估及端 到 端系统约束 。  项目经历  1. 智能客服与知识检索助手：知识接入与检索  百 度 飞桨   · 研发实 习生 ｜2026.03 - 2026.08  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 知识接入与检索整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding  2. 智能客服与知识检索助手：多轮交互与异常处理  课程与 团队项目   ·   核心开 发 成员 ｜2025.09 - 2026.02  • 接入文 档 解 析 、模型调用和业务接口， 补充空 输入、 长 文本 及 服务 超 时的处理 分支 。  •   围绕 多轮 交互 与异常处理整理 评测样 例与 运 行 日志 ， 按召 回 质量 、回 答可 用 性 和接口 耗 时 跟踪 问题。  公开项目 ：github.com/FlagOpen/FlagEmbedding  竞赛  中国大学生计算机设计大赛  2025｜ 省级二等奖 ｜ 队长  中国机器人及人工智能大赛  2024｜ 全国三等奖 ｜ 团队成员",
+    "researchSnapshot": null,
+    "rulesSnapshot": {
+      "factorDefinitions": {
+        "award": [
+          {
+            "key": "participants",
+            "label": "有效参赛规模",
+            "weight": 0.5,
+            "kind": "size",
+            "choices": []
+          },
+          {
+            "key": "award_rate",
+            "label": "官方目标奖项比例（表现比例）",
+            "weight": 0,
+            "kind": "selectivity",
+            "choices": []
+          },
+          {
+            "key": "tier",
+            "label": "本赛事奖项层级（表现比例）",
+            "weight": 0,
+            "choices": [
+              {
+                "key": "top",
+                "label": "本赛事最高奖",
+                "points": 100,
+                "pattern": "特等奖|冠军|金奖|金牌|grand prize|champion|gold"
+              },
+              {
+                "key": "first",
+                "label": "一等奖 / 一等层级",
+                "points": 75,
+                "pattern": "一等奖|first prize"
+              },
+              {
+                "key": "second",
+                "label": "二等奖 / 银奖",
+                "points": 50,
+                "pattern": "二等奖|银奖|银牌|second prize|silver"
+              },
+              {
+                "key": "third",
+                "label": "三等奖 / 铜奖",
+                "points": 30,
+                "pattern": "三等奖|铜奖|铜牌|third prize|bronze"
+              },
+              {
+                "key": "finalist",
+                "label": "有明确结果的入围或优胜",
+                "points": 15,
+                "pattern": "入围|优胜|finalist|honorable mention"
+              }
+            ]
+          },
+          {
+            "key": "judging",
+            "label": "赛制与评审规则",
+            "weight": 0.5,
+            "choices": [
+              {
+                "key": "reproducible",
+                "label": "可复核测试 / 盲评和答辩",
+                "points": 100,
+                "pattern": "隐藏测试|测试用例|盲评|匿名评审|复现|hidden test|test cases|blind review"
+              },
+              {
+                "key": "rubric",
+                "label": "明确评分规则和专家评审",
+                "points": 75,
+                "pattern": "评分标准|评审标准|专家评审|scoring rubric|judging criteria"
+              },
+              {
+                "key": "specified",
+                "label": "有明确赛制或评审方式",
+                "points": 45,
+                "pattern": "限时|答辩|评审|比赛规则|timed|judged|defense"
+              }
+            ]
+          }
+        ],
+        "research": [
+          {
+            "key": "question",
+            "label": "研究问题",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 120,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 80,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 45,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 20,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "rigor",
+            "label": "方法严谨度",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "validated",
+                "label": "对照、消融及统计验证",
+                "points": 100,
+                "pattern": "消融|统计显著|置信区间|ablation|statistical significance|confidence interval"
+              },
+              {
+                "key": "controlled",
+                "label": "对照或基线实验",
+                "points": 75,
+                "pattern": "对照|基线|baseline|controlled experiment"
+              },
+              {
+                "key": "method",
+                "label": "明确研究方法",
+                "points": 45,
+                "pattern": "实验方法|研究方法|提出.{0,20}方法|methodology|proposed method"
+              }
+            ]
+          },
+          {
+            "key": "experiments",
+            "label": "实验质量",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "robust",
+                "label": "多数据集、误差或鲁棒性分析",
+                "points": 100,
+                "pattern": "多数据集|误差分析|鲁棒性|多次实验|multiple datasets|error analysis|robustness"
+              },
+              {
+                "key": "comparison",
+                "label": "明确实验比较",
+                "points": 75,
+                "pattern": "对比实验|基线|baseline|comparative experiment"
+              },
+              {
+                "key": "specified",
+                "label": "有实验设置",
+                "points": 45,
+                "pattern": "实验设置|实验结果|experimental setup|experimental results"
+              }
+            ]
+          },
+          {
+            "key": "reproducibility",
+            "label": "可复现性",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "reproduced",
+                "label": "明确的独立复现记录",
+                "points": 100,
+                "pattern": "独立复现成功|第三方复现|independently reproduced"
+              },
+              {
+                "key": "complete",
+                "label": "代码、数据和运行说明齐全",
+                "points": 75,
+                "pattern": "代码.{0,25}数据.{0,25}(?:说明|脚本)|code.{0,25}data.{0,25}(?:instructions|scripts)"
+              },
+              {
+                "key": "available",
+                "label": "提供开放材料",
+                "points": 40,
+                "pattern": "公开代码|开源代码|代码仓库|数据集链接|code repository|open.source code"
+              }
+            ]
+          },
+          {
+            "key": "status",
+            "label": "成果状态",
+            "weight": 0.1,
+            "choices": [
+              {
+                "key": "published",
+                "label": "已正式发表",
+                "points": 80,
+                "pattern": "已发表|正式发表|已在线发表|published|online publication"
+              },
+              {
+                "key": "accepted",
+                "label": "已录用未发表",
+                "points": 55,
+                "pattern": "已录用|accepted"
+              },
+              {
+                "key": "preprint",
+                "label": "预印本",
+                "points": 20,
+                "pattern": "预印本|preprint|arxiv"
+              }
+            ]
+          },
+          {
+            "key": "content",
+            "label": "研究内容与验证结果",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 120,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 80,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 45,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 20,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "project": [
+          {
+            "key": "complexity",
+            "label": "问题复杂度",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 120,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 80,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 45,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 20,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "constraints",
+            "label": "技术 / 业务约束",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "multiple",
+                "label": "多重约束与权衡",
+                "points": 100,
+                "pattern": "高并发|容灾|一致性|跨系统|隐私|合规|trade.off|fault.toleran|consistency"
+              },
+              {
+                "key": "explicit",
+                "label": "明确性能或业务约束",
+                "points": 75,
+                "pattern": "延迟|性能|吞吐|成本|兼容|latency|performance|budget|compatibility"
+              },
+              {
+                "key": "bounded",
+                "label": "明确任务边界",
+                "points": 40,
+                "pattern": "需求|约束|任务|requirement|constraint|task"
+              }
+            ]
+          },
+          {
+            "key": "delivery",
+            "label": "交付阶段",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 120,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 80,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 45,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 20,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "adoption",
+            "label": "部署 / 采用",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 120,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 80,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 45,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 20,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          },
+          {
+            "key": "outcome",
+            "label": "结果质量",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 120,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 80,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 45,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 20,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "work": [
+          {
+            "key": "complexity",
+            "label": "任务复杂度",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 120,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 80,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 45,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 20,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "scope",
+            "label": "具体责任范围",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "end_to_end",
+                "label": "明确的端到端责任",
+                "points": 100,
+                "pattern": "端到端|从需求.{0,30}(?:上线|交付)|end.to.end"
+              },
+              {
+                "key": "owned",
+                "label": "独立负责具体范围",
+                "points": 75,
+                "pattern": "独立负责|负责.{2,45}(?:模块|服务|项目|流程)|owned|responsible for"
+              },
+              {
+                "key": "specific",
+                "label": "明确执行任务",
+                "points": 40,
+                "pattern": "开发|设计|测试|分析|implemented|developed|tested|analyzed"
+              }
+            ]
+          },
+          {
+            "key": "delivery",
+            "label": "实际交付",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 120,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 80,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 45,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 20,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "impact",
+            "label": "结果影响",
+            "weight": 0.3,
+            "choices": [
+              {
+                "key": "measured",
+                "label": "有明确指标与比较结果",
+                "points": 120,
+                "pattern": "(?:提升|降低|减少|缩短|增长|improv|reduc|increase).{0,45}\\d+(?:\\.\\d+)?\\s*(?:%|倍|秒|天|ms)|(?:从|from).{0,30}(?:到|至|to).{0,15}\\d"
+              },
+              {
+                "key": "adopted",
+                "label": "有实际采用或验收结果",
+                "points": 80,
+                "pattern": "验收|正式采用|实际使用|投产|adopted|in use|production"
+              },
+              {
+                "key": "delivered",
+                "label": "有明确交付成果",
+                "points": 45,
+                "pattern": "交付|完成|实现|delivered|completed|implemented"
+              },
+              {
+                "key": "documented",
+                "label": "形成可检查的文档或作品",
+                "points": 20,
+                "pattern": "报告|文档|作品|report|documentation|artifact"
+              }
+            ]
+          }
+        ],
+        "patent": [
+          {
+            "key": "status",
+            "label": "公开 / 授权状态",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "granted",
+                "label": "已授权",
+                "points": 80,
+                "pattern": "已授权|授权公告|granted"
+              },
+              {
+                "key": "published",
+                "label": "已公开",
+                "points": 45,
+                "pattern": "已公开|公开公告|published application"
+              },
+              {
+                "key": "filed",
+                "label": "有申请记录",
+                "points": 20,
+                "pattern": "申请号|已申请|application number|filed"
+              }
+            ]
+          },
+          {
+            "key": "technical",
+            "label": "技术问题与方法",
+            "weight": 0.35,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "多重约束或跨系统复杂问题",
+                "points": 120,
+                "pattern": "分布式|跨系统|高并发|容灾|多目标|多模态|distributed|fault.toleran|multi.objective"
+              },
+              {
+                "key": "complex",
+                "label": "明确的系统或方法复杂度",
+                "points": 80,
+                "pattern": "系统|平台|架构|算法|复杂|system|platform|architecture|algorithm"
+              },
+              {
+                "key": "bounded",
+                "label": "明确的模块或任务",
+                "points": 45,
+                "pattern": "模块|接口|流程|实验|module|interface|workflow|experiment"
+              },
+              {
+                "key": "basic",
+                "label": "有明确对象的基础实现",
+                "points": 20,
+                "pattern": "脚本|页面|表单|script|page|form"
+              }
+            ]
+          },
+          {
+            "key": "claims",
+            "label": "权利要求",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "validated",
+                "label": "明确权利要求及实现验证",
+                "points": 100,
+                "pattern": "权利要求.{0,45}(?:验证|实现|测试)|claims.{0,45}(?:validated|implemented)"
+              },
+              {
+                "key": "specific",
+                "label": "有具体权利要求",
+                "points": 70,
+                "pattern": "权利要求|patent claims"
+              },
+              {
+                "key": "description",
+                "label": "有技术方案说明",
+                "points": 30,
+                "pattern": "技术方案|technical solution"
+              }
+            ]
+          },
+          {
+            "key": "application",
+            "label": "应用情况",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 120,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 80,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 45,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 20,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          }
+        ],
+        "opensource": [
+          {
+            "key": "runnable",
+            "label": "可运行性",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 120,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 80,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 45,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 20,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "quality",
+            "label": "代码质量",
+            "weight": 0.25,
+            "choices": [
+              {
+                "key": "engineering",
+                "label": "测试、CI 与接口文档",
+                "points": 100,
+                "pattern": "(?:测试|test).{0,45}(?:CI|持续集成).{0,45}(?:文档|doc)|持续集成.{0,45}测试"
+              },
+              {
+                "key": "tested",
+                "label": "自动测试或持续集成",
+                "points": 75,
+                "pattern": "单元测试|集成测试|持续集成|unit test|integration test|CI/CD"
+              },
+              {
+                "key": "documented",
+                "label": "有使用说明",
+                "points": 40,
+                "pattern": "README|使用说明|接口文档|documentation"
+              }
+            ]
+          },
+          {
+            "key": "maintenance",
+            "label": "维护持续性",
+            "weight": 0.15,
+            "choices": [
+              {
+                "key": "sustained",
+                "label": "持续发布并处理问题",
+                "points": 100,
+                "pattern": "持续维护|定期发布|持续发布|sustained maintenance|regular releases"
+              },
+              {
+                "key": "responded",
+                "label": "有问题处理或版本维护",
+                "points": 70,
+                "pattern": "修复|版本发布|issue|bug fix|release"
+              },
+              {
+                "key": "changes",
+                "label": "有可定位提交",
+                "points": 30,
+                "pattern": "提交|pull request|commit"
+              }
+            ]
+          },
+          {
+            "key": "contribution",
+            "label": "具体贡献",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "core",
+                "label": "核心功能与维护责任",
+                "points": 100,
+                "pattern": "维护者|核心模块|核心功能|maintainer|core module"
+              },
+              {
+                "key": "implemented",
+                "label": "明确的代码或文档贡献",
+                "points": 70,
+                "pattern": "实现|开发|修复|编写|implemented|developed|fixed|authored"
+              },
+              {
+                "key": "reviewed",
+                "label": "明确评审或测试贡献",
+                "points": 30,
+                "pattern": "代码评审|测试|code review|tested"
+              }
+            ]
+          },
+          {
+            "key": "adoption",
+            "label": "使用 / 采用",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "wide",
+                "label": "有多单位或公开采用证据",
+                "points": 120,
+                "pattern": "多家|多个部门|跨部门|企业客户|多所|multiple (?:organizations|teams)|enterprise customers"
+              },
+              {
+                "key": "production",
+                "label": "实际部署或应用",
+                "points": 80,
+                "pattern": "实际使用|投产|生产环境|上线|production|deployed"
+              },
+              {
+                "key": "pilot",
+                "label": "试点或测试使用",
+                "points": 45,
+                "pattern": "试点|试用|pilot|trial"
+              },
+              {
+                "key": "demo",
+                "label": "可访问或演示",
+                "points": 20,
+                "pattern": "演示|可访问|demo|accessible"
+              }
+            ]
+          }
+        ],
+        "certificate": [
+          {
+            "key": "assessment",
+            "label": "考核方式",
+            "weight": 0.45,
+            "choices": [
+              {
+                "key": "practical",
+                "label": "实操考核",
+                "points": 100,
+                "pattern": "实操考核|实验考核|practical exam|hands.on assessment"
+              },
+              {
+                "key": "exam",
+                "label": "明确考试",
+                "points": 70,
+                "pattern": "通过考试|认证考试|passed.{0,20}exam|certification exam"
+              },
+              {
+                "key": "coursework",
+                "label": "课程考核",
+                "points": 30,
+                "pattern": "课程作业|结课考核|coursework|course assessment"
+              }
+            ]
+          },
+          {
+            "key": "practice",
+            "label": "实际练习与作品",
+            "weight": 0.35,
+            "choices": [
+              {
+                "key": "accepted",
+                "label": "验收或持续生产交付",
+                "points": 120,
+                "pattern": "验收|生产环境|持续运行|正式交付|production|accepted delivery"
+              },
+              {
+                "key": "released",
+                "label": "已上线或部署",
+                "points": 80,
+                "pattern": "上线|部署|发布|交付|deployed|released|delivered"
+              },
+              {
+                "key": "tested",
+                "label": "完成测试或可运行原型",
+                "points": 45,
+                "pattern": "测试通过|原型|试点|prototype|pilot|tested"
+              },
+              {
+                "key": "designed",
+                "label": "形成明确方案或设计",
+                "points": 20,
+                "pattern": "设计方案|技术方案|需求分析|design document|proposal"
+              }
+            ]
+          },
+          {
+            "key": "curriculum",
+            "label": "课程内容深度",
+            "weight": 0.2,
+            "choices": [
+              {
+                "key": "advanced",
+                "label": "有明确高级专题",
+                "points": 100,
+                "pattern": "高级|进阶|专题|advanced|specialized"
+              },
+              {
+                "key": "specific",
+                "label": "有明确方法与实践内容",
+                "points": 60,
+                "pattern": "实验|项目|算法|系统|experiment|project|algorithm|system"
+              },
+              {
+                "key": "foundation",
+                "label": "基础课程内容",
+                "points": 25,
+                "pattern": "基础|入门|foundation|introductory"
+              }
+            ]
+          }
+        ]
+      },
+      "typeAdaptation": {
+        "award": {
+          "professional_execution": 0.65,
+          "problem_solving": 0.7,
+          "ownership_delivery": 0.45,
+          "collaboration_organization": 0.35,
+          "learning_research": 0.55
+        },
+        "research": {
+          "professional_execution": 0.7,
+          "problem_solving": 0.9,
+          "ownership_delivery": 0.6,
+          "collaboration_organization": 0.35,
+          "learning_research": 1
+        },
+        "project": {
+          "professional_execution": 1,
+          "problem_solving": 1,
+          "ownership_delivery": 0.95,
+          "collaboration_organization": 0.75,
+          "learning_research": 0.65
+        },
+        "work": {
+          "professional_execution": 1,
+          "problem_solving": 0.85,
+          "ownership_delivery": 1,
+          "collaboration_organization": 0.8,
+          "learning_research": 0.6
+        },
+        "patent": {
+          "professional_execution": 0.6,
+          "problem_solving": 0.85,
+          "ownership_delivery": 0.5,
+          "collaboration_organization": 0.3,
+          "learning_research": 0.8
+        },
+        "opensource": {
+          "professional_execution": 1,
+          "problem_solving": 0.85,
+          "ownership_delivery": 0.85,
+          "collaboration_organization": 0.6,
+          "learning_research": 0.7
+        },
+        "certificate": {
+          "professional_execution": 0.45,
+          "problem_solving": 0.4,
+          "ownership_delivery": 0.25,
+          "collaboration_organization": 0.15,
+          "learning_research": 0.7
+        }
+      },
+      "actionLevels": {
+        "guided": 0.25,
+        "concrete": 0.5,
+        "owned": 0.75,
+        "validated": 1
+      },
+      "actionFloor": 0.1,
+      "awardEventWeights": {
+        "participants": 0.5,
+        "judging": 0.5
+      },
+      "awardTierMultipliers": {
+        "top": 1,
+        "first": 0.85,
+        "second": 0.65,
+        "third": 0.45,
+        "finalist": 0.25
+      },
+      "awardSelectivityReference": 0.001,
+      "rho": 0.55,
+      "rhoByType": {
+        "award": 0.45,
+        "research": 0.6,
+        "project": 0.55,
+        "work": 0.7,
+        "patent": 0.55,
+        "opensource": 0.6,
+        "certificate": 0.45
+      }
+    },
+    "materialContributions": {
+      "m-c22fe534c43a03dc": {
+        "professional_execution": 0.98,
+        "problem_solving": 1.26,
+        "ownership_delivery": 0.84,
+        "collaboration_organization": 0.49,
+        "learning_research": 6.3
+      },
+      "m-32aae5d2fa126c88": {
+        "professional_execution": 1.125,
+        "problem_solving": 1.125,
+        "ownership_delivery": 1.06875,
+        "collaboration_organization": 0.84375,
+        "learning_research": 0.73125
+      },
+      "m-8615084c46b8d25e": {
+        "professional_execution": 0.61875,
+        "problem_solving": 0.61875,
+        "ownership_delivery": 0.587813,
+        "collaboration_organization": 0.464063,
+        "learning_research": 0.402188
+      },
+      "m-7057949730a30fc9": {
+        "professional_execution": null,
+        "problem_solving": null,
+        "ownership_delivery": null,
+        "collaboration_organization": null,
+        "learning_research": null
+      },
+      "m-5b17cab0578e5c9a": {
+        "professional_execution": null,
+        "problem_solving": null,
+        "ownership_delivery": null,
+        "collaboration_organization": null,
+        "learning_research": null
+      }
+    }
+  }
+}
