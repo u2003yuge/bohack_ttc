@@ -11,6 +11,8 @@ import { historicalCandidates, normalizeHistoricalCandidate, roleGroup, type His
 import { knowledgeRecords, normalizeKnowledgeEvidenceSources, normalizeKnowledgeImport, type KnowledgeRecord, type KnowledgeReviewEntry } from "../shared/knowledge.js";
 import { searchPublicWeb } from "./web-search.js";
 import { catalogStore, readCustomKnowledge, readKnowledgeRecords } from "./knowledge-store.js";
+import { saveAnalysisReport, type ReportContext } from "./report-store.js";
+import type { ResearchBatch } from "../src/research-types.js";
 
 type ResumeRecord = {
   id: string;
@@ -588,7 +590,7 @@ router.post("/:id/analyze", async (request, response, next) => {
       analysisError: "",
       analyzedAt: new Date().toISOString(),
     };
-    await writeRecord(updated);
+    await writeRecord(updated, { kind: "role", question, roleRequirements, researchSources, researchStatus, scoreCard });
     response.json({ answer: analysisReport, resume: updated, researchSources, researchStatus });
   } catch (error) {
     next(error);
@@ -615,7 +617,7 @@ async function readDirectory(): Promise<ResumeRecord[]> {
   return records.sort(sortRecords);
 }
 
-async function indexPdf(filePath: string, id: string, fileName: string): Promise<ResumeRecord> {
+export async function indexPdf(filePath: string, id: string, fileName: string, options: { analyze?: boolean } = {}): Promise<ResumeRecord> {
   const buffer = await readFile(filePath);
   const pdf = await getDocument({
     data: new Uint8Array(buffer),
@@ -633,7 +635,8 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
   }
   await pdf.destroy();
   const text = pages.join("\n\n").trim();
-  const ai = await extractCandidate(text, fileName);
+  const analyze = options.analyze !== false;
+  const ai = analyze ? await extractCandidate(text, fileName) : null;
   const fallbackName = path.basename(fileName, path.extname(fileName)).replace(/[-_]+/g, " ").trim();
   const name = ai?.name?.trim() || fallbackName || "未命名候选人";
   const fileStats = await stat(filePath);
@@ -651,15 +654,15 @@ async function indexPdf(filePath: string, id: string, fileName: string): Promise
     skills: Array.isArray(ai?.skills) ? ai.skills.filter((value): value is string => typeof value === "string").slice(0, 10) : [],
     summary: ai?.summary?.trim() || "",
     analysisReport: "",
-    analysisStatus: process.env.OPENAI_API_KEY ? "failed" : "unavailable",
-    analysisError: process.env.OPENAI_API_KEY ? "" : "未配置模型服务，无法生成初始分析报告。",
+    analysisStatus: analyze && process.env.OPENAI_API_KEY ? "failed" : "unavailable",
+    analysisError: !analyze ? "已完成离线文本索引，尚未运行 AI 分析。" : process.env.OPENAI_API_KEY ? "" : "未配置模型服务，无法生成初始分析报告。",
     analyzedAt: "",
     pages: pages.length,
     size: fileStats.size,
     extractionVersion,
   };
 
-  if (process.env.OPENAI_API_KEY && text) {
+  if (analyze && process.env.OPENAI_API_KEY && text) {
   try {
       const weights = await readWeights();
       const [scoreCard, analysisReport] = await Promise.all([
@@ -752,17 +755,39 @@ function safeHttpUrl(value: unknown): string {
   catch { return ""; }
 }
 
-async function writeRecord(record: ResumeRecord): Promise<void> {
+export async function writeRecord(record: ResumeRecord, context: ReportContext = { kind: "initial" }, signal?: AbortSignal): Promise<void> {
+  signal?.throwIfAborted();
+  if (record.analysisReport.trim()) {
+    await saveAnalysisReport({ ...context, resumeId: record.id, resumeName: record.name, fileName: record.fileName,
+      resumeText: record.text, answer: record.analysisReport, scoreCard: context.scoreCard ?? record.scoreCard }, { signal });
+  }
   await mkdir(path.join(directory, ".metadata"), { recursive: true });
   await writeFile(metadataPath(record.id), JSON.stringify(record, null, 2), "utf8");
 }
 
-async function readRecord(id: string): Promise<ResumeRecord | null> {
+export async function readRecord(id: string): Promise<ResumeRecord | null> {
+  if (!id || path.basename(id) !== id || id.includes("/") || id.includes("\\") || id.includes(":")) return null;
   try {
     return JSON.parse(await readFile(metadataPath(id), "utf8")) as ResumeRecord;
   } catch {
     return null;
   }
+}
+
+export async function persistAgentAnalysis(input: {
+  resumeId?: string; resumeName?: string; resumeText: string; question: string; roleRequirements?: string;
+}, result: { answer: string; research: ResearchBatch }, signal?: AbortSignal): Promise<ResumeRecord | undefined> {
+  signal?.throwIfAborted();
+  const record = input.resumeId ? await readRecord(input.resumeId) : null;
+  if (input.resumeId && (!record || record.text !== input.resumeText)) throw new Error("简历已变化或不存在，未将报告关联到错误档案。");
+  if (record) {
+    const updated: ResumeRecord = { ...record, analysisReport: result.answer, analysisStatus: "complete",
+      analysisError: "", analyzedAt: new Date().toISOString() };
+    await writeRecord(updated, { kind: "agent", question: input.question, roleRequirements: input.roleRequirements, research: result.research }, signal);
+    return updated;
+  }
+  await saveAnalysisReport({ kind: "agent", resumeName: input.resumeName || "未命名简历", resumeText: input.resumeText,
+    answer: result.answer, question: input.question, roleRequirements: input.roleRequirements, research: result.research }, { signal });
 }
 
 function metadataPath(id: string): string {

@@ -1,3 +1,5 @@
+import type { Resume } from "./types.js";
+
 export type ResearchKind = "competition" | "paper" | "project";
 
 export type ResearchInput = Record<string, string | number | null>;
@@ -40,6 +42,6 @@ export type AnalysisEvent =
   | { type: "answer"; text: string; replace?: boolean }
   | { type: "progress"; progress: AnalysisProgress }
   | { type: "research"; research: ResearchBatch }
-  | { type: "complete"; answer: string; research: ResearchBatch }
+  | { type: "complete"; answer: string; research: ResearchBatch; resume?: Resume }
   | { type: "error"; error: string; research?: ResearchBatch }
   | { type: "heartbeat" };

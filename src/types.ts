@@ -29,5 +29,5 @@ export type Resume = {
   pages?: number;
   size?: number;
 };
-import type { ScoreCard, ScoreHistoryEntry } from "../shared/scoring";
-import type { Benchmark } from "../shared/history";
+import type { ScoreCard, ScoreHistoryEntry } from "../shared/scoring.js";
+import type { Benchmark } from "../shared/history.js";

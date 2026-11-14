@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import resumes from "./resumes.js";
+import resumes, { persistAgentAnalysis, readRecord } from "./resumes.js";
 import research from "./research/router.js";
 import { AnalysisFailure, analyzeResume } from "./agent.js";
 import { deadline, errorMessage, limit } from "./operations.js";
@@ -20,7 +20,7 @@ app.get("/api/health", (_request, response) => response.json({
 }));
 
 app.post("/api/agent", async (request, response) => {
-  const { resumeName, resumeText, roleRequirements, question, includeResearch = true, streamProgress = false, webResearchEnabled = false } = request.body ?? {};
+  const { resumeId, resumeName, resumeText, roleRequirements, question, includeResearch = true, streamProgress = false, webResearchEnabled = false } = request.body ?? {};
   if (typeof resumeText !== "string" || typeof question !== "string") {
     response.status(400).json({ error: "请提供简历文本和分析问题。" });
     return;
@@ -28,6 +28,12 @@ app.post("/api/agent", async (request, response) => {
   if (!process.env.OPENAI_API_KEY) {
     response.status(503).json({ error: "尚未配置模型服务。请在 .env 中填写 OPENAI_API_KEY。" });
     return;
+  }
+  if (resumeId !== undefined) {
+    if (typeof resumeId !== "string") { response.status(400).json({ error: "简历 ID 无效。" }); return; }
+    const stored = await readRecord(resumeId);
+    if (!stored) { response.status(404).json({ error: "找不到这份简历，请刷新后重试。" }); return; }
+    if (stored.text !== resumeText) { response.status(409).json({ error: "简历文本已变化，请刷新后重试。" }); return; }
   }
   if (resumeText.length > 100_000 || typeof includeResearch !== "boolean" || typeof streamProgress !== "boolean" || typeof webResearchEnabled !== "boolean") {
     response.status(400).json({ error: "简历文本不得超过 100000 字符，核查和进度开关必须为布尔值。" });
@@ -58,9 +64,10 @@ app.post("/api/agent", async (request, response) => {
         if (event.type === "progress") console.log(`[agent ${requestId}] ${event.progress.stage} ${event.progress.completed ?? ""}/${event.progress.total ?? ""} +${Date.now() - started}ms`);
       },
     });
+    const resume = await persistAgentAnalysis({ resumeId, resumeName, resumeText, question, roleRequirements }, result, scope.signal);
     if (!response.destroyed) {
-      if (streamProgress) { emit({ type: "complete", ...result }); response.end(); }
-      else response.json(result);
+      if (streamProgress) { emit({ type: "complete", ...result, ...(resume ? { resume } : {}) }); response.end(); }
+      else response.json({ ...result, ...(resume ? { resume } : {}) });
     }
   } catch (error) {
     const message = scope.signal.aborted ? errorMessage(scope.signal.reason) : errorMessage(error);

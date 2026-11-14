@@ -1556,7 +1556,7 @@ export default function App() {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeName: selected.name, resumeText: selected.text, roleRequirements, question, includeResearch, webResearchEnabled, streamProgress: !useStoredReport }),
+        body: JSON.stringify({ ...(selected.source === "pdf" ? { resumeId: selected.id } : {}), resumeName: selected.name, resumeText: selected.text, roleRequirements, question, includeResearch, webResearchEnabled, streamProgress: !useStoredReport }),
         signal: controller.signal,
       });
       if (!response.ok || !response.headers.get("Content-Type")?.includes("application/x-ndjson")) {
@@ -1573,7 +1573,10 @@ export default function App() {
           if (event.type === "progress") setAnalysisProgress(event.progress);
           if (event.type === "answer") setAnswer((current) => event.replace ? event.text : current + event.text);
           if (event.type === "research") setResearchResults(event.research);
-          if (event.type === "complete") { setAnswer(event.answer); setResearchResults(includeResearch ? event.research : null); }
+          if (event.type === "complete") {
+            setAnswer(event.answer); setResearchResults(includeResearch ? event.research : null);
+            if (event.resume) setResumes((current) => current.map((resume) => resume.id === event.resume!.id ? event.resume! : resume));
+          }
           if (event.type === "error" && event.research) setResearchResults(event.research);
         });
       }
