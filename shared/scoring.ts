@@ -10,8 +10,9 @@ export const scoreCriteria = [
 export type ScoreKey = (typeof scoreCriteria)[number]["key"];
 export type ComparisonRankCriterion = ScoreKey | "composite";
 export type ComparisonMapAxis = ScoreKey | "depth";
+export type ComparisonMapRegion = "all" | "high-high" | "high-low" | "low-high" | "low-low";
 export type ComparisonRatingFilter = "all" | "scored" | "demo";
-export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; mapX: ComparisonMapAxis; mapY: ComparisonMapAxis; rationale: string };
+export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; mapX: ComparisonMapAxis; mapY: ComparisonMapAxis; mapRegion: ComparisonMapRegion; rationale: string };
 export type ScoreWeights = Record<ScoreKey, number>;
 export type ScoreEvidence = { score: number; evidence: string[]; confidence: number };
 export type ScoreCard = {
@@ -40,6 +41,16 @@ export const defaultScoreWeights: ScoreWeights = {
   growth: 5,
 };
 
+export function matchesComparisonMapRegion(xScore: number, yScore: number, region: ComparisonMapRegion): boolean {
+  if (region === "all") return true;
+  const highX = xScore >= 50;
+  const highY = yScore >= 50;
+  return region === "high-high" ? highX && highY
+    : region === "high-low" ? highX && !highY
+    : region === "low-high" ? !highX && highY
+    : !highX && !highY;
+}
+
 export function normalizeComparisonRankDraft(input: unknown, defaults: Partial<ComparisonRankDraft> = {}): ComparisonRankDraft | { error: string } {
   const value = input && typeof input === "object" ? input as Record<string, unknown> : {};
   const criteria = ["composite", ...scoreCriteria.map(({ key }) => key)];
@@ -49,8 +60,10 @@ export function normalizeComparisonRankDraft(input: unknown, defaults: Partial<C
   const ratingFilter = value.ratingFilter === undefined ? defaults.ratingFilter ?? "all" : value.ratingFilter;
   const mapX = value.mapX === undefined ? defaults.mapX ?? "perspective" : value.mapX;
   const mapY = value.mapY === undefined ? defaults.mapY ?? "depth" : value.mapY;
+  const mapRegion = value.mapRegion === undefined ? defaults.mapRegion ?? "all" : value.mapRegion;
   if (!criteria.includes(String(criterion)) || !["asc", "desc"].includes(String(direction)) || !["all", "scored", "demo"].includes(String(ratingFilter))
-    || !mapAxes.includes(String(mapX)) || !mapAxes.includes(String(mapY)) || mapX === mapY) {
+    || !mapAxes.includes(String(mapX)) || !mapAxes.includes(String(mapY)) || mapX === mapY
+    || !["all", "high-high", "high-low", "low-high", "low-low"].includes(String(mapRegion))) {
     return { error: "排名方案包含无效的评分维度或方向，请重新生成。" };
   }
   return {
@@ -59,6 +72,7 @@ export function normalizeComparisonRankDraft(input: unknown, defaults: Partial<C
     ratingFilter: ratingFilter as ComparisonRatingFilter,
     mapX: mapX as ComparisonMapAxis,
     mapY: mapY as ComparisonMapAxis,
+    mapRegion: mapRegion as ComparisonMapRegion,
     rationale: typeof value.rationale === "string" ? value.rationale.trim().slice(0, 240) : "",
   };
 }

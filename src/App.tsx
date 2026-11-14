@@ -30,7 +30,7 @@ import {
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 import { sampleResumes } from "./sample-resumes";
 import type { Resume } from "./types";
-import { calculateComposite, defaultScoreWeights, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
+import { calculateComposite, defaultScoreWeights, matchesComparisonMapRegion, normalizeWeights, scoreCriteria, type ComparisonMapAxis, type ComparisonMapRegion, type ComparisonRankCriterion, type ComparisonRankDraft, type ComparisonRatingFilter, type ScoreCard, type ScoreKey, type ScoreWeights } from "../shared/scoring";
 import { calculateBenchmark, historicalCandidates, historicalScoreBands, matchesHistoricalFilters, roleGroup, roleGroupLabel, type HistoricalCandidate, type HistoricalFilterDraft, type HistoricalOutcomeFilter, type HistoricalScoreBandKey } from "../shared/history";
 import { findKnowledgeMatch, findKnowledgeReferences, getKnowledgeReadiness, knowledgeEvidenceSourceTypeLabels, knowledgeKindLabels, knowledgeReadinessStages, knowledgeRecords as seedKnowledgeRecords, knowledgeReviewTimelineX, knowledgeScoreBands, summarizeKnowledgeReadiness, summarizeKnowledgeScoreBands, type KnowledgeEvidenceFilter, type KnowledgeEvidenceSource, type KnowledgeEvidenceSourceType, type KnowledgeFilterDraft, type KnowledgeImportBundle, type KnowledgeKind, type KnowledgeReadiness, type KnowledgeRecord, type KnowledgeReviewEntry, type KnowledgeReviewFilter, type KnowledgeScoreBand, type KnowledgeSort, type KnowledgeVerificationFilter } from "../shared/knowledge";
 
@@ -563,7 +563,22 @@ function depthScore(card: ScoreCard): number {
   return Math.round(keys.reduce((total, key) => total + card.criteria[key].score, 0) / keys.length * 10) / 10;
 }
 
-function RecruitmentQualityMap({ candidates, selectedId, onSelect, rankLabel, rankDirection, mapX, mapY, mapLabels }: { candidates: Array<{ resume: Resume; card: ScoreCard }>; selectedId: string; onSelect: (id: string) => void; rankLabel: string; rankDirection: "asc" | "desc"; mapX: ComparisonRankDraft["mapX"]; mapY: ComparisonRankDraft["mapY"]; mapLabels: Record<ComparisonRankDraft["mapX"], string> }) {
+function comparisonAxisScore(card: ScoreCard, axis: ComparisonMapAxis): number {
+  return axis === "depth" ? depthScore(card) : card.criteria[axis].score;
+}
+
+function matchesMapRegion(card: ScoreCard, mapX: ComparisonMapAxis, mapY: ComparisonMapAxis, region: ComparisonMapRegion): boolean {
+  return matchesComparisonMapRegion(comparisonAxisScore(card, mapX), comparisonAxisScore(card, mapY), region);
+}
+
+const mapRegionLabels: Record<Exclude<ComparisonMapRegion, "all">, string> = {
+  "high-high": "横高 · 纵高",
+  "high-low": "横高 · 纵低",
+  "low-high": "横低 · 纵高",
+  "low-low": "横低 · 纵低",
+};
+
+function RecruitmentQualityMap({ candidates, selectedId, onSelect, rankLabel, rankDirection, mapX, mapY, mapRegion, onRegionChange, mapLabels }: { candidates: Array<{ resume: Resume; card: ScoreCard }>; selectedId: string; onSelect: (id: string) => void; rankLabel: string; rankDirection: "asc" | "desc"; mapX: ComparisonRankDraft["mapX"]; mapY: ComparisonRankDraft["mapY"]; mapRegion: ComparisonMapRegion; onRegionChange: (region: ComparisonMapRegion) => void; mapLabels: Record<ComparisonRankDraft["mapX"], string> }) {
   const width = 620;
   const height = 320;
   const left = 56;
@@ -572,23 +587,24 @@ function RecruitmentQualityMap({ candidates, selectedId, onSelect, rankLabel, ra
   const bottom = 48;
   const plotWidth = width - left - right;
   const plotHeight = height - top - bottom;
-  const axisValue = (card: ScoreCard, axis: ComparisonRankDraft["mapX"]) => axis === "depth" ? depthScore(card) : card.criteria[axis].score;
+  const axisValue = comparisonAxisScore;
   const pointX = (value: number) => left + (value / 100) * plotWidth;
   const pointY = (value: number) => top + plotHeight - (value / 100) * plotHeight;
   const xName = mapLabels[mapX];
   const yName = mapLabels[mapY];
+  const regionCount = candidates.filter(({ card }) => matchesMapRegion(card, mapX, mapY, mapRegion)).length;
   const mapCandidates = [...candidates.filter(({ resume }) => resume.id !== selectedId), ...candidates.filter(({ resume }) => resume.id === selectedId)];
   return <section className="quality-map-section">
     <div className="quality-map-head"><div><span className="eyebrow">RECRUITING QUALITY MAP</span><h3>招聘质量图 · {yName} × {xName}</h3><p>坐标轴反映不同能力维度；点内序号对应当前排名，选中时显示姓名。</p></div><div className="quality-map-legend"><span className="quality-size-legend"><i className="quality-size-small" />50 分</span><span className="quality-size-legend"><i className="quality-size-large" />100 分</span><span className="quality-rank-context">气泡半径 = 综合分</span><span className="quality-rank-context">{rankLabel} · {rankDirection === "desc" ? "高分优先" : "低分优先"}</span></div></div>
     <div className="quality-map-wrap"><svg className="quality-map" viewBox={`0 0 ${width} ${height}`} role="group" aria-label={`招聘质量图，横轴${xName}，纵轴${yName}，点序号按${rankLabel}${rankDirection === "desc" ? "高分优先" : "低分优先"}`}>
       <rect x={left} y={top} width={plotWidth} height={plotHeight} className="quality-map-bg" />
-      <rect x={left} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-learning" /><rect x={left + plotWidth / 2} y={top} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-deep" /><rect x={left} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-narrow" /><rect x={left + plotWidth / 2} y={top + plotHeight / 2} width={plotWidth / 2} height={plotHeight / 2} className="quality-quadrant quality-quadrant-broad" />
+      {([{ key: "low-high", x: left, y: top, className: "quality-quadrant-learning" }, { key: "high-high", x: left + plotWidth / 2, y: top, className: "quality-quadrant-deep" }, { key: "low-low", x: left, y: top + plotHeight / 2, className: "quality-quadrant-narrow" }, { key: "high-low", x: left + plotWidth / 2, y: top + plotHeight / 2, className: "quality-quadrant-broad" }] as const).map(({ key, x, y, className }) => <g key={key} className={`quality-map-region ${mapRegion === key ? "active" : ""}`} role="button" tabIndex={0} aria-label={`筛选象限：${mapRegionLabels[key]}`} aria-pressed={mapRegion === key} onClick={() => onRegionChange(mapRegion === key ? "all" : key)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onRegionChange(mapRegion === key ? "all" : key); } }}><rect x={x} y={y} width={plotWidth / 2} height={plotHeight / 2} className={`quality-quadrant ${className}`} /><title>{`点击筛选${mapRegionLabels[key]}候选人`}</title></g>)}
       <line x1={left + plotWidth / 2} y1={top} x2={left + plotWidth / 2} y2={top + plotHeight} className="quality-midline" /><line x1={left} y1={top + plotHeight / 2} x2={left + plotWidth} y2={top + plotHeight / 2} className="quality-midline" /><line x1={left} y1={top + plotHeight} x2={left + plotWidth} y2={top + plotHeight} className="quality-axis" /><line x1={left} y1={top} x2={left} y2={top + plotHeight} className="quality-axis" />
       <text x={left + plotWidth / 4} y={top + 18} className="quality-quadrant-label">纵高 · 横低</text><text x={left + plotWidth * .75} y={top + 18} className="quality-quadrant-label">双高</text><text x={left + plotWidth / 4} y={top + plotHeight - 12} className="quality-quadrant-label">双低</text><text x={left + plotWidth * .75} y={top + plotHeight - 12} className="quality-quadrant-label">横高 · 纵低</text>
       {[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={pointX(tick)} y1={top + plotHeight} x2={pointX(tick)} y2={top + plotHeight + 4} className="quality-axis" /><text x={pointX(tick)} y={height - 25} textAnchor="middle" className="quality-tick">{tick}</text><line x1={left - 4} y1={pointY(tick)} x2={left} y2={pointY(tick)} className="quality-axis" /><text x={left - 9} y={pointY(tick) + 3} textAnchor="end" className="quality-tick">{tick}</text></g>)}
       {mapCandidates.map(({ resume, card }) => { const index = candidates.findIndex((candidate) => candidate.resume.id === resume.id); const xValue = axisValue(card, mapX); const yValue = axisValue(card, mapY); const radius = 5 + card.composite / 10; const x = pointX(xValue); const y = pointY(yValue); const active = resume.id === selectedId; const stableColor = [...resume.id].reduce((sum, character) => sum + character.charCodeAt(0), 0) % 4 + 1; const label = resume.name.length > 8 ? `${resume.name.slice(0, 8)}…` : resume.name; return <g key={resume.id} className={`quality-point ${active ? "selected" : ""}`} role="button" tabIndex={0} aria-pressed={active} aria-label={`排名第 ${index + 1}：${resume.name}，${xName} ${xValue.toFixed(0)}，${yName} ${yValue.toFixed(0)}，${rankLabel}${rankDirection === "desc" ? "高分优先" : "低分优先"}，综合分 ${card.composite.toFixed(1)}`} onClick={() => onSelect(resume.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(resume.id); } }}><title>{`第 ${index + 1} 名 · ${resume.name} · ${xName} ${xValue.toFixed(0)} · ${yName} ${yValue.toFixed(0)} · 综合分 ${card.composite.toFixed(1)}`}</title><circle cx={x} cy={y} r={active ? radius + 2 : radius} className={`quality-bubble quality-bubble-${stableColor}`} /><text x={x} y={y + 3} textAnchor="middle" className="quality-rank-mark">{index + 1}</text>{active && <text x={x} y={y - radius - 7} textAnchor="middle" className="quality-name">{label}</text>}</g>; })}
       <text x={left + plotWidth / 2} y={height - 7} textAnchor="middle" className="quality-axis-label">{xName}</text><text x="14" y={top + plotHeight / 2} textAnchor="middle" transform={`rotate(-90 14 ${top + plotHeight / 2})`} className="quality-axis-label">{yName}</text>
-    </svg></div><div className="quality-map-note"><span>纵轴深度取领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>气泡半径固定映射 0–100 分综合分；重叠候选人可在下方排名表点选</span></div>
+    </svg></div><div className="quality-map-note"><span>{mapRegion === "all" ? "点击象限可联动筛选排名表；阈值线为 50 分" : `象限筛选：${mapRegionLabels[mapRegion]} · ${regionCount} 位候选人`}</span><span>能力深度取领导力、专业能力、经验、岗位契合度和进步分的平均值</span><span>气泡半径映射综合分；重叠候选人可在下方排名表点选</span></div>
   </section>;
 }
 
@@ -1113,6 +1129,7 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
   const [rankDirection, setRankDirection] = useState<ComparisonRankDraft["direction"]>("desc");
   const [mapX, setMapX] = useState<ComparisonMapAxis>("perspective");
   const [mapY, setMapY] = useState<ComparisonMapAxis>("depth");
+  const [mapRegion, setMapRegion] = useState<ComparisonMapRegion>("all");
   const [ratingFilter, setRatingFilter] = useState<ComparisonRatingFilter>("all");
   const [rankInstruction, setRankInstruction] = useState("");
   const [rankProposal, setRankProposal] = useState<ComparisonRankDraft | null>(null);
@@ -1126,7 +1143,8 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
     const primary = rankDirection === "desc" ? rightScore - leftScore : leftScore - rightScore;
     return primary || right.card.composite - left.card.composite || left.resume.name.localeCompare(right.resume.name, "zh-CN");
   }), [resumes, weights, rankCriterion, rankDirection]);
-  const ranked = useMemo(() => allRanked.filter(({ resume }) => ratingFilter === "all" || (ratingFilter === "scored" ? Boolean(resume.scoreCard) : !resume.scoreCard)), [allRanked, ratingFilter]);
+  const sourceFiltered = useMemo(() => allRanked.filter(({ resume }) => ratingFilter === "all" || (ratingFilter === "scored" ? Boolean(resume.scoreCard) : !resume.scoreCard)), [allRanked, ratingFilter]);
+  const ranked = useMemo(() => sourceFiltered.filter(({ card }) => matchesMapRegion(card, mapX, mapY, mapRegion)), [sourceFiltered, mapX, mapY, mapRegion]);
   useEffect(() => {
     if (ranked.length && !ranked.some(({ resume }) => resume.id === selectedId)) onSelectResume(ranked[0].resume.id);
   }, [ranked, selectedId, onSelectResume]);
@@ -1144,7 +1162,7 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
   async function suggestRanking() {
     setRankBusy(true); setRankError(""); setRankProposal(null);
     try {
-      const response = await fetch("/api/resumes/comparison/rank-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: rankInstruction, current: { criterion: rankCriterion, direction: rankDirection, ratingFilter, mapX, mapY } }) });
+      const response = await fetch("/api/resumes/comparison/rank-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ instruction: rankInstruction, current: { criterion: rankCriterion, direction: rankDirection, ratingFilter, mapX, mapY, mapRegion } }) });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "无法生成排名方案。");
       setRankProposal(payload.suggestion as ComparisonRankDraft);
@@ -1154,7 +1172,7 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
 
   return <main className="comparison-main comparison-workspace-main"><div className="comparison-panel">
     <div className="comparison-head"><div><span className="eyebrow">CANDIDATE COMPARISON</span><h2>多人候选人对比</h2></div><div className="comparison-head-actions"><span className="comparison-count">显示 {ranked.length} / {resumes.length} 位</span><button className="back-to-workspace" onClick={onClose}><span>返回分析</span></button></div></div>
-    <p className="comparison-note">已生成评分卡 {resumes.filter((resume) => Boolean(resume.scoreCard)).length} 份 · 演示 / 待评分 {resumes.filter((resume) => !resume.scoreCard).length} 份。演示分不代表真实评估；选择评分来源可联动筛选质量图和排名表。</p>
+    <p className="comparison-note">已生成评分卡 {resumes.filter((resume) => Boolean(resume.scoreCard)).length} 份 · 演示 / 待评分 {resumes.filter((resume) => !resume.scoreCard).length} 份。演示分不代表真实评估；评分来源与图表象限会联动筛选排名表。</p>
     <div className="comparison-source-filter" role="group" aria-label="按评分来源筛选候选人"><span>评分来源</span>{(["all", "scored", "demo"] as ComparisonRatingFilter[]).map((filterKey) => { const count = filterKey === "all" ? resumes.length : resumes.filter((resume) => filterKey === "scored" ? Boolean(resume.scoreCard) : !resume.scoreCard).length; return <button key={filterKey} type="button" className={ratingFilter === filterKey ? "active" : ""} aria-pressed={ratingFilter === filterKey} onClick={() => setRatingFilter(filterKey)}>{ratingFilterLabels[filterKey]}<b>{count}</b></button>; })}</div>
     <section className="comparison-rank-tools" aria-label="设置候选人排名依据">
       <label>排名依据<select value={rankCriterion} onChange={(event) => setRankCriterion(event.target.value as ComparisonRankCriterion)}><option value="composite">综合分</option>{scoreCriteria.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}</select></label>
@@ -1164,9 +1182,10 @@ function ComparisonView({ resumes, weights, selectedId, onSelectResume, onEviden
       <div className="comparison-rank-assistant"><input value={rankInstruction} onChange={(event) => { setRankInstruction(event.target.value); setRankProposal(null); setRankError(""); }} maxLength={500} placeholder="如：只看真实评分，按专业能力降序；图表对比经验与岗位契合度" aria-label="描述候选人筛选、排名和图表维度" onKeyDown={(event) => { if (event.key === "Enter" && !event.nativeEvent.isComposing) { event.preventDefault(); void suggestRanking(); } }} /><button type="button" onClick={() => void suggestRanking()} disabled={!agentAvailable || rankBusy || !rankInstruction.trim()} title={agentAvailable ? "生成筛选、排名与图表方案" : "请先配置模型服务"}>{rankBusy ? <LoaderCircle className="spin" size={13} /> : <Sparkles size={13} />}AI 建议</button>
       </div>
       {rankError && <span className="comparison-rank-error">{rankError}</span>}
-      {rankProposal && <div className="comparison-rank-proposal"><span>{rankProposal.rationale}</span><strong>{ratingFilterLabels[rankProposal.ratingFilter]} · 排名按{rankLabels[rankProposal.criterion]}{rankProposal.direction === "desc" ? "高分优先" : "低分优先"} · 图表 {mapLabels[rankProposal.mapY]} × {mapLabels[rankProposal.mapX]}</strong><div><button type="button" onClick={() => setRankProposal(null)}>放弃</button><button type="button" onClick={() => { setRankCriterion(rankProposal.criterion); setRankDirection(rankProposal.direction); setRatingFilter(rankProposal.ratingFilter); setMapX(rankProposal.mapX); setMapY(rankProposal.mapY); setRankProposal(null); }}>应用方案</button></div></div>}
+      {rankProposal && <div className="comparison-rank-proposal"><span>{rankProposal.rationale}</span><strong>{ratingFilterLabels[rankProposal.ratingFilter]} · 排名按{rankLabels[rankProposal.criterion]}{rankProposal.direction === "desc" ? "高分优先" : "低分优先"} · 图表 {mapLabels[rankProposal.mapY]} × {mapLabels[rankProposal.mapX]} · {rankProposal.mapRegion === "all" ? "全部象限" : mapRegionLabels[rankProposal.mapRegion]}</strong><div><button type="button" onClick={() => setRankProposal(null)}>放弃</button><button type="button" onClick={() => { setRankCriterion(rankProposal.criterion); setRankDirection(rankProposal.direction); setRatingFilter(rankProposal.ratingFilter); setMapX(rankProposal.mapX); setMapY(rankProposal.mapY); setMapRegion(rankProposal.mapRegion); setRankProposal(null); }}>应用方案</button></div></div>}
     </section>
-    {ranked.length ? <RecruitmentQualityMap candidates={ranked} selectedId={selected?.resume.id ?? ""} onSelect={onSelectResume} rankLabel={rankLabels[rankCriterion]} rankDirection={rankDirection} mapX={mapX} mapY={mapY} mapLabels={mapLabels} /> : <div className="comparison-empty">当前筛选下没有候选人。可切换评分来源查看其他档案。</div>}
+    {mapRegion !== "all" && <div className="comparison-region-filter"><span>图表象限：{mapRegionLabels[mapRegion]} · {ranked.length} 位</span><button type="button" onClick={() => setMapRegion("all")}>显示全部</button></div>}
+    {sourceFiltered.length ? <RecruitmentQualityMap candidates={sourceFiltered} selectedId={selected?.resume.id ?? ""} onSelect={onSelectResume} rankLabel={rankLabels[rankCriterion]} rankDirection={rankDirection} mapX={mapX} mapY={mapY} mapRegion={mapRegion} onRegionChange={setMapRegion} mapLabels={mapLabels} /> : <div className="comparison-empty">当前筛选下没有候选人。可切换评分来源查看其他档案。</div>}
     <div className="comparison-table-wrap"><table className="comparison-table"><thead><tr><th>排名</th><th>候选人</th>{scoreCriteria.map(({ key, label }) => <th key={key}>{label}</th>)}<th>综合分</th></tr></thead><tbody>{ranked.length ? ranked.map(({ resume, card }, rank) => <tr key={resume.id} className={resume.id === selected?.resume.id ? "selected" : ""} aria-selected={resume.id === selected?.resume.id}><td><span className={`rank-badge rank-${rank + 1}`}>{rank + 1}</span></td><td><button className="comparison-candidate-select" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(null); }} aria-pressed={resume.id === selected?.resume.id}><strong>{resume.name}</strong><small>{resume.role} · {resume.scoreCard ? "已生成评分卡" : "演示 / 待评分"}</small></button></td>{scoreCriteria.map(({ key, label }) => { const criterion = card.criteria[key]; return <td className="score-cell" key={key}><button type="button" className="comparison-score-evidence" onClick={() => { onSelectResume(resume.id); setFocusEvidenceKey(key); }} title={`查看 ${resume.name} · ${label} 的评分依据`} aria-label={`${resume.name}，${label} ${criterion.score.toFixed(0)} 分，置信度 ${Math.round(criterion.confidence * 100)}%，查看评分依据`}><span className="score-cell-score"><span className="score-cell-value">{criterion.score.toFixed(0)}</span><i><b style={{ width: `${criterion.score}%` }} /></i></span><small className={`score-cell-confidence ${criterion.confidence < 0.45 ? "low-confidence" : ""}`}>置信度 {Math.round(criterion.confidence * 100)}%</small></button></td>; })}<td className="composite-cell">{card.composite.toFixed(1)}</td></tr>) : <tr><td colSpan={9} className="comparison-empty-cell">当前筛选下没有候选人。</td></tr>}</tbody></table></div>
     {selected && <section className="comparison-evidence"><div className="comparison-evidence-head"><div><span className="eyebrow">SELECTED CANDIDATE</span><h3>{selected.resume.name} · {selected.resume.role}</h3><p>{rankLabels[rankCriterion]}排名 {ranked.findIndex(({ resume }) => resume.id === selected.resume.id) + 1} · 综合分 {selected.card.composite.toFixed(1)} · 深度 {depthScore(selected.card).toFixed(1)} · 广度 {selected.card.criteria.perspective.score.toFixed(0)}</p></div><button className="back-to-workspace" onClick={() => { onSelectResume(selected.resume.id); onClose(); }}>打开简历分析</button></div><div className="comparison-evidence-grid">{scoreCriteria.map(({ key, label }) => { const criterion = selected.card.criteria[key]; return <article key={key} className={focusEvidenceKey === key ? "focused" : ""} ref={(element) => { if (element) evidenceCardRefs.current.set(key, element); else evidenceCardRefs.current.delete(key); }} tabIndex={-1}><div className="comparison-evidence-metric"><span><strong>{label}</strong><small className={criterion.confidence < 0.45 ? "low-confidence" : ""} title="模型对该维度现有简历证据充分度的估计；不是录用概率">置信度 {Math.round(criterion.confidence * 100)}%</small></span><b>{criterion.score.toFixed(0)}</b></div>{criterion.evidence.length ? criterion.evidence.slice(0, 2).map((evidence, index) => <button className="comparison-evidence-link" key={`${index}-${evidence}`} onClick={() => { onSelectResume(selected.resume.id); onEvidence(evidence); onClose(); }} title="回到 PDF 定位依据">{evidence}<ExternalLink size={10} /></button>) : <p>暂无可展示的证据摘要</p>}</article>; })}</div></section>}
     <div className="weight-summary"><span>当前权重</span>{scoreCriteria.map(({ key, label }) => <span key={key}>{label} {weights[key]}%</span>)}</div>
