@@ -1630,3 +1630,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .comparison-region-filter { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin: -7px 0 9px; color: #6e7e74; font-size: 9px; }.comparison-region-filter button { min-height: 25px; padding: 0 8px; border: 1px solid #dce8df; border-radius: 4px; background: #f5f9f6; color: #3e7758; font-size: 8px; cursor: pointer; }
 .comparison-threshold-control { grid-template-columns: auto minmax(90px, 150px) 25px !important; align-items: center; column-gap: 7px !important; }.comparison-threshold-control input { width: 100%; accent-color: #4b8966; }.comparison-threshold-control output { color: #3e7758; font-size: 10px; font-variant-numeric: tabular-nums; }
 .quality-rank-context { padding-top: 2px; color: #4e775d; font-size: 8px; font-weight: 600; }
+.analysis-score-summary-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 18px 0 10px; padding: 11px 12px; border: 1px solid #dce9df; border-radius: 6px; background: #f7fbf8; }
+.analysis-score-summary-actions > div { min-width: 0; display: grid; gap: 3px; }
+.analysis-score-summary-actions strong { color: #315c43; font-size: 11px; }
+.analysis-score-summary-actions small { color: #849589; font-size: 9px; line-height: 1.45; }
+.analysis-score-summary-actions button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; min-height: 29px; padding: 0 9px; border: 1px solid #bcd6c3; border-radius: 4px; background: #fff; color: #397354; font-size: 9px; cursor: pointer; }
+.analysis-score-summary-actions button:hover { border-color: #77a98a; background: #eef8f1; }
+.analysis-score-summary-empty { border-style: dashed; background: #fbfcfb; }
+.legacy-score-details { margin-top: 14px; border-top: 1px solid #e8ece9; padding-top: 9px; }
+.legacy-score-details summary { color: #7b897f; font-size: 9px; cursor: pointer; }
+@media (max-width: 640px) {
+  .analysis-score-summary-actions { align-items: flex-start; flex-direction: column; }
+  .analysis-score-summary-actions button { width: 100%; justify-content: center; }
+}

@@ -28,6 +28,7 @@ type Props = {
   onEvidence: (quote: string) => void;
   onRead: () => void;
   agentAvailable: boolean;
+  initialTab?: "candidate" | "comparison" | "rules";
 };
 const statusLabels = {
   ready: "可比较",
@@ -44,8 +45,9 @@ export default function ScoringWorkspace({
   onEvidence,
   onRead,
   agentAvailable,
+  initialTab = "candidate",
 }: Props) {
-  const [tab, setTab] = useState<"candidate" | "comparison" | "rules">("candidate");
+  const [tab, setTab] = useState<"candidate" | "comparison" | "rules">(initialTab);
   const [includeResearch, setIncludeResearch] = useState(true);
   const [useModel, setUseModel] = useState(true);
   const [ocrText, setOcrText] = useState("");
