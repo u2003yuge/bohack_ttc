@@ -12,7 +12,7 @@ export type ComparisonRankCriterion = ScoreKey | "composite";
 export type ComparisonMapAxis = ScoreKey | "depth";
 export type ComparisonMapRegion = "all" | "high-high" | "high-low" | "low-high" | "low-low";
 export type ComparisonMapQuadrant = { key: Exclude<ComparisonMapRegion, "all">; x: number; y: number; width: number; height: number; centerX: number; centerY: number };
-export type ComparisonRatingFilter = "all" | "scored" | "demo";
+export type ComparisonRatingFilter = "all" | "scored" | "pending";
 export type ComparisonRankDraft = { criterion: ComparisonRankCriterion; direction: "desc" | "asc"; ratingFilter: ComparisonRatingFilter; mapX: ComparisonMapAxis; mapY: ComparisonMapAxis; mapRegion: ComparisonMapRegion; mapThreshold: number; rationale: string };
 export type ScoreWeights = Record<ScoreKey, number>;
 export type ScoreEvidence = { score: number; evidence: string[]; confidence?: number };
@@ -159,7 +159,7 @@ export function normalizeComparisonRankDraft(input: unknown, defaults: Partial<C
   const mapY = value.mapY === undefined ? defaults.mapY ?? "depth" : value.mapY;
   const mapRegion = value.mapRegion === undefined ? defaults.mapRegion ?? "all" : value.mapRegion;
   const mapThreshold = value.mapThreshold === undefined ? defaults.mapThreshold ?? 50 : Number(value.mapThreshold);
-  if (!criteria.includes(String(criterion)) || !["asc", "desc"].includes(String(direction)) || !["all", "scored", "demo"].includes(String(ratingFilter))
+  if (!criteria.includes(String(criterion)) || !["asc", "desc"].includes(String(direction)) || !["all", "scored", "pending"].includes(String(ratingFilter))
     || !mapAxes.includes(String(mapX)) || !mapAxes.includes(String(mapY)) || mapX === mapY
     || !["all", "high-high", "high-low", "low-high", "low-low"].includes(String(mapRegion))
     || !Number.isFinite(mapThreshold) || mapThreshold < 20 || mapThreshold > 80) {

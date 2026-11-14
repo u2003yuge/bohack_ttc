@@ -1,6 +1,8 @@
 /** Versioned, deterministic scoring. Models may extract facts; they never supply points. */
-export const scoringVersion = "material-derived-v1.4.0";
-export const calibrationStatus = "v1.4 赛事质量与表现分离、行动系数设最低归因值，待双人标注校准";
+export const scoringVersion = "material-derived-v1.4.2";
+export const calibrationStatus = "v1.4.2 五维能力结果乘以 5 后加 20；赛事质量与表现分离、行动系数设最低归因值，待双人标注校准";
+export const abilityScoreMultiplier = 5;
+export const abilityScoreBonus = 20;
 export const decayRatio = 0.55;
 export const decayRatios: Record<MaterialType, number> = { award: 0.45, research: 0.6, project: 0.55, work: 0.7, patent: 0.55, opensource: 0.6, certificate: 0.45 };
 export const awardEventWeights = { participants: 0.5, judging: 0.5 } as const;
@@ -746,7 +748,7 @@ export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
         const value = mapAction(material, key);
         value.derived_contribution =
           score !== null && value.mapping_coefficient !== null
-            ? roundPoints(score * value.type_coefficient * value.mapping_coefficient)
+            ? roundPoints(score * value.type_coefficient * value.mapping_coefficient * abilityScoreMultiplier)
             : null;
         return [key, value];
       }),
@@ -797,7 +799,9 @@ export function scoreMaterials(inputs: MaterialInput[], rho?: number) {
       return [
         key,
         {
-          score: terms.length ? roundPoints(terms.reduce((sum, term) => sum + term.contribution, 0)) : null,
+          score: terms.length
+            ? roundPoints(terms.reduce((sum, term) => sum + term.contribution, 0) + abilityScoreBonus)
+            : null,
           provisional: materials.some(
             (m) =>
               m.provisional ||

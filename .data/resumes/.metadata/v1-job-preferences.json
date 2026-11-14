@@ -1,0 +1,19 @@
+[
+  {
+    "title": "AI 应用研发工程师",
+    "weights": {
+      "professional_execution": 0.35,
+      "problem_solving": 0.25,
+      "ownership_delivery": 0.25,
+      "collaboration_organization": 0.1,
+      "learning_research": 0.05
+    },
+    "must_have": [
+      "Python 或 TypeScript",
+      "LLM API / RAG / Agent",
+      "完整项目交付经验"
+    ],
+    "rationale": "初版岗位预设，可按当前招聘要求调整。",
+    "version": "material-derived-v1.4.0"
+  }
+]

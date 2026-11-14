@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   abilityDimensions,
+  abilityScoreBonus,
+  abilityScoreMultiplier,
   actionLevels,
   decayRatio,
   evaluateCondition,
@@ -130,6 +132,20 @@ test("一项材料仅支持有行动证据的能力，明确分工不因团队�
   assert.ok(result.abilities.learning_research.score! > 0);
   assert.ok(result.abilities.collaboration_organization.provisional);
 });
+test("五个能力维度按 v1.4.2 放大五倍并在最终分数加 20", () => {
+  assert.equal(abilityScoreMultiplier, 5);
+  assert.equal(abilityScoreBonus, 20);
+  const result = scoreMaterials([byId("S12")]);
+  for (const { key } of abilityDimensions) {
+    const term = result.abilities[key].terms[0];
+    assert.ok(term);
+    close(
+      term.derived_contribution,
+      term.material_score * term.type_coefficient * term.mapping_coefficient * 5,
+    );
+    close(result.abilities[key].score, term.contribution + 20);
+  }
+});
 test("几何递减按派生贡献排序，而不是原材料分排序", () => {
   const high = sampleMaterial(
     "project",
@@ -148,7 +164,7 @@ test("几何递减按派生贡献排序，而不是原材料分排序", () => {
   assert.equal(result.materials[1].material_score, result.materials[1].score_breakdown.reduce((sum, factor) => sum + (factor.contribution ?? 0), 0));
   assert.equal(result.abilities.professional_execution.terms[0].title, "普通强映射");
   const expected = result.abilities.professional_execution.terms.reduce((sum, term) => sum + term.contribution, 0);
-  assert.equal(result.abilities.professional_execution.score, expected);
+  assert.equal(result.abilities.professional_execution.score, expected + abilityScoreBonus);
 });
 test("不同材料父类型各自从权重 1 开始，跨类型贡献直接相加", () => {
   const a = byId("S11"),
@@ -156,7 +172,7 @@ test("不同材料父类型各自从权重 1 开始，跨类型贡献直接相�
   const first = scoreMaterials([a]).abilities.professional_execution.score!;
   const second = scoreMaterials([b]).abilities.professional_execution.score!;
   const both = scoreMaterials([a, b]);
-  close(both.abilities.professional_execution.score, first + second);
+  close(both.abilities.professional_execution.score, first + second - abilityScoreBonus);
   assert.ok(both.abilities.professional_execution.terms.every((term) => term.decay === 1));
 });
 test("高质量单项可以压过大量普通同类项，rho 对数量积累生效", () => {
